@@ -1,0 +1,79 @@
+{
+ "_doc": "§5. Soft preferences only (weights); never an input to rules.py/check.py rulings.",
+ "factions": {
+  "emperor": {
+   "motifs": {
+    "domed_basilica": 3,
+    "hippodrome": 2,
+    "gatehouse": 2,
+    "rotunda": 2,
+    "column_monument": 2,
+    "peristyle": 2
+   },
+   "materials": [
+    "marble_revetted"
+   ],
+   "ornament": 3
+  },
+  "church": {
+   "motifs": {
+    "cross_in_square": 3,
+    "domed_basilica": 3,
+    "monastery": 2,
+    "basilica": 2
+   },
+   "materials": [
+    "gold_mosaic",
+    "brick"
+   ],
+   "ornament": 3
+  },
+  "merchants": {
+   "motifs": {
+    "market_row": 3,
+    "insula": 2,
+    "peristyle": 1,
+    "basilica": 1
+   },
+   "materials": [
+    "brick"
+   ],
+   "ornament": 1
+  },
+  "people": {
+   "motifs": {
+    "courtyard_house": 3,
+    "basilica": 1
+   },
+   "materials": [
+    "rubble",
+    "brick"
+   ],
+   "ornament": 0
+  },
+  "army": {
+   "motifs": {
+    "tower": 3,
+    "gatehouse": 2,
+    "insula": 1
+   },
+   "materials": [
+    "ashlar",
+    "brick"
+   ],
+   "ornament": 0
+  },
+  "settlers": {
+   "motifs": {
+    "peristyle": 2,
+    "tower": 2,
+    "courtyard_house": 2
+   },
+   "materials": [
+    "rubble",
+    "ashlar"
+   ],
+   "ornament": 1
+  }
+ }
+}

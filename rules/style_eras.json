@@ -1,0 +1,124 @@
+{
+ "_doc": "§4. AF 1 ≈ AD 330; AF N ≈ AD 330+(N-1). Years <= 0 in the engine are narrative labels for the old Greek city (meta.start_year -657 = Byzas' founding, 657 BC) and map to 'archaic' until PR-C4 unifies the calendar.",
+ "pre_foundation": "archaic",
+ "eras": [
+  {
+   "id": "archaic",
+   "zh": "古风",
+   "en": "Archaic",
+   "af": [
+    -99999,
+    -660
+   ],
+   "palette": [
+    "rubble"
+   ],
+   "ornament_max": 1,
+   "scale_max": "monumental",
+   "tint": "#a89a80"
+  },
+  {
+   "id": "hellenistic",
+   "zh": "希腊化",
+   "en": "Hellenistic",
+   "af": [
+    -659,
+    -134
+   ],
+   "palette": [
+    "ashlar",
+    "stucco"
+   ],
+   "ornament_max": 2,
+   "scale_max": "monumental",
+   "tint": "#c9b48c"
+  },
+  {
+   "id": "severan",
+   "zh": "塞维鲁",
+   "en": "Severan",
+   "af": [
+    -133,
+    -6
+   ],
+   "palette": [
+    "brick",
+    "ashlar"
+   ],
+   "ornament_max": 2,
+   "scale_max": "monumental",
+   "tint": "#b98a62"
+  },
+  {
+   "id": "constantinian",
+   "zh": "君士坦丁",
+   "en": "Constantinian",
+   "af": [
+    -5,
+    65
+   ],
+   "palette": [
+    "brick",
+    "marble_revetted"
+   ],
+   "ornament_max": 3,
+   "scale_max": "wonder",
+   "tint": "#e3cf9e"
+  },
+  {
+   "id": "theodosian",
+   "zh": "狄奥多西",
+   "en": "Theodosian",
+   "af": [
+    66,
+    197
+   ],
+   "palette": [
+    "brick",
+    "marble_revetted",
+    "mosaic"
+   ],
+   "ornament_max": 3,
+   "scale_max": "wonder",
+   "tint": "#d9b97a"
+  },
+  {
+   "id": "justinianic",
+   "zh": "查士丁尼",
+   "en": "Justinianic",
+   "af": [
+    198,
+    235
+   ],
+   "palette": [
+    "brick",
+    "gold_mosaic",
+    "marble_revetted"
+   ],
+   "ornament_max": 3,
+   "scale_max": "wonder",
+   "tint": "#e0b85a"
+  },
+  {
+   "id": "middle",
+   "zh": "中期",
+   "en": "Middle",
+   "af": [
+    236,
+    99999
+   ],
+   "palette": [
+    "brick",
+    "rubble",
+    "banded_masonry"
+   ],
+   "ornament_max": 2,
+   "scale_max": "monumental",
+   "tint": "#b0745a"
+  }
+ ],
+ "transition": {
+  "_doc": "Style drift (§4). Skeleton in PR-B1: drift_style() currently returns the era's own values; parameters will be fitted in PR-C3.",
+  "window_years": 15
+ }
+}
