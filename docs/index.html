@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>安托萨 · Anthousa — 一座自己生长的城市</title>
+<style>
+:root{--ink:#3b2a1a;--paper:#f3e7c9;--deep:#1d1610;--red:#9c3b2e;--muted:#8a7660}
+*{box-sizing:border-box}
+body{margin:0;background:var(--deep);color:var(--paper);font-family:Georgia,"Songti SC","Noto Serif SC",serif}
+header{padding:28px 32px 10px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+header h1{margin:0;font-weight:normal;letter-spacing:.35em;font-size:30px}
+header .sub{opacity:.7;font-style:italic}
+main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:0;height:calc(100vh - 170px);min-height:520px}
+#stage{position:relative;overflow:hidden;background:#b8b29b;cursor:grab;border-top:1px solid #4a3a2a;border-bottom:1px solid #4a3a2a}
+#stage img{position:absolute;left:0;top:0;width:100%;transform-origin:0 0;user-select:none;-webkit-user-drag:none}
+#stage .hint{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--ink);opacity:.6;background:#f3e7c9cc;padding:3px 8px}
+aside{overflow-y:auto;padding:22px 26px;background:#241b13;border-left:1px solid #4a3a2a}
+aside h2{font-weight:normal;font-size:22px;margin:0 0 4px;letter-spacing:.08em}
+.years{opacity:.65;font-style:italic;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;font-size:13px;margin-bottom:18px;align-items:center}
+.bar{height:6px;background:#3a2d20;position:relative}.bar i{position:absolute;left:0;top:0;bottom:0;background:#c98f4e}
+.bar.w i{background:#6f8fa0}
+.chron{line-height:1.85;font-size:15px}.chron h2{display:none}
+.chron b.ref{color:#e6c27a;font-weight:normal;border-bottom:1px dotted #e6c27a;cursor:help}
+h3{font-weight:normal;letter-spacing:.2em;font-size:13px;opacity:.7;margin:26px 0 8px;border-top:1px solid #4a3a2a;padding-top:14px}
+.act{font-size:13px;margin:3px 0;opacity:.9}.act .f{display:inline-block;min-width:64px;opacity:.6}
+.rej{color:#e39a86}.rej small{display:block;opacity:.8;margin-left:68px}
+.ev{color:#f0b46a;font-size:13px}
+footer{height:120px;padding:14px 32px;border-top:1px solid #4a3a2a;display:flex;align-items:center;gap:20px}
+footer button{background:none;border:1px solid var(--paper);color:var(--paper);font:inherit;padding:8px 16px;cursor:pointer}
+#tl{flex:1;position:relative;height:60px}
+#tl input{width:100%;margin-top:22px;accent-color:#c98f4e}
+#tl .tick{position:absolute;top:0;font-size:11px;opacity:.6;transform:translateX(-50%);white-space:nowrap}
+#yearbig{font-size:34px;min-width:190px;text-align:right;letter-spacing:.05em}
+#yearbig small{display:block;font-size:12px;opacity:.6;letter-spacing:.2em}
+.how{font-size:13px;opacity:.75;line-height:1.7}
+@media(max-width:900px){main{grid-template-columns:1fr;height:auto}#stage{height:62vh}aside{border-left:0}}
+</style>
+</head>
+<body>
+<header><h1>ANTHOUSA · 安托萨</h1><span class="sub">一座没有人设计、自己生长出来的城市</span></header>
+<main>
+  <div id="stage"><img id="map" alt="map"><span class="hint">滚轮缩放 · 拖动平移</span></div>
+  <aside>
+    <h2 id="title"></h2><div class="years" id="yrs"></div>
+    <div class="stats" id="stats"></div>
+    <div class="chron" id="chron"></div>
+    <div id="events"></div>
+    <h3>议事厅 · 各方提案</h3><div id="acts"></div>
+    <h3>它是怎么长出来的</h3>
+    <div class="how">每一次心跳，城市就过去十年。皇帝、教会、商人、平民、军队各自提出要建什么；一套用代码写成的规则引擎逐条裁决：是否在陆地上、是否压住了别的建筑、有没有路能到、水和粮食够不够。被驳回的提案原样记录在上面。房屋沿着街道自行生长，火灾、地震与瘟疫由骰子决定，没有人能选择。拆掉的城墙、烧掉的街区不会消失，它们的地基一直留在地图上。</div>
+  </aside>
+</main>
+<footer>
+  <button id="play">▶ 播放</button>
+  <div id="tl"><input type="range" id="slider" min="0" value="0" step="1"></div>
+  <div id="yearbig"></div>
+</footer>
+<script>
+const FACTION={emperor:"皇帝",church:"教会",merchants:"商人",people:"平民",army:"军队",settlers:"移民",priests:"祭司"};
+const OP={build:"兴建",demolish:"拆除",rename:"更名"};
+let D,names={},idx=0,timer=null;
+const $=id=>document.getElementById(id);
+const fname=y=>"years/"+(y<0?"m"+String(-y).padStart(4,"0"):String(y).padStart(5,"0"))+".svg";
+const yl=y=>y<=0?(y<0?`前 ${-y} 年`:"建城前夕"):`建城 ${y} 年`;
+fetch("data.json").then(r=>r.json()).then(d=>{D=d;d.structures.forEach(s=>names[s.id]=s);
+  const sl=$("slider");sl.max=d.eras.length-1;sl.value=d.eras.length-1;
+  d.eras.forEach((e,i)=>{const t=document.createElement("span");t.className="tick";t.style.left=(d.eras.length>1?i/(d.eras.length-1)*100:0)+"%";t.textContent=e.to;$("tl").appendChild(t)});
+  d.eras.forEach(e=>{const im=new Image();im.src=fname(e.to)});
+  show(d.eras.length-1);sl.oninput=()=>show(+sl.value)});
+function md(t){return t.replace(/^## .*$/m,"").trim().split(/\n\s*\n/).map(p=>"<p>"+p.replace(/\{\{(\w+)\}\}/g,(m,id)=>{const s=names[id];
+  if(!s)return id;const life=`${s.built}${s.destroyed!=null?" – "+s.destroyed:" 至今"}`;
+  const hist=(s.history||[]).map(h=>h.year+"：" + h.text).join("\n");return `<b class="ref" title="${life}\n${hist.replace(/"/g,"'")}">${s.name}</b>`})+"</p>").join("")}
+function show(i){idx=i;const e=D.eras[i];$("map").src=fname(e.to);$("title").textContent=e.title;
+  $("yrs").textContent=`${yl(e.from)} — ${yl(e.to)}`;$("yearbig").innerHTML=`${e.to<0?"前 "+(-e.to):e.to}<small>${e.to>0?"ANNO FUNDATIONIS":"ANTE"}</small>`;
+  const s=e.stats,m=Math.max(s.food,s.water,s.population);
+  $("stats").innerHTML=`<span>人口</span><div class="bar"><i style="width:${s.population/m*100}%"></i></div><span>${s.population.toLocaleString()}</span>
+   <span>粮食上限</span><div class="bar"><i style="width:${s.food/m*100}%"></i></div><span>${s.food.toLocaleString()}</span>
+   <span>水源上限</span><div class="bar w"><i style="width:${s.water/m*100}%"></i></div><span>${s.water.toLocaleString()}</span>
+   <span>房屋</span><span></span><span>${s.houses} <small>(+${s.houses_added})</small></span>`;
+  $("chron").innerHTML=e.chronicle?md(e.chronicle):"<p><i>编年史尚未写成。</i></p>";
+  $("events").innerHTML=(e.events||[]).map(v=>`<p class="ev">⚑ ${v.year} 年 · ${{fire:"大火",earthquake:"地震",plague:"瘟疫"}[v.type]}${v.houses?"，"+v.houses+" 座房屋损毁":""}</p>`).join("");
+  let h=e.accepted.map(a=>`<div class="act"><span class="f">${FACTION[a.faction]||a.faction}</span>${OP[a.op]} ${a.name||a.id}</div>`).join("");
+  h+=e.rejected.map(r=>`<div class="act rej"><span class="f">${FACTION[r.faction]||r.faction}</span>✕ ${r.name||r.id}<small>${r.reasons.map(x=>x.replace(/^\w+: /,"")).join("；")}</small></div>`).join("");
+  (e.review_rounds||[]).forEach(rr=>{h+=`<div class="act" style="opacity:.65;margin-top:10px">第 ${rr.round} 轮审议被驳回、后经修改：</div>`+rr.rejected.map(x=>`<div class="act rej" style="opacity:.75"><span class="f"></span>✕ ${x.id}<small>${x.reason} → ${x.fix}</small></div>`).join("")});
+  $("acts").innerHTML=h;}
+$("play").onclick=()=>{if(timer){clearInterval(timer);timer=null;$("play").textContent="▶ 播放";return}
+  $("play").textContent="❚❚ 暂停";if(idx>=D.eras.length-1)show(0),$("slider").value=0;
+  timer=setInterval(()=>{if(idx>=D.eras.length-1){$("play").click();return}show(idx+1);$("slider").value=idx},1600)};
+// pan & zoom
+let z=1,px=0,py=0,drag=null;const st=$("stage"),im=$("map");
+const ap=()=>im.style.transform=`translate(${px}px,${py}px) scale(${z})`;
+st.addEventListener("wheel",ev=>{ev.preventDefault();const r=st.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;
+  const nz=Math.min(12,Math.max(1,z*(ev.deltaY<0?1.15:1/1.15)));px=mx-(mx-px)*nz/z;py=my-(my-py)*nz/z;z=nz;ap()},{passive:false});
+st.onmousedown=ev=>{drag=[ev.clientX-px,ev.clientY-py];st.style.cursor="grabbing"};
+onmouseup=()=>{drag=null;st.style.cursor="grab"};
+onmousemove=ev=>{if(drag){px=ev.clientX-drag[0];py=ev.clientY-drag[1];ap()}};
+// start zoomed on the city
+im.onload=()=>{if(im.dataset.init)return;im.dataset.init=1;const r=st.getBoundingClientRect();z=2.2;px=-r.width*0.62*z+r.width*0.5;py=-r.width*(400/1200)*z+r.height*0.5;ap()};
+</script>
+</body>
+</html>
