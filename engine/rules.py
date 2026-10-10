@@ -104,7 +104,56 @@ def check_structure(w, s, year):
                     bad += 1
             if bad:
                 errs.append(f"{s['id']}: {bad * g.length / n * 12:.0f} m of channel would hang in the air with no arcade under it")
+    errs += check_grammar(w, s, year)
     return errs
+
+
+def check_grammar(w, s, year):
+    """Architectural grammar v0.2 §11 rules 1, 3, 4 (PR-C1). Only rulings that rest on data, never on prose.
+    Materials outside the era palette are a warning, not a rejection (see grammar_warnings)."""
+    import grammar
+    R = CAL.get("grammar_rule", {})
+    if year < R.get("from_year", 10**9):
+        return []
+    errs, t = [], s["type"]
+    allowed = grammar.MOTIFS["type_map"].get(t)
+    d = s.get("dna") or {}
+    if allowed:  # rule 1: a motif, from the library, allowed for this type
+        m = d.get("motif")
+        if not m:
+            errs.append(f"{s['id']}: a {t} must declare dna.motif (one of: {', '.join(allowed)})")
+        elif m not in grammar.MOTIFS["motifs"]:
+            errs.append(f"{s['id']}: unknown motif {m} (library: rules/motifs.json)")
+        elif m not in allowed:
+            errs.append(f"{s['id']}: motif {m} is not allowed for a {t} (one of: {', '.join(allowed)})")
+        ok, msgs = grammar.validate_dna(s)
+        errs += [x for x in msgs if "motif" not in x]
+    for src in s.get("spolia_from", []):  # rule 3: spolia only from what has already fallen
+        o = next((x for x in w["structures"] if x["id"] == src), None)
+        if o is None:
+            errs.append(f"{s['id']}: spolia_from {src}: no such structure")
+        elif o.get("destroyed") is None or o["destroyed"] > year:
+            errs.append(f"{s['id']}: spolia_from {src}: it is still standing in AF {year}; only ruins can be quarried")
+    if d.get("scale") == "wonder":  # rule 4: wonder size and one at a time
+        area = geom(s).area
+        if area > CAL["wonder_max_area"]["value"]:
+            errs.append(f"{s['id']}: a wonder of {area:.0f} sq units exceeds wonder_max_area {CAL['wonder_max_area']['value']}")
+        decade = year - (year - 1) % 10
+        same = [x for x in w["structures"] if (x.get("dna") or {}).get("scale") == "wonder" and decade <= x["built"] < decade + 10]
+        if len(same) >= CAL["wonder_concurrency"]["value"]:
+            errs.append(f"{s['id']}: {same[0]['id']} is already this decade's wonder; only {CAL['wonder_concurrency']['value']} may be begun per decade")
+    return errs
+
+
+def grammar_warnings(s, year):
+    """Rule 2: materials outside the style era's palette. Advisory, recorded on the accepted action."""
+    import grammar
+    if year < CAL.get("grammar_rule", {}).get("from_year", 10**9):
+        return []
+    mats = (s.get("dna") or {}).get("materials") or []
+    pal = grammar.era(grammar.style_era(year))["palette"]
+    off = [m for m in mats if m not in pal]
+    return [f"{s['id']}: materials {', '.join(off)} are outside the {grammar.style_era(year)} palette ({', '.join(pal)})"] if off else []
 
 
 def check_world(w, year):
