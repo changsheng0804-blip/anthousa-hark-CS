@@ -3,7 +3,7 @@ The AI proposes; this code decides. Nothing here is written to flatter the AI.""
 from shapely.geometry import Point
 from shapely.ops import unary_union
 from terrain import land
-from world import geom, standing, BUILDING_TYPES, LINE_TYPES, WATER_TYPES, AREA_TYPES
+from world import geom, standing, BUILDING_TYPES, LINE_TYPES, WATER_TYPES, AREA_TYPES, FARM_TYPES
 
 import json, os
 CAL = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "rules", "calibration.json")))
@@ -16,6 +16,11 @@ def capacities(w, year):
     F, Wt = CAL["food"], CAL["water"]
     # a structure may carry its own "capacity" (e.g. a small early aqueduct); otherwise the calibrated default
     food = F["base"] + sum(x.get("capacity", F[x["type"]]) for x in s if x["type"] in ("harbor", "granary", "market", "warehouse"))
+    # farmland (from AF 31): people fed per hectare of field, from yield and ration (calibration farmland)
+    FL = CAL.get("farmland")
+    if FL:
+        food += int(sum(geom(x).area * CAL["meters_per_unit"]["value"] ** 2 / 10000 * FL["people_per_ha"]
+                        for x in s if x["type"] in FARM_TYPES))
     water = Wt["base"] + sum(x.get("capacity", Wt[x["type"]]) for x in s if x["type"] in ("cistern", "aqueduct"))
     return {"food": food, "water": water}
 
@@ -45,6 +50,35 @@ def check_structure(w, s, year):
         on = g.intersection(L).length / max(g.length, 1e-6)
         if on < 0.97:
             errs.append(f"{s['id']}: {t} runs {100*(1-on):.0f}% over water")
+    if t in FARM_TYPES:
+        FL = CAL["farmland"]
+        if year < FL["from_year"]:
+            errs.append(f"{s['id']}: farmland enters the rules in AF {FL['from_year']}")
+        if not g.within(L.buffer(0.5)):
+            errs.append(f"{s['id']}: fields must be on dry land ({g.difference(L).area:.0f} sq units in water)")
+        if g.area < FL["min_area"]:
+            errs.append(f"{s['id']}: {g.area:.0f} sq units is a garden plot, not farmland (min {FL['min_area']})")
+        for o in standing(w, year, BUILDING_TYPES | WATER_TYPES | FARM_TYPES):
+            if geom(o).intersection(g).area > 1.0:
+                errs.append(f"{s['id']}: overlaps standing {o['id']} ({o['name']})")
+        from terrain import elevation
+        b, step = g.bounds, 4.0  # sample every 4 units (48 m); slope between neighbours
+        sl, x = [], b[0]
+        while x < b[2]:
+            y = b[1]
+            while y < b[3]:
+                if g.contains(Point(x, y)) and g.contains(Point(x + step, y)) and g.contains(Point(x, y + step)):
+                    e = elevation(x, y)
+                    sl.append(max(abs(elevation(x + step, y) - e), abs(elevation(x, y + step) - e)) / (step * CAL["meters_per_unit"]["value"]))
+                y += step
+            x += step
+        if sl:
+            sl.sort(); p80 = sl[int(0.8 * (len(sl) - 1))]
+            if p80 > FL["max_slope"]:
+                errs.append(f"{s['id']}: most of the ground slopes {100 * p80:.0f}% (max {100 * FL['max_slope']:.0f}%); too steep to plough")
+        roads = standing(w, year, {"road"})
+        if roads and min(geom(r).distance(g) for r in roads) > 25:
+            errs.append(f"{s['id']}: no road within 25 units; the harvest could not reach the city")
     # collisions with standing solid structures
     if t in BUILDING_TYPES | WATER_TYPES:
         for o in standing(w, year, BUILDING_TYPES | WATER_TYPES):
