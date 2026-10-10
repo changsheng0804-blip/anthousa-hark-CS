@@ -41,7 +41,7 @@
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
-  "harbor_prosphorion": "普罗斯福里昂港",
+  "harbor_prosphorion": "普罗斯福里昂",
   "agora_tetrastoon": "四柱廊广场",
   "aq_hadrian": "旧水渠",
   "d_byzas": "拜扎斯旧城",
@@ -90,5 +90,41 @@
  "cartouche_zh": {
   "sub": "建城 {year} 年",
   "pop": "约 {pop} 人"
+ },
+ "label_at": {
+  "both": {
+   "agora_tetrastoon": [
+    662,
+    444
+   ],
+   "church_peace": [
+    684,
+    458
+   ],
+   "milion": [
+    650,
+    467
+   ],
+   "forum_founder": [
+    611,
+    445
+   ]
+  },
+  "zh": {
+   "harbor_prosphorion": [
+    654,
+    367
+   ],
+   "d_byzas": [
+    692,
+    402
+   ]
+  },
+  "en": {
+   "harbor_prosphorion": [
+    654,
+    367
+   ]
+  }
  }
 }
