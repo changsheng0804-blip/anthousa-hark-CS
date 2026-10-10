@@ -1,0 +1,247 @@
+{
+ "_doc": "Architectural grammar v0.2 §3 (docs/arch-grammar-draft.md). Motif = how a building's plan is generated. Geometry params are fractions of the footprint's long (L) and short (S) side.",
+ "motifs": {
+  "courtyard_house": {
+   "zh": "庭院住宅",
+   "en": "courtyard house",
+   "scale": "domestic",
+   "factions": [
+    "people",
+    "merchants"
+   ],
+   "geometry": {
+    "court": 0.4
+   }
+  },
+  "insula": {
+   "zh": "集合住宅",
+   "en": "insula",
+   "scale": "domestic",
+   "factions": [
+    "merchants",
+    "people"
+   ],
+   "geometry": {
+    "bays": 4
+   }
+  },
+  "basilica": {
+   "zh": "巴西利卡",
+   "en": "basilica",
+   "scale": "civic",
+   "factions": [
+    "emperor",
+    "church"
+   ],
+   "geometry": {
+    "nave": 0.4,
+    "apse": 0.5
+   }
+  },
+  "domed_basilica": {
+   "zh": "穹顶巴西利卡",
+   "en": "domed basilica",
+   "scale": "wonder",
+   "factions": [
+    "emperor",
+    "church"
+   ],
+   "geometry": {
+    "dome": 0.8
+   }
+  },
+  "cross_in_square": {
+   "zh": "十字穹顶教堂",
+   "en": "cross-in-square church",
+   "scale": "monumental",
+   "factions": [
+    "church"
+   ],
+   "geometry": {
+    "arm": 0.36,
+    "dome": 0.34,
+    "corner_dome": 0.14
+   }
+  },
+  "rotunda": {
+   "zh": "圆形厅",
+   "en": "rotunda",
+   "scale": "monumental",
+   "factions": [
+    "emperor"
+   ],
+   "geometry": {
+    "drum": 0.9,
+    "oculus": 0.25
+   }
+  },
+  "peristyle": {
+   "zh": "柱廊",
+   "en": "peristyle",
+   "scale": "civic",
+   "factions": [
+    "emperor",
+    "merchants"
+   ],
+   "geometry": {
+    "inset": 0.14,
+    "column_every_m": 18
+   }
+  },
+  "tower": {
+   "zh": "塔楼",
+   "en": "tower",
+   "scale": "civic",
+   "factions": [
+    "army"
+   ],
+   "geometry": {
+    "corner": 0.22
+   }
+  },
+  "gatehouse": {
+   "zh": "城门楼",
+   "en": "gatehouse",
+   "scale": "monumental",
+   "factions": [
+    "army",
+    "emperor"
+   ],
+   "geometry": {
+    "tower": 0.34,
+    "passage": 0.28
+   }
+  },
+  "column_monument": {
+   "zh": "纪念柱",
+   "en": "honorific column",
+   "scale": "monumental",
+   "factions": [
+    "emperor"
+   ],
+   "geometry": {
+    "base": 0.5
+   }
+  },
+  "cistern": {
+   "zh": "蓄水池",
+   "en": "cistern",
+   "scale": "civic",
+   "factions": [
+    "emperor"
+   ],
+   "geometry": {
+    "column_grid": 4
+   }
+  },
+  "hippodrome": {
+   "zh": "竞技场",
+   "en": "hippodrome",
+   "scale": "monumental",
+   "factions": [
+    "emperor",
+    "people"
+   ],
+   "geometry": {
+    "stands": 0.18,
+    "spina": 0.6
+   }
+  },
+  "market_row": {
+   "zh": "市场廊",
+   "en": "market arcade",
+   "scale": "civic",
+   "factions": [
+    "merchants"
+   ],
+   "geometry": {
+    "bays": 6
+   }
+  },
+  "monastery": {
+   "zh": "修道院群",
+   "en": "monastery",
+   "scale": "civic",
+   "factions": [
+    "church"
+   ],
+   "geometry": {
+    "court": 0.45
+   }
+  }
+ },
+ "_type_map_doc": "§3.1. First motif is the default used when a structure declares no dna (render-time inference only; world.json is not changed). [] = exempt.",
+ "type_map": {
+  "palace": [
+   "peristyle",
+   "basilica",
+   "rotunda"
+  ],
+  "forum": [
+   "peristyle",
+   "basilica"
+  ],
+  "church": [
+   "basilica",
+   "cross_in_square",
+   "domed_basilica",
+   "rotunda"
+  ],
+  "market": [
+   "market_row",
+   "peristyle",
+   "basilica"
+  ],
+  "fort": [
+   "tower"
+  ],
+  "granary": [
+   "basilica"
+  ],
+  "cistern": [
+   "cistern"
+  ],
+  "temple": [
+   "peristyle",
+   "rotunda",
+   "basilica"
+  ],
+  "hippodrome": [
+   "hippodrome"
+  ],
+  "baths": [
+   "basilica",
+   "rotunda",
+   "peristyle"
+  ],
+  "monument": [
+   "column_monument",
+   "rotunda"
+  ],
+  "column": [
+   "column_monument"
+  ],
+  "monastery": [
+   "monastery",
+   "cross_in_square"
+  ],
+  "barracks": [
+   "insula"
+  ],
+  "warehouse": [
+   "basilica",
+   "insula"
+  ],
+  "gate": [
+   "gatehouse"
+  ],
+  "ruin_marker": [],
+  "aqueduct_bridge": [],
+  "road": [],
+  "wall": [],
+  "aqueduct": [],
+  "seawall": [],
+  "harbor": [],
+  "district": []
+ }
+}
