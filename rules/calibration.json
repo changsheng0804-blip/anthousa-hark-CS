@@ -1,0 +1,106 @@
+{
+ "_doc": "Every number the engine uses, with where it comes from. 'source' = checked against a page; 'estimate' = our judgement, open to revision.",
+ "meters_per_unit": {
+  "value": 12,
+  "basis": "source",
+  "why": "terrain is projected from real coordinates: OSM coastline + SRTM 30 m elevation, origin lon 28.884 / lat 41.058, map 14.4 x 9.6 km"
+ },
+ "wall_gap_m": {
+  "value": 2800,
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Walls_of_Constantinople",
+  "note": "Constantine's wall ~2.8 km (15 stadia) west of the Severan wall; Theodosian walls ~2 km further west"
+ },
+ "mese_width_m": {
+  "value": 25,
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Mese_(Constantinople)"
+ },
+ "milion_to_forum_m": {
+  "value": 600,
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Mese_(Constantinople)"
+ },
+ "hippodrome_m": {
+  "value": [
+   450,
+   130
+  ],
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Hippodrome_of_Constantinople"
+ },
+ "population_330": {
+  "value": [
+   30000,
+   40000
+  ],
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Population_of_the_Byzantine_Empire",
+  "note": "one study gives ~30,000 in 330 and ~300,000 by 450"
+ },
+ "population_450": {
+  "value": 300000,
+  "basis": "source",
+  "note": "Growing Up in Constantinople (2015) via search; mid-5th c. urban area ~1,400 ha"
+ },
+ "population_530s": {
+  "value": [
+   400000,
+   500000
+  ],
+  "basis": "source",
+  "url": "https://istanbultarihi.ist/460-the-population-of-constantinople-in-the-byzantine-period"
+ },
+ "grain_dole_332": {
+  "value": 80000,
+  "basis": "source",
+  "url": "https://en.wikipedia.org/wiki/Constantinople",
+  "note": "80,000 rations a day from 117 distribution points"
+ },
+ "people_per_house": {
+  "value": 9,
+  "basis": "estimate",
+  "why": "house footprint 10-16 m, 2-3 storeys; at ~50% built cover gives ~260 people/ha, inside the 100-400/ha range of dense pre-industrial cities"
+ },
+ "house_size_units": {
+  "value": [
+   0.85,
+   1.35
+  ],
+  "basis": "estimate"
+ },
+ "house_spacing_units": {
+  "value": 1.55,
+  "basis": "estimate"
+ },
+ "growth_cap_per_decade": {
+  "value": 0.5,
+  "basis": "estimate",
+  "why": "historic average 330-450 is ~21%/decade (x10 in 120 years); booms run faster, so the cap sits above the average"
+ },
+ "growth_floor_houses": {
+  "value": 150,
+  "basis": "estimate"
+ },
+ "food": {
+  "base": 6000,
+  "harbor": 25000,
+  "granary": 20000,
+  "market": 3000,
+  "warehouse": 4000,
+  "basis": "estimate",
+  "why": "two harbors + one granary ~ 80,000, the size of the 332 grain dole"
+ },
+ "water": {
+  "base": 8000,
+  "cistern": 15000,
+  "aqueduct": 100000,
+  "basis": "estimate",
+  "why": "wells and rain for a small town; a full aqueduct system supports a metropolis of hundreds of thousands"
+ },
+ "terrain": {
+  "coastline": "OpenStreetMap natural=coastline via Overpass, 2026-10-09 (modern shoreline, includes landfill)",
+  "elevation": "SRTM 30 m via api.opentopodata.org, 20-unit grid",
+  "landmarks": "placed at real lat/lon: Milion, Hagia Sophia/Irene, Hippodrome, Forum of Constantine, Binbirdirek, Kumkapi, Sirkeci, Severan & Constantinian wall lines (approx.)"
+ }
+}
