@@ -32,7 +32,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 400px}
 .lens-fac #city>.hs,.lens-fac #city>.old,.lens-fac #city>.rz{opacity:.2}
 .lens-dis #city>*:not(.rz):not(.gone):not(.lb){opacity:.18}
 .lens-dis #city .rz.fire{fill:#c8402a;fill-opacity:.65;stroke:#c8402a;stroke-opacity:1}
-.lens-dis #city .rz.clr{fill:#6b5a4a;fill-opacity:.35}.lens-dis #city .gone{stroke:#c8402a;stroke-opacity:.9}
+.lens-dis #city .rz.clr{fill:#6b5a4a;fill-opacity:.35}.lens-dis #city .rz.plg{fill:#6a5a8a;fill-opacity:.5;stroke:#6a5a8a}.lens-dis #city .gone{stroke:#c8402a;stroke-opacity:.9}
 #stage .hint{position:absolute;right:10px;bottom:8px;font-size:12px;color:var(--ink);opacity:.65;background:#f3e7c9cc;padding:2px 8px}
 aside{display:flex;flex-direction:column;min-height:0;background:#241b13;border-left:1px solid var(--line)}
 .top{flex:none;padding:14px 20px 10px;border-bottom:1px solid var(--line)}
@@ -94,7 +94,7 @@ const T={
   lens:{all:"全图",water:"水系",food:"粮食",fac:"势力",dis:"灾痕"},
   lg:{water:s=>`水渠 · 水道桥 · 蓄水池 · 浴场<br>供水上限 ${s.water.toLocaleString("zh-CN")}，人口 ${s.population.toLocaleString("zh-CN")}`,
    food:s=>`港口 · 粮仓 · 货栈 · 市场<br>粮食上限 ${s.food.toLocaleString("zh-CN")}，人口 ${s.population.toLocaleString("zh-CN")}`,
-   fac:"建筑按提出它的势力着色",fire:"火灾烧毁的房屋",clr:"为兴建而拆除的房屋",gone:"已消失的建筑"},
+   fac:"按提出它的势力着色（含道路、城墙）",fire:"火灾烧毁的房屋",clr:"为兴建而拆除的房屋",plg:"瘟疫后弃置的房屋",gone:"已消失的建筑"},
   yl:y=>y<=0?(y<0?`前 ${-y} 年`:"建城前夕"):`建城 ${y} 年`,big:y=>y<0?"前 "+(-y):y,now:"至今",
   how:"每一次心跳，城市就过去十年。皇帝、教会、商人、平民、军队各自提出要建什么；一套用代码写成的规则引擎逐条裁决：是否在陆地上、是否压住了别的建筑、有没有路能到、水和粮食够不够。被驳回的提案原样记录在“议事厅”里。房屋沿着街道自行生长，火灾、地震与瘟疫由骰子决定，没有人能选择。拆掉的城墙、烧掉的街区不会消失，它们的地基一直留在地图上。<br><br>地形是真实的：海岸线来自 OpenStreetMap，高程来自 SRTM，地图 1 格 = 12 米。",
   reason:r=>r.replace(/^.*?: /,"").replace(/no road within 25 units; nobody could reach it/,"25 格内没有道路，无人能到达").replace(/road does not connect to the existing street network/,"道路没有接入现有路网").replace(/a district needs a road running into it/,"街区需要有道路通入").replace(/aqueduct would have to run uphill/,"水渠得往高处流").replace(/footprint leaves dry land \((\d+) sq units in water\)/,"占地伸进水里（$1 平方格）").replace(/overlaps standing (\w+) \((.*)\)/,"压住了现有建筑 $2").replace(/a harbor must sit on the shore, mostly in the water/,"港口必须建在岸边、大部分在水中").replace(/id already used/,"编号已被占用")},
@@ -106,16 +106,16 @@ const T={
   lens:{all:"All",water:"Water",food:"Grain",fac:"Factions",dis:"Disasters"},
   lg:{water:s=>`Aqueducts · bridges · cisterns · baths<br>water capacity ${s.water.toLocaleString("en-US")}, population ${s.population.toLocaleString("en-US")}`,
    food:s=>`Harbors · granaries · warehouses · markets<br>grain capacity ${s.food.toLocaleString("en-US")}, population ${s.population.toLocaleString("en-US")}`,
-   fac:"Buildings coloured by the faction that proposed them",fire:"Houses lost to fire",clr:"Houses cleared for new building",gone:"Vanished structures"},
+   fac:"Coloured by the faction that proposed them (roads and walls included)",fire:"Houses lost to fire",clr:"Houses cleared for new building",plg:"Houses abandoned after plague",gone:"Vanished structures"},
   yl:y=>y<=0?(y<0?`${-y} BC`:"Eve of the refounding"):`AF ${y}`,big:y=>y<0?(-y)+" BC":y,now:"present",
   how:"Every heartbeat, ten years pass. Emperor, church, merchants, people and army each propose what to build; a rules engine written in code judges every proposal: is it on land, does it sit on another building, can a road reach it, is there enough water and grain. Rejected proposals stay on record in the Council tab. Houses grow along the streets by themselves; fires, earthquakes and plagues come from the dice, and nobody chooses them. Demolished walls and burned quarters never vanish: their foundations stay on the map.<br><br>The terrain is real: coastline from OpenStreetMap, elevation from SRTM; one map unit = 12 m.",
   reason:r=>r.replace(/^.*?: /,"")}};
 let L=localStorage.getItem("lang")||((navigator.language||"").startsWith("zh")?"zh":"en");
-let D,names={},idx=0,timer=null,lens=localStorage.getItem("lens")||"all";
+let D,names={},idx=0,timer=null,lens=localStorage.getItem("lens")||"all";if(!["all","water","food","fac","dis"].includes(lens))lens="all";
 const FC={emperor:"#7b3f8c",church:"#b8322a",merchants:"#2f7d6d",people:"#d29a2e",army:"#4a5a6a",settlers:"#8a6a4a",priests:"#e8dcb0"};
 {const st=document.createElement("style");st.textContent=Object.entries(FC).map(([f,c])=>
  `.lens-fac #city .f-${f}.fp,.lens-fac #city .f-${f} .fp{fill:${c};fill-opacity:1}.lens-fac #city .f-${f}.ri,.lens-fac #city .f-${f} .ri{stroke:${c};stroke-dasharray:none}`).join("");document.head.appendChild(st)}
-const svgs={};const getSvg=f=>svgs[f]||(svgs[f]=fetch(f).then(r=>r.text()));
+const svgs={};const getSvg=f=>svgs[f]||(svgs[f]=fetch(f).then(r=>{if(!r.ok)throw new Error(r.status);return r.text()}).catch(e=>{delete svgs[f];throw e}));
 function drawLens(){const t=T[L],st=$("stage");["all","water","food","fac","dis"].forEach(k=>st.classList.toggle("lens-"+k,k==lens));
   $("lensb").innerHTML=Object.entries(t.lens).map(([k,v])=>`<button data-l="${k}" class="${k==lens?"on":""}">${v}</button>`).join("");
   $("lensb").querySelectorAll("button").forEach(b=>b.onclick=ev=>{ev.stopPropagation();lens=b.dataset.l;localStorage.setItem("lens",lens);drawLens()});
@@ -123,7 +123,7 @@ function drawLens(){const t=T[L],st=$("stage");["all","water","food","fac","dis"
   if(lens=="water"||lens=="food")h=t.lg[lens](s);
   if(lens=="fac"){const live=D.structures.filter(x=>x.built<=yr&&(x.destroyed==null||x.destroyed>yr)&&x.type!="district"),n={};live.forEach(x=>n[x.faction]=(n[x.faction]||0)+1);
     h=t.lg.fac+"<br>"+Object.keys(n).sort((a,b)=>n[b]-n[a]).map(f=>`<i style="background:${FC[f]||"#999"}"></i>${t.fac[f]||f} ${n[f]}`).join("<br>")}
-  if(lens=="dis")h=`<i style="background:#c8402a"></i>${t.lg.fire}<br><i style="background:#a99a8a"></i>${t.lg.clr}<br><i style="border:1px dashed #c8402a;background:none"></i>${t.lg.gone}`+
+  if(lens=="dis")h=`<i style="background:#c8402a"></i>${t.lg.fire}<br><i style="background:#a99a8a"></i>${t.lg.clr}<br><i style="background:#9a8ab0"></i>${t.lg.plg}<br><i style="border:1px dashed #c8402a;background:none"></i>${t.lg.gone}`+
     (D.eras[idx].events||[]).map(v=>`<br>${t.evline(v.year,t.ev[v.type],v.houses)}`).join("");
   $("legend").innerHTML=h}
 const $=id=>document.getElementById(id);
