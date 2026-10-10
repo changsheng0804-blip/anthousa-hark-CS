@@ -8,6 +8,8 @@ from shapely.geometry import Polygon
 from world import load, geom, standing, houses_standing, ROOT
 from render_terrain import render as render_terrain, path_of, INK
 from terrain import W, H
+from grammar import motif_of, style_era, wonder_score
+from render_plans import plan
 
 DOCS = os.path.join(ROOT, "docs")
 FILL = {"palace": "#d9b45a", "church": "#9c3b2e", "forum": "#efe6cf", "market": "#c98f4e", "fort": "#7d6a55",
@@ -83,11 +85,9 @@ def svg_for(w, year, terrain_inner, lang="en"):
         f = FILL.get(s["type"], "#ccc")
         P.append(f'<polygon points="{pts(s["geom"]["coords"])}" fill="{f}" stroke="{INK}" stroke-width="0.5"/>')
         g = geom(s)
-        if s["type"] == "church":
-            c = g.centroid
-            P.append(f'<path d="M{c.x-1.5:.1f},{c.y:.1f}H{c.x+1.5:.1f}M{c.x:.1f},{c.y-1.5:.1f}V{c.y+1.5:.1f}" stroke="#f3e7c9" stroke-width="0.6"/>')
-        if s["type"] in ("forum", "hippodrome"):
-            P.append(f'<polygon points="{pts(g.buffer(-1.2, join_style=2).exterior.coords) if not g.buffer(-1.2).is_empty else ""}" fill="none" stroke="{INK}" stroke-width="0.5" stroke-dasharray="1 1.5"/>')
+        P.extend(plan(s, g, motif_of(s)))
+        if wonder_score(s) >= 4:  # wonders get a gilt edge
+            P.append(f'<polygon points="{pts(s["geom"]["coords"])}" fill="none" stroke="#b8862b" stroke-width="0.35"/>')
     for s in [x for x in live if x["type"] in ("wall", "seawall")]:
         c = s["geom"]["coords"]
         P.append(f'<path d="{line_d(c)}" fill="none" stroke="{INK}" stroke-width="{1.5 if s["type"]=="wall" else 1}" stroke-linejoin="round"/>')
@@ -152,7 +152,7 @@ def main():
     data = {"meta": w["meta"], "years": years, "names_zh": I18N["names_zh"],
             "eras": [{k: e[k] for k in ("from", "to", "title", "title_en", "chronicle_en", "accepted", "rejected", "events", "stats", "chronicle", "review_rounds") if k in e}
                      for e in w["eras"]],
-            "structures": [{k: s.get(k) for k in ("id", "name", "type", "built", "destroyed", "cause", "faction", "history")} | {"name_zh": I18N["names_zh"].get(s["id"])}
+            "structures": [{k: s.get(k) for k in ("id", "name", "type", "built", "destroyed", "cause", "faction", "history")} | {"name_zh": I18N["names_zh"].get(s["id"]), "motif": motif_of(s), "style_era": style_era(s["built"])}
                            for s in w["structures"] if s["type"] != "district" or s.get("label")]}
     json.dump(data, open(os.path.join(DOCS, "data.json"), "w"), ensure_ascii=False)
     print("rendered", years)
