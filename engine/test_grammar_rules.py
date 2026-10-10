@@ -1,6 +1,7 @@
 """Tests for the grammar rulings (PR-C1). Run: python engine/test_grammar_rules.py
 Uses the real AF 20 world and asks the rules engine about hypothetical AF 21 proposals."""
 import os, sys, copy
+from shapely.geometry import Polygon
 sys.path.insert(0, os.path.dirname(__file__))
 from world import load
 import rules
@@ -73,6 +74,34 @@ print(("PASS " if ok else "FAIL ") + "disaster type and year are the same whatev
 src = open(os.path.join(os.path.dirname(__file__), "step.py")).read()
 ok = "independent_dice" in src and rules.CAL["independent_dice"]["from_year"] == 21
 print(("PASS " if ok else "FAIL ") + "step.py draws disasters from the independent stream from AF 21"); fails += not ok
+
+
+# farmland (from AF 31): feeds ~1.5 people/ha, must be ploughable, reachable, and never built on
+def farm(c, i="t_farm"):
+    return {"id": i, "type": "farmland", "name": "T", "geom": {"type": "polygon", "coords": c}}
+F_OK = [[260, 400], [380, 400], [380, 470], [260, 470]]  # gentle ground west of the Founder's wall, by the Mese
+ok = not rules.check_structure(w, farm(F_OK), 31)
+print(("PASS " if ok else "FAIL ") + "farmland on gentle ground by a road passes"); fails += not ok
+ok = any("enters the rules" in e for e in rules.check_structure(w, farm(F_OK), 30))
+print(("PASS " if ok else "FAIL ") + "farmland before AF 31 is rejected"); fails += not ok
+ok = any("garden plot" in e for e in rules.check_structure(w, farm([[300, 420], [305, 420], [305, 425], [300, 425]]), 31))
+print(("PASS " if ok else "FAIL ") + "tiny farmland is rejected"); fails += not ok
+ok = any("no road" in e for e in rules.check_structure(w, farm([[300, 330], [390, 330], [390, 420], [300, 420]]), 31))
+print(("PASS " if ok else "FAIL ") + "farmland far from any road is rejected"); fails += not ok
+hippo = next(s for s in w["structures"] if s["id"] == "hippodrome")
+hc = hippo["geom"]["coords"]; hx = sum(p[0] for p in hc) / len(hc); hy = sum(p[1] for p in hc) / len(hc)
+ok = any("overlaps standing hippodrome" in e for e in rules.check_structure(w, farm([[hx - 10, hy - 6], [hx + 10, hy - 6], [hx + 10, hy + 6], [hx - 10, hy + 6]]), 31))
+print(("PASS " if ok else "FAIL ") + "farmland over a building is rejected"); fails += not ok
+w5 = copy.deepcopy(w); f5 = dict(farm(F_OK), built=31, destroyed=None); w5["structures"].append(f5)
+from world import geom as _g
+gain = rules.capacities(w5, 31)["food"] - rules.capacities(w, 31)["food"]
+want = int(_g(f5).area * 144 / 10000 * rules.CAL["farmland"]["people_per_ha"])
+ok = abs(gain - want) <= 1
+print(("PASS " if ok else "FAIL ") + f"farmland feeds {gain} people ({_g(f5).area * 144 / 10000:.0f} ha x {rules.CAL['farmland']['people_per_ha']}/ha)"); fails += not ok
+import random as _r
+h0 = len(w5["houses"]); step.grow(w5, {"from": 31, "to": 40}, _r.Random(1))
+ok = not any(_g(f5).contains(Polygon(h["p"]).centroid) for h in w5["houses"][h0:])
+print(("PASS " if ok else "FAIL ") + "no house grows on farmland"); fails += not ok
 
 print(f"{fails} failed" if fails else "all grammar rule tests passed")
 sys.exit(1 if fails else 0)
