@@ -102,5 +102,11 @@
   "coastline": "OpenStreetMap natural=coastline via Overpass, 2026-10-09 (modern shoreline, includes landfill)",
   "elevation": "SRTM 30 m via api.opentopodata.org, 20-unit grid",
   "landmarks": "placed at real lat/lon: Milion, Hagia Sophia/Irene, Hippodrome, Forum of Constantine, Binbirdirek, Kumkapi, Sirkeci, Severan & Constantinian wall lines (approx.)"
+ },
+ "aqueduct_arcade_rule": {
+  "from_year": 11,
+  "sag_m": 6,
+  "basis": "estimate",
+  "why": "Gravity channel falls evenly from source to end; where the ground lies more than 6 m below the channel it must ride on arcades. Applies to aqueducts built from AF 11 on; the small old channel of era 0 is treated as a ground-level/underground conduit and grandfathered."
  }
 }
