@@ -1,0 +1,377 @@
+{
+ "era": {
+  "from": -657,
+  "to": 0,
+  "title": "拜扎斯的旧城"
+ },
+ "no_events": true,
+ "growth_floor": 230,
+ "actions": [
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "fort_acropolis",
+    "type": "fort",
+    "name": "Acropolis of Byzas",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       905,
+       330
+      ],
+      [
+       935,
+       328
+      ],
+      [
+       940,
+       352
+      ],
+      [
+       912,
+       358
+      ]
+     ]
+    },
+    "label": "Acropolis"
+   },
+   "why": "Megarian settlers under Byzas fortify the headland."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "r_old_harbor",
+    "type": "road",
+    "name": "Harbor Lane",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       903,
+       313
+      ],
+      [
+       897,
+       350
+      ],
+      [
+       892,
+       384
+      ]
+     ]
+    },
+    "width": 3
+   },
+   "why": "A lane climbs from the landing to the market."
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "harbor_prosphorion",
+    "type": "harbor",
+    "name": "Prosphorion Harbor",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       884,
+       309
+      ],
+      [
+       884,
+       286
+      ],
+      [
+       920,
+       286
+      ],
+      [
+       922,
+       312
+      ]
+     ]
+    },
+    "label": "Prosphorion"
+   },
+   "why": "The sheltered Horn becomes the town's landing."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "r_acropolis",
+    "type": "road",
+    "name": "Acropolis Way",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       892,
+       384
+      ],
+      [
+       905,
+       368
+      ],
+      [
+       915,
+       359
+      ]
+     ]
+    },
+    "width": 3
+   },
+   "why": "A path to the citadel gate."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "r_south",
+    "type": "road",
+    "name": "South Lane",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       892,
+       384
+      ],
+      [
+       892,
+       420
+      ],
+      [
+       890,
+       455
+      ]
+     ]
+    },
+    "width": 3
+   },
+   "why": "A lane towards the southern shore."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "gate_old_thracian",
+    "type": "gate",
+    "name": "Thracian Gate",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       852,
+       390
+      ],
+      [
+       862,
+       390
+      ],
+      [
+       862,
+       400
+      ],
+      [
+       852,
+       400
+      ]
+     ]
+    }
+   },
+   "why": "The single landward gate."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "r_west",
+    "type": "road",
+    "name": "Thracian Road",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       892,
+       388
+      ],
+      [
+       870,
+       393
+      ],
+      [
+       857,
+       395
+      ],
+      [
+       830,
+       400
+      ],
+      [
+       780,
+       410
+      ],
+      [
+       700,
+       425
+      ],
+      [
+       600,
+       440
+      ]
+     ]
+    },
+    "width": 3
+   },
+   "why": "The road to Thrace leaves through the landward gate."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "wall_byzas",
+    "type": "wall",
+    "name": "Wall of Byzas",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       863,
+       298
+      ],
+      [
+       858,
+       340
+      ],
+      [
+       857,
+       395
+      ],
+      [
+       861,
+       470
+      ],
+      [
+       872,
+       532
+      ]
+     ]
+    }
+   },
+   "why": "A wall of rough stone seals the headland."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "agora_tetrastoon",
+    "type": "forum",
+    "name": "Agora (Tetrastoon)",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       874,
+       383
+      ],
+      [
+       884,
+       377
+      ],
+      [
+       886,
+       389
+      ],
+      [
+       876,
+       391
+      ]
+     ]
+    },
+    "label": "Agora"
+   },
+   "why": "The market square where four porticoes meet."
+  },
+  {
+   "faction": "priests",
+   "op": "build",
+   "structure": {
+    "id": "temple_apollo",
+    "type": "temple",
+    "name": "Temple of Apollo",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       924,
+       394
+      ],
+      [
+       939,
+       393
+      ],
+      [
+       940,
+       407
+      ],
+      [
+       925,
+       408
+      ]
+     ]
+    },
+    "label": "Temple of Apollo"
+   },
+   "why": "A temple raised to the god of the oracle that sent them."
+  },
+  {
+   "faction": "settlers",
+   "op": "build",
+   "structure": {
+    "id": "d_byzas",
+    "type": "district",
+    "name": "Old Byzas",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       864,
+       300
+      ],
+      [
+       960,
+       312
+      ],
+      [
+       962,
+       480
+      ],
+      [
+       915,
+       530
+      ],
+      [
+       872,
+       540
+      ],
+      [
+       860,
+       470
+      ],
+      [
+       858,
+       340
+      ]
+     ]
+    },
+    "label": "BYZAS"
+   },
+   "why": "Houses crowd the slopes inside the wall."
+  }
+ ]
+}
