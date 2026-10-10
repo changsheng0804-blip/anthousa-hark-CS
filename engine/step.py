@@ -65,12 +65,26 @@ def apply_actions(w, prop, era):
                 n = demolish_houses_under(w, g.buffer(width), year, f"cleared for {s['name']}")
                 if n:
                     s["history"].append({"year": year, "text": f"{n} houses were pulled down to make room."})
-            acc.append({"faction": a.get("faction"), "op": "build", "id": s["id"], "name": s.get("name")})
+            ent = {"faction": a.get("faction"), "op": "build", "id": s["id"], "name": s.get("name")}
+            wn = rules.grammar_warnings(s, year)
+            if wn:
+                ent["warnings"] = wn
+            acc.append(ent)
         elif a["op"] == "demolish":
             s = by_id(w, a["id"])
             if not s or (s.get("destroyed") is not None and s["destroyed"] <= year):
                 rej.append({"faction": a.get("faction"), "id": a["id"], "reasons": ["nothing standing to demolish"]})
                 continue
+            if year >= rules.CAL.get("grammar_rule", {}).get("from_year", 10**9):
+                import grammar
+                thr = rules.CAL["memorial_wonder_threshold"]["value"]
+                mem = a.get("memorial") or {}
+                if grammar.wonder_score(s) >= thr and mem.get("kind") not in ("stele", "rename", "chronicle_feature"):
+                    rej.append({"faction": a.get("faction"), "id": a["id"], "reasons": [
+                        f"{s['id']} has wonder score {grammar.wonder_score(s)} >= {thr}: demolishing it needs memorial {{kind: stele|rename|chronicle_feature, note}}"]})
+                    continue
+                if mem:
+                    s["memorial"] = mem
             s["destroyed"] = year
             s["cause"] = a.get("why", "demolished")
             s["history"].append({"year": year, "text": "Demolished: " + a.get("why", "")})
