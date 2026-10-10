@@ -1,0 +1,390 @@
+{
+ "era": {
+  "from": 11,
+  "to": 20,
+  "title": "引水入城"
+ },
+ "actions": [
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "aqb_outer",
+    "type": "aqueduct_bridge",
+    "name": "Arcade of the Springs",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       357.7,
+       296.9
+      ],
+      [
+       357.6,
+       295.5
+      ],
+      [
+       311.6,
+       295.8
+      ],
+      [
+       311.6,
+       297.2
+      ]
+     ]
+    },
+    "label": "Outer Arcade"
+   },
+   "why": "Where the ground falls away under the channel, an arcade of stone 550 m long carries it."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "aqb_middle",
+    "type": "aqueduct_bridge",
+    "name": "Arcade of the Wall",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       423.6,
+       341.3
+      ],
+      [
+       424.2,
+       340.1
+      ],
+      [
+       417.1,
+       336.4
+      ],
+      [
+       416.4,
+       337.7
+      ]
+     ]
+    },
+    "label": "Arcade"
+   },
+   "why": "Where the ground falls away under the channel, an arcade of stone 100 m long carries it."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "aqb_valley",
+    "type": "aqueduct_bridge",
+    "name": "Bridge of the Aqueduct",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       518.7,
+       389.6
+      ],
+      [
+       534.0,
+       392.7
+      ],
+      [
+       534.3,
+       391.3
+      ],
+      [
+       519.2,
+       388.3
+      ],
+      [
+       491.1,
+       374.1
+      ],
+      [
+       490.5,
+       375.3
+      ]
+     ]
+    },
+    "label": "Aqueduct Bridge"
+   },
+   "why": "Where the ground falls away under the channel, an arcade of stone 560 m long carries it."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "aq_great",
+    "type": "aqueduct",
+    "name": "Great Aqueduct",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       140.0,
+       250.0
+      ],
+      [
+       251.0,
+       297.0
+      ],
+      [
+       384.0,
+       296.0
+      ],
+      [
+       391.0,
+       324.0
+      ],
+      [
+       519.0,
+       389.0
+      ],
+      [
+       549.0,
+       395.0
+      ],
+      [
+       575.0,
+       405.0
+      ]
+     ]
+    },
+    "label": "Great Aqueduct",
+    "label_at": [
+     300,
+     290
+    ]
+   },
+   "why": "Water is the binding limit: the old channel and one cistern serve 43,000. A new channel from springs in the Thracian hills, 62 m above the sea, falls evenly to the third hill."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "nymphaeum_great",
+    "type": "cistern",
+    "name": "Great Nymphaeum",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       576.4,
+       406.5
+      ],
+      [
+       582.3,
+       407.6
+      ],
+      [
+       581.6,
+       411.5
+      ],
+      [
+       575.7,
+       410.4
+      ]
+     ]
+    },
+    "label": "Nymphaeum"
+   },
+   "why": "At the aqueduct's end a fountain house and reservoir feed the public fountains."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_mese_north",
+    "type": "road",
+    "name": "Northern Mese",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       504.0,
+       447.0
+      ],
+      [
+       495.0,
+       420.0
+      ],
+      [
+       480.0,
+       390.0
+      ],
+      [
+       462.0,
+       362.0
+      ]
+     ]
+    },
+    "label": "MESE BOREIA",
+    "width": 1.8,
+    "label_at": [
+     478,
+     410
+    ]
+   },
+   "why": "At the Philadelphion the Mese forks; the northern branch climbs to the fourth hill."
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "church_apostles",
+    "type": "church",
+    "name": "Church of the Holy Apostles",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       458.8,
+       347.3
+      ],
+      [
+       461.0,
+       347.3
+      ],
+      [
+       461.0,
+       349.7
+      ],
+      [
+       463.4,
+       349.7
+      ],
+      [
+       463.4,
+       351.9
+      ],
+      [
+       461.0,
+       351.9
+      ],
+      [
+       461.0,
+       354.3
+      ],
+      [
+       458.8,
+       354.3
+      ],
+      [
+       458.8,
+       351.9
+      ],
+      [
+       456.4,
+       351.9
+      ],
+      [
+       456.4,
+       349.7
+      ],
+      [
+       458.8,
+       349.7
+      ]
+     ]
+    },
+    "label": "Holy Apostles"
+   },
+   "why": "A cross-shaped church on the fourth hill, raised as a mausoleum for the Founder."
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "harbor_neorion",
+    "type": "harbor",
+    "name": "Neorion Harbor",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       610,
+       352
+      ],
+      [
+       632,
+       352
+      ],
+      [
+       632,
+       370
+      ],
+      [
+       610,
+       370
+      ]
+     ]
+    },
+    "label": "Neorion"
+   },
+   "why": "Ships from the Black Sea unload in the calm of the Horn, west of the old landing."
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "warehouse_horn",
+    "type": "warehouse",
+    "name": "Horrea of the Horn",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       608.0,
+       375.0
+      ],
+      [
+       616.0,
+       375.0
+      ],
+      [
+       616.0,
+       379.0
+      ],
+      [
+       608.0,
+       379.0
+      ]
+     ]
+    },
+    "label": "Horrea"
+   },
+   "why": "Warehouses behind the new quay."
+  },
+  {
+   "faction": "army",
+   "op": "build",
+   "structure": {
+    "id": "barracks_gate",
+    "type": "barracks",
+    "name": "Barracks of the Gate",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       423.6,
+       479.2
+      ],
+      [
+       431.5,
+       477.8
+      ],
+      [
+       432.4,
+       482.8
+      ],
+      [
+       424.5,
+       484.2
+      ]
+     ]
+    },
+    "label": "Barracks"
+   },
+   "why": "The guard of the land gate needs quarters."
+  }
+ ]
+}
