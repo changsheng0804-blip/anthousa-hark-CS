@@ -220,6 +220,53 @@ def roll_events(w, era, rnd):
     return ev
 
 
+def roll_events_fixed(w, era, rnd):
+    """Disasters from AF 21 (calibration independent_dice). Whether each disaster strikes, its year and the fire's
+    radius are drawn first, before anything about the world is read, so no proposal can move them. Only where a
+    fire lands (among the standing houses) and what it happens to catch depend on the city as built."""
+    y0, y1 = era["from"], era["to"]
+    fire = (rnd.random() < 0.28, rnd.randint(y0, y1), rnd.random(), rnd.random())
+    quake = (rnd.random() < 0.08, rnd.randint(y0, y1))
+    plague = (rnd.random() < 0.06, rnd.randint(y0, y1))
+    dmg = random.Random(rnd.random())  # per-house / per-building damage rolls
+    ev = []
+    hs = houses_standing(w, y1)
+    if hs and fire[0]:
+        year = fire[1]
+        c = Polygon(sorted(hs, key=lambda h: h["id"])[int(fire[2] * len(hs))]["p"]).centroid
+        r = 8 + fire[3] * (6 + min(40, len(hs) / 300))
+        area = c.buffer(r)
+        n = 0
+        for h in houses_standing(w, year):
+            if area.contains(Polygon(h["p"]).centroid) and dmg.random() < 0.9:
+                h["destroyed"] = year; h["cause"] = "fire"; n += 1
+        burned = []
+        for s in standing(w, year, {"market", "warehouse", "church", "baths", "monastery"}):
+            if area.contains(geom(s).centroid) and dmg.random() < 0.5:
+                s["destroyed"] = year; s["cause"] = "fire"
+                s["history"].append({"year": year, "text": "Burned in the great fire."})
+                burned.append(s["id"])
+        ev.append({"type": "fire", "year": year, "x": round(c.x), "y": round(c.y), "r": round(r),
+                   "houses": n, "structures": burned})
+    if quake[0]:
+        year = quake[1]
+        fallen = []
+        for s in standing(w, year, {"church", "column", "monument", "baths", "wall", "aqueduct_bridge"}):
+            if dmg.random() < 0.12:
+                s["destroyed"] = year; s["cause"] = "earthquake"
+                s["history"].append({"year": year, "text": "Thrown down by the earthquake."})
+                fallen.append(s["id"])
+        ev.append({"type": "earthquake", "year": year, "structures": fallen})
+    if hs and plague[0]:
+        year = plague[1]
+        n = 0
+        for h in houses_standing(w, year):
+            if dmg.random() < 0.25:
+                h["destroyed"] = year; h["cause"] = "plague (abandoned)"; n += 1
+        ev.append({"type": "plague", "year": year, "houses": n})
+    return ev
+
+
 def main(path):
     w = load()
     prop = json.load(open(path))
@@ -231,7 +278,14 @@ def main(path):
     rnd = random.Random(SEED * 100003 + era["from"])
     acc, rej = apply_actions(w, prop, era)
     added = grow(w, era, rnd, prop.get("growth_floor", GROWTH_FLOOR))
-    events = roll_events(w, era, rnd) if not prop.get("no_events") else []
+    # From AF 21 the dice for disasters get their own stream, seeded by the era alone. Before that they shared
+    # the growth stream, so a change in the proposals shifted every later draw and could move or erase a disaster;
+    # a proposer could re-roll fate by editing a building. Earlier eras keep the shared stream so history stays.
+    if era["from"] >= rules.CAL.get("independent_dice", {}).get("from_year", 10**9):
+        roll = lambda: roll_events_fixed(w, era, random.Random(f"anthousa-events-{SEED}-{era['from']}"))
+    else:
+        roll = lambda: roll_events(w, era, rnd)
+    events = roll() if not prop.get("no_events") else []
     y1 = era["to"]
     stats = {"population": rules.population(w, y1), **rules.capacities(w, y1),
              "houses": len(houses_standing(w, y1)), "houses_added": added,
