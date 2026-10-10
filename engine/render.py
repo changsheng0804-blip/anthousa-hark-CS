@@ -119,6 +119,8 @@ def svg_for(w, year, terrain_inner):
 
 
 def main():
+    global I18N
+    I18N = json.load(open(os.path.join(ROOT, "i18n", "i18n.json"), encoding="utf-8"))
     w = load()
     t = render_terrain()
     defs_end = t.index("</defs>") + 7
@@ -131,11 +133,14 @@ def main():
         open(os.path.join(DOCS, "years", f"{y:05d}.svg".replace("-", "m")), "w").write(svg)
     for e in w["eras"]:
         f = os.path.join(ROOT, "chronicle", f"{e['from']}_{e['to']}.md")
-        e["chronicle"] = open(f).read() if os.path.exists(f) else None
-    data = {"meta": w["meta"], "years": years,
-            "eras": [{k: e[k] for k in ("from", "to", "title", "accepted", "rejected", "events", "stats", "chronicle", "review_rounds") if k in e}
+        e["chronicle"] = open(f, encoding="utf-8").read() if os.path.exists(f) else None
+        f = os.path.join(ROOT, "chronicle", "en", f"{e['from']}_{e['to']}.md")
+        e["chronicle_en"] = open(f, encoding="utf-8").read() if os.path.exists(f) else None
+        e["title_en"] = I18N["titles_en"].get(str(e["from"]), "")
+    data = {"meta": w["meta"], "years": years, "names_zh": I18N["names_zh"],
+            "eras": [{k: e[k] for k in ("from", "to", "title", "title_en", "chronicle_en", "accepted", "rejected", "events", "stats", "chronicle", "review_rounds") if k in e}
                      for e in w["eras"]],
-            "structures": [{k: s.get(k) for k in ("id", "name", "type", "built", "destroyed", "cause", "faction", "history")}
+            "structures": [{k: s.get(k) for k in ("id", "name", "type", "built", "destroyed", "cause", "faction", "history")} | {"name_zh": I18N["names_zh"].get(s["id"])}
                            for s in w["structures"] if s["type"] != "district" or s.get("label")]}
     json.dump(data, open(os.path.join(DOCS, "data.json"), "w"), ensure_ascii=False)
     print("rendered", years)
