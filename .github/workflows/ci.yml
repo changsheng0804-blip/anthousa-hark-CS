@@ -1,0 +1,21 @@
+name: check-pr
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  rebuild-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install shapely numpy
+      - name: rebuild every era from scratch and run the acceptance checks
+        run: python engine/build_all.py
+      - name: published eras must not change silently
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED=$(git diff --name-only FETCH_HEAD -- proposals/era_*.json chronicle/ | while read f; do git cat-file -e FETCH_HEAD:$f 2>/dev/null && echo $f; done)
+          if [ -n "$CHANGED" ]; then echo "::warning::This PR edits already-published history: $CHANGED (needs a type C justification and owner approval)"; fi
