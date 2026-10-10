@@ -14,7 +14,7 @@ for e in w["eras"]:
     if not os.path.exists(f):
         fails.append(f"era {e['from']}-{e['to']}: chronicle missing")
         continue
-    text = open(f).read()
+    text = open(f, encoding="utf-8").read()
     for sid in re.findall(r"\{\{(\w+)\}\}", text):
         s = by_id(w, sid)
         if s is None:
@@ -31,6 +31,20 @@ for e in w["eras"]:
     nums = [int(n.replace(",", "")) for n in re.findall(r"(\d[\d,]*)\s*人", text)]
     if "万" not in text and nums and all(abs(n - pop) / pop > 0.1 for n in nums):
         fails.append(f"chronicle {e['from']}-{e['to']}: no population figure within 10% of {pop}")
+    # English edition: must exist, mention exactly the same structures, every event, and a population figure within 10%
+    fe = os.path.join(ROOT, "chronicle", "en", f"{e['from']}_{e['to']}.md")
+    if not os.path.exists(fe):
+        fails.append(f"era {e['from']}-{e['to']}: English chronicle missing")
+    else:
+        en = open(fe, encoding="utf-8").read()
+        if set(re.findall(r"\{\{(\w+)\}\}", en)) != set(re.findall(r"\{\{(\w+)\}\}", text)):
+            fails.append(f"chronicle {e['from']}-{e['to']}: English and Chinese editions mention different structures")
+        for ev in e.get("events", []):
+            if ev["type"] not in en.lower():
+                fails.append(f"chronicle/en {e['from']}-{e['to']}: the {ev['type']} of year {ev['year']} is not mentioned")
+        nums = [int(n.replace(",", "")) for n in re.findall(r"\b\d{1,3}(?:,\d{3})+\b", en)]
+        if not any(abs(n - pop) / pop <= 0.1 for n in nums):
+            fails.append(f"chronicle/en {e['from']}-{e['to']}: no population figure within 10% of {pop}")
     if len(e.get("accepted", [])) == 0 and not e.get("events"):
         fails.append(f"era {e['from']}-{e['to']}: nothing happened (no-progress brake)")
 print("\n".join(fails) if fails else f"all checks passed for {len(w['eras'])} eras, year {year}")
