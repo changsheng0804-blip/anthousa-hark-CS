@@ -134,5 +134,18 @@
   "from_year": 21,
   "basis": "estimate",
   "why": "disasters must not depend on what was proposed; from AF 21 fire, earthquake and plague draw from a stream seeded only by the era. Earlier eras keep the old shared stream so published history does not change."
+ },
+ "farmland": {
+  "from_year": 31,
+  "people_per_ha": 1.5,
+  "min_area": 40,
+  "basis": "estimate",
+  "why": "Ancient Mediterranean wheat yields ran about 400-620 kg/ha (Greece 620 kg/ha in the 1920s; Roman-army logistics models use ~385-514 kg/ha), a person ate about 200-250 kg of grain a year, and biennial fallow halves the sown area: roughly 1-1.5 people per hectare of farmland. This is why the city lived on sea-borne grain (the annona from Egypt) and its fields only added a margin.",
+  "url": [
+   "https://en.wikipedia.org/wiki/Agriculture_in_ancient_Rome",
+   "https://pure.royalholloway.ac.uk/ws/files/29676234/2018MatthewsSRPhDPart2pdf.pdf"
+  ],
+  "max_slope": 0.1,
+  "slope_why": "ploughland needs gentle ground: 80% of a field must slope under 10% (our judgement; terraces would allow more, not modelled)"
  }
 }

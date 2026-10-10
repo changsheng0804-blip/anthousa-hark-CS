@@ -129,6 +129,7 @@ def grow(w, era, rnd, floor=GROWTH_FLOOR):
     block = [geom(r).buffer(r.get("width", 2) / 2 + 0.4) for r in roads]
     block += [geom(s).buffer(1.0) for s in standing(w, y1, {"wall", "aqueduct"})]
     block += [geom(s).buffer(0.4) for s in standing(w, y1, BUILDING_TYPES | WATER_TYPES)]
+    block += [geom(s) for s in standing(w, y1, {"farmland"})]
     existing = [Polygon(h["p"]) for h in houses_standing(w, y1)]
     tree_block = STRtree(block) if block else None
     districts = standing(w, y1, {"district"})

@@ -11,6 +11,7 @@ BUILDING_TYPES = {"palace", "forum", "church", "market", "fort", "granary", "cis
 LINE_TYPES = {"road", "wall", "aqueduct", "seawall"}
 WATER_TYPES = {"harbor"}            # polygons that must reach into the water
 AREA_TYPES = {"district"}           # zones that houses grow into
+FARM_TYPES = {"farmland"}           # fields and market gardens: feed a few people, never built on
 
 
 def load():
