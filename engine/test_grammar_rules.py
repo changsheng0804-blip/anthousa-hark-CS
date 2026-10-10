@@ -41,5 +41,38 @@ mats = dict(base, dna={"motif": "basilica", "materials": ["gold_mosaic"]})
 ok = bool(rules.grammar_warnings(mats, Y)) and not rules.check_grammar(w, mats, Y)
 print(("PASS " if ok else "FAIL ") + "materials off-palette warn but do not reject")
 fails += not ok
+
+# memorial on demolishing a wonder (step.apply_actions), asked for by review of PR #13 once a wonder exists
+import step
+w3 = copy.deepcopy(w)
+w3["structures"].append(dict(base, id="t_wonder", built=21, destroyed=None, history=[], faction="church",
+                             dna={"motif": "basilica", "scale": "wonder", "ornament": 3}))
+era = {"from": 31, "to": 40}
+acc, rej = step.apply_actions(copy.deepcopy(w3), {"actions": [{"op": "demolish", "id": "t_wonder", "faction": "emperor", "year": 32}]}, era)
+ok = not acc and rej and "memorial" in rej[0]["reasons"][0]
+print(("PASS " if ok else "FAIL ") + "demolishing a wonder without memorial is rejected"); fails += not ok
+acc, rej = step.apply_actions(copy.deepcopy(w3), {"actions": [{"op": "demolish", "id": "t_wonder", "faction": "emperor", "year": 32,
+                                                                "memorial": {"kind": "stele", "note": "a stone marks where it stood"}}]}, era)
+ok = acc and not rej
+print(("PASS " if ok else "FAIL ") + "demolishing a wonder with a memorial passes"); fails += not ok
+acc, rej = step.apply_actions(copy.deepcopy(w3), {"actions": [{"op": "demolish", "id": "t_wonder", "faction": "emperor", "year": 32,
+                                                                "memorial": {"kind": "plaque"}}]}, era)
+ok = not acc and rej
+print(("PASS " if ok else "FAIL ") + "memorial kind outside the enum is rejected"); fails += not ok
+
+# disasters must not depend on the proposals (independent_dice, from AF 21)
+import random, json as _json
+def dice(world, frm):
+    r = random.Random(f"anthousa-events-{step.SEED}-{frm}")
+    return [(e["type"], e["year"]) for e in step.roll_events_fixed(copy.deepcopy(world), {"from": frm, "to": frm + 9}, r)]
+w4 = copy.deepcopy(w); w4["houses"] = w4["houses"][: len(w4["houses"]) // 2]  # a very different city
+seen = {frm: dice(w, frm) == dice(w3, frm) == dice(w4, frm) for frm in range(21, 2000, 10)}
+print("   eras with a disaster in AF 21-2000:", sum(bool(dice(w, f)) for f in range(21, 2000, 10)), "of", len(seen))
+ok = all(seen.values())
+print(("PASS " if ok else "FAIL ") + "disaster type and year are the same whatever was built"); fails += not ok
+src = open(os.path.join(os.path.dirname(__file__), "step.py")).read()
+ok = "independent_dice" in src and rules.CAL["independent_dice"]["from_year"] == 21
+print(("PASS " if ok else "FAIL ") + "step.py draws disasters from the independent stream from AF 21"); fails += not ok
+
 print(f"{fails} failed" if fails else "all grammar rule tests passed")
 sys.exit(1 if fails else 0)
