@@ -1,0 +1,14 @@
+{
+  "titles_en": {"-657": "Old Byzas", "1": "The Refounding"},
+  "names_zh": {
+    "gate_old_thracian": "色雷斯门", "fort_acropolis": "拜扎斯卫城", "harbor_prosphorion": "普罗斯福里昂港",
+    "r_old_harbor": "港口巷", "r_acropolis": "卫城路", "r_south": "南巷", "r_east": "渔夫巷", "r_west": "色雷斯路",
+    "wall_byzas": "拜扎斯城墙", "agora_tetrastoon": "四柱廊广场", "aq_hadrian": "旧水渠", "d_byzas": "拜扎斯旧城",
+    "gate_founder": "奠基者之门", "wall_founder": "奠基者城墙", "r_mese": "梅塞大道", "forum_founder": "奠基者广场",
+    "col_founder": "奠基者之柱", "milion": "米利翁里程碑", "palace_great": "大皇宫", "r_hippo": "御者街",
+    "hippodrome": "竞技场", "church_peace": "圣和平教堂", "r_harbor_south": "港口街", "harbor_julian": "尤利安港",
+    "granary_founder": "奠基者粮仓", "cistern_founder": "奠基者蓄水池", "r_north1": "铜匠街", "r_north2": "灯火街",
+    "r_north3": "陶工街", "r_west_s": "园丁巷", "r_south2": "制绳街", "d_forum": "广场区", "d_harbor": "港口区",
+    "temple_apollo": "阿波罗神庙"
+  }
+}
