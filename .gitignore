@@ -1,0 +1,7 @@
+world.json
+docs/years/
+docs/data.json
+docs/*.png
+docs/terrain.svg
+data/osm_coastline.json
+__pycache__/
