@@ -19,5 +19,5 @@ jobs:
       - name: published eras must not change silently
         run: |
           git fetch origin ${{ github.base_ref }} --depth=1
-          CHANGED=$(git diff --name-only FETCH_HEAD -- proposals/era_*.json chronicle/ | while read f; do git cat-file -e FETCH_HEAD:$f 2>/dev/null && echo $f; done)
+          CHANGED=$(git diff --name-only FETCH_HEAD -- proposals/era_*.json chronicle/ | while read f; do if git cat-file -e FETCH_HEAD:$f 2>/dev/null; then echo $f; fi; done)
           if [ -n "$CHANGED" ]; then echo "::warning::This PR edits already-published history: $CHANGED (needs a type C justification and owner approval)"; fi
