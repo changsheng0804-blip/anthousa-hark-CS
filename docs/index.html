@@ -90,7 +90,7 @@ const T={
 let L=localStorage.getItem("lang")||((navigator.language||"").startsWith("zh")?"zh":"en");
 let D,names={},idx=0,timer=null;
 const $=id=>document.getElementById(id);
-const fname=y=>"years/"+(y<0?"m"+String(-y).padStart(4,"0"):String(y).padStart(5,"0"))+".svg";
+const fname=y=>"years/"+(L=="zh"?"zh/":"")+(y<0?"m"+String(-y).padStart(4,"0"):String(y).padStart(5,"0"))+".svg";
 const nm=s=>L=="zh"&&s.name_zh?s.name_zh:s.name;
 function setLang(l){L=l;localStorage.setItem("lang",l);document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll("[data-t]").forEach(e=>e.innerHTML=t[e.dataset.t]);
@@ -102,7 +102,7 @@ setLang(L);
 fetch("data.json").then(r=>r.json()).then(d=>{D=d;d.structures.forEach(s=>names[s.id]=s);
   const sl=$("slider");sl.max=d.eras.length-1;sl.value=d.eras.length-1;
   d.eras.forEach((e,i)=>{const t=document.createElement("span");t.className="tick";t.style.left=(d.eras.length>1?i/(d.eras.length-1)*100:0)+"%";t.textContent=e.to;$("tl").appendChild(t)});
-  d.eras.forEach(e=>{const im=new Image();im.src=fname(e.to)});
+  d.eras.forEach(e=>["","zh/"].forEach(p=>{const im=new Image();im.src="years/"+p+fname(e.to).replace(/^years\/(zh\/)?/,"")}));
   show(d.eras.length-1);sl.oninput=()=>show(+sl.value)});
 function md(t){const tt=T[L];return t.replace(/^## .*$/m,"").trim().split(/\n\s*\n/).map(p=>"<p>"+p.replace(/\{\{(\w+)\}\}/g,(m,id)=>{const s=names[id];
   if(!s)return id;const life=`${s.built}${s.destroyed!=null?" – "+s.destroyed:" – "+tt.now}`;
