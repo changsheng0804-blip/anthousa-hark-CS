@@ -1,0 +1,218 @@
+{
+ "era": {
+  "from": 41,
+  "to": 50,
+  "title": "瓦伦斯的水"
+ },
+ "actions": [
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "cistern_modestus",
+    "type": "cistern",
+    "name": "Cistern of Modestus",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       442.5,
+       359.5
+      ],
+      [
+       451.5,
+       359.5
+      ],
+      [
+       451.5,
+       366.5
+      ],
+      [
+       442.5,
+       366.5
+      ]
+     ]
+    },
+    "label": "Modestus",
+    "dna": {
+     "motif": "cistern",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "The prefect Modestus digs an open reservoir beside the Holy Apostles, fed from the Great Aqueduct before it enters the city.",
+   "year": 41
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "d_xerolophos",
+    "type": "district",
+    "name": "Xerolophos quarter",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       437,
+       370
+      ],
+      [
+       452,
+       370
+      ],
+      [
+       452,
+       462
+      ],
+      [
+       416,
+       466
+      ]
+     ]
+    }
+   },
+   "why": "Between the Founder's wall and the old forum quarter the dry seventh hill fills with houses.",
+   "year": 42
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "nymphaeum_maius",
+    "type": "monument",
+    "name": "Nymphaeum Maius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       553.3,
+       431.0
+      ],
+      [
+       558.2,
+       430.1
+      ],
+      [
+       558.7,
+       433.0
+      ],
+      [
+       553.8,
+       433.9
+      ]
+     ]
+    },
+    "label": "Nymphaeum Maius",
+    "dna": {
+     "motif": "rotunda",
+     "materials": [
+      "brick",
+      "marble_revetted"
+     ],
+     "ornament": 3,
+     "scale": "monumental"
+    }
+   },
+   "why": "Valens finishes the aqueduct's showpiece: a great fountain on the Forum Tauri where the water is seen to arrive.",
+   "year": 44
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "horrea_troadensia",
+    "type": "granary",
+    "name": "Horrea Troadensia",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       613.3,
+       390.4
+      ],
+      [
+       622.3,
+       389.6
+      ],
+      [
+       622.7,
+       393.6
+      ],
+      [
+       613.7,
+       394.4
+      ]
+     ]
+    },
+    "label": "Troadensia",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "Granaries on the Golden Horn for the grain ships from the Troad, behind the Neorion quays.",
+   "year": 46
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "church_anastasia",
+    "type": "church",
+    "name": "Anastasia",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       601.0,
+       464.5
+      ],
+      [
+       605.0,
+       464.5
+      ],
+      [
+       605.0,
+       467.5
+      ],
+      [
+       601.0,
+       467.5
+      ]
+     ]
+    },
+    "label": "Anastasia",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 1,
+     "scale": "domestic"
+    }
+   },
+   "why": "In a house chapel south of the Mese, Gregory of Nazianzus preaches to the Nicene remnant; the chapel is called Anastasia, the resurrection.",
+   "year": 49
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "cistern_modestus",
+     "reason": "no road within 25 units; nobody could reach it",
+     "fix": "a lane was tried next, but it crossed the Founder's wall with no gate: the site was outside the wall. Moved inside, beside the end of the northern Mese"
+    }
+   ]
+  }
+ ]
+}
