@@ -4,6 +4,7 @@
 - 日期：2026-10-10
 - 对应仓库：tanxinhao2026-netizen/anthousa
 - 目标读者：项目规划者与实现 agent
+- 起草：Muse（2026-10-10）
 
 > 本文档是设计草案，不是实现。评审重点见 §15。讨论请直接在 PR review comments 里进行。
 
