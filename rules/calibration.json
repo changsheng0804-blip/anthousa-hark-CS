@@ -129,5 +129,10 @@
   "value": 3,
   "basis": "estimate",
   "why": "Demolishing a structure with wonder_score >= 3 must declare memorial {kind: stele|rename|chronicle_feature, note} (§7)."
+ },
+ "independent_dice": {
+  "from_year": 21,
+  "basis": "estimate",
+  "why": "disasters must not depend on what was proposed; from AF 21 fire, earthquake and plague draw from a stream seeded only by the era. Earlier eras keep the old shared stream so published history does not change."
  }
 }
