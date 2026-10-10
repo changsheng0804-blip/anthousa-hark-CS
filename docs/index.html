@@ -17,7 +17,22 @@ header .sub{opacity:.65;font-style:italic;font-size:13px;flex:1;overflow:hidden;
 .lang button.on{background:#3a2d20;opacity:1}
 main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 400px}
 #stage{position:relative;overflow:hidden;background:#b8b29b;cursor:grab}
-#stage img{position:absolute;left:0;top:0;width:100%;transform-origin:0 0;user-select:none;-webkit-user-drag:none}
+#map{position:absolute;left:0;top:0;width:100%;transform-origin:0 0;user-select:none}
+#map svg{display:block;width:100%;height:auto}
+#lens{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:2;max-width:260px}
+#lens .b{display:flex;border:1px solid var(--ink);background:#f3e7c9e6}
+#lens button{background:none;border:0;color:var(--ink);font:inherit;font-size:12px;padding:5px 9px;cursor:pointer;opacity:.7;white-space:nowrap}
+#lens button.on{background:var(--ink);color:var(--paper);opacity:1}
+#legend{font-size:11px;color:var(--ink);background:#f3e7c9e6;border:1px solid var(--ink);padding:5px 8px;line-height:1.7}
+#legend:empty{display:none}#legend i{display:inline-block;width:10px;height:10px;margin:0 5px -1px 0;border:1px solid var(--ink)}
+#map #city>*{transition:opacity .25s}
+.lens-water #city>*:not(.k-water):not(.lb),.lens-food #city>*:not(.k-food):not(.lb){opacity:.14}
+.lens-water #city .k-water .fp,.lens-water #city .k-water.fp{fill:#3f8fc4}.lens-water #city .k-water .ri{stroke:#3f8fc4;stroke-dasharray:none}
+.lens-food #city .k-food .fp,.lens-food #city .k-food.fp{fill:#d08a2a;fill-opacity:.85}
+.lens-fac #city>.hs,.lens-fac #city>.old,.lens-fac #city>.rz{opacity:.2}
+.lens-dis #city>*:not(.rz):not(.gone):not(.lb){opacity:.18}
+.lens-dis #city .rz.fire{fill:#c8402a;fill-opacity:.65;stroke:#c8402a;stroke-opacity:1}
+.lens-dis #city .rz.clr{fill:#6b5a4a;fill-opacity:.35}.lens-dis #city .gone{stroke:#c8402a;stroke-opacity:.9}
 #stage .hint{position:absolute;right:10px;bottom:8px;font-size:12px;color:var(--ink);opacity:.65;background:#f3e7c9cc;padding:2px 8px}
 aside{display:flex;flex-direction:column;min-height:0;background:#241b13;border-left:1px solid var(--line)}
 .top{flex:none;padding:14px 20px 10px;border-bottom:1px solid var(--line)}
@@ -55,7 +70,7 @@ footer button{background:none;border:1px solid var(--paper);color:var(--paper);f
   <div class="lang"><button id="lzh">中文</button><button id="len">EN</button></div>
 </header>
 <main>
-  <div id="stage"><img id="map" alt="map"><span class="hint" data-t="hint"></span></div>
+  <div id="stage"><div id="map"></div><div id="lens"><div class="b" id="lensb"></div><div id="legend"></div></div><span class="hint" data-t="hint"></span></div>
   <aside>
     <div class="top"><h2 id="title"></h2><div class="years" id="yrs"></div><div class="stats" id="stats"></div></div>
     <div class="tabs"><button data-p="pc" class="on" data-t="t1"></button><button data-p="pa" data-t="t2"></button><button data-p="ph" data-t="t3"></button></div>
@@ -76,6 +91,10 @@ const T={
   fac:{emperor:"皇帝",church:"教会",merchants:"商人",people:"平民",army:"军队",settlers:"移民",priests:"祭司"},
   op:{build:"兴建",demolish:"拆除",rename:"更名"},ev:{fire:"大火",earthquake:"地震",plague:"瘟疫"},
   evline:(y,t,h)=>`⚑ ${y} 年 · ${t}${h?"，"+h+" 座房屋损毁":""}`,round:r=>`第 ${r} 轮审议被驳回、后经修改：`,
+  lens:{all:"全图",water:"水系",food:"粮食",fac:"势力",dis:"灾痕"},
+  lg:{water:s=>`水渠 · 水道桥 · 蓄水池 · 浴场<br>供水上限 ${s.water.toLocaleString("zh-CN")}，人口 ${s.population.toLocaleString("zh-CN")}`,
+   food:s=>`港口 · 粮仓 · 货栈 · 市场<br>粮食上限 ${s.food.toLocaleString("zh-CN")}，人口 ${s.population.toLocaleString("zh-CN")}`,
+   fac:"建筑按提出它的势力着色",fire:"火灾烧毁的房屋",clr:"为兴建而拆除的房屋",gone:"已消失的建筑"},
   yl:y=>y<=0?(y<0?`前 ${-y} 年`:"建城前夕"):`建城 ${y} 年`,big:y=>y<0?"前 "+(-y):y,now:"至今",
   how:"每一次心跳，城市就过去十年。皇帝、教会、商人、平民、军队各自提出要建什么；一套用代码写成的规则引擎逐条裁决：是否在陆地上、是否压住了别的建筑、有没有路能到、水和粮食够不够。被驳回的提案原样记录在“议事厅”里。房屋沿着街道自行生长，火灾、地震与瘟疫由骰子决定，没有人能选择。拆掉的城墙、烧掉的街区不会消失，它们的地基一直留在地图上。<br><br>地形是真实的：海岸线来自 OpenStreetMap，高程来自 SRTM，地图 1 格 = 12 米。",
   reason:r=>r.replace(/^.*?: /,"").replace(/no road within 25 units; nobody could reach it/,"25 格内没有道路，无人能到达").replace(/road does not connect to the existing street network/,"道路没有接入现有路网").replace(/a district needs a road running into it/,"街区需要有道路通入").replace(/aqueduct would have to run uphill/,"水渠得往高处流").replace(/footprint leaves dry land \((\d+) sq units in water\)/,"占地伸进水里（$1 平方格）").replace(/overlaps standing (\w+) \((.*)\)/,"压住了现有建筑 $2").replace(/a harbor must sit on the shore, mostly in the water/,"港口必须建在岸边、大部分在水中").replace(/id already used/,"编号已被占用")},
@@ -84,30 +103,48 @@ const T={
   fac:{emperor:"Emperor",church:"Church",merchants:"Merchants",people:"People",army:"Army",settlers:"Settlers",priests:"Priests"},
   op:{build:"builds",demolish:"demolishes",rename:"renames"},ev:{fire:"Great fire",earthquake:"Earthquake",plague:"Plague"},
   evline:(y,t,h)=>`⚑ Year ${y} · ${t}${h?", "+h+" houses lost":""}`,round:r=>`Rejected in review round ${r}, then revised:`,
+  lens:{all:"All",water:"Water",food:"Grain",fac:"Factions",dis:"Disasters"},
+  lg:{water:s=>`Aqueducts · bridges · cisterns · baths<br>water capacity ${s.water.toLocaleString("en-US")}, population ${s.population.toLocaleString("en-US")}`,
+   food:s=>`Harbors · granaries · warehouses · markets<br>grain capacity ${s.food.toLocaleString("en-US")}, population ${s.population.toLocaleString("en-US")}`,
+   fac:"Buildings coloured by the faction that proposed them",fire:"Houses lost to fire",clr:"Houses cleared for new building",gone:"Vanished structures"},
   yl:y=>y<=0?(y<0?`${-y} BC`:"Eve of the refounding"):`AF ${y}`,big:y=>y<0?(-y)+" BC":y,now:"present",
   how:"Every heartbeat, ten years pass. Emperor, church, merchants, people and army each propose what to build; a rules engine written in code judges every proposal: is it on land, does it sit on another building, can a road reach it, is there enough water and grain. Rejected proposals stay on record in the Council tab. Houses grow along the streets by themselves; fires, earthquakes and plagues come from the dice, and nobody chooses them. Demolished walls and burned quarters never vanish: their foundations stay on the map.<br><br>The terrain is real: coastline from OpenStreetMap, elevation from SRTM; one map unit = 12 m.",
   reason:r=>r.replace(/^.*?: /,"")}};
 let L=localStorage.getItem("lang")||((navigator.language||"").startsWith("zh")?"zh":"en");
-let D,names={},idx=0,timer=null;
+let D,names={},idx=0,timer=null,lens=localStorage.getItem("lens")||"all";
+const FC={emperor:"#7b3f8c",church:"#b8322a",merchants:"#2f7d6d",people:"#d29a2e",army:"#4a5a6a",settlers:"#8a6a4a",priests:"#e8dcb0"};
+{const st=document.createElement("style");st.textContent=Object.entries(FC).map(([f,c])=>
+ `.lens-fac #city .f-${f}.fp,.lens-fac #city .f-${f} .fp{fill:${c};fill-opacity:1}.lens-fac #city .f-${f}.ri,.lens-fac #city .f-${f} .ri{stroke:${c};stroke-dasharray:none}`).join("");document.head.appendChild(st)}
+const svgs={};const getSvg=f=>svgs[f]||(svgs[f]=fetch(f).then(r=>r.text()));
+function drawLens(){const t=T[L],st=$("stage");["all","water","food","fac","dis"].forEach(k=>st.classList.toggle("lens-"+k,k==lens));
+  $("lensb").innerHTML=Object.entries(t.lens).map(([k,v])=>`<button data-l="${k}" class="${k==lens?"on":""}">${v}</button>`).join("");
+  $("lensb").querySelectorAll("button").forEach(b=>b.onclick=ev=>{ev.stopPropagation();lens=b.dataset.l;localStorage.setItem("lens",lens);drawLens()});
+  if(!D){$("legend").innerHTML="";return}const s=D.eras[idx].stats,yr=D.eras[idx].to;let h="";
+  if(lens=="water"||lens=="food")h=t.lg[lens](s);
+  if(lens=="fac"){const live=D.structures.filter(x=>x.built<=yr&&(x.destroyed==null||x.destroyed>yr)&&x.type!="district"),n={};live.forEach(x=>n[x.faction]=(n[x.faction]||0)+1);
+    h=t.lg.fac+"<br>"+Object.keys(n).sort((a,b)=>n[b]-n[a]).map(f=>`<i style="background:${FC[f]||"#999"}"></i>${t.fac[f]||f} ${n[f]}`).join("<br>")}
+  if(lens=="dis")h=`<i style="background:#c8402a"></i>${t.lg.fire}<br><i style="background:#a99a8a"></i>${t.lg.clr}<br><i style="border:1px dashed #c8402a;background:none"></i>${t.lg.gone}`+
+    (D.eras[idx].events||[]).map(v=>`<br>${t.evline(v.year,t.ev[v.type],v.houses)}`).join("");
+  $("legend").innerHTML=h}
 const $=id=>document.getElementById(id);
 const fname=y=>"years/"+(L=="zh"?"zh/":"")+(y<0?"m"+String(-y).padStart(4,"0"):String(y).padStart(5,"0"))+".svg";
 const nm=s=>L=="zh"&&s.name_zh?s.name_zh:s.name;
 function setLang(l){L=l;localStorage.setItem("lang",l);document.documentElement.lang=l;const t=T[l];
   document.querySelectorAll("[data-t]").forEach(e=>e.innerHTML=t[e.dataset.t]);
   $("lzh").classList.toggle("on",l=="zh");$("len").classList.toggle("on",l=="en");
-  $("play").textContent=timer?t.pause:t.play;if(D)show(idx)}
+  $("play").textContent=timer?t.pause:t.play;if(D)show(idx);else drawLens()}
 $("lzh").onclick=()=>setLang("zh");$("len").onclick=()=>setLang("en");
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button,.pane").forEach(x=>x.classList.remove("on"));b.classList.add("on");$(b.dataset.p).classList.add("on")});
 setLang(L);
 fetch("data.json").then(r=>r.json()).then(d=>{D=d;d.structures.forEach(s=>names[s.id]=s);
   const sl=$("slider");sl.max=d.eras.length-1;sl.value=d.eras.length-1;
   d.eras.forEach((e,i)=>{const t=document.createElement("span");t.className="tick";t.style.left=(d.eras.length>1?i/(d.eras.length-1)*100:0)+"%";t.textContent=e.to;$("tl").appendChild(t)});
-  d.eras.forEach(e=>["","zh/"].forEach(p=>{const im=new Image();im.src="years/"+p+fname(e.to).replace(/^years\/(zh\/)?/,"")}));
   show(d.eras.length-1);sl.oninput=()=>show(+sl.value)});
 function md(t){const tt=T[L];return t.replace(/^## .*$/m,"").trim().split(/\n\s*\n/).map(p=>"<p>"+p.replace(/\{\{(\w+)\}\}/g,(m,id)=>{const s=names[id];
   if(!s)return id;const life=`${s.built}${s.destroyed!=null?" – "+s.destroyed:" – "+tt.now}`;
   const hist=(s.history||[]).map(h=>h.year+": "+h.text).join("\n");return `<b class="ref" title="${life}\n${hist.replace(/"/g,"'")}">${nm(s)}</b>`})+"</p>").join("")}
-function show(i){idx=i;const e=D.eras[i],t=T[L];$("map").src=fname(e.to);
+function show(i){idx=i;const e=D.eras[i],t=T[L],f=fname(e.to);
+  getSvg(f).then(x=>{if(fname(D.eras[idx].to)!=f)return;$("map").innerHTML=x;init()});drawLens();
   $("title").textContent=L=="en"&&e.title_en?e.title_en:e.title;
   $("yrs").textContent=`${t.yl(e.from)} — ${t.yl(e.to)}`;$("yearbig").innerHTML=`${t.big(e.to)}<small>${e.to>0?"ANNO FUNDATIONIS":"ANTE"}</small>`;
   const s=e.stats,m=Math.max(s.food,s.water,s.population),loc=L=="zh"?"zh-CN":"en-US";
@@ -125,16 +162,16 @@ function show(i){idx=i;const e=D.eras[i],t=T[L];$("map").src=fname(e.to);
 $("play").onclick=()=>{const t=T[L];if(timer){clearInterval(timer);timer=null;$("play").textContent=t.play;return}
   $("play").textContent=t.pause;if(idx>=D.eras.length-1)show(0),$("slider").value=0;
   timer=setInterval(()=>{if(idx>=D.eras.length-1){$("play").click();return}show(idx+1);$("slider").value=idx},1600)};
-let z=1,px=0,py=0,drag=null;const st=$("stage"),im=$("map");
+let z=1,px=0,py=0,drag=null,inited=0;const st=$("stage"),im=$("map");
 const ap=()=>im.style.transform=`translate(${px}px,${py}px) scale(${z})`;
 st.addEventListener("wheel",ev=>{ev.preventDefault();const r=st.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;
   const nz=Math.min(12,Math.max(1,z*(ev.deltaY<0?1.15:1/1.15)));px=mx-(mx-px)*nz/z;py=my-(my-py)*nz/z;z=nz;ap()},{passive:false});
-st.onmousedown=ev=>{drag=[ev.clientX-px,ev.clientY-py];st.style.cursor="grabbing"};
+st.onmousedown=ev=>{if(ev.target.closest("#lens"))return;drag=[ev.clientX-px,ev.clientY-py];st.style.cursor="grabbing"};
 onmouseup=()=>{drag=null;st.style.cursor="grab"};
 onmousemove=ev=>{if(drag){px=ev.clientX-drag[0];py=ev.clientY-drag[1];ap()}};
 let tp=null;st.addEventListener("touchstart",ev=>{if(ev.touches.length==1)tp=[ev.touches[0].clientX-px,ev.touches[0].clientY-py]},{passive:true});
 st.addEventListener("touchmove",ev=>{if(tp&&ev.touches.length==1){ev.preventDefault();px=ev.touches[0].clientX-tp[0];py=ev.touches[0].clientY-tp[1];ap()}},{passive:false});
-im.onload=()=>{if(im.dataset.init)return;im.dataset.init=1;const r=st.getBoundingClientRect();z=2.2;px=-r.width*0.62*z+r.width*0.5;py=-r.width*(400/1200)*z+r.height*0.5;ap()};
+function init(){if(inited)return;inited=1;const r=st.getBoundingClientRect();z=2.2;px=-r.width*0.62*z+r.width*0.5;py=-r.width*(400/1200)*z+r.height*0.5;ap()}
 </script>
 </body>
 </html>
