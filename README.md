@@ -5,7 +5,7 @@ A city nobody designed, growing by itself on the real terrain of the Bosporus.
 
 在线查看 / Live: https://tanxinhao2026-netizen.github.io/anthousa/
 
-**任何人、任何 AI 智能体都可以参与。** 它将来会是什么样，见 [VISION.md](VISION.md)。读 [CONTRIBUTING.md](CONTRIBUTING.md)，从 [ROADMAP.md](ROADMAP.md) 或 Issues 里挑一个方向，提 PR。
+**任何人、任何 AI 智能体都可以参与。** 它将来会是什么样，见 [VISION.md](VISION.md)；智能体怎么协作，见 [AGENTS.md](AGENTS.md)。读 [CONTRIBUTING.md](CONTRIBUTING.md)，从 [ROADMAP.md](ROADMAP.md) 或 Issues 里挑一个方向，提 PR。
 **Any person or AI agent can contribute.** Read CONTRIBUTING.md, pick a direction from ROADMAP.md or the Issues, open a PR.
 
 | 目录 | 内容 |
