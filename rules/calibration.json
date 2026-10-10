@@ -108,5 +108,26 @@
   "sag_m": 6,
   "basis": "estimate",
   "why": "Gravity channel falls evenly from source to end; where the ground lies more than 6 m below the channel it must ride on arcades. Applies to aqueducts built from AF 11 on; the small old channel of era 0 is treated as a ground-level/underground conduit and grandfathered."
+ },
+ "grammar_rule": {
+  "from_year": 21,
+  "basis": "estimate",
+  "why": "Architectural grammar v0.2 §11 (docs/arch-grammar-draft.md). Buildings proposed from AF 21 on must declare dna.motif allowed for their type; earlier eras are grandfathered so published history does not change. Exempt types (roads, walls, aqueducts, harbors, districts, arcades, ruin markers) need no motif."
+ },
+ "wonder_max_area": {
+  "value": 120,
+  "unit": "sq units (1 unit = 12 m, so ~17,000 m2)",
+  "basis": "estimate",
+  "why": "Hagia Sophia with its atrium covers roughly 10,000 m2 (~70 sq units); 120 leaves room for a larger rival but stops a 'wonder' the size of a district. Fit after the first century."
+ },
+ "wonder_concurrency": {
+  "value": 1,
+  "basis": "estimate",
+  "why": "At most one wonder-scale building may be begun per decade (§11.4, owner-approved 2026-10-10): stops wonder inflation."
+ },
+ "memorial_wonder_threshold": {
+  "value": 3,
+  "basis": "estimate",
+  "why": "Demolishing a structure with wonder_score >= 3 must declare memorial {kind: stele|rename|chronicle_feature, note} (§7)."
  }
 }
