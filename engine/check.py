@@ -54,5 +54,14 @@ for s in w["structures"]:
         fails.append(f"i18n: map label of {s['id']} has no Chinese translation")
     if s["type"] != "district" and s["id"] not in _i["names_zh"]:
         fails.append(f"i18n: {s['id']} has no Chinese name")
+# dna_consistency (grammar v0.2, PR-C1): whatever dna a structure carries must be valid, and spolia must come from ruins
+import grammar
+for s in w["structures"]:
+    ok, msgs = grammar.validate_dna(s)
+    fails += [f"dna: {m}" for m in msgs]
+    for src in s.get("spolia_from", []):
+        o = by_id(w, src)
+        if o is None or o.get("destroyed") is None or o["destroyed"] > s["built"]:
+            fails.append(f"dna: {s['id']} reuses spolia from {src}, which was not a ruin in AF {s['built']}")
 print("\n".join(fails) if fails else f"all checks passed for {len(w['eras'])} eras, year {year}")
 sys.exit(1 if fails else 0)
