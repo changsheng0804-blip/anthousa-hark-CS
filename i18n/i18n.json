@@ -2,7 +2,8 @@
  "titles_en": {
   "-657": "Old Byzas",
   "1": "The Refounding",
-  "11": "Water Comes to the City"
+  "11": "Water Comes to the City",
+  "21": "The Great Church"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -48,7 +49,12 @@
   "warehouse_horn": "金角湾货栈",
   "barracks_gate": "城门兵营",
   "aqb_outer": "泉源拱廊",
-  "aqb_middle": "城墙拱廊"
+  "aqb_middle": "城墙拱廊",
+  "r_firebreak": "余烬街",
+  "market_embers": "余烬市场",
+  "baths_constantius": "君士坦提乌斯浴场",
+  "tower_horn": "金角塔",
+  "church_megale": "大教堂"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -76,7 +82,12 @@
   "warehouse_horn": "货栈",
   "barracks_gate": "兵营",
   "aqb_outer": "外拱廊",
-  "aqb_middle": "拱廊"
+  "aqb_middle": "拱廊",
+  "r_firebreak": "余烬街",
+  "market_embers": "余烬市场",
+  "baths_constantius": "君士坦提乌斯浴场",
+  "tower_horn": "塔",
+  "church_megale": "大教堂"
  },
  "sea_labels": [
   [
