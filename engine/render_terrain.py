@@ -74,7 +74,7 @@ def compass(cx, cy, r):
             f'<text x="{cx}" y="{cy - r*1.2:.1f}" text-anchor="middle" font-size="13" fill="{INK}" font-family="serif">N</text></g>')
 
 
-def render():
+def render(lang="en"):
     L = land()
     parts = [f'<rect width="{W}" height="{H}" fill="url(#sea)"/>']
     # water ripple lines
@@ -88,9 +88,14 @@ def render():
               ("FRETUM · 海峡", 930, 230, 13, -48), ("PONTUS · 北海", 1085, 40, 12, -50),
               ("ORIENS · 东岸", 1120, 420, 14, 70), ("SYCAE · 北岸", 650, 200, 13, -20),
               ("THRACIA · 西陆", 200, 400, 18, 0)]
+    import json as _j, os as _o
+    _tr = dict(_j.load(open(_o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))), "i18n", "i18n.json"), encoding="utf-8"))["sea_labels"])
+    labels = [((_tr[t.split(" · ")[0]] if lang == "zh" else t.split(" · ")[0]), x, y, s, rot) for t, x, y, s, rot in labels]
+    ls = 8 if lang == "zh" else 3
+    FONT = "Georgia,'Songti SC','Noto Serif SC',serif"
     for t, x, y, s, rot in labels:
         parts.append(f'<text x="{x}" y="{y}" transform="rotate({rot} {x} {y})" text-anchor="middle" font-size="{s}" '
-                     f'font-style="italic" letter-spacing="3" fill="{INK}" fill-opacity="0.7" font-family="Georgia,serif">{t}</text>')
+                     f'font-style="italic" letter-spacing="{ls}" fill="{INK}" fill-opacity="0.7" font-family="{FONT}">{t}</text>')
     parts.append(compass(95, 700, 42))
     defs = ('<defs><radialGradient id="sea" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#d9d3bf"/>'
             '<stop offset="1" stop-color="#b8b29b"/></radialGradient>'
