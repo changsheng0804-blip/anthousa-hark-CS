@@ -1,0 +1,292 @@
+{
+ "era": {
+  "from": 31,
+  "to": 40,
+  "title": "粮道"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_egnatia",
+    "type": "road",
+    "name": "Via Egnatia",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       360.0,
+       480.0
+      ],
+      [
+       300.0,
+       486.0
+      ],
+      [
+       250.0,
+       492.0
+      ]
+     ]
+    },
+    "label": "VIA EGNATIA",
+    "width": 1.6
+   },
+   "why": "Beyond the Founder's gate the Mese becomes the old road west to Thessalonica; carts from the farms come in along it.",
+   "year": 31
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "harbor_theodosius",
+    "type": "harbor",
+    "name": "Harbor of Theodosius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       469.0,
+       517.0
+      ],
+      [
+       491.0,
+       517.0
+      ],
+      [
+       491.0,
+       531.0
+      ],
+      [
+       469.0,
+       531.0
+      ]
+     ]
+    },
+    "label": "Harbor of Theodosius"
+   },
+   "why": "The Egyptian grain fleet needs a harbor on the Marmara shore big enough for the whole convoy; the merchants dig one west of the Julian harbor.",
+   "year": 33
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "horrea_theodosius",
+    "type": "granary",
+    "name": "Horrea of Theodosius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       473.0,
+       502.5
+      ],
+      [
+       483.0,
+       502.5
+      ],
+      [
+       483.0,
+       507.5
+      ],
+      [
+       473.0,
+       507.5
+      ]
+     ]
+    },
+    "label": "Horrea",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 1,
+     "scale": "civic"
+    }
+   },
+   "why": "Behind the new harbor the emperor builds state granaries for the annona, the free bread of the city.",
+   "year": 34
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "r_mocius",
+    "type": "road",
+    "name": "Lane of St Mocius",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       372.0,
+       479.0
+      ],
+      [
+       377.0,
+       442.0
+      ]
+     ]
+    },
+    "width": 1.0
+   },
+   "why": "A lane from the Mese up to the martyr's grave.",
+   "year": 35
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "church_mocius",
+    "type": "church",
+    "name": "Church of St Mocius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       375.4,
+       436.7
+      ],
+      [
+       380.4,
+       436.3
+      ],
+      [
+       380.6,
+       439.3
+      ],
+      [
+       375.6,
+       439.7
+      ]
+     ]
+    },
+    "label": "St Mocius",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 2,
+     "scale": "civic"
+    }
+   },
+   "why": "Among the fields outside the wall the church raises a basilica over the grave of the martyr Mocius.",
+   "year": 35
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "field_north",
+    "type": "farmland",
+    "name": "Fields of the Lycus",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       268,
+       404
+      ],
+      [
+       300,
+       398
+      ],
+      [
+       338,
+       401
+      ],
+      [
+       362,
+       408
+      ],
+      [
+       362,
+       461
+      ],
+      [
+       330,
+       463
+      ],
+      [
+       296,
+       466
+      ],
+      [
+       266,
+       458
+      ],
+      [
+       261,
+       430
+      ]
+     ]
+    },
+    "label": "Fields"
+   },
+   "why": "Farmers clear the gentle ground north of the Egnatia for wheat and barley.",
+   "year": 32
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "field_south",
+    "type": "farmland",
+    "name": "Fields of the Egnatia",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       300,
+       470
+      ],
+      [
+       340,
+       468
+      ],
+      [
+       384,
+       467
+      ],
+      [
+       386,
+       488
+      ],
+      [
+       378,
+       506
+      ],
+      [
+       345,
+       511
+      ],
+      [
+       312,
+       507
+      ],
+      [
+       294,
+       492
+      ]
+     ]
+    }
+   },
+   "why": "South of the road the slope is gentler still; market gardens and grain strips run down toward the sea.",
+   "year": 32
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "church_mocius",
+     "reason": "no road within 25 units; nobody could reach it",
+     "fix": "the church adds a lane from the Mese to the grave; the northern fields leave a strip for it"
+    }
+   ]
+  }
+ ]
+}
