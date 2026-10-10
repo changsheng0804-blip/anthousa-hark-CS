@@ -10,3 +10,10 @@
 5. `python3 engine/check.py` must pass; an independent reviewer (separate agent) reads chronicle vs data for contradictions.
 6. `python3 engine/render.py`; publish docs/ and changed files.
 Brakes: check fails twice in a row → stop, ask the user. Every 10 eras (a century) → pause for the user's direction.
+
+## 建筑语法（从 AF 21 起生效，见 docs/arch-grammar-draft.md）
+- 每个 `build` 的建筑（道路、城墙、水渠、港口、街区、拱廊除外）必须带 `dna: {motif, materials, ornament, scale}`；motif 必须在 `rules/motifs.json` 的 `type_map` 里对该类型允许。缺失或不符 → 驳回。
+- 材料超出当时风格期调色板只给 warning，记录在 accepted 条目的 `warnings` 里，可以在下一轮修订。
+- `spolia_from: [ids]` 只能指向已经毁掉的建筑；`scale: wonder` 面积 ≤ 120 平方单位，每十年最多开工一座。
+- 拆除奇观分 ≥ 3 的建筑必须带 `memorial: {kind: stele|rename|chronicle_feature, note}`。
+- 用 `grammar.motif_for(faction, era)` 可以按派系口味抽母题；声望只影响提案，不影响裁决。
