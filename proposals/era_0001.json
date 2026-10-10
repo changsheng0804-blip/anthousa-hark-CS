@@ -1,0 +1,1029 @@
+{
+ "era": {
+  "from": 1,
+  "to": 10,
+  "title": "重新奠基"
+ },
+ "actions": [
+  {
+   "faction": "emperor",
+   "op": "demolish",
+   "id": "wall_byzas",
+   "why": "The old wall is too small for an imperial city; its stones go into the new one."
+  },
+  {
+   "faction": "emperor",
+   "op": "demolish",
+   "id": "gate_old_thracian",
+   "why": "The old gate falls with its wall."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "gate_founder",
+    "type": "gate",
+    "name": "Gate of the Founder",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       410.9,
+       466.9
+      ],
+      [
+       414.9,
+       466.9
+      ],
+      [
+       414.9,
+       470.9
+      ],
+      [
+       410.9,
+       470.9
+      ]
+     ]
+    }
+   },
+   "why": "Where the Mese passes the new wall."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "wall_founder",
+    "type": "wall",
+    "name": "Wall of the Founder",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       462.0,
+       250.0
+      ],
+      [
+       393.8,
+       554.1
+      ]
+     ]
+    }
+   },
+   "why": "The Founder walks the line of the new wall with a spear, 'until he who walks before me stops.'"
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "r_mese",
+    "type": "road",
+    "name": "The Mese",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       654.0,
+       458.0
+      ],
+      [
+       640.0,
+       456.0
+      ],
+      [
+       611.0,
+       454.0
+      ],
+      [
+       585.0,
+       447.0
+      ],
+      [
+       560.0,
+       438.0
+      ],
+      [
+       530.0,
+       441.0
+      ],
+      [
+       490.0,
+       450.0
+      ],
+      [
+       450.0,
+       460.0
+      ],
+      [
+       400.0,
+       472.0
+      ],
+      [
+       360.0,
+       480.0
+      ]
+     ]
+    },
+    "label": "MESE",
+    "width": 2.1,
+    "label_at": [
+     515,
+     436
+    ]
+   },
+   "why": "The Middle Street, 25 metres wide between porticoes, runs from the Milion to the land gate."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "forum_founder",
+    "type": "forum",
+    "name": "Forum of the Founder",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       618.0,
+       454.0
+      ],
+      [
+       617.8,
+       455.6
+      ],
+      [
+       617.1,
+       457.0
+      ],
+      [
+       615.9,
+       458.2
+      ],
+      [
+       614.5,
+       459.2
+      ],
+      [
+       612.8,
+       459.8
+      ],
+      [
+       611.0,
+       460.0
+      ],
+      [
+       609.2,
+       459.8
+      ],
+      [
+       607.5,
+       459.2
+      ],
+      [
+       606.1,
+       458.2
+      ],
+      [
+       604.9,
+       457.0
+      ],
+      [
+       604.2,
+       455.6
+      ],
+      [
+       604.0,
+       454.0
+      ],
+      [
+       604.2,
+       452.4
+      ],
+      [
+       604.9,
+       451.0
+      ],
+      [
+       606.1,
+       449.8
+      ],
+      [
+       607.5,
+       448.8
+      ],
+      [
+       609.2,
+       448.2
+      ],
+      [
+       611.0,
+       448.0
+      ],
+      [
+       612.8,
+       448.2
+      ],
+      [
+       614.5,
+       448.8
+      ],
+      [
+       615.9,
+       449.8
+      ],
+      [
+       617.1,
+       451.0
+      ],
+      [
+       617.8,
+       452.4
+      ]
+     ]
+    },
+    "label": "Forum of the Founder"
+   },
+   "why": "An oval forum of marble porticoes on the Mese, about six hundred metres from the Milion."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "col_founder",
+    "type": "column",
+    "name": "Column of the Founder",
+    "geom": {
+     "type": "point",
+     "coords": [
+      611,
+      454
+     ]
+    }
+   },
+   "why": "A porphyry column carries the Founder's statue."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "milion",
+    "type": "monument",
+    "name": "Milion",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       653.3,
+       458.8
+      ],
+      [
+       654.7,
+       458.8
+      ],
+      [
+       654.7,
+       460.2
+      ],
+      [
+       653.3,
+       460.2
+      ]
+     ]
+    },
+    "label": "Milion"
+   },
+   "why": "The milestone from which every road of the empire is measured."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "palace_great",
+    "type": "palace",
+    "name": "Great Palace",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       662,
+       478
+      ],
+      [
+       684,
+       473
+      ],
+      [
+       692,
+       497
+      ],
+      [
+       666,
+       505
+      ]
+     ]
+    },
+    "label": "Great Palace"
+   },
+   "why": "Terraces of the palace step down towards the sea."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_hippo",
+    "type": "road",
+    "name": "Street of the Charioteers",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       645.0,
+       456.0
+      ],
+      [
+       648.0,
+       460.0
+      ]
+     ]
+    },
+    "width": 1.5
+   },
+   "why": "A short street from the Mese to the starting gates."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "hippodrome",
+    "type": "hippodrome",
+    "name": "Hippodrome",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       656.5,
+       465.6
+      ],
+      [
+       634.2,
+       495.8
+      ],
+      [
+       625.5,
+       489.4
+      ],
+      [
+       647.8,
+       459.2
+      ]
+     ]
+    },
+    "label": "Hippodrome"
+   },
+   "why": "450 metres of race track beside the palace; the city will love and riot here."
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "church_peace",
+    "type": "church",
+    "name": "Church of Holy Peace",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       676.8,
+       449.4
+      ],
+      [
+       684.8,
+       448.7
+      ],
+      [
+       685.2,
+       452.6
+      ],
+      [
+       677.2,
+       453.3
+      ]
+     ]
+    },
+    "label": "Holy Peace"
+   },
+   "why": "The first great church rises beside the old citadel."
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "r_harbor_south",
+    "type": "road",
+    "name": "Harbor Street",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       585.0,
+       447.0
+      ],
+      [
+       576.0,
+       480.0
+      ],
+      [
+       569.0,
+       505.0
+      ]
+     ]
+    },
+    "width": 1.5
+   },
+   "why": "A street drops from the Mese to the new southern harbor."
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "harbor_julian",
+    "type": "harbor",
+    "name": "Harbor of Julian",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       553,
+       507
+      ],
+      [
+       586,
+       507
+      ],
+      [
+       586,
+       532
+      ],
+      [
+       553,
+       532
+      ]
+     ]
+    },
+    "label": "Harbor of Julian"
+   },
+   "why": "Moles of rubble enclose a harbor on the inland sea."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "granary_founder",
+    "type": "granary",
+    "name": "Granary of the Founder",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       580.8,
+       493.8
+      ],
+      [
+       588.8,
+       493.2
+      ],
+      [
+       589.2,
+       498.2
+      ],
+      [
+       581.2,
+       498.8
+      ]
+     ]
+    },
+    "label": "Granary"
+   },
+   "why": "Egyptian grain needs a home."
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "cistern_founder",
+    "type": "cistern",
+    "name": "Cistern of the Founder",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       621.1,
+       465.9
+      ],
+      [
+       626.4,
+       465.4
+      ],
+      [
+       626.9,
+       470.1
+      ],
+      [
+       621.6,
+       470.6
+      ]
+     ]
+    },
+    "label": "Cistern"
+   },
+   "why": "A covered cistern under brick vaults."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_north1",
+    "type": "road",
+    "name": "Street of the Coppersmiths",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       608.0,
+       449.0
+      ],
+      [
+       604.0,
+       410.0
+      ],
+      [
+       600.0,
+       360.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A street runs north from the forum to the Horn."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_north2",
+    "type": "road",
+    "name": "Street of the Lamps",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       560.0,
+       438.0
+      ],
+      [
+       552.0,
+       400.0
+      ],
+      [
+       548.0,
+       340.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "Another street climbs north."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_north3",
+    "type": "road",
+    "name": "Street of the Potters",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       490.0,
+       450.0
+      ],
+      [
+       488.0,
+       400.0
+      ],
+      [
+       492.0,
+       320.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A street through the new northern quarter."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_west_s",
+    "type": "road",
+    "name": "Lane of the Gardeners",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       490.0,
+       450.0
+      ],
+      [
+       495.0,
+       500.0
+      ],
+      [
+       496.0,
+       512.4
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "Gardens give way to houses."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_south2",
+    "type": "road",
+    "name": "Street of the Ropemakers",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       530.0,
+       441.0
+      ],
+      [
+       532.0,
+       490.0
+      ],
+      [
+       533.8,
+       519.8
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A street down to the southern shore."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "d_forum",
+    "type": "district",
+    "name": "Region of the Forum",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       455.0,
+       240.0
+      ],
+      [
+       450.0,
+       462.0
+      ],
+      [
+       632.0,
+       452.0
+      ],
+      [
+       632.0,
+       370.6
+      ],
+      [
+       624.3,
+       366.1
+      ],
+      [
+       617.0,
+       368.0
+      ],
+      [
+       613.1,
+       366.2
+      ],
+      [
+       611.2,
+       366.2
+      ],
+      [
+       602.4,
+       360.6
+      ],
+      [
+       599.1,
+       354.4
+      ],
+      [
+       594.9,
+       356.1
+      ],
+      [
+       593.9,
+       355.3
+      ],
+      [
+       593.2,
+       356.1
+      ],
+      [
+       584.9,
+       355.4
+      ],
+      [
+       582.8,
+       353.4
+      ],
+      [
+       575.6,
+       355.6
+      ],
+      [
+       573.6,
+       354.1
+      ],
+      [
+       572.7,
+       352.1
+      ],
+      [
+       573.0,
+       346.5
+      ],
+      [
+       569.9,
+       344.0
+      ],
+      [
+       567.0,
+       344.4
+      ],
+      [
+       560.6,
+       341.5
+      ],
+      [
+       558.0,
+       339.0
+      ],
+      [
+       555.3,
+       334.5
+      ],
+      [
+       555.5,
+       327.3
+      ],
+      [
+       553.2,
+       324.2
+      ],
+      [
+       541.1,
+       316.7
+      ],
+      [
+       534.3,
+       308.3
+      ],
+      [
+       528.6,
+       297.5
+      ],
+      [
+       529.3,
+       292.5
+      ],
+      [
+       516.0,
+       280.9
+      ],
+      [
+       513.5,
+       275.4
+      ],
+      [
+       513.5,
+       273.0
+      ],
+      [
+       511.6,
+       271.5
+      ],
+      [
+       506.3,
+       272.0
+      ],
+      [
+       499.5,
+       270.7
+      ],
+      [
+       484.2,
+       266.1
+      ],
+      [
+       479.7,
+       259.7
+      ],
+      [
+       479.9,
+       257.8
+      ],
+      [
+       482.0,
+       255.3
+      ],
+      [
+       478.2,
+       248.8
+      ],
+      [
+       475.9,
+       249.9
+      ],
+      [
+       468.9,
+       247.5
+      ],
+      [
+       465.6,
+       245.0
+      ],
+      [
+       462.0,
+       240.0
+      ]
+     ]
+    },
+    "label": "REGIO FORI"
+   },
+   "why": "Settlers from Asia and Thrace build north of the Mese."
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "d_harbor",
+    "type": "district",
+    "name": "Region of the Harbor",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       632.0,
+       458.0
+      ],
+      [
+       450.0,
+       466.0
+      ],
+      [
+       423.3,
+       567.5
+      ],
+      [
+       435.0,
+       568.7
+      ],
+      [
+       448.1,
+       567.8
+      ],
+      [
+       464.4,
+       563.0
+      ],
+      [
+       475.2,
+       557.2
+      ],
+      [
+       485.9,
+       548.8
+      ],
+      [
+       538.4,
+       550.6
+      ],
+      [
+       538.2,
+       549.1
+      ],
+      [
+       530.8,
+       549.6
+      ],
+      [
+       530.3,
+       548.0
+      ],
+      [
+       495.3,
+       547.2
+      ],
+      [
+       487.7,
+       542.2
+      ],
+      [
+       481.4,
+       523.1
+      ],
+      [
+       487.7,
+       514.3
+      ],
+      [
+       490.7,
+       513.3
+      ],
+      [
+       500.5,
+       511.8
+      ],
+      [
+       507.5,
+       517.6
+      ],
+      [
+       511.4,
+       513.2
+      ],
+      [
+       513.5,
+       514.9
+      ],
+      [
+       540.9,
+       521.8
+      ],
+      [
+       542.3,
+       522.9
+      ],
+      [
+       537.4,
+       515.6
+      ],
+      [
+       537.7,
+       514.6
+      ],
+      [
+       542.2,
+       512.7
+      ],
+      [
+       557.3,
+       512.6
+      ],
+      [
+       560.7,
+       513.9
+      ],
+      [
+       561.7,
+       512.9
+      ],
+      [
+       566.6,
+       512.2
+      ],
+      [
+       593.8,
+       515.4
+      ],
+      [
+       607.9,
+       520.5
+      ],
+      [
+       623.6,
+       524.7
+      ],
+      [
+       638.5,
+       524.8
+      ]
+     ]
+    },
+    "label": "REGIO PORTUS"
+   },
+   "why": "Sailors and porters settle by the new harbor."
+  }
+ ]
+}
