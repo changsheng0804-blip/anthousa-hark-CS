@@ -1,0 +1,221 @@
+{
+ "era": {
+  "from": 21,
+  "to": 30,
+  "title": "大教堂"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_firebreak",
+    "type": "road",
+    "name": "Street of the Embers",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       492.0,
+       347.0
+      ],
+      [
+       522.0,
+       346.0
+      ],
+      [
+       548.0,
+       347.0
+      ]
+     ]
+    },
+    "label": "Street of the Embers",
+    "width": 1.6
+   },
+   "why": "After the fire of year 19 the people of the north slope cut a broad street through the ashes, so that flames could not leap from roof to roof again.",
+   "year": 22
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "market_embers",
+    "type": "market",
+    "name": "Market of the Embers",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       547.0,
+       336.5
+      ],
+      [
+       557.0,
+       336.5
+      ],
+      [
+       557.0,
+       339.5
+      ],
+      [
+       547.0,
+       339.5
+      ]
+     ]
+    },
+    "label": "Embers Market",
+    "dna": {
+     "motif": "market_row",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 1,
+     "scale": "civic"
+    }
+   },
+   "why": "On the burned ground beside the Horn the merchants set up a covered row of shops instead of houses.",
+   "year": 23
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "baths_constantius",
+    "type": "baths",
+    "name": "Baths of Constantius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       443.2,
+       376.5
+      ],
+      [
+       450.7,
+       373.8
+      ],
+      [
+       452.8,
+       379.5
+      ],
+      [
+       445.3,
+       382.2
+      ]
+     ]
+    },
+    "label": "Baths of Constantius",
+    "dna": {
+     "motif": "rotunda",
+     "materials": [
+      "brick",
+      "marble_revetted"
+     ],
+     "ornament": 2,
+     "scale": "monumental"
+    }
+   },
+   "why": "Now that the Great Aqueduct runs full, the emperor gives the fourth hill public baths, a domed hall beside the Holy Apostles.",
+   "year": 25
+  },
+  {
+   "faction": "army",
+   "op": "build",
+   "structure": {
+    "id": "tower_horn",
+    "type": "fort",
+    "name": "Tower of the Horn",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       632.5,
+       371.5
+      ],
+      [
+       635.5,
+       371.5
+      ],
+      [
+       635.5,
+       374.5
+      ],
+      [
+       632.5,
+       374.5
+      ]
+     ]
+    },
+    "label": "Tower",
+    "dna": {
+     "motif": "tower",
+     "materials": [
+      "ashlar",
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "A watchtower over the Neorion, where the Black Sea grain ships now lie.",
+   "year": 24
+  },
+  {
+   "faction": "church",
+   "op": "build",
+   "structure": {
+    "id": "church_megale",
+    "type": "church",
+    "name": "The Great Church",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       666.1,
+       454.4
+      ],
+      [
+       678.9,
+       452.6
+      ],
+      [
+       679.9,
+       459.6
+      ],
+      [
+       667.1,
+       461.4
+      ]
+     ]
+    },
+    "label": "Great Church",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick",
+      "marble_revetted"
+     ],
+     "ornament": 3,
+     "scale": "wonder"
+    },
+    "spolia_from": [
+     "wall_byzas"
+    ]
+   },
+   "why": "Beside the church of Holy Peace the bishops raise the Great Church, a timber-roofed basilica longer than any hall in the city. Its foundations are laid with blocks taken from the old Greek wall of Byzas, pulled down when the Founder's wall was built.",
+   "year": 30
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "market_embers",
+     "reason": "footprint leaves dry land (3 sq units in water)",
+     "fix": "moved 4 units inland, off the Horn's edge"
+    }
+   ]
+  }
+ ]
+}
