@@ -21,7 +21,7 @@ FILL = {"palace": "#d9b45a", "church": "#9c3b2e", "forum": "#efe6cf", "market": 
 
 # viewer layers (#5): every drawn entity carries classes the viewer's lenses key on
 KIND = {"aqueduct": "water", "aqueduct_bridge": "water", "cistern": "water", "baths": "water",
-        "harbor": "food", "granary": "food", "warehouse": "food", "market": "food"}
+        "harbor": "food", "granary": "food", "warehouse": "food", "market": "food", "farmland": "food"}
 
 
 def cls(s, *extra):
@@ -81,6 +81,16 @@ def svg_for(w, year, terrain_inner, lang="en"):
         elif g["type"] == "polygon":
             P.append(f'<polygon {cls(s, "gone")} points="{pts(g["coords"])}" fill="none" stroke="#6b4a32" stroke-opacity="0.5" stroke-width="0.8" stroke-dasharray="2 2"/>')
     live = standing(w, year)
+    for s in [x for x in live if x["type"] == "farmland"]:  # fields: pale green with furrows along the long side
+        g = geom(s); mr = g.minimum_rotated_rectangle; c = list(mr.exterior.coords)
+        e = max([(c[i], c[i + 1]) for i in range(4)], key=lambda q: math.dist(*q))
+        ang = math.degrees(math.atan2(e[1][1] - e[0][1], e[1][0] - e[0][0]))
+        cx, cy = g.centroid.x, g.centroid.y; R = max(math.dist(*q) for q in [(c[0], c[2])]) / 2 + 1
+        fur = "".join(f"M{-R:.1f},{k:.1f}H{R:.1f}" for k in [i * 1.6 - R for i in range(int(2 * R / 1.6) + 1)])
+        cid = "clip-" + s["id"]
+        P.append(f'<g {cls(s, "fld")}><clipPath id="{cid}"><polygon points="{pts(s["geom"]["coords"])}"/></clipPath>'
+                 f'<polygon points="{pts(s["geom"]["coords"])}" fill="#c9cf94" fill-opacity="0.55" stroke="#8a8a52" stroke-width="0.3" stroke-dasharray="1 0.6"/>'
+                 f'<path clip-path="url(#{cid})" transform="translate({cx:.1f},{cy:.1f}) rotate({ang:.1f})" d="{fur}" stroke="#8a8a52" stroke-opacity="0.45" stroke-width="0.25" fill="none"/></g>')
     for s in [x for x in live if x["type"] == "harbor"]:
         P.append(f'<polygon {cls(s, "fp")} points="{pts(s["geom"]["coords"])}" fill="#7f9aa6" fill-opacity="0.35" stroke="{INK}" stroke-width="0.8"/>')
     for s in [x for x in live if x["type"] == "aqueduct"]:
@@ -97,7 +107,7 @@ def svg_for(w, year, terrain_inner, lang="en"):
         P.append(f'<path class="hs" d="{"".join("M"+pts(h["p"]).replace(" ","L")+"Z" for h in cur_h)}" fill="#b0603f" stroke="{INK}" stroke-width="0.12"/>')
     if new_h:
         P.append(f'<path class="hs new" d="{"".join("M"+pts(h["p"]).replace(" ","L")+"Z" for h in new_h)}" fill="#d9774a" stroke="{INK}" stroke-width="0.12"/>')
-    for s in [x for x in live if x["geom"]["type"] == "polygon" and x["type"] not in ("district", "harbor")]:
+    for s in [x for x in live if x["geom"]["type"] == "polygon" and x["type"] not in ("district", "harbor", "farmland")]:
         f = FILL.get(s["type"], "#ccc")
         P.append(f'<g {cls(s)}><polygon class="fp" points="{pts(s["geom"]["coords"])}" fill="{f}" stroke="{INK}" stroke-width="0.5"/>')
         g = geom(s)
