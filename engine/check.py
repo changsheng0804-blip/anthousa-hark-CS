@@ -47,5 +47,12 @@ for e in w["eras"]:
             fails.append(f"chronicle/en {e['from']}-{e['to']}: no population figure within 10% of {pop}")
     if len(e.get("accepted", [])) == 0 and not e.get("events"):
         fails.append(f"era {e['from']}-{e['to']}: nothing happened (no-progress brake)")
+import json as _json
+_i = _json.load(open(os.path.join(ROOT, "i18n", "i18n.json"), encoding="utf-8"))
+for s in w["structures"]:
+    if s.get("label") and s["id"] not in _i["labels_zh"]:
+        fails.append(f"i18n: map label of {s['id']} has no Chinese translation")
+    if s["type"] != "district" and s["id"] not in _i["names_zh"]:
+        fails.append(f"i18n: {s['id']} has no Chinese name")
 print("\n".join(fails) if fails else f"all checks passed for {len(w['eras'])} eras, year {year}")
 sys.exit(1 if fails else 0)
