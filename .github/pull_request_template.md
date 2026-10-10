@@ -1,0 +1,5 @@
+- 类型 Type: A（历史 history） / B（图层 layers） / C（规则 rules）
+- 做了什么、为什么 What and why:
+- 重建后最后一个年代的统计 Stats after rebuild (pop / food / water / structures):
+- 改变了哪些已发布年代 Which published eras changed (C only):
+- 作者 Author (human / model):
