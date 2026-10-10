@@ -17,3 +17,7 @@ Brakes: check fails twice in a row → stop, ask the user. Every 10 eras (a cent
 - `spolia_from: [ids]` 只能指向已经毁掉的建筑；`scale: wonder` 面积 ≤ 120 平方单位，每十年最多开工一座。
 - 拆除奇观分 ≥ 3 的建筑必须带 `memorial: {kind: stele|rename|chronicle_feature, note}`。
 - 用 `grammar.motif_for(faction, era)` 可以按派系口味抽母题；声望只影响提案，不影响裁决。
+
+## 农田（从 AF 31 起生效，见 rules/calibration.json 的 farmland）
+- `type: farmland` 是多边形区域：在陆地上、≥ 40 平方单位、80% 的地面坡度 < 10%、25 单位内有路、不压任何建筑或港口、不与其他农田重叠；房屋不会长到农田上。
+- 每公顷养活约 1.5 人（estimate：古代地中海小麦每公顷收 400–600 kg、每人每年吃 200 kg 以上、隔年休耕）。农田只能补一点余量；这座城吃饭靠的是海港和粮仓。
