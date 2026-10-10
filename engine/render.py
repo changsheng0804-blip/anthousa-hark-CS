@@ -50,7 +50,7 @@ def towers(coords, every=9):
 
 def svg_for(w, year, terrain_inner, lang="en"):
     P = []
-    ruins_h, fire_h, old_h, new_h, cur_h = [], [], [], [], []
+    ruins_h, fire_h, plague_h, old_h, new_h, cur_h = [], [], [], [], [], []
     for h in w["houses"]:
         if h["built"] > year:
             continue
@@ -59,7 +59,8 @@ def svg_for(w, year, terrain_inner, lang="en"):
             if year - d > 60:
                 old_h.append(h)
             else:
-                (fire_h if h.get("cause") == "fire" else ruins_h).append(h)
+                c = h.get("cause") or ""
+                (fire_h if c == "fire" else plague_h if c.startswith("plague") else ruins_h).append(h)
         elif year - h["built"] < 10:
             new_h.append(h)
         else:
@@ -67,7 +68,7 @@ def svg_for(w, year, terrain_inner, lang="en"):
     # long-vanished foundations: the palimpsest
     if old_h:
         P.append(f'<path class="old" d="{"".join("M"+pts(h["p"]).replace(" ","L")+"Z" for h in old_h)}" fill="none" stroke="#8a6a4a" stroke-opacity="0.25" stroke-width="0.15"/>')
-    for grp, c in ((ruins_h, "rz clr"), (fire_h, "rz fire")):
+    for grp, c in ((ruins_h, "rz clr"), (fire_h, "rz fire"), (plague_h, "rz plg")):
         if not grp:
             continue
         P.append(f'<path class="{c}" d="{"".join("M"+pts(h["p"]).replace(" ","L")+"Z" for h in grp)}" fill="#6b4a32" fill-opacity="0.12" stroke="#6b4a32" stroke-opacity="0.5" stroke-width="0.15" stroke-dasharray="0.4 0.4"/>')
