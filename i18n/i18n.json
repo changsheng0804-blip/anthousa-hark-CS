@@ -3,7 +3,8 @@
   "-657": "Old Byzas",
   "1": "The Refounding",
   "11": "Water Comes to the City",
-  "21": "The Great Church"
+  "21": "The Great Church",
+  "31": "The Grain Road"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -54,7 +55,14 @@
   "market_embers": "余烬市场",
   "baths_constantius": "君士坦提乌斯浴场",
   "tower_horn": "金角塔",
-  "church_megale": "大教堂"
+  "church_megale": "大教堂",
+  "r_egnatia": "埃格纳提亚大道",
+  "harbor_theodosius": "狄奥多西港",
+  "horrea_theodosius": "狄奥多西粮仓",
+  "r_mocius": "圣莫基乌斯小路",
+  "church_mocius": "圣莫基乌斯教堂",
+  "field_north": "吕科斯田野",
+  "field_south": "埃格纳提亚田野"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -87,7 +95,12 @@
   "market_embers": "余烬市场",
   "baths_constantius": "君士坦提乌斯浴场",
   "tower_horn": "塔",
-  "church_megale": "大教堂"
+  "church_megale": "大教堂",
+  "r_egnatia": "埃格纳提亚大道",
+  "harbor_theodosius": "狄奥多西港",
+  "horrea_theodosius": "粮仓",
+  "church_mocius": "圣莫基乌斯",
+  "field_north": "田野"
  },
  "sea_labels": [
   [
