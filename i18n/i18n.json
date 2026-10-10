@@ -1,7 +1,8 @@
 {
  "titles_en": {
   "-657": "Old Byzas",
-  "1": "The Refounding"
+  "1": "The Refounding",
+  "11": "Water Comes to the City"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -37,7 +38,17 @@
   "r_south2": "制绳街",
   "d_forum": "广场区",
   "d_harbor": "港口区",
-  "temple_apollo": "阿波罗神庙"
+  "temple_apollo": "阿波罗神庙",
+  "aq_great": "大水渠",
+  "aqb_valley": "水道桥",
+  "nymphaeum_great": "大泉池",
+  "r_mese_north": "北梅塞大道",
+  "church_apostles": "圣使徒教堂",
+  "harbor_neorion": "新港",
+  "warehouse_horn": "金角湾货栈",
+  "barracks_gate": "城门兵营",
+  "aqb_outer": "泉源拱廊",
+  "aqb_middle": "城墙拱廊"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -55,7 +66,17 @@
   "granary_founder": "粮仓",
   "cistern_founder": "蓄水池",
   "d_forum": "广场区",
-  "d_harbor": "港口区"
+  "d_harbor": "港口区",
+  "aq_great": "大水渠",
+  "aqb_valley": "水道桥",
+  "nymphaeum_great": "泉池",
+  "r_mese_north": "北梅塞大道",
+  "church_apostles": "圣使徒教堂",
+  "harbor_neorion": "新港",
+  "warehouse_horn": "货栈",
+  "barracks_gate": "兵营",
+  "aqb_outer": "外拱廊",
+  "aqb_middle": "拱廊"
  },
  "sea_labels": [
   [
