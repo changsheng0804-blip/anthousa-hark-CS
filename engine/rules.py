@@ -91,6 +91,19 @@ def check_structure(w, s, year):
         a, b = g.coords[0], g.coords[-1]
         if elevation(*a) <= elevation(*b):
             errs.append(f"{s['id']}: aqueduct would have to run uphill")
+        # the channel falls evenly from source to end; wherever the ground drops more than
+        # SAG m below it, the channel needs an arcade (a standing aqueduct_bridge) under it
+        R = CAL.get("aqueduct_arcade_rule", {})
+        if year >= R.get("from_year", 10**9):
+            e0, e1, n = elevation(*a), elevation(*b), max(2, int(g.length // 2))
+            br = [geom(x).buffer(1.5) for x in standing(w, year, {"aqueduct_bridge"})]
+            bad = 0
+            for i in range(n + 1):
+                f = i / n; p = g.interpolate(f, normalized=True)
+                if elevation(p.x, p.y) < e0 + (e1 - e0) * f - R["sag_m"] and not any(b.contains(p) for b in br):
+                    bad += 1
+            if bad:
+                errs.append(f"{s['id']}: {bad * g.length / n * 12:.0f} m of channel would hang in the air with no arcade under it")
     return errs
 
 
