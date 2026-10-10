@@ -103,12 +103,14 @@ def svg_for(w, year, terrain_inner, lang="en"):
         g = geom(s)
         c = g.centroid if s["geom"]["type"] != "line" else g.interpolate(0.5, normalized=True)
         lx, ly = s.get("label_at", [c.x, c.y])
+        la = I18N.get("label_at", {})
+        lx, ly = la.get(lang, {}).get(s["id"], la.get("both", {}).get(s["id"], [lx, ly]))
         lab = I18N["labels_zh"].get(s["id"], s["label"]) if lang == "zh" else s["label"]
         big = s["type"] == "district"
         FONT = "Georgia,'Songti SC','Noto Serif SC',serif"
         fst = "normal" if lang == "zh" else "italic"
         common = (f'x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-family="{FONT}" font-style="{fst}" '
-                  f'font-size="{(8 if big else 4.2) if lang == "zh" else (9 if big else 4.5)}" letter-spacing="{(4 if big else 0.4) if lang == "zh" else (2.5 if big else 0.6)}"')
+                  f'font-size="{(6.5 if big else 3.6) if lang == "zh" else (9 if big else 4.5)}" letter-spacing="{(3 if big else 0.2) if lang == "zh" else (2.5 if big else 0.6)}"')
         if not big:
             P.append(f'<text {common} fill="none" stroke="#f3e7c9" stroke-width="1.4" stroke-linejoin="round">{html.escape(lab)}</text>')
         P.append(f'<text {common} fill="{INK}" fill-opacity="{0.55 if big else 0.95}">{html.escape(lab)}</text>')
