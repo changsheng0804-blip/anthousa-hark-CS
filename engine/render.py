@@ -36,7 +36,7 @@ def towers(coords, every=9):
     return "".join(out)
 
 
-def svg_for(w, year, terrain_inner):
+def svg_for(w, year, terrain_inner, lang="en"):
     P = []
     ruins_h, old_h, new_h, cur_h = [], [], [], []
     for h in w["houses"]:
@@ -103,18 +103,26 @@ def svg_for(w, year, terrain_inner):
         g = geom(s)
         c = g.centroid if s["geom"]["type"] != "line" else g.interpolate(0.5, normalized=True)
         lx, ly = s.get("label_at", [c.x, c.y])
+        lab = I18N["labels_zh"].get(s["id"], s["label"]) if lang == "zh" else s["label"]
         big = s["type"] == "district"
-        common = (f'x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-family="Georgia,serif" font-style="italic" '
-                  f'font-size="{9 if big else 4.5}" letter-spacing="{2.5 if big else 0.6}"')
+        FONT = "Georgia,'Songti SC','Noto Serif SC',serif"
+        fst = "normal" if lang == "zh" else "italic"
+        common = (f'x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-family="{FONT}" font-style="{fst}" '
+                  f'font-size="{(8 if big else 4.2) if lang == "zh" else (9 if big else 4.5)}" letter-spacing="{(4 if big else 0.4) if lang == "zh" else (2.5 if big else 0.6)}"')
         if not big:
-            P.append(f'<text {common} fill="none" stroke="#f3e7c9" stroke-width="1.4" stroke-linejoin="round">{html.escape(s["label"])}</text>')
-        P.append(f'<text {common} fill="{INK}" fill-opacity="{0.55 if big else 0.95}">{html.escape(s["label"])}</text>')
+            P.append(f'<text {common} fill="none" stroke="#f3e7c9" stroke-width="1.4" stroke-linejoin="round">{html.escape(lab)}</text>')
+        P.append(f'<text {common} fill="{INK}" fill-opacity="{0.55 if big else 0.95}">{html.escape(lab)}</text>')
     pop = len(houses_standing(w, year)) * 9
+    if lang == "zh":
+        yr = f"前 {-year} 年" if year < 0 else f"建城 {year} 年"
+        sub, popl = yr, f"约 {pop:,} 人"
+    else:
+        sub, popl = (f"{-year} BC" if year < 0 else f"Anno Fundationis {year}"), f"c. {pop:,} souls"
     cart = (f'<g transform="translate(24,22)"><rect width="250" height="76" fill="#f3e7c9" fill-opacity="0.92" stroke="{INK}" stroke-width="1.2"/>'
             f'<rect x="4" y="4" width="242" height="68" fill="none" stroke="{INK}" stroke-width="0.5"/>'
             f'<text x="125" y="32" text-anchor="middle" font-family="Georgia,serif" font-size="22" letter-spacing="6" fill="{INK}">ANTHOUSA</text>'
-            f'<text x="125" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-style="italic" fill="{INK}">Anno Fundationis {year}</text>'
-            f'<text x="125" y="66" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{INK}" fill-opacity="0.75">c. {pop:,} souls</text></g>')
+            f'<text x="125" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-style="italic" fill="{INK}">{sub}</text>'
+            f'<text x="125" y="66" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{INK}" fill-opacity="0.75">{popl}</text></g>')
     return terrain_inner + "".join(P) + cart
 
 
@@ -122,15 +130,17 @@ def main():
     global I18N
     I18N = json.load(open(os.path.join(ROOT, "i18n", "i18n.json"), encoding="utf-8"))
     w = load()
-    t = render_terrain()
-    defs_end = t.index("</defs>") + 7
-    head = t[:defs_end]
-    inner = t[defs_end:-6]
-    os.makedirs(os.path.join(DOCS, "years"), exist_ok=True)
     years = [w["meta"]["start_year"]] + [e["to"] for e in w["eras"]]
-    for y in years:
-        svg = head + svg_for(w, y, inner) + "</svg>"
-        open(os.path.join(DOCS, "years", f"{y:05d}.svg".replace("-", "m")), "w").write(svg)
+    for lang, sub in (("en", ""), ("zh", "zh")):
+        t = render_terrain(lang)
+        defs_end = t.index("</defs>") + 7
+        head = t[:defs_end]
+        inner = t[defs_end:-6]
+        out = os.path.join(DOCS, "years", sub)
+        os.makedirs(out, exist_ok=True)
+        for y in years:
+            svg = head + svg_for(w, y, inner, lang) + "</svg>"
+            open(os.path.join(out, f"{y:05d}.svg".replace("-", "m")), "w", encoding="utf-8").write(svg)
     for e in w["eras"]:
         f = os.path.join(ROOT, "chronicle", f"{e['from']}_{e['to']}.md")
         e["chronicle"] = open(f, encoding="utf-8").read() if os.path.exists(f) else None
