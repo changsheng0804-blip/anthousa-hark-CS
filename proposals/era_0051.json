@@ -1,0 +1,190 @@
+{
+ "era": {
+  "from": 51,
+  "to": 60,
+  "title": "城外的礼拜"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "arian_meeting",
+    "type": "church",
+    "name": "Arian meeting house",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       401.0,
+       474.5
+      ],
+      [
+       405.0,
+       474.5
+      ],
+      [
+       405.0,
+       477.5
+      ],
+      [
+       401.0,
+       477.5
+      ]
+     ]
+    },
+    "label": "Arians",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "timber"
+     ],
+     "ornament": 0,
+     "scale": "domestic"
+    }
+   },
+   "why": "Put out of the city's churches by the new emperor, the Arians walk out through the Founder's gate on feast days and pray in a yard beyond the wall.",
+   "year": 52
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "cistern_carriers",
+    "type": "cistern",
+    "name": "Cistern of the Water-Carriers",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       428.5,
+       449.5
+      ],
+      [
+       435.5,
+       449.5
+      ],
+      [
+       435.5,
+       454.5
+      ],
+      [
+       428.5,
+       454.5
+      ]
+     ]
+    },
+    "label": "Carriers",
+    "dna": {
+     "motif": "cistern",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "The water-carriers of the dry hill pool their coppers for a cistern halfway up the slope, so they no longer climb from Modestus with every jar.",
+   "year": 54
+  },
+  {
+   "faction": "merchants",
+   "op": "build",
+   "structure": {
+    "id": "horrea_alexandrina",
+    "type": "granary",
+    "name": "Horrea Alexandrina",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       487.5,
+       509.0
+      ],
+      [
+       496.5,
+       509.0
+      ],
+      [
+       496.5,
+       513.0
+      ],
+      [
+       487.5,
+       513.0
+      ]
+     ]
+    },
+    "label": "Alexandrina",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "Grain merchants buy the burned lots by the Harbor of Theodosius and raise a granary for the Egyptian ships.",
+   "year": 55
+  },
+  {
+   "faction": "emperor",
+   "op": "build",
+   "structure": {
+    "id": "forum_theodosius",
+    "type": "forum",
+    "name": "Forum of Theodosius",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       541.0,
+       436.0
+      ],
+      [
+       551.0,
+       436.0
+      ],
+      [
+       551.0,
+       444.0
+      ],
+      [
+       541.0,
+       444.0
+      ]
+     ]
+    },
+    "label": "Forum of Theodosius",
+    "dna": {
+     "motif": "peristyle",
+     "materials": [
+      "marble_revetted"
+     ],
+     "ornament": 3,
+     "scale": "monumental"
+    }
+   },
+   "why": "Theodosius lays out a great forum on the Forum Tauri, beside the fountain where Valens' water arrives.",
+   "year": 57
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "cistern_carriers",
+     "reason": "no road within 25 units; nobody could reach it",
+     "fix": "moved down the slope beside the Mese, near the Founder's gate"
+    },
+    {
+     "id": "horrea_alexandrina",
+     "reason": "overlaps the standing Horrea of Theodosius (AF 34)",
+     "fix": "moved east onto the burned lots"
+    }
+   ]
+  }
+ ]
+}

@@ -5,7 +5,8 @@
   "11": "Water Comes to the City",
   "21": "The Great Church",
   "31": "The Grain Road",
-  "41": "Valens' Water"
+  "41": "Valens' Water",
+  "51": "Worship Outside the Walls"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -68,7 +69,11 @@
   "d_xerolophos": "克塞罗洛福斯区",
   "nymphaeum_maius": "大宁芙神殿喷泉",
   "horrea_troadensia": "特罗阿德粮仓",
-  "church_anastasia": "阿纳斯塔西娅礼拜堂"
+  "church_anastasia": "阿纳斯塔西娅礼拜堂",
+  "arian_meeting": "阿里乌派城外聚会所",
+  "cistern_carriers": "运水人蓄水池",
+  "horrea_alexandrina": "亚历山大粮仓",
+  "forum_theodosius": "狄奥多西广场"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -110,7 +115,11 @@
   "cistern_modestus": "莫德斯图斯",
   "nymphaeum_maius": "大喷泉",
   "horrea_troadensia": "特罗阿德粮仓",
-  "church_anastasia": "阿纳斯塔西娅"
+  "church_anastasia": "阿纳斯塔西娅",
+  "arian_meeting": "阿里乌派",
+  "cistern_carriers": "运水人",
+  "horrea_alexandrina": "亚历山大粮仓",
+  "forum_theodosius": "狄奥多西广场"
  },
  "sea_labels": [
   [
