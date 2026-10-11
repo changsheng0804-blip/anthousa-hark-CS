@@ -4,7 +4,8 @@
   "1": "The Refounding",
   "11": "Water Comes to the City",
   "21": "The Great Church",
-  "31": "The Grain Road"
+  "31": "The Grain Road",
+  "41": "Valens' Water"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -62,7 +63,12 @@
   "r_mocius": "圣莫基乌斯小路",
   "church_mocius": "圣莫基乌斯教堂",
   "field_north": "吕科斯田野",
-  "field_south": "埃格纳提亚田野"
+  "field_south": "埃格纳提亚田野",
+  "cistern_modestus": "莫德斯图斯蓄水池",
+  "d_xerolophos": "克塞罗洛福斯区",
+  "nymphaeum_maius": "大宁芙神殿喷泉",
+  "horrea_troadensia": "特罗阿德粮仓",
+  "church_anastasia": "阿纳斯塔西娅礼拜堂"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -100,7 +106,11 @@
   "harbor_theodosius": "狄奥多西港",
   "horrea_theodosius": "粮仓",
   "church_mocius": "圣莫基乌斯",
-  "field_north": "田野"
+  "field_north": "田野",
+  "cistern_modestus": "莫德斯图斯",
+  "nymphaeum_maius": "大喷泉",
+  "horrea_troadensia": "特罗阿德粮仓",
+  "church_anastasia": "阿纳斯塔西娅"
  },
  "sea_labels": [
   [
