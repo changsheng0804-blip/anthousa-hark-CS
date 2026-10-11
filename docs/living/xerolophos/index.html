@@ -74,7 +74,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
-<div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>50 年</span></div><input id="yr" type="range" min="1" max="50" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
+<div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>60 年</span></div><input id="yr" type="range" min="1" max="60" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
 <div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
 
 <div id="intro">
@@ -119,7 +119,7 @@ function isSea(x,y){ // lower-right of coast polyline
 const LM0={};city.landmarks.forEach(l=>LM0[l.id]=l);const FAR={xy:[-99999,-99999],name:'',now:{},story:''};const LM=new Proxy(LM0,{get:(t,k)=>t[k]||FAR});const has=id=>!!LM0[id];
 
 /* ---------- houses ---------- */
-const houses=[];
+const MAXY=60;const houses=[];
 for(const h of HD.houses){
   const [id,dist_,built,destroyed,p]=h;
   if(destroyed<=1||destroyed<=built+1) continue;
@@ -157,8 +157,10 @@ function buildBase(Y){
     fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(3px)';fctx.drawImage(maskC,0,0,W,H);fctx.filter='none';
     fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
     bctx.drawImage(fillC,0,0);}
+  if(Y>K){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
   baseYear=Y;
 }
+function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}
 let YEAR=50;buildBase(50);
 const prevBase=document.createElement('canvas');prevBase.width=W;prevBase.height=H;let fadeT=0;
 
@@ -169,7 +171,7 @@ const ORIG=city.origins, FAITH=city.faiths;
 const OBJ=['一盏印着凯乐符号的陶灯','一枚瓦伦斯的铜币，被摸得发亮','从{o}带来的一只陶罐，补过两次','一块蜡板，上面记着谁还欠他们钱','门楣上一个刻歪了的十字','一副骨头骰子，藏在枕头底下','一张蓝党的赛马签，已经输了','一小瓶从圣地带回来的油','一把铜钥匙，门早就换过了','墙角一尊没人敢扔的家神像','一卷写着孩子生日的莎草纸','一只少了把手的玻璃杯，是嫁妆'];
 function landType(id){if(/harbor|horrea|granary/.test(id))return'harbor';if(/palace/.test(id))return'palace';if(/hippo/.test(id))return'hippodrome';if(/forum|agora|milion|column/.test(id))return'forum';if(/church/.test(id))return'church';return'other'}
 function nearestLM(x,y,filter){let b=null,bd=1e9;for(const l of city.landmarks){if(filter&&!filter(l))continue;const d=dist(x,y,l.xy[0],l.xy[1]);if(d<bd){bd=d;b=l}}return[b,bd]}
-const ARRIVE=[[-999,0,'那时这里还是拜扎斯旧城，卫城脚下的老街'],[1,10,'跟着奠基的工程来的，男人在工地上搬石头'],[11,20,'水渠修通后来的，听说城里终于有水了'],[21,30,'大教堂开工那几年来的，城里到处缺人手'],[31,40,'粮道修通后来的，跟着粮船一起进的城'],[41,47,'瓦伦斯在位时来的'],[48,50,'第 48 年南港大火烧了他们原来的家，搬到了这里']];
+const ARRIVE=[[-999,0,'那时这里还是拜扎斯旧城，卫城脚下的老街'],[1,10,'跟着奠基的工程来的，男人在工地上搬石头'],[11,20,'水渠修通后来的，听说城里终于有水了'],[21,30,'大教堂开工那几年来的，城里到处缺人手'],[31,40,'粮道修通后来的，跟着粮船一起进的城'],[41,47,'瓦伦斯在位时来的'],[48,50,'第 48 年南港大火烧了他们原来的家，搬到了这里'],[51,55,'狄奥多西刚登基那几年来的，城里正为信什么吵得厉害'],[56,60,'跟着埃及的粮船来的，城里新盖了好几座粮仓']];
 const CITYEV=[[18,'水渠第一次通水，全家去喷泉边看热闹'],[19,'城西大火那夜，从屋顶上看见了半边天的红光'],[30,'大教堂落成，挤在人群里没看见主教'],[38,'城西又起大火，烧了三百多座房子，他们收留过一个远亲'],[44,'大喷泉落成那天，孩子们跳进了水池'],[46,'特罗阿德粮仓开工，家里有人去当了搬运工'],[48,'南港大火，烧了 287 座房子']];
 const hhCache=new Map();
 function household(h){
@@ -177,7 +179,7 @@ function household(h){
   const r=rng(hash('hh'+h.id));
   const [lm]=nearestLM(h.cx,h.cy);const lt=landType(lm.id);
   const people=[];const ev=[];const used=new Set();const fams=[];
-  const END=Math.min(50,h.destroyed-1);
+  const END=Math.min(MAXY,h.destroyed-1);
   const nm=sx=>{const L=sx==='m'?NM:NF;for(let k=0;k<12;k++){const n=pick(r,L);if(!used.has(n)){used.add(n);return n}}return pick(r,L)};
   function lifespan(){const q=r();if(q<.22)return Math.floor(r()*5);if(q<.3)return 5+Math.floor(r()*20);return 28+Math.floor(r()*45)}
   const AWAY=['去当了兵','去码头上找活干','去给一个石匠当学徒','进了修道院','跟着粮船出了海'];
@@ -194,14 +196,14 @@ function household(h){
     const wife=P({n:nm('f'),s:'f',b:head.b+2+Math.floor(r()*8),g:0,bride:true});wife.d=Math.max(wife.b+lifespan(),B+1);
     if(first){const arr=ARRIVE.find(a=>B>=a[0]&&B<=a[1])[2];ev.push([B,(origin==='本城生'?'一家人搬进这栋房子。':'一家人从'+origin+'来，住进这栋房子。')+arr])}
     else ev.push([B,'房子空了一阵，'+head.n+'一家'+(origin==='本城生'?'从城里另一头':'从'+origin)+'搬了进来。'+(B>=48?'他们原来的家烧在了南港大火里':ARRIVE.find(a=>B>=a[0]&&B<=a[1])[2].replace(/^那时.*$/,'')).replace(/。$/,'')]);
-    function line(father,mother,g){let y=Math.max(mother.b+17,father.b+19,B-25);const end=Math.min(mother.b+40,mother.d,father.d+1,50);let heir=false;
+    function line(father,mother,g){let y=Math.max(mother.b+17,father.b+19,B-25);const end=Math.min(mother.b+40,mother.d,father.d+1,MAXY);let heir=false;
       while(true){y+=1+Math.floor(r()*3);if(y>end)break;
         const sx=r()<.5?'m':'f';const k=P({n:nm(sx),s:sx,b:y,g:g+1});k.d=k.b+lifespan();
         const life=k.d-k.b;E(y,(g===0?'':g===1?'孙辈':'曾孙辈')+(sx==='m'?'儿子':'女儿')+k.n+'出生'+(life<5?'，'+(life<1?'没满一年':'活到 '+life+' 岁')+'就夭折了':''));
         if(sx==='m'&&life>21&&g<4){const wy=k.b+20+Math.floor(r()*6);
-          if(!heir&&wy<k.d&&wy<=50){heir=true;const bride=P({n:nm('f'),s:'f',b:k.b-2+Math.floor(r()*6),g:g+1,bride:true,married:wy});bride.d=Math.max(bride.b+lifespan(),wy+1);E(wy,k.n+'娶了'+bride.n+'，新娘住进了这栋房子');line(k,bride,g+1)}
-          else{const ly=k.b+17+Math.floor(r()*5);if(ly<k.d&&ly<=50){k.left=ly;E(ly,k.n+pick(r,AWAY))}}}
-        else if(sx==='f'&&life>17){const wy=k.b+15+Math.floor(r()*5);if(wy<k.d&&wy<=50){k.left=wy;const tgt=nearestHouse(h.cx+(r()-.5)*700,h.cy+(r()-.5)*700,wy,220);if(tgt&&tgt.id!==h.id){k.to=tgt.id;E(wy,k.n+'出嫁，嫁到了另一个街区')}else{k.to='外城';E(wy,k.n+'出嫁，嫁到了城外')}}}
+          if(!heir&&wy<k.d&&wy<=MAXY){heir=true;const bride=P({n:nm('f'),s:'f',b:k.b-2+Math.floor(r()*6),g:g+1,bride:true,married:wy});bride.d=Math.max(bride.b+lifespan(),wy+1);E(wy,k.n+'娶了'+bride.n+'，新娘住进了这栋房子');line(k,bride,g+1)}
+          else{const ly=k.b+17+Math.floor(r()*5);if(ly<k.d&&ly<=MAXY){k.left=ly;E(ly,k.n+pick(r,AWAY))}}}
+        else if(sx==='f'&&life>17){const wy=k.b+15+Math.floor(r()*5);if(wy<k.d&&wy<=MAXY){k.left=wy;const tgt=nearestHouse(h.cx+(r()-.5)*700,h.cy+(r()-.5)*700,wy,220);if(tgt&&tgt.id!==h.id){k.to=tgt.id;E(wy,k.n+'出嫁，嫁到了另一个街区')}else{k.to='外城';E(wy,k.n+'出嫁，嫁到了城外')}}}
       }}
     line(head,wife,0);
     fam.people.forEach(p=>{const life=p.d-p.b;if(p.d<=END&&p.d>=B&&life>=5&&!(p.left&&p.left<=p.d))E(p.d,p.n+'去世，'+life+' 岁')});
@@ -211,7 +213,7 @@ function household(h){
     first=false;B=last+1+Math.floor(r()*3);
   }
   for(const[cy,t]of CITYEV)if(cy>fams[0].B&&cy<=END&&r()<.35)ev.push([cy,t]);
-  if(h.destroyed<=50){const why=h.destroyed===30?'房子被拆了，给大教堂让路。一家人搬走了':h.destroyed===46?'房子被拆了，地皮划给了特罗阿德粮仓':h.destroyed===49?'房子卖给了一户尼西亚派信徒，后来成了阿纳斯塔西娅':'房子没了';ev.push([h.destroyed,why])}
+  if(h.destroyed<=MAXY){const why=h.destroyed===48?'南港大火烧了房子，一家人投奔了亲戚':h.destroyed>50?'房子被拆了，地皮给了新修的公家建筑':h.destroyed===30?'房子被拆了，给大教堂让路。一家人搬走了':h.destroyed===46?'房子被拆了，地皮划给了特罗阿德粮仓':h.destroyed===49?'房子卖给了一户尼西亚派信徒，后来成了阿纳斯塔西娅':'房子没了';ev.push([h.destroyed,why])}
   ev.sort((a,b)=>a[0]-b[0]);
   const obj=pick(r,OBJ).replace('{o}',fams[0].origin==='本城生'?'老家':fams[0].origin);
   const hh={h,B:fams[0].B,fams,people,ev,obj};
@@ -226,18 +228,18 @@ function relLabel(p,head,al){if(p===head)return'当家';const dg=p.g-head.g;
 function periodOf(t){return t>=5&&t<9?'morning':t>=9&&t<18?'day':t>=18&&t<21?'evening':'night'}
 
 /* ---------- named characters ---------- */
-const QUAY=[880,330];const SHACK=SCENE.shack||[0,0];const DHOME=SCENE.home||[0,0];
+const QUAY=[880,330];const SHACK=SCENE.shack||[0,0];const ARIAN=SCENE.arian||[0,0];const DHOME=SCENE.home||[0,0];
 const DAPH={key:'daph',name:'达芙涅',img:daphImg,src:'daphne.jpg',b:29,meta:'运水人的女儿 · 色雷斯人 · 尼西亚派',
  quote:'水来了，可水不会自己走上山坡。',
- life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗']],
+ life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗'],[52,'尼西亚派的人回到了城里的教堂。她第一次走进大教堂，仰着头看了半天'],[54,'干山上的运水人凑铜板，在半山腰修了一座蓄水池。父亲是领头的，她把攒了一年的铜板全交了'],[58,'嫁给了码头上的搬运工约翰。还在码头卖水']],
  where:Y=>SCENE.id==='xero'?(Y<35?null:Y<42?SHACK:DHOME):(Y<35?null:(Y>=49?QUAY:null)),
  threads:Y=>{const t=[];if(SCENE.id==='xero'){if(Y>=41)t.push([LM.cistern_modestus.xy[0],LM.cistern_modestus.xy[1],Y>=41?'十二岁那年，看着它第一次注满':'']);t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'父亲挑水走的城门']);if(Y>=48)t.push([LM.fire_ruins.xy[0],LM.fire_ruins.xy[1],'大火那夜，父亲在这里挑了一整夜水']);if(Y>=49)t.push([1815,700,'白天去金角湾码头卖水 →','east']);return t}if(Y>=49){t.push([313,171,'狄奥多罗斯每天早上买她的水给搬运工']);t.push([LM.milion.xy[0],LM.milion.xy[1],'早上去这儿领面包']);t.push([4,880,'← 家：克塞罗洛福斯区，往西 3 公里','xero']);if(Y>=49)t.push([LM.church_anastasia.xy[0],LM.church_anastasia.xy[1],'晚上偷偷去听格里高利讲道'])}return t}};
 const THEO={key:'theo',name:'特罗阿德的狄奥多罗斯',img:theoImg,src:'theodoros.jpg',b:-5,meta:'粮商 · 特罗阿德的亚历山大港人 · 阿里乌派',
  quote:'在安托萨，人们信的是量器，不是商人。',
- life:[[1,'在特罗阿德跑粮船，还没见过这座城'],[31,'粮道修通，他开始常年在特罗阿德和安托萨之间往返'],[38,'在南港边上买了一栋房子'],[46,'押上全家的钱，在金角湾边建起特罗阿德粮仓'],[48,'南港大火烧了他的房子，粮仓躲过一劫。他搬进粮仓的阁楼'],[49,'把粮仓的地板租给烧了家的人，每一袋粮都用城里的铜斗量']],
- where:Y=>Y>=46?[313,171]:null,
- threads:Y=>{const t=[];if(Y>=46){t.push([QUAY[0],QUAY[1],Y>=49?'从达芙涅那儿买水':'他的船在这里卸粮']);t.push([LM.milion.xy[0],LM.milion.xy[1],'给面包配给供粮']);t.push([LM.church_peace.xy[0],LM.church_peace.xy[1],'在圣伊琳娜做礼拜']);if(Y>=48)t.push([700,2040,'↓ 南港：他被烧掉的家'])}return t}};
-const NAMED=SCENE.id==='xero'?[DAPH]:[DAPH,THEO];
+ life:[[1,'在特罗阿德跑粮船，还没见过这座城'],[31,'粮道修通，他开始常年在特罗阿德和安托萨之间往返'],[38,'在南港边上买了一栋房子'],[46,'押上全家的钱，在金角湾边建起特罗阿德粮仓'],[48,'南港大火烧了他的房子，粮仓躲过一劫。他搬进粮仓的阁楼'],[49,'把粮仓的地板租给烧了家的人，每一袋粮都用城里的铜斗量'],[51,'新皇帝的诏书下来，阿里乌派被请出了城里所有的教堂，包括他做了二十年礼拜的圣伊琳娜'],[52,'每逢节日，他走出奠基者城门，到城墙外的一个院子里祈祷'],[55,'和几个粮商买下大火烧过的地，盖起亚历山大粮仓，专收埃及的粮船'],[60,'六十五岁。每天早上还是自己量粮']],
+ where:Y=>SCENE.id==='xero'?(Y>=52?ARIAN:null):(Y>=46?[313,171]:null),
+ threads:Y=>{const t=[];if(SCENE.id==='xero'){t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'节日从这道门出城']);t.push([1815,500,'他的粮仓在金角湾 →','east']);return t}if(Y>=46){t.push([QUAY[0],QUAY[1],Y>=49?'从达芙涅那儿买水':'他的船在这里卸粮']);t.push([LM.milion.xy[0],LM.milion.xy[1],'给面包配给供粮']);if(Y<51)t.push([LM.church_peace.xy[0],LM.church_peace.xy[1],'在圣伊琳娜做礼拜']);else t.push([4,1300,'← 节日出城，去城墙外祈祷','xero']);if(Y>=48)t.push([700,2040,'↓ 南港：他被烧掉的家'])}return t}};
+const NAMED=[DAPH,THEO];
 function lifeAt(P,Y){let cur=null;for(const l of P.life)if(l[0]<=Y)cur=l;return cur}
 
 /* ---------- view ---------- */
@@ -305,7 +307,7 @@ function renderCard(){
     if(!gone&&al.length){
       const [wl]=nearestLM(h.cx,h.cy,l=>landType(l.id)===landType(nearestLM(h.cx,h.cy)[0].id)&&!(late[l.id]&&late[l.id].built>Y));if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'在'+wl.name+'一带干活：'+F.trade});
       const ch=F.faith==='阿里乌派'?LM.church_peace:F.faith==='尼西亚派'?(Y>=49?LM.church_anastasia:LM.church_megale):LM.fort_acropolis;
-      if(ch!==FAR)threads.push({x:ch.xy[0],y:ch.xy[1],t:F.faith==='还拜旧神'?'偷偷去卫城的旧神庙':'做礼拜'});
+      if(F.faith==='阿里乌派'&&Y>=51){if(has('arian_meeting')&&Y>=52)threads.push({x:LM.arian_meeting.xy[0],y:LM.arian_meeting.xy[1],t:'节日出城祈祷'})}else if(ch!==FAR)threads.push({x:ch.xy[0],y:ch.xy[1],t:F.faith==='还拜旧神'?'偷偷去卫城的旧神庙':'做礼拜'});
       {const wl=has('cistern_founder')?LM.cistern_founder:(has('cistern_modestus')&&Y>=41?LM.cistern_modestus:null);if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'打水'})}
       for(const p of F.people)if(p.left&&p.left<=Y&&p.d>Y){if(typeof p.to==='number'){const t=houseById(p.to);if(t)threads.push({x:t.cx,y:t.cy,t:p.n+'嫁到了这里（'+(Y-p.b)+' 岁）',go:t.id})}}
       threads.forEach(t=>{t.fx=h.cx;t.fy=h.cy});
@@ -354,7 +356,7 @@ function setYear(Y){if(Y===YEAR)return;const pc=prevBase.getContext('2d');pc.cle
   $('ylab').textContent=`建城 ${Y} 年 · 公元 ${329+Y} 年`;$('tyear').textContent=`建城 ${Y} 年（公元 ${329+Y} 年）`;
   $('ystat').textContent=`这一角 ${n.toLocaleString()} 栋房子 · 全城约 ${cityPop(Y).toLocaleString()} 人`;renderCard();}
 $('yr').addEventListener('input',e=>setYear(+e.target.value));
-$('ystat').textContent=`这一角 ${houses.filter(h=>h.destroyed>50).length.toLocaleString()} 栋房子 · 全城约 137,664 人`;
+$('ystat').textContent=`这一角 ${houses.filter(h=>h.built<=50&&h.destroyed>50).length.toLocaleString()} 栋房子 · 全城约 137,664 人`;
 
 /* ---------- ticker ---------- */
 const TK={morning:['米利翁门开始发面包','一艘特罗阿德的粮船进了港','圣伊琳娜的晨钟响了','运水人挑着罐子往山坡上走'],day:['银钱商在柱廊下吵了起来','一个亚历山大里亚来的修士在广场上布道','卸粮工在粮仓前排成了长队','有人在大道上丢了一头驴'],race:['蓝党赢下第三场','绿党的人把帽子扔上了跑道','竞技场的吼声隔着三条街都听得见'],evening:['一支婚礼队伍举着火把走过大道','阿纳斯塔西娅门口又挤满了人','酒馆里有人说皇帝在东方打了败仗'],night:['打更人喊：小心火烛','金角湾上只剩几盏船灯','卫城的守夜兵点起了火盆']};
@@ -459,7 +461,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     for(const g of glows){if(!(g.h.built<=YEAR&&g.h.destroyed>YEAR))continue;if(!vis(g.h.cx,g.h.cy))continue;const fl=.6+.4*Math.sin(t*3+g.ph);const rg=ctx.createRadialGradient(g.h.cx,g.h.cy,0,g.h.cx,g.h.cy,9);rg.addColorStop(0,`rgba(255,190,90,${.75*k*fl})`);rg.addColorStop(1,'rgba(255,150,50,0)');ctx.fillStyle=rg;ctx.fillRect(g.h.cx-9,g.h.cy-9,18,18)}
     ctx.globalCompositeOperation='source-over'}
   // landmarks
-  for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
+  for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;if(l.until&&YEAR>l.until)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads
   if(threads.length){const k=clamp((now-threadT)/900,0,1);ctx.lineCap='round';
     for(const th of threads){if(th.x<-1000)continue;const mx=(th.fx+th.x)/2,my=(th.fy+th.y)/2-dist(th.fx,th.fy,th.x,th.y)*.25;
