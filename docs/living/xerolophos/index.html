@@ -94,12 +94,13 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 'use strict';
 const $=id=>document.getElementById(id);
 const W=1820,H=2048;
-const [city,HD,SCENE]=await Promise.all(['city.json','houses.json','scene.json'].map(f=>fetch(f).then(r=>r.json())));
+const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
+const pplImg=new Image();pplImg.src='people.png';
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
-await Promise.all([...Object.values(IM),daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
+await Promise.all([...Object.values(IM),pplImg,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
 
 /* ---------- utils ---------- */
 function hash(s){let h=2166136261>>>0;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
@@ -250,7 +251,7 @@ fit();
 function s2w(sx,sy){return[(sx-VW/2)/cam.z+cam.x,(sy-VH/2)/cam.z+cam.y]}
 function w2s(x,y){return[(x-cam.x)*cam.z+VW/2,(y-cam.y)*cam.z+VH/2]}
 function flyTo(x,y,z,dur=1600){camT={x0:cam.x,y0:cam.y,z0:cam.z,x,y,z:z||cam.z,t0:performance.now(),dur}}
-function clampCam(){cam.z=clamp(cam.z,minZ(),3);const hx=VW/2/cam.z,hy=VH/2/cam.z;cam.x=W>2*hx?clamp(cam.x,hx,W-hx):W/2;cam.y=H>2*hy?clamp(cam.y,hy,H-hy):H/2}
+function clampCam(){cam.z=clamp(cam.z,minZ(),4);const hx=VW/2/cam.z,hy=VH/2/cam.z;cam.x=W>2*hx?clamp(cam.x,hx,W-hx):W/2;cam.y=H>2*hy?clamp(cam.y,hy,H-hy):H/2}
 
 /* ---------- input ---------- */
 const ptrs=new Map();let dragMoved=0,pinch0=null;
@@ -262,7 +263,7 @@ cv.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return
   if(ptrs.size===2&&pinch0){const[a,b]=[...ptrs.values()];cam.z=pinch0.z*dist(a.x,a.y,b.x,b.y)/pinch0.d;clampCam();dragMoved=99}});
 function up(e){const was=ptrs.has(e.pointerId);ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=null;cv.classList.remove('drag');if(was&&dragMoved<6&&ptrs.size===0)tap(e.clientX,e.clientY)}
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId)});
-cv.addEventListener('wheel',e=>{e.preventDefault();const[wx,wy]=s2w(e.clientX,e.clientY);const z0=cam.z;cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0015),minZ(),3);
+cv.addEventListener('wheel',e=>{e.preventDefault();const[wx,wy]=s2w(e.clientX,e.clientY);const z0=cam.z;cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0015),minZ(),4);
   cam.x=wx-(e.clientX-VW/2)/cam.z;cam.y=wy-(e.clientY-VH/2)/cam.z;clampCam();camT=null},{passive:false});
 
 /* ---------- selection & threads ---------- */
@@ -328,7 +329,9 @@ const totalL=roads.reduce((a,r)=>a+r.L,0);
 function onRoad(r,s){let i=0;while(i<r.seg.length-1&&s>r.seg[i]){s-=r.seg[i];i++}const t=clamp(s/r.seg[i],0,1);const a=r.pts[i],b=r.pts[i+1];const nx=-(b[1]-a[1]),ny=b[0]-a[0];const nl=Math.hypot(nx,ny)||1;return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,nx/nl,ny/nl]}
 const R0=rng(7);
 const COLS=['#c98b3a','#9b3b2a','#d8cbb0','#3d5a80','#6b5a3a','#e0dccf','#7a4a6a'];
-const walkers=[];for(let i=0;i<520;i++){let u=R0()*totalL,ri=0;while(u>roads[ri].L){u-=roads[ri].L;ri++}walkers.push({r:ri,s:u,v:(R0()<.5?-1:1)*(6+R0()*10),off:(R0()-.5)*16,c:pick(R0,COLS),pause:0,k:R0()})}
+const SPW=SCENE.id==='xero'?{0:6,12:4,17:5,14:3,9:3,15:2,16:2,3:1,1:1,10:2,11:2,18:1,6:1,7:1,13:1,19:0,20:1,21:0,2:0}:{0:3,1:6,2:3,3:4,6:2,7:2,9:3,10:3,11:3,12:2,13:1,14:2,15:2,16:1,17:2,18:2,19:3,20:1,21:1};
+function pickSprite(rnd){let tot=0;for(const m of PPL)tot+=SPW[m.k]||0;let u=rnd()*tot;for(const m of PPL){u-=SPW[m.k]||0;if(u<=0)return m}return PPL[0]}
+const walkers=[];for(let i=0;i<520;i++){let u=R0()*totalL,ri=0;while(u>roads[ri].L){u-=roads[ri].L;ri++}walkers.push({r:ri,s:u,v:(R0()<.5?-1:1)*(6+R0()*10),off:(R0()-.5)*16,c:pick(R0,COLS),pause:0,k:R0(),sp:pickSprite(R0)})}
 const HT=city.hippodrome_track||{center:[-9999,-9999],semi_long:1,semi_short:1,angle_deg:0};const race={on:false,score:''};
 const chariots=['#2f6fd6','#2f9e4f','#c8352c','#f2f0e6'].map((c,i)=>({c,a:i*.4,v:.55+i*.04+R0()*.08}));
 const ships=[];for(let i=0;i<6;i++)ships.push({x:HB[0]+80+R0()*(HB[2]-HB[0]-160),y:HB[1]+60+R0()*(HB[3]-HB[1]-110),ph:R0()*6});
@@ -433,7 +436,9 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   const big=cam.z>1.2;
   for(let i=0;i<nW;i++){const w=walkers[i];if(w.pause>0)w.pause-=dt;else{w.s+=w.v*dt*speed*.6+w.v*dt*.4;if(Math.random()<dt*.02)w.pause=1+Math.random()*3}const r=roads[w.r];if(w.s<0){w.s=0;w.v=-w.v}if(w.s>r.L){w.s=r.L;w.v=-w.v}
     const[x,y,nx,ny]=onRoad(r,w.s);const px=x+nx*w.off,py=y+ny*w.off;if(!vis(px,py))continue;
-    if(big){ctx.fillStyle=w.c;ctx.fillRect(px-1.3,py-1,2.6,3.4);ctx.fillStyle='#3a2a1c';ctx.fillRect(px-1,py-2.6,2,1.8)}else{ctx.fillStyle=w.c;ctx.fillRect(px-1,py-1,2.2,2.2)}}
+    if(cam.z>=1.5){const m=w.sp,hh=m.h/72*9.5,ww=m.w/m.h*hh;const bob=w.pause>0?0:Math.abs(Math.sin(t*8+w.k*9))*.5;ctx.fillStyle='rgba(30,20,10,.28)';ctx.beginPath();ctx.ellipse(px,py+.3,ww*.38,1.1,0,0,7);ctx.fill();
+      const dx=onRoad(r,Math.min(r.L,w.s+1))[0]-x;const flip=(w.v*(dx||1))<0;ctx.save();ctx.translate(px,py-bob);if(flip)ctx.scale(-1,1);ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,-ww/2,-hh,ww,hh);ctx.restore()}
+    else if(big){ctx.fillStyle=w.c;ctx.fillRect(px-1.3,py-1,2.6,3.4);ctx.fillStyle='#3a2a1c';ctx.fillRect(px-1,py-2.6,2,1.8)}else{ctx.fillStyle=w.c;ctx.fillRect(px-1,py-1,2.2,2.2)}}
   // chariots
   if(race.on){for(const c of chariots){c.a+=dt*c.v*(.6+.4*speed);const ca=Math.cos(HT.angle_deg*Math.PI/180),sa=Math.sin(HT.angle_deg*Math.PI/180);const ex=Math.cos(c.a)*HT.semi_long,ey=Math.sin(c.a)*HT.semi_short;const x=HT.center[0]+ex*ca-ey*sa,y=HT.center[1]+ex*sa+ey*ca;
     for(let k=1;k<6;k++){const a2=c.a-k*.04,ex2=Math.cos(a2)*HT.semi_long,ey2=Math.sin(a2)*HT.semi_short;ctx.fillStyle=`rgba(210,190,150,${.25-k*.04})`;ctx.beginPath();ctx.arc(HT.center[0]+ex2*ca-ey2*sa,HT.center[1]+ex2*sa+ey2*ca,3+k,0,7);ctx.fill()}
