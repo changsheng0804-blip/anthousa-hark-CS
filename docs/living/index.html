@@ -75,7 +75,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
 <div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>50 年</span></div><input id="yr" type="range" min="1" max="50" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
-<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图分块绘制、拼接。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
+<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
 
 <div id="intro">
  <div class="bg" id="ibg"></div><div class="veil"></div>
@@ -96,10 +96,11 @@ const $=id=>document.getElementById(id);
 const W=1820,H=2048;
 const [city,HD]=await Promise.all([fetch('city.json').then(r=>r.json()),fetch('houses.json').then(r=>r.json())]);
 const img=new Image(); img.src='quarter_hi.jpg';
+const k10=new Image(); k10.src='east_af10.jpg'; const k30=new Image(); k30.src='east_af30.jpg';
 const bare=new Image(); bare.src='bare.jpg';
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
-await Promise.all([img,bare,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
+await Promise.all([img,k10,k30,bare,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
 
 /* ---------- utils ---------- */
 function hash(s){let h=2166136261>>>0;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
@@ -142,18 +143,20 @@ const base=document.createElement('canvas');base.width=W;base.height=H;const bct
 let baseYear=-1;
 function polyPath(ctx,p,s){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*s,y=cy+(p[2*i+1]-cy)*s;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+const KEYS=[[10,k10,bare],[30,k30,k10],[50,img,k30]];
+function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
+const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
+const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
 function buildBase(Y){
-  bctx.globalAlpha=1;bctx.drawImage(img,0,0,W,H);
-  bctx.save();bctx.beginPath();
-  for(const h of houses) if(h.built>Y) polyPath(bctx,h.p,2.3);
-  for(const k in late) if(late[k].built>Y){const q=late[k].p.flat();polyPath(bctx,q,1.12)}
-  bctx.clip();bctx.drawImage(bare,0,0,W,H);bctx.restore();
-  // houses that stood then but were cleared later (for the Great Church, the granary, the Anastasia)
-  for(const h of houses) if(h.built<=Y&&h.destroyed>Y&&h.destroyed<=50){
-    bctx.beginPath();polyPath(bctx,h.p,1.5);bctx.fillStyle='#b65f3e';bctx.fill();bctx.strokeStyle='rgba(60,30,20,.7)';bctx.lineWidth=1.2;bctx.stroke();}
-  // newest houses (last 3 years): fresh plaster, a pale ring
-  bctx.lineWidth=1;bctx.strokeStyle='rgba(255,240,200,.28)';
-  for(const h of houses) if(h.built<=Y&&h.built>Y-3&&h.built>1){bctx.beginPath();polyPath(bctx,h.p,1.7);bctx.stroke()}
+  const [K,KI,PI]=keyFor(Y);bctx.globalAlpha=1;bctx.globalCompositeOperation='source-over';bctx.drawImage(KI,0,0,W,H);
+  mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,W/2,H/2);mctx.setTransform(.5,0,0,.5,0,0);mctx.fillStyle='#fff';mctx.beginPath();
+  let any=false;
+  for(const h of houses) if(h.built>Y&&h.built<=K){polyPath(mctx,h.p,2.0);any=true}
+  for(const k in late) if(late[k].built>Y&&late[k].built<=K){polyPath(mctx,late[k].p.flat(),1.15);any=true}
+  if(any){mctx.fill();
+    fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(3px)';fctx.drawImage(maskC,0,0,W,H);fctx.filter='none';
+    fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
+    bctx.drawImage(fillC,0,0);}
   baseYear=Y;
 }
 let YEAR=50;buildBase(50);
