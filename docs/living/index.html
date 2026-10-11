@@ -69,8 +69,8 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <body>
 <canvas id="c"></canvas>
 
-<div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub">城东尖角 · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
-<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="info">i</button></div>
+<div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub"><span id="scn">城东尖角</span> · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
+<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="info">i</button></div>
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
@@ -94,13 +94,12 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 'use strict';
 const $=id=>document.getElementById(id);
 const W=1820,H=2048;
-const [city,HD]=await Promise.all([fetch('city.json').then(r=>r.json()),fetch('houses.json').then(r=>r.json())]);
-const img=new Image(); img.src='quarter_hi.jpg';
-const k10=new Image(); k10.src='east_af10.jpg'; const k30=new Image(); k30.src='east_af30.jpg';
-const bare=new Image(); bare.src='bare.jpg';
+const [city,HD,SCENE]=await Promise.all(['city.json','houses.json','scene.json'].map(f=>fetch(f).then(r=>r.json())));
+const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
+SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
-await Promise.all([img,k10,k30,bare,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
+await Promise.all([...Object.values(IM),daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
 
 /* ---------- utils ---------- */
 function hash(s){let h=2166136261>>>0;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
@@ -108,21 +107,21 @@ function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=
 const pick=(r,a)=>a[Math.floor(r()*a.length)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const dist=(a,b,c,d)=>Math.hypot(a-c,b-d);
-const HB=city.harbor_box;
+const HB=city.harbor_box||[-9999,-9999,-9990,-9990];
 const inHarbor=(x,y)=>x>HB[0]&&x<HB[2]&&y>HB[1]&&y<HB[3];
-const CL=city.coast_line;
+const CL=city.coast_line||[[-9999,-9999],[-9999,-9990]];
 function isSea(x,y){ // lower-right of coast polyline
   for(let i=0;i<CL.length-1;i++){const[a,b]=CL[i],[c,d]=CL[i+1];
     if((y>=Math.min(b,d)&&y<=Math.max(b,d))){const t=(y-b)/(d-b||1);const xc=a+(c-a)*t;return x>xc}}
   return y>CL[CL.length-1][1]&&false;
 }
-const LM={};city.landmarks.forEach(l=>LM[l.id]=l);
+const LM0={};city.landmarks.forEach(l=>LM0[l.id]=l);const FAR={xy:[-99999,-99999],name:'',now:{},story:''};const LM=new Proxy(LM0,{get:(t,k)=>t[k]||FAR});const has=id=>!!LM0[id];
 
 /* ---------- houses ---------- */
 const houses=[];
 for(const h of HD.houses){
   const [id,dist_,built,destroyed,p]=h;
-  if(destroyed<=1) continue;
+  if(destroyed<=1||destroyed<=built+1) continue;
   let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   if(inHarbor(cx,cy)) continue;
   houses.push({id,d:dist_,built,destroyed,p,cx,cy});
@@ -143,7 +142,7 @@ const base=document.createElement('canvas');base.width=W;base.height=H;const bct
 let baseYear=-1;
 function polyPath(ctx,p,s){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*s,y=cy+(p[2*i+1]-cy)*s;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
-const KEYS=[[10,k10,bare],[30,k30,k10],[50,img,k30]];
+const KEYS=SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
@@ -226,18 +225,18 @@ function relLabel(p,head,al){if(p===head)return'当家';const dg=p.g-head.g;
 function periodOf(t){return t>=5&&t<9?'morning':t>=9&&t<18?'day':t>=18&&t<21?'evening':'night'}
 
 /* ---------- named characters ---------- */
-const QUAY=[880,330];
+const QUAY=[880,330];const SHACK=SCENE.shack||[0,0];const DHOME=SCENE.home||[0,0];
 const DAPH={key:'daph',name:'达芙涅',img:daphImg,src:'daphne.jpg',b:29,meta:'运水人的女儿 · 色雷斯人 · 尼西亚派',
  quote:'水来了，可水不会自己走上山坡。',
- life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家住在奠基者城墙外的棚子里'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗']],
- where:Y=>Y<35?null:(Y>=49?QUAY:null),
- threads:Y=>{const t=[];if(Y>=49){t.push([313,171,'狄奥多罗斯每天早上买她的水给搬运工']);t.push([LM.milion.xy[0],LM.milion.xy[1],'早上去这儿领面包']);t.push([0,880,'家：克塞罗洛福斯区，往西 3 公里 →']);if(Y>=49)t.push([LM.church_anastasia.xy[0],LM.church_anastasia.xy[1],'晚上偷偷去听格里高利讲道'])}return t}};
+ life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗']],
+ where:Y=>SCENE.id==='xero'?(Y<35?null:Y<42?SHACK:DHOME):(Y<35?null:(Y>=49?QUAY:null)),
+ threads:Y=>{const t=[];if(SCENE.id==='xero'){if(Y>=41)t.push([LM.cistern_modestus.xy[0],LM.cistern_modestus.xy[1],Y>=41?'十二岁那年，看着它第一次注满':'']);t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'父亲挑水走的城门']);if(Y>=48)t.push([LM.fire_ruins.xy[0],LM.fire_ruins.xy[1],'大火那夜，父亲在这里挑了一整夜水']);if(Y>=49)t.push([1815,700,'白天去金角湾码头卖水 →','east']);return t}if(Y>=49){t.push([313,171,'狄奥多罗斯每天早上买她的水给搬运工']);t.push([LM.milion.xy[0],LM.milion.xy[1],'早上去这儿领面包']);t.push([4,880,'← 家：克塞罗洛福斯区，往西 3 公里','xero']);if(Y>=49)t.push([LM.church_anastasia.xy[0],LM.church_anastasia.xy[1],'晚上偷偷去听格里高利讲道'])}return t}};
 const THEO={key:'theo',name:'特罗阿德的狄奥多罗斯',img:theoImg,src:'theodoros.jpg',b:-5,meta:'粮商 · 特罗阿德的亚历山大港人 · 阿里乌派',
  quote:'在安托萨，人们信的是量器，不是商人。',
  life:[[1,'在特罗阿德跑粮船，还没见过这座城'],[31,'粮道修通，他开始常年在特罗阿德和安托萨之间往返'],[38,'在南港边上买了一栋房子'],[46,'押上全家的钱，在金角湾边建起特罗阿德粮仓'],[48,'南港大火烧了他的房子，粮仓躲过一劫。他搬进粮仓的阁楼'],[49,'把粮仓的地板租给烧了家的人，每一袋粮都用城里的铜斗量']],
  where:Y=>Y>=46?[313,171]:null,
  threads:Y=>{const t=[];if(Y>=46){t.push([QUAY[0],QUAY[1],Y>=49?'从达芙涅那儿买水':'他的船在这里卸粮']);t.push([LM.milion.xy[0],LM.milion.xy[1],'给面包配给供粮']);t.push([LM.church_peace.xy[0],LM.church_peace.xy[1],'在圣伊琳娜做礼拜']);if(Y>=48)t.push([700,2040,'↓ 南港：他被烧掉的家'])}return t}};
-const NAMED=[DAPH,THEO];
+const NAMED=SCENE.id==='xero'?[DAPH]:[DAPH,THEO];
 function lifeAt(P,Y){let cur=null;for(const l of P.life)if(l[0]<=Y)cur=l;return cur}
 
 /* ---------- view ---------- */
@@ -272,7 +271,7 @@ let threads=[];let threadT=0;
 function tap(sx,sy){
   const[x,y]=s2w(sx,sy);
   // thread end labels
-  for(const t of threads){if(t.go&&dist(x,y,t.x,t.y)<26/cam.z+8){openHouse(t.go);return}}
+  for(const t of threads){if((t.go||t.link)&&dist(x,y,t.x,t.y)<30/cam.z+10){if(t.link){location.href=t.link==='xero'?'xerolophos/':'../';return}openHouse(t.go);return}}
   for(const P of NAMED){const w=P.where(YEAR);if(w&&isPresent(P)&&dist(x,y,w[0],w[1])<30/cam.z+10){openNamed(P);return}}
   const [l,d]=nearestLM(x,y);if(d<28/cam.z+12){openLM(l);return}
   if(isSea(x,y)||inHarbor(x,y)){closeCard();return}
@@ -287,7 +286,7 @@ function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
 function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
 function lifeHTML(items,Y){return '<div class="life">'+items.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">${y<1?'建城前':'建城 '+y+' 年'}</span>${y>Y?'……':t}</div>`).join('')+'</div>'}
-function isPresent(P){const t=clock;return P.key==='daph'?(t>=5&&t<17):(t>=6&&t<20)}
+function isPresent(P){const t=clock;if(SCENE.id==='xero')return true;return P.key==='daph'?(t>=5&&t<17):(t>=6&&t<20)}
 function renderCard(){
   const Y=YEAR,per=periodOf(clock);threads=[];
   if(!sel){return}
@@ -305,15 +304,15 @@ function renderCard(){
     if(!gone&&al.length){
       const [wl]=nearestLM(h.cx,h.cy,l=>landType(l.id)===landType(nearestLM(h.cx,h.cy)[0].id)&&!(late[l.id]&&late[l.id].built>Y));if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'在'+wl.name+'一带干活：'+F.trade});
       const ch=F.faith==='阿里乌派'?LM.church_peace:F.faith==='尼西亚派'?(Y>=49?LM.church_anastasia:LM.church_megale):LM.fort_acropolis;
-      threads.push({x:ch.xy[0],y:ch.xy[1],t:F.faith==='还拜旧神'?'偷偷去卫城的旧神庙':'做礼拜'});
-      threads.push({x:LM.cistern_founder.xy[0],y:LM.cistern_founder.xy[1],t:'打水'});
+      if(ch!==FAR)threads.push({x:ch.xy[0],y:ch.xy[1],t:F.faith==='还拜旧神'?'偷偷去卫城的旧神庙':'做礼拜'});
+      {const wl=has('cistern_founder')?LM.cistern_founder:(has('cistern_modestus')&&Y>=41?LM.cistern_modestus:null);if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'打水'})}
       for(const p of F.people)if(p.left&&p.left<=Y&&p.d>Y){if(typeof p.to==='number'){const t=houseById(p.to);if(t)threads.push({x:t.cx,y:t.cy,t:p.n+'嫁到了这里（'+(Y-p.b)+' 岁）',go:t.id})}}
       threads.forEach(t=>{t.fx=h.cx;t.fy=h.cy});
     }
   }else if(sel.kind==='named'){
     const P=sel.P;const age=Y-P.b;const L=lifeAt(P,Y);
-    showCard(`<img class="portrait" src="${P.src}" alt=""><h2>${P.name}</h2><div class="meta">${P.meta}</div><div class="meta">建城 ${Y} 年 · ${age<0?'还没出生':age+' 岁'}</div><div class="quote">“${P.quote}”</div><div class="now">${L?L[1]:''}</div>`+lifeHTML(P.life,Y)+`<div class="pin">◆ 已固定：拨动年代，看${P.key==='daph'?'她':'他'}老去</div>`);
-    const w=P.where(Y);if(w){P.threads(Y).forEach(([x,y,t])=>threads.push({fx:w[0],fy:w[1],x,y,t}))}
+    showCard(`<img class="portrait" src="${P.src}" alt=""><h2>${P.name}</h2><div class="meta">${P.meta}</div><div class="meta">建城 ${Y} 年 · ${age<0?'还没出生':age+' 岁'}</div><div class="quote">“${P.quote}”</div><div class="now">${L?L[1]:''}</div>${P===DAPH&&SCENE.id==='xero'&&Y>=29?'<div class="ppl">家里：父亲尼刻塔斯（运水人，'+(Y+3)+' 岁）、母亲伊琳娜（'+(Y-2)+' 岁）'+(Y>=37?'、弟弟米隆（'+(Y-37)+' 岁）':'')+'</div>':''}`+lifeHTML(P.life,Y)+`<div class="pin">◆ 已固定：拨动年代，看${P.key==='daph'?'她':'他'}老去</div>`);
+    const w=P.where(Y);if(w){P.threads(Y).forEach(([x,y,t,link])=>threads.push({fx:w[0],fy:w[1],x,y,t,link}))}
   }else{
     const l=sel.l;let now=l.now[per]||l.now[per==='morning'||per==='day'?'day':'night']||'';
     if(l.id==='hippodrome'&&clock>=13&&clock<17)now=l.now.race+'。'+race.score;
@@ -330,7 +329,7 @@ function onRoad(r,s){let i=0;while(i<r.seg.length-1&&s>r.seg[i]){s-=r.seg[i];i++
 const R0=rng(7);
 const COLS=['#c98b3a','#9b3b2a','#d8cbb0','#3d5a80','#6b5a3a','#e0dccf','#7a4a6a'];
 const walkers=[];for(let i=0;i<520;i++){let u=R0()*totalL,ri=0;while(u>roads[ri].L){u-=roads[ri].L;ri++}walkers.push({r:ri,s:u,v:(R0()<.5?-1:1)*(6+R0()*10),off:(R0()-.5)*16,c:pick(R0,COLS),pause:0,k:R0()})}
-const HT=city.hippodrome_track;const race={on:false,score:''};
+const HT=city.hippodrome_track||{center:[-9999,-9999],semi_long:1,semi_short:1,angle_deg:0};const race={on:false,score:''};
 const chariots=['#2f6fd6','#2f9e4f','#c8352c','#f2f0e6'].map((c,i)=>({c,a:i*.4,v:.55+i*.04+R0()*.08}));
 const ships=[];for(let i=0;i<6;i++)ships.push({x:HB[0]+80+R0()*(HB[2]-HB[0]-160),y:HB[1]+60+R0()*(HB[3]-HB[1]-110),ph:R0()*6});
 const seaShips=[];for(let i=0;i<3;i++)seaShips.push({t:R0(),off:60+R0()*140,v:.006+R0()*.006});
@@ -356,7 +355,7 @@ $('ystat').textContent=`这一角 ${houses.filter(h=>h.destroyed>50).length.toLo
 
 /* ---------- ticker ---------- */
 const TK={morning:['米利翁门开始发面包','一艘特罗阿德的粮船进了港','圣伊琳娜的晨钟响了','运水人挑着罐子往山坡上走'],day:['银钱商在柱廊下吵了起来','一个亚历山大里亚来的修士在广场上布道','卸粮工在粮仓前排成了长队','有人在大道上丢了一头驴'],race:['蓝党赢下第三场','绿党的人把帽子扔上了跑道','竞技场的吼声隔着三条街都听得见'],evening:['一支婚礼队伍举着火把走过大道','阿纳斯塔西娅门口又挤满了人','酒馆里有人说皇帝在东方打了败仗'],night:['打更人喊：小心火烛','金角湾上只剩几盏船灯','卫城的守夜兵点起了火盆']};
-let tkT=0;function tick(){const per=clock>=13&&clock<17?'race':periodOf(clock);const a=TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
+let tkT=0;function tick(){const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
 
 /* ---------- sound (synthesized) ---------- */
 let AC=null,master,sea,crowd,crowdF,roar,soundOn=false;
@@ -394,7 +393,8 @@ let daphTarget=QUAY;
 function ticker(){}
 function glowYear(){const y=$('year');y.classList.add('glow');setTimeout(()=>y.classList.remove('glow'),4000);openNamed(DAPH)}
 function greet(){say(DAPH,'新来的？水，一个铜子一碗。……第一次来安托萨吧？我叫达芙涅，我爸是运水的。你想先去哪儿？',[['跟着你走走',startTour],['随便敲一扇门',()=>{hush();say(DAPH,'那就去吧。随便点一栋房子，里面的人会告诉你他们是谁。点完了再拨拨年代，看看他们以前是什么样。',[['好',hush]])}],['这座城是怎么长出来的？',()=>{hush();glowYear();say(DAPH,'拨下面那个年代。五十年前，这一片还多半是空地。你看着我，我也会跟着变小。',[['好',hush]])}]])}
-$('daph').onclick=()=>{flyTo(QUAY[0],QUAY[1],1.4);greet()};
+$('daph').onclick=()=>{if(SCENE.id==='xero'){flyTo(DHOME[0],DHOME[1],1.3);openNamed(DAPH);return}flyTo(QUAY[0],QUAY[1],1.4);greet()};
+$('scn').textContent=SCENE.title;$('other').textContent=SCENE.other.label;$('other').onclick=()=>location.href=SCENE.other.url;
 $('info').onclick=()=>$('infobox').style.display='block';$('infox').onclick=()=>$('infobox').style.display='none';
 
 /* ---------- intro ---------- */
@@ -403,7 +403,7 @@ function startIntro(){const ib=$('ibg');requestAnimationFrame(()=>ib.style.opaci
 function enter(withSound){if(withSound)initSound();const it=$('intro');it.style.transition='opacity 1.6s';it.style.opacity=0;setTimeout(()=>it.remove(),1700);
   cam.z=minZ();cam.x=W/2;cam.y=H/2;arriving.t=0;flyTo(880,260,1.3,5200);setTimeout(()=>{if(AC)bell(.18,330);greet()},5600)}
 $('go').onclick=()=>enter(true);$('skip').onclick=()=>enter(false);
-startIntro();
+if(SCENE.intro)startIntro();else{$('intro').remove();cam.z=minZ();clampCam();setTimeout(()=>{flyTo(DHOME[0],DHOME[1],1.2,2500);setTimeout(()=>{openNamed(DAPH);hush();say(DAPH,SCENE.greet,[['拨动年代',()=>{hush();glowYear()}],['回城东尖角',()=>location.href='../']])},2700)},400)}
 
 /* ---------- render ---------- */
 let last=performance.now(),gullT=0,bellHour=-1;
@@ -411,7 +411,7 @@ function grade(t){ // returns [color, alpha]
   if(t<4.5||t>=21)return['rgba(12,22,58,',.55];if(t<6)return['rgba(255,150,90,',.25*(1-(t-4.5)/1.5)+.1];if(t<8)return['rgba(255,190,120,',.12*(1-(t-6)/2)];
   if(t<16)return['rgba(0,0,0,',0];if(t<18.5)return['rgba(255,170,70,',.18*(t-16)/2.5];if(t<21)return['rgba(30,30,80,',.18+.37*(t-18.5)/2.5];return['rgba(12,22,58,',.55]}
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
-  clock=(clock+dt*speed*24/DAY)%24;const per=periodOf(clock);race.on=clock>=13&&clock<17;
+  clock=(clock+dt*speed*24/DAY)%24;const per=periodOf(clock);race.on=has('hippodrome')&&clock>=13&&clock<17;
   const hr=Math.floor(clock);if(hr!==bellHour){bellHour=hr;if(hr===6||hr===18){const d=Math.min(dist(cam.x,cam.y,LM.church_peace.xy[0],LM.church_peace.xy[1]),dist(cam.x,cam.y,LM.church_megale.xy[0],LM.church_megale.xy[1]));const v=.06+.16*clamp(1-d/1200,0,1);for(let k=0;k<5;k++)setTimeout(()=>bell(v,hr===6?294:262),k*1700)}
     if(hr===13)race.score='蓝 0 · 绿 0 · 红 0 · 白 0';}
   if(race.on&&Math.random()<dt*.05){const s=race.score.match(/\d+/g).map(Number);s[Math.floor(Math.random()*4)]++;race.score=`蓝 ${s[0]} · 绿 ${s[1]} · 红 ${s[2]} · 白 ${s[3]}`}
@@ -457,17 +457,17 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads
   if(threads.length){const k=clamp((now-threadT)/900,0,1);ctx.lineCap='round';
-    for(const th of threads){const mx=(th.fx+th.x)/2,my=(th.fy+th.y)/2-dist(th.fx,th.fy,th.x,th.y)*.25;
+    for(const th of threads){if(th.x<-1000)continue;const mx=(th.fx+th.x)/2,my=(th.fy+th.y)/2-dist(th.fx,th.fy,th.x,th.y)*.25;
       ctx.strokeStyle='rgba(255,215,120,.25)';ctx.lineWidth=7/cam.z;drawQ(th,mx,my,k);ctx.strokeStyle='rgba(255,226,150,.95)';ctx.lineWidth=1.8/cam.z;drawQ(th,mx,my,k);
       // moving spark
       const u=(t*.35+th.x*.001)%1;if(k>=1){const q=qp(th,mx,my,u);ctx.fillStyle='#fff3c8';ctx.beginPath();ctx.arc(q[0],q[1],3/cam.z,0,7);ctx.fill()}
-      if(k>=1){ctx.fillStyle='#ffe29a';ctx.beginPath();ctx.arc(th.x,th.y,(th.go?6:4)/cam.z,0,7);ctx.fill();
+      if(k>=1){ctx.fillStyle='#ffe29a';ctx.beginPath();ctx.arc(th.x,th.y,((th.go||th.link)?6:4)/cam.z,0,7);ctx.fill();
         ctx.font=`${13/cam.z}px serif`;const tw=ctx.measureText(th.t).width;const lx=clamp(th.x+8/cam.z,0,W-tw-10/cam.z),ly=clamp(th.y-8/cam.z,16/cam.z,H-4);
-        ctx.fillStyle='rgba(20,17,13,.82)';ctx.fillRect(lx-4/cam.z,ly-13/cam.z,tw+8/cam.z,18/cam.z);ctx.fillStyle=th.go?'#ffe29a':'#f3ead8';ctx.fillText(th.t,lx,ly)}}
+        ctx.fillStyle='rgba(20,17,13,.82)';ctx.fillRect(lx-4/cam.z,ly-13/cam.z,tw+8/cam.z,18/cam.z);ctx.fillStyle=(th.go||th.link)?'#ffe29a':'#f3ead8';ctx.fillText(th.t,lx,ly)}}
     if(sel&&sel.kind==='house'){const h=sel.hh.h;ctx.strokeStyle='#ffe29a';ctx.lineWidth=2.5/cam.z;ctx.beginPath();polyPath(ctx,h.p,2.4);ctx.stroke()}}
   else if(sel&&sel.kind==='house'){const h=sel.hh.h;ctx.strokeStyle='#ffe29a';ctx.lineWidth=2.5/cam.z;ctx.beginPath();polyPath(ctx,h.p,2.4);ctx.stroke()}
   // named characters
-  for(const P of NAMED){let w=P.where(YEAR);if(!w||!isPresent(P))continue;if(P===DAPH&&YEAR===50)w=daphPos;const r=15/Math.max(cam.z,.6);
+  for(const P of NAMED){let w=P.where(YEAR);if(!w||!isPresent(P))continue;if(P===DAPH&&YEAR===50&&SCENE.id!=='xero')w=daphPos;const r=15/Math.max(cam.z,.6);
     ctx.save();ctx.beginPath();ctx.arc(w[0],w[1],r,0,7);ctx.closePath();ctx.fillStyle='#000';ctx.fill();ctx.clip();ctx.drawImage(P.img,w[0]-r,w[1]-r,2*r,2*r);ctx.restore();
     const p=.5+.5*Math.sin(t*3);ctx.strokeStyle=`rgba(255,215,120,${.6+.4*p})`;ctx.lineWidth=2.5/Math.max(cam.z,.6);ctx.beginPath();ctx.arc(w[0],w[1],r+2/cam.z,0,7);ctx.stroke();
     if(cam.z>.8){ctx.font=`${12/cam.z}px serif`;ctx.fillStyle='rgba(20,17,13,.8)';const tw=ctx.measureText(P.name).width;ctx.fillRect(w[0]-tw/2-3/cam.z,w[1]+r+3/cam.z,tw+6/cam.z,16/cam.z);ctx.fillStyle='#f0d79a';ctx.fillText(P.name,w[0]-tw/2,w[1]+r+15/cam.z)}}
