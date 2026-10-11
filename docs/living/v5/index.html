@@ -150,7 +150,7 @@ function buildBase(Y){
   const [K,KI,PI]=keyFor(Y);bctx.globalAlpha=1;bctx.globalCompositeOperation='source-over';bctx.drawImage(KI,0,0,W,H);
   mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,W/2,H/2);mctx.setTransform(.5,0,0,.5,0,0);mctx.fillStyle='#fff';mctx.beginPath();
   let any=false;
-  for(const h of houses) if(h.built>Y&&h.built<=K){polyPath(mctx,h.p,2.0);any=true}
+  for(const h of houses) if((h.built>Y&&h.built<=K)||(h.built<=Y&&h.destroyed>Y&&h.destroyed<=K)){polyPath(mctx,h.p,2.0);any=true}
   for(const k in late) if(late[k].built>Y&&late[k].built<=K){polyPath(mctx,late[k].p.flat(),1.15);any=true}
   if(any){mctx.fill();
     fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(3px)';fctx.drawImage(maskC,0,0,W,H);fctx.filter='none';
