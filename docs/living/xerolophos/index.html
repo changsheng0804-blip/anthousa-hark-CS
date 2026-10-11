@@ -44,6 +44,9 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card .life{font-size:12.5px;line-height:1.7;color:var(--ivory);margin-top:8px;border-top:1px solid rgba(212,168,90,.25);padding-top:8px}
 #card .life .y{color:var(--gold);display:inline-block;min-width:58px}
 #card .life .fut{color:#6f6553}
+#card .story{font-size:14.5px;line-height:1.85;margin:10px 0;color:var(--ivory)}
+#card .wf{font-size:13.5px;margin:4px 0}#card .wf b{color:var(--gold2);margin-right:8px;font-weight:normal}
+#card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
@@ -96,6 +99,7 @@ const $=id=>document.getElementById(id);
 const W=1820,H=2048;
 const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
+const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
@@ -119,7 +123,7 @@ function isSea(x,y){ // lower-right of coast polyline
 const LM0={};city.landmarks.forEach(l=>LM0[l.id]=l);const FAR={xy:[-99999,-99999],name:'',now:{},story:''};const LM=new Proxy(LM0,{get:(t,k)=>t[k]||FAR});const has=id=>!!LM0[id];
 
 /* ---------- houses ---------- */
-const MAXY=60;const houses=[];
+const MAXY=60;let buildingNow=[];const houses=[];
 for(const h of HD.houses){
   const [id,dist_,built,destroyed,p]=h;
   if(destroyed<=1||destroyed<=built+1) continue;
@@ -158,7 +162,7 @@ function buildBase(Y){
     fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
     bctx.drawImage(fillC,0,0);}
   if(Y>K){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
-  baseYear=Y;
+  baseYear=Y;buildingNow=houses.filter(h=>h.destroyed>Y&&(h.built===Y||h.built===Y-1));
 }
 function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}
 let YEAR=50;buildBase(50);
@@ -231,7 +235,7 @@ function periodOf(t){return t>=5&&t<9?'morning':t>=9&&t<18?'day':t>=18&&t<21?'ev
 const QUAY=[880,330];const SHACK=SCENE.shack||[0,0];const ARIAN=SCENE.arian||[0,0];const DHOME=SCENE.home||[0,0];
 const DAPH={key:'daph',name:'达芙涅',img:daphImg,src:'daphne.jpg',b:29,meta:'运水人的女儿 · 色雷斯人 · 尼西亚派',
  quote:'水来了，可水不会自己走上山坡。',
- life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗'],[52,'尼西亚派的人回到了城里的教堂。她第一次走进大教堂，仰着头看了半天'],[54,'干山上的运水人凑铜板，在半山腰修了一座蓄水池。父亲是领头的，她把攒了一年的铜板全交了'],[58,'嫁给了码头上的搬运工约翰。还在码头卖水']],
+ life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗'],[52,'尼西亚派的人回到了城里的教堂。她第一次走进大教堂，仰着头看了半天'],[54,'干山上的运水人凑铜板，在半山腰修了一座蓄水池。父亲是领头的，她把攒了一年的铜板全交了。可池子的地方，正压在她最好的朋友安娜家的房子上'],[58,'嫁给了码头上的搬运工约翰。还在码头卖水']],
  where:Y=>SCENE.id==='xero'?(Y<35?null:Y<42?SHACK:DHOME):(Y<35?null:(Y>=49?QUAY:null)),
  threads:Y=>{const t=[];if(SCENE.id==='xero'){if(Y>=41)t.push([LM.cistern_modestus.xy[0],LM.cistern_modestus.xy[1],Y>=41?'十二岁那年，看着它第一次注满':'']);t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'父亲挑水走的城门']);if(Y>=48)t.push([LM.fire_ruins.xy[0],LM.fire_ruins.xy[1],'大火那夜，父亲在这里挑了一整夜水']);if(Y>=49)t.push([1815,700,'白天去金角湾码头卖水 →','east']);return t}if(Y>=49){t.push([313,171,'狄奥多罗斯每天早上买她的水给搬运工']);t.push([LM.milion.xy[0],LM.milion.xy[1],'早上去这儿领面包']);t.push([4,880,'← 家：克塞罗洛福斯区，往西 3 公里','xero']);if(Y>=49)t.push([LM.church_anastasia.xy[0],LM.church_anastasia.xy[1],'晚上偷偷去听格里高利讲道'])}return t}};
 const THEO={key:'theo',name:'特罗阿德的狄奥多罗斯',img:theoImg,src:'theodoros.jpg',b:-5,meta:'粮商 · 特罗阿德的亚历山大港人 · 阿里乌派',
@@ -288,11 +292,30 @@ function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
 function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
+function tiePos(k,Y){if(k==='daph'){const w=DAPH.where(Y);return w}if(k==='theo'){const w=THEO.where(Y);return w}const t=houseById(+k);return t?[t.cx,t.cy,t.id]:null}
+function renderDeep(h,S,Y,per){
+  const beats=S.beats.filter(b=>b[0]<=Y);const cur=beats[beats.length-1];
+  const al=S.members.filter(m=>m.b<=Y&&m.d>Y);const gone=Y>=h.destroyed||(Y>=h.built&&al.length===0&&S.members.every(m=>m.d<=Y));
+  const tl='<div class="life">'+S.beats.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">建城 ${y} 年</span>${y>Y?'……':t}</div>`).join('')+'</div>';
+  if(Y<h.built&&!cur){showCard(`<h2>这里还是空地</h2><div class="meta">建城 ${Y} 年</div><div class="now">这栋房子要到建城 ${h.built} 年才盖起来，住进来的人家有一段故事。把年代往后拨。</div><div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);return}
+  const now=gone||Y<h.built?'':(S.now[per==='race'?'day':per]||S.now.day);
+  const ppl=al.map(m=>`${m.n}（${m.r}，${Y-m.b} 岁）`).join('、');
+  showCard(`<h2>${S.title}</h2><div class="meta">${S.meta}</div>`
+   +(now?`<div class="now">此刻：${now}</div>`:'')
+   +`<div class="quote">“${S.quote}”</div>`
+   +(gone?`<div class="story">${S.gone||'这家人已经不在这里了。'}</div>`:(cur?`<div class="story">${cur[1]}</div>`:''))
+   +(gone?'':`<div class="wf"><b>想要</b>${S.want}</div><div class="wf"><b>怕</b>${S.fear}</div>`)
+   +`<div class="obj">屋里有：<b>${S.object[0]}</b>。${S.object[1]}</div>`
+   +(ppl&&!gone?`<div class="ppl">${ppl}</div>`:'')
+   +`<details><summary>这一家的年代</summary>${tl}</details><div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
+  for(const [k,t,y0] of S.ties){if(Y<y0)continue;const p=tiePos(k,Y);if(!p)continue;threads.push({fx:h.cx,fy:h.cy,x:p[0],y:p[1],t,go:p[2]})}
+}
 function lifeHTML(items,Y){return '<div class="life">'+items.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">${y<1?'建城前':'建城 '+y+' 年'}</span>${y>Y?'……':t}</div>`).join('')+'</div>'}
 function isPresent(P){const t=clock;if(SCENE.id==='xero')return true;return P.key==='daph'?(t>=5&&t<17):(t>=6&&t<20)}
 function renderCard(){
   const Y=YEAR,per=periodOf(clock);threads=[];
   if(!sel){return}
+  if(sel.kind==='house'&&STORIES[sel.hh.h.id]){renderDeep(sel.hh.h,STORIES[sel.hh.h.id],Y,per);return}
   if(sel.kind==='house'){
     const hh=sel.hh,h=hh.h;
     if(Y<h.built){showCard(`<h2>这里还是空地</h2><div class="meta">建城 ${Y} 年</div><div class="now">${h.built<1?'':'这栋房子要到建城 '+h.built+' 年才盖起来。'}把年代往后拨。</div>`+lifeHTML(hh.ev,Y)+`<div class="pin">◆ 已固定：拨动年代，这一家会跟着变</div>`);return}
@@ -333,6 +356,7 @@ const R0=rng(7);
 const COLS=['#c98b3a','#9b3b2a','#d8cbb0','#3d5a80','#6b5a3a','#e0dccf','#7a4a6a'];
 const SPW=SCENE.id==='xero'?{0:6,12:4,17:5,14:3,9:3,15:2,16:2,3:1,1:1,10:2,11:2,18:1,6:1,7:1,13:1,19:0,20:1,21:0,2:0}:{0:3,1:6,2:3,3:4,6:2,7:2,9:3,10:3,11:3,12:2,13:1,14:2,15:2,16:1,17:2,18:2,19:3,20:1,21:1};
 function pickSprite(rnd){let tot=0;for(const m of PPL)tot+=SPW[m.k]||0;let u=rnd()*tot;for(const m of PPL){u-=SPW[m.k]||0;if(u<=0)return m}return PPL[0]}
+const stalls=[];{const SC=['#a8452e','#2f5d8a','#3c7a4a','#c08a2e','#7a3d6e'],SG=['#d9b25a','#7fa04a','#c45a3a','#e0d0a0','#6b8bb0'];for(let i=0;i<260;i++){let u=R0()*totalL,ri=0;while(u>roads[ri].L){u-=roads[ri].L;ri++}const[x,y,nx,ny]=onRoad(roads[ri],u);const sd=R0()<.5?-1:1;stalls.push({x:x+nx*sd*7,y:y+ny*sd*7,c:pick(R0,SC),g:pick(R0,SG)})}}
 const walkers=[];for(let i=0;i<520;i++){let u=R0()*totalL,ri=0;while(u>roads[ri].L){u-=roads[ri].L;ri++}walkers.push({r:ri,s:u,v:(R0()<.5?-1:1)*(6+R0()*10),off:(R0()-.5)*16,c:pick(R0,COLS),pause:0,k:R0(),sp:pickSprite(R0)})}
 const HT=city.hippodrome_track||{center:[-9999,-9999],semi_long:1,semi_short:1,angle_deg:0};const race={on:false,score:''};
 const chariots=['#2f6fd6','#2f9e4f','#c8352c','#f2f0e6'].map((c,i)=>({c,a:i*.4,v:.55+i*.04+R0()*.08}));
@@ -433,6 +457,15 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   const t=now/1000;const density=clamp(houses.filter(h=>h.built<=YEAR).length/houses.length,.25,1);
   // smoke
   for(const s of smokes){if(!vis(s.x,s.y,120))continue;const str=per==='morning'||per==='evening'?1:.55;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
+  // construction: houses going up this year, public works about to open
+  if(cam.z>=.7){ctx.lineWidth=.9;for(const h of buildingNow){if(!vis(h.cx,h.cy))continue;const p=h.p;ctx.strokeStyle='rgba(120,80,40,.85)';ctx.beginPath();for(let i=0;i<p.length;i+=2){const x=h.cx+(p[i]-h.cx)*2.0,y=h.cy+(p[i+1]-h.cy)*2.0;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
+      const r=8;for(let k=-r;k<=r;k+=3){ctx.beginPath();ctx.moveTo(h.cx+k-3,h.cy-r*.6);ctx.lineTo(h.cx+k+3,h.cy+r*.6);ctx.stroke()}
+      if(cam.z>=1.5&&per!=='night'){const m=PPL.find(q=>q.k===17);const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+6,h.cy-hh+3,ww,hh)}}
+    for(const k in late){const L=late[k];if(!(L.built>YEAR&&L.built<=YEAR+2))continue;const pts=L.p.flat?L.p:L.p;ctx.fillStyle='rgba(140,100,60,.45)';ctx.strokeStyle='rgba(110,70,35,.9)';ctx.beginPath();polyPath(ctx,L.p.flat(),1);ctx.fill();ctx.stroke();
+      const c=L.p.reduce((a,q)=>[a[0]+q[0]/L.p.length,a[1]+q[1]/L.p.length],[0,0]);if(per!=='night'&&cam.z>=1.2){for(let j=0;j<3;j++){const m=PPL.find(q=>q.k===(j?17:1));const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,c[0]-15+j*12,c[1]-5+Math.sin(t*2+j)*1.5,ww,hh)}}
+      if(cam.z>=.8){ctx.font=`${12/cam.z}px serif`;const tx='工地：建城 '+L.built+' 年完工';const tw=ctx.measureText(tx).width;ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(c[0]-tw/2-3/cam.z,c[1]-26/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#f3ead8';ctx.fillText(tx,c[0]-tw/2,c[1]-15/cam.z)}}}
+  // market stalls along the streets (more as the city fills; folded at night)
+  if(cam.z>=1&&(per==='morning'||per==='day')){const nS=Math.floor(stalls.length*density*density);for(let i=0;i<nS;i++){const st=stalls[i];if(!vis(st.x,st.y))continue;ctx.fillStyle='rgba(40,25,10,.25)';ctx.fillRect(st.x-3.2,st.y-1.2,7,4.4);ctx.fillStyle=st.c;ctx.fillRect(st.x-3.5,st.y-2.5,7,3);ctx.fillStyle='rgba(255,250,235,.85)';for(let k=0;k<3;k++)ctx.fillRect(st.x-3.5+k*2.4,st.y-2.5,1.1,3);ctx.fillStyle=st.g;for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(st.x-2+k*2,st.y+1.3,.8,0,7);ctx.fill()}}}
   // walkers
   const nightF=per==='night'?.15:per==='evening'?.6:1;const nW=Math.floor(walkers.length*nightF*density);
   const big=cam.z>1.2;
@@ -460,6 +493,9 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   if(per==='night'||clock>=19||clock<5.5){const k=clock>=19&&clock<21?(clock-19)/2:clock>=4.5&&clock<5.5?1-(clock-4.5):1;ctx.globalCompositeOperation='lighter';
     for(const g of glows){if(!(g.h.built<=YEAR&&g.h.destroyed>YEAR))continue;if(!vis(g.h.cx,g.h.cy))continue;const fl=.6+.4*Math.sin(t*3+g.ph);const rg=ctx.createRadialGradient(g.h.cx,g.h.cy,0,g.h.cx,g.h.cy,9);rg.addColorStop(0,`rgba(255,190,90,${.75*k*fl})`);rg.addColorStop(1,'rgba(255,150,50,0)');ctx.fillStyle=rg;ctx.fillRect(g.h.cx-9,g.h.cy-9,18,18)}
     ctx.globalCompositeOperation='source-over'}
+  // story lamps
+  for(const id in STORIES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR))continue;if(!vis(h.cx,h.cy))continue;const S=STORIES[id];if(S.members.every(m=>m.d<=YEAR))continue;const p=.6+.4*Math.sin(t*1.7+h.id);const rr=10/Math.max(cam.z,.5);const rg=ctx.createRadialGradient(h.cx,h.cy,0,h.cx,h.cy,rr*1.8);rg.addColorStop(0,`rgba(255,200,110,${.55*p})`);rg.addColorStop(1,'rgba(255,170,70,0)');ctx.fillStyle=rg;ctx.beginPath();ctx.arc(h.cx,h.cy,rr*1.8,0,7);ctx.fill();ctx.fillStyle='#ffd88a';ctx.beginPath();ctx.arc(h.cx,h.cy,2.6/Math.max(cam.z,.5),0,7);ctx.fill();
+    if(cam.z>=.9){ctx.font=`${12/cam.z}px serif`;ctx.fillStyle='rgba(20,17,13,.75)';const tw=ctx.measureText(S.title).width;ctx.fillRect(h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(S.title,h.cx+8/cam.z,h.cy)}}
   // landmarks
   for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;if(l.until&&YEAR>l.until)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads
@@ -485,7 +521,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
 function qp(th,mx,my,u){const a=(1-u)*(1-u),b=2*u*(1-u),c=u*u;return[a*th.fx+b*mx+c*th.x,a*th.fy+b*my+c*th.y]}
 function drawQ(th,mx,my,k){ctx.beginPath();ctx.moveTo(th.fx,th.fy);const N=24;for(let i=1;i<=N*k;i++){const q=qp(th,mx,my,i/N);ctx.lineTo(q[0],q[1])}ctx.stroke()}
 requestAnimationFrame(frame);
-window.__anth={household,houses,setYear,aliveAt};
+window.__anth={household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
 })();
 </script>
 </body>
