@@ -1,38 +1,35 @@
 # 智能体协作协议 · Agent protocol
 
-多个云端智能体（不同模型）轮流醒来，在这个仓库里协作。没有人实时盯着，所以一切靠**状态写在仓库里**、**规则写在代码里**。
+安托萨不按传统软件工程的方式做。它像一间画师工作室：**先生成，再自己看，然后重画**。
+AI 的长处是能大量、快速、反复地生成；这份协议的目的，是让这个长处放开，同时不丢东西、不和史实打架。
 
-## 身份
-所有智能体可能共用同一个 GitHub 账号，所以每条评论、每个 PR 描述的**第一行**写署名：`——Hark`、`——Muse` 等。没有署名的评论视为所有者本人的意见。
+（2026-10-11 所有者决定：本项目不再走 PR / 交叉审阅流程。旧协议见 git 历史。）
 
-## 角色
-| 角色 | 谁 | 做什么 |
-|---|---|---|
-| 所有者 Owner | 人 | 定方向；批准 C 类 PR（在 PR 里留言「批准」）；可以否决任何东西 |
-| 作者 Author | 任何智能体 | 认领 Issue → 开分支 → 提 PR |
-| 审阅者 Reviewer | 与作者**不同**的智能体 | 按 CONTRIBUTING 的清单审，结论 `APPROVE` 或 `CHANGES` |
-| 合并者 Merger | 审阅者以外的任何智能体，或所有者 | 条件满足时合并 |
+## 一个循环：生成 → 看 → 重来
+1. **生成**：一次做一个「镜头」——一条街、一家人、一个年代、一种声音、一张画——而不是一个「功能」。同一个镜头可以一次生成几种，挑最活的一个。
+2. **自己看**：做完必须打开成品看（截图、实际走一遍体验），用一个问题来评：**陌生人三分钟内能不能看懂、愿不愿意继续追下去？** 不好就重画、重写，不必等任何人。
+3. **给所有者一眼**：只给成品链接和一句话的变化。所有者说「留」就留，说「再来」就再来。
 
-## 每次醒来（心跳）按这个顺序做，做完一件就停
-1. **有人在等我**：有 PR 请我审阅，或者我的 PR 收到了 `CHANGES` → 先处理。
-2. **可以合并的**：CI 绿 + 不同模型 `APPROVE` +（C 类）所有者批准 → 合并，然后看 Pages 是否上线。
-3. **我认领的 Issue** 还没交 PR → 继续做。
-4. **按计划**：从 ROADMAP / 未认领的 Issue 里挑一个（优先 `适合新手` 和眼前瓶颈），在 Issue 下留言 `认领 ——名字`，然后开始。
-5. 什么都没有 → 不做事，不发言。
+## 谁管什么
+| 谁 | 管什么 |
+|---|---|
+| 所有者（人） | 品味和方向。可以否决任何东西。 |
+| 引擎（底账） | 只管事实：房子何时建、何时拆，哪场火烧了哪里，人口多少。生成的东西不能和底账矛盾，这一步由脚本自动核对。 |
+| AI（任何智能体） | 画、人、故事、声音、体验。可以大胆生成，也可以随时推倒重来。 |
 
-## 状态标签
-`待审阅` → `需修改` ↔ `待审阅` → `可合并` →（C 类加 `需所有者批准`）→ 合并。
-认领 = 在 Issue 下留言 + 加标签 `已认领`。认领超过 48 小时没有动静，别人可以接手。
+## 只有三条硬规矩
+1. **不和底账打架**：画里、故事里、家庭里出现的年份、建筑、灾害，必须和 `world.json` 一致。推进新年代后跑 `python engine/build_all.py`，要能通过。
+2. **正史只往前长**：已经发生的年代不改写。要改过去，先问所有者。
+3. **不丢东西**：每一版成品留一个快照（如 `docs/living/v3/`），线上只指向最新的；旧版随时能打开对比。
 
-## 刹车
-- 同一个 PR 来回超过 **3 轮** `CHANGES`：停下，加 `需所有者批准`，等人来定。
-- 一次醒来最多开 **1 个** PR、写 **3 条**评论。
-- 连续 **3 次**醒来都没有进展（没有合并、没有新 PR、没有回复）：心跳降频或暂停，告诉所有者。
-- 任何智能体都不能审阅、批准或合并自己写的 PR。
-- 不改已发布的历史，除非是 C 类并且所有者已经批准。
+## 怎么提交
+- 直接提交到 `main`，推送后 Pages 自动发布。提交说明第一行写清楚改了哪个镜头，并署名（`——Hark`、`——Muse` 等）。
+- 推送后打开线上页面确认能用。坏了就立刻修，或者回退到上一个快照。
+- 大的方向变化（换路线、改规则、动正史）先问所有者，再动手。
 
-## 验收（合并的硬条件）
-1. CI `check-pr` 通过：从零重建全部历史 + `check.py` + 语法规则测试。
-2. 一位不同模型的审阅者 `APPROVE`，并且审阅意见里逐条写明核对了什么。
-3. C 类：所有者批准。
-4. 合并后 Pages 构建成功，线上 `data.json` 的年份和统计与 PR 描述一致。
+## 目录
+- `docs/` → GitHub Pages。`docs/living/` 是「活着的安托萨」体验，`docs/living/STORYBOARD.md` 是当前分镜。
+- `world.json`、`proposals/`、`rules/`、`chronicle/` → 底账和正史。
+
+---
+**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction.
