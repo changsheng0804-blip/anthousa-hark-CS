@@ -145,14 +145,14 @@ function polyPath(ctx,p,s){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++)
 function buildBase(Y){
   bctx.globalAlpha=1;bctx.drawImage(img,0,0,W,H);
   bctx.save();bctx.beginPath();
-  for(const h of houses) if(h.built>Y) polyPath(bctx,h.p,1.9);
+  for(const h of houses) if(h.built>Y) polyPath(bctx,h.p,2.3);
   for(const k in late) if(late[k].built>Y){const q=late[k].p.flat();polyPath(bctx,q,1.12)}
   bctx.clip();bctx.drawImage(bare,0,0,W,H);bctx.restore();
   // houses that stood then but were cleared later (for the Great Church, the granary, the Anastasia)
   for(const h of houses) if(h.built<=Y&&h.destroyed>Y&&h.destroyed<=50){
     bctx.beginPath();polyPath(bctx,h.p,1.5);bctx.fillStyle='#b65f3e';bctx.fill();bctx.strokeStyle='rgba(60,30,20,.7)';bctx.lineWidth=1.2;bctx.stroke();}
   // newest houses (last 3 years): fresh plaster, a pale ring
-  bctx.lineWidth=1.4;bctx.strokeStyle='rgba(255,240,200,.55)';
+  bctx.lineWidth=1;bctx.strokeStyle='rgba(255,240,200,.28)';
   for(const h of houses) if(h.built<=Y&&h.built>Y-3&&h.built>1){bctx.beginPath();polyPath(bctx,h.p,1.7);bctx.stroke()}
   baseYear=Y;
 }
@@ -248,7 +248,7 @@ fit();
 function s2w(sx,sy){return[(sx-VW/2)/cam.z+cam.x,(sy-VH/2)/cam.z+cam.y]}
 function w2s(x,y){return[(x-cam.x)*cam.z+VW/2,(y-cam.y)*cam.z+VH/2]}
 function flyTo(x,y,z,dur=1600){camT={x0:cam.x,y0:cam.y,z0:cam.z,x,y,z:z||cam.z,t0:performance.now(),dur}}
-function clampCam(){cam.z=clamp(cam.z,minZ(),3);cam.x=clamp(cam.x,0,W);cam.y=clamp(cam.y,0,H)}
+function clampCam(){cam.z=clamp(cam.z,minZ(),3);const hx=VW/2/cam.z,hy=VH/2/cam.z;cam.x=W>2*hx?clamp(cam.x,hx,W-hx):W/2;cam.y=H>2*hy?clamp(cam.y,hy,H-hy):H/2}
 
 /* ---------- input ---------- */
 const ptrs=new Map();let dragMoved=0,pinch0=null;
@@ -277,9 +277,9 @@ function tap(sx,sy){
   if(h)openHouse(h.id);else{showCard(`<h2>空地</h2><div class="meta">建城 ${YEAR} 年，这里还没有房子。</div><div class="now">把年代往后拨，看它什么时候长出来。</div>`);sel=null;threads=[]}
 }
 function houseById(id){return houses.find(h=>h.id===id)}
-function openHouse(id){const h=houseById(id);if(!h)return;sel={kind:'house',hh:household(h)};renderCard();blip(660,.08)}
+function openHouse(id){hush();const h=houseById(id);if(!h)return;sel={kind:'house',hh:household(h)};renderCard();blip(660,.08)}
 function openNamed(P){sel={kind:'named',P};renderCard();blip(520,.08)}
-function openLM(l){sel={kind:'lm',l};renderCard();blip(440,.08)}
+function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
 function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
@@ -413,7 +413,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     if(hr===13)race.score='蓝 0 · 绿 0 · 红 0 · 白 0';}
   if(race.on&&Math.random()<dt*.05){const s=race.score.match(/\d+/g).map(Number);s[Math.floor(Math.random()*4)]++;race.score=`蓝 ${s[0]} · 绿 ${s[1]} · 红 ${s[2]} · 白 ${s[3]}`}
   $('clock').textContent=HOURS[hr]+' '+(hr%12||12)+' 时'+(race.on?' · 赛马中':'');
-  if(camT){const k=clamp((now-camT.t0)/camT.dur,0,1),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.x=camT.x0+(camT.x-camT.x0)*e;cam.y=camT.y0+(camT.y-camT.y0)*e;cam.z=camT.z0+(camT.z-camT.z0)*e;if(k>=1)camT=null}
+  if(camT){const k=clamp((now-camT.t0)/camT.dur,0,1),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam.x=camT.x0+(camT.x-camT.x0)*e;cam.y=camT.y0+(camT.y-camT.y0)*e;cam.z=camT.z0+(camT.z-camT.z0)*e;if(k>=1)camT=null;clampCam()}
   if(follow){cam.x+=(follow.x-cam.x)*Math.min(1,dt*1.6);cam.y+=(follow.y-cam.y)*Math.min(1,dt*1.6);cam.z+=(follow.z-cam.z)*Math.min(1,dt*1.2);daphTarget=[follow.x+18,follow.y+10]}
   daphPos[0]+=(daphTarget[0]-daphPos[0])*Math.min(1,dt*1.3);daphPos[1]+=(daphTarget[1]-daphPos[1])*Math.min(1,dt*1.3);
   clampCam();
