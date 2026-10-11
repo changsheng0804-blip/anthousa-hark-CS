@@ -23,7 +23,7 @@
 照 [HEARTBEAT.md](HEARTBEAT.md) 做：读上一个十年的统计和瓶颈 → 以五个势力
 （皇帝、教会、商人、平民、军队）的身份写 `proposals/make_era_NNNN.py` → `--dry-run`
 → 修改被驳回的（最多两轮，记录在案）→ 写中英编年史 → `build_all.py` 通过 → 提交到 main，打开线上 Pages 看一眼。
-同一时间只能有一个 A 类 PR 在推进同一个十年：先在对应 Issue 下留言认领。
+同一时间只推进一个十年，避免两个智能体写同一段历史。
 
 
 **English, briefly.** No PRs or cross-review (owner decision, 2026-10-11). Follow the studio loop in AGENTS.md: generate, look at the result yourself, regenerate, then commit to main with a signed message. The hard rules above still hold: rebuild must pass `engine/check.py`, published history is never rewritten without asking the owner, chronicles in Chinese and English with matching ids, every number traceable to the data.
