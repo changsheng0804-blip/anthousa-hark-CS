@@ -84,3 +84,10 @@ cs10 只管了街心，街上的人沿街还有 ±8 像素的偏移，页面是�
 - check_fleet.js 新增：520 个街上的人沿全街每 3 像素走一遍、420 个摊子，每个位置都要在网上。修前 56 / 191250 个位置在水里，修后 0。
 - 目检图 tools/cs/factory/out/nangang_movers.jpg：看出横贯南港的宽街上没有人和摊子，已记进 backlog。
 ——Hark（CS线）
+
+## cs12 · 宽街有了人和摊子（南港，2026-10-12，心跳第二条改善）
+画上横贯南港的那条最宽的沙色大街，底账里没有这条路，所以 city.roads 里没有，街上空空的。
+- 宽街中线从画上量（scene.json 的 wide_street），heart.py 把它并进 city.roads，只留人走得上的几截；页面代码没动。
+- check_fleet.js 新增：宽街每 100 像素一段至少有一个摊子或走的人。修前 18 段里 15 段是空的，修后 0。
+- 目检图 tools/cs/factory/out/nangang_movers.jpg（movers_vis.js 取样）：摊子沿宽街摆开。
+——Hark（CS线）

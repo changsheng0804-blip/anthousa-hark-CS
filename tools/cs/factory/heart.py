@@ -232,6 +232,19 @@ def main():
                     if len(run) >= 6: croads.append((st['id'], run))
                     run = []
         if len(run) >= 6: croads.append((st['id'], run))
+    # cs12：画上沙色的宽街（底账没有这条路）。中线从画上量，存在 scene.json 的 wide_street；只留人走得上的几截
+    WS = sc.get('wide_street') or []
+    run = []
+    for a_, b_ in zip(WS, WS[1:]):
+        n = max(1, int(math.hypot(b_[0] - a_[0], b_[1] - a_[1]) / 8))
+        for t in range(n + 1):
+            x, y = a_[0] + (b_[0] - a_[0]) * t / n, a_[1] + (b_[1] - a_[1]) * t / n
+            j, i = math.floor(y / R8), math.floor(x / R8)
+            if 0 <= j < H8 and 0 <= i < W8 and walk8[j, i]: run.append((x, y))
+            else:
+                if len(run) >= 6: croads.append(('wide', run))
+                run = []
+    if len(run) >= 6: croads.append(('wide', run))
     city_roads = [{'id': f'{i}' if k == 0 else f'{i}_{k}', 'pts': [[int(x), int(y)] for x, y in rdp(r_, 2)]} for k, (i, r_) in enumerate(croads)]
     if '--json' in sys.argv:
         print(json.dumps({**out, '_roads': city_roads}, ensure_ascii=False)); return
