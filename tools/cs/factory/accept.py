@@ -175,6 +175,12 @@ def compare(q, fix):
         mp = re.search(r'piers walkable (\d+) / (\d+)', r.stdout)
         okp = bool(mp) and int(mp.group(2)) > 0 and int(mp.group(1)) >= 0.95 * int(mp.group(2))
         rec(S, '画上的栈桥人走得上去', okp, mp.group(0) if mp else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（栈桥并进 walk 网）')
+    # cs17 · 栈桥上有人站：画上的栈桥至少 4 个站位落在栈桥上，来码头的路有 5%–50% 终点在栈桥上（不能全挤在一个泊位，也不能把主泊位抽空）
+    if sc.get('fleet', {}).get('derived'):
+        r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--pierspots')
+        mp = re.search(r'pier spots (\d+), on pier (\d+), trails ending on a pier (\d+) / (\d+)', r.stdout)
+        okp = bool(mp) and int(mp.group(2)) >= 4 and int(mp.group(4)) > 0 and 0.05 <= int(mp.group(3)) / int(mp.group(4)) <= 0.5
+        rec(S, '栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥）', okp, mp.group(0) if mp else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（栈桥尖端和半腰放站位）')
     # cs14 · 港口的口子按画：画上围墙的缺口 = 口子；算出来的口子要落在缺口上，至少一艘船停在港里、水路穿过缺口
     if sc.get('fleet', {}).get('derived'):
         r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--mouth')

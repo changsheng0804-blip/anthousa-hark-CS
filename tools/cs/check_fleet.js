@@ -65,6 +65,8 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
  console.log('movers',Object.keys(res).length,'kinds; missing',[...miss].join(',')||'none','; off-domain',JSON.stringify(Object.fromEntries(Object.entries(res).filter(([k,r])=>r.bad).map(([k,r])=>[k,r.bad+'/'+r.n+' '+JSON.stringify(r.eg)]))),'; unregistered frame loops',loops.join(',')||'none');
  if(miss.size||tot)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
+{const FS=F.FLEET,ps=FS.C.pier_spots||[];const cnt=[];for(const Y of [40,50,57,60]){A.setYear(Y);const Rr=FS.crowd(Y);cnt.push(Rr.crowd.filter(m=>ps.some(s=>Math.hypot(m.spot[0]-s[0],m.spot[1]-s[1])<16)).length)}
+ console.log('people standing on piers per year',cnt.join(','),'pier spots',ps.length);if(ps.length<4||cnt.some(v=>v<8))bad++}
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);
 }catch(e){console.log('ERR',e.stack)}process.exit()},6000);`)

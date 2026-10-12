@@ -829,12 +829,18 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     let ang=u>=.98?s.ang:Math.atan2(y2-y,x2-x)+Math.PI;
     if(s.main&&c>=C.snap&&c<C.hold+.15){const k=c<C.hold?sm((c-C.snap)/(C.hold-C.snap)):1-sm((c-C.hold)/.15);x+=C.drift[0]*k;y+=C.drift[1]*k;ang+=.12*k}
     return[x,y,ang,u]}
+  /* cs17 · 栈桥站位：从栈桥尖上扛包去粮仓，直线会跨水。直线每 6 像素都在网上就走直线，否则先沿自己来的路退到离扛包路最近的一点，再走；还不行就留在站位上 */
+  const hauls={};
+  function haul(m,g){const key=m.h.id+'|'+g.xy[0];if(key in hauls)return hauls[key];const base=[...C.route,g.xy];
+    const ok=R=>{for(let k=1;k<R.length;k++){const a=R[k-1],b=R[k],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/6));for(let t=0;t<=n;t++)if(!FLEET_walkable(a[0]+(b[0]-a[0])*t/n,a[1]+(b[1]-a[1])*t/n))return false}return true};
+    let r=[m.spot,...base];if(!ok(r)){const rp=m.path.slice().reverse();let bi=0,bd=1e9;rp.forEach((p,i)=>{const d=Math.hypot(p[0]-base[0][0],p[1]-base[0][1]);if(d<bd){bd=d;bi=i}});r=[m.spot,...rp.slice(0,bi+1),...base];if(!ok(r))r=null}
+    return hauls[key]=r}
   /* 一个人在钟点 c 的位置：去码头、回家都沿着人走的网；扛包、粮商沿底账的路到粮仓 */
   FLEET.pos=function(m,c,g){if(c<m.go||c>=m.back+1.2)return null;
     const climax=c>=C.snap&&c<C.hold+.6,unload=c>=C.hold+.3&&c<16.8;const L=m.path.length;const T=Math.min(1.6,.5+L/120);   /* 路远走得久 */
     if(c<m.go+T){const[x,y,f]=along(m.path,sm((c-m.go)/T));return[x,y,f,false]}
     if(c>=m.back){const[x,y,f]=along(m.path.slice().reverse(),sm((c-m.back)/1.2));return[x,y,f,false]}
-    if(g&&unload&&(m.trade==='搬运工'||m.trade==='粮商')){const route=[m.spot,...C.route,g.xy];
+    if(g&&unload&&(m.trade==='搬运工'||m.trade==='粮商')&&haul(m,g)){const route=haul(m,g);   /* cs17：栈桥上的人扛包也不跨水，先顺自己的来路退回岸上 */
       if(m.trade==='粮商'){const[x,y,f]=along(route,sm((c-C.hold-.3)*1.5));return[x,y,f,false]}
       const u=((c-C.hold)/1.0+m.ph)%1;const fw=u<.5;const[x,y,f]=along(fw?route:route.slice().reverse(),fw?u*2:(u-.5)*2);return[x,y,f,!fw]}
     let p=m.spot.slice();if(climax&&m.kind==='work'){const k=sm((c-C.snap)*4)*(1-sm((c-C.hold-.3)*3));const p2=lerp(p,C.bollard,.35*k);if(FLEET_walkable(p2[0],p2[1]))p=p2}

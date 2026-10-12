@@ -212,6 +212,22 @@ def main():
     if '--piers' in sys.argv:
         pj, pi_ = np.nonzero(pier_px); ok_ = walk8[np.minimum(pj * R // R8, H8 - 1), np.minimum(pi_ * R // R8, W8 - 1)]
         print(f'piers walkable {int(ok_.sum())} / {len(pj)}'); return
+    # cs17 · 栈桥上站人：画上的每座栈桥（离泊位 ≤ 700 像素）尖端和半腰各放一个站位，人家就近走过去
+    pier_spots = []
+    if not os.environ.get('PIER_OFF') and not os.environ.get('PIERSPOT_OFF'):
+        lab_, n_ = ndi.label(pier_px)
+        for k_ in range(1, n_ + 1):
+            jj, ii = np.nonzero(lab_ == k_)
+            if len(jj) < 30: continue
+            okc = walk8[np.minimum(jj * R // R8, H8 - 1), np.minimum(ii * R // R8, W8 - 1)]
+            jj, ii = jj[okc], ii[okc]
+            if not len(jj): continue
+            cl = clear[jj, ii]; t_ = int(np.argmax(cl))
+            if cl.max() < 20 or math.hypot(ii[t_] * R - bol[0], jj[t_] * R - bol[1]) > 700: continue
+            for want in (cl.max(), cl.max() * 0.5):
+                t_ = int(np.argmin(np.abs(cl - want))); p = [int(ii[t_] * R), int(jj[t_] * R)]
+                if all(math.hypot(p[0] - s_[0], p[1] - s_[1]) >= 24 for s_ in spots + pier_spots): pier_spots.append(p)
+    spots = spots + pier_spots
     cost8 = np.where(walk8, np.where(road8 | wall8, 1.0, np.where(house8, 6.0, 2.0)), np.inf)
     def field(srcs):
         global GH, GW
@@ -233,9 +249,21 @@ def main():
             rows.append(''.join(r_))
         return ''.join(rows)
     walk = {'R': R8, 'W': W8, 'H': H8, 'quay': field(spots), 'wall': field(wall)}
+    if '--pierspots' in sys.argv:
+        pset = {(int(p[1] / R8), int(p[0] / R8)) for p in pier_spots}; fq = walk['quay']; dd = {'0': (-1, 0), '1': (1, 0), '2': (0, -1), '3': (0, 1), '4': (-1, -1), '5': (1, 1), '6': (-1, 1), '7': (1, -1)}
+        tot = hit = 0
+        for j in range(0, H8, 3):
+            for i in range(0, W8, 3):
+                if not walk8[j, i] or not land8[j, i] or math.hypot(i * R8 - bol[0], j * R8 - bol[1]) > 900: continue
+                a, b, n = j, i, 0
+                while fq[a * W8 + b] in dd and n < 3000: d = dd[fq[a * W8 + b]]; a += d[0]; b += d[1]; n += 1
+                if fq[a * W8 + b] != 's': continue
+                tot += 1; hit += any(abs(a - pj) <= 1 and abs(b - pi_) <= 1 for pj, pi_ in pset)
+        onp = sum(1 for p in pier_spots if pier_px[min(int(p[1] / R), GH - 1), min(int(p[0] / R), GW - 1)] or pier8[int(p[1] / R8), int(p[0] / R8)])
+        print(f'pier spots {len(pier_spots)}, on pier {onp}, trails ending on a pier {hit} / {tot}'); return
     I = lambda v: [I(x) for x in v] if isinstance(v, (list, tuple)) else int(v)
     ships = [{**s, 'at': I(s['at']), 'path': I(s['path'])} for s in ships]; spots, wall, route, bol = I(spots), I(wall), I(route), I(bol)
-    out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'wall': wall, 'route': route,
+    out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'pier_spots': I(pier_spots), 'wall': wall, 'route': route,
            'drift': [int(nx * 20), int(ny * 20)], 'walk': walk, 'derived': f'heart.py 从底账算（建城 {Y} 年的陆地、港口、粮仓 {g0["id"]}、路、房子）'}
     out.pop('enter', None)
     # 目检图
