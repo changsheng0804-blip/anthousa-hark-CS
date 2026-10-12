@@ -71,5 +71,7 @@
    ]
   }
  ],
- "compose": true
+ "compose": {
+  "kit": "kits/hill/"
+ }
 }

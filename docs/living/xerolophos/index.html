@@ -101,21 +101,21 @@ const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.js
 const pplImg=new Image();pplImg.src='people.png';
 const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
-let COMP=null;if(SCENE.compose){const L=src=>{const i=new Image();i.src=src;return i};const [rm,pm]=await Promise.all(['roofs.json','props.json'].map(f=>fetch(f).then(r=>r.json())));COMP={roofs:L('roofs.webp'),props:L('props.webp'),ground:L('ground.webp'),rm,pm,pat:null,RW:[3,3,2,1,3,2,2,2,2]}}
+let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm]=await Promise.all(['houses.json','props.json'].map(f=>fetch(K+f).then(r=>r.json())));COMP={houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
-function geomOf(h){if(h.g)return h.g;const p=h.p;let e1=Math.hypot(p[2]-p[0],p[3]-p[1]),e2=Math.hypot(p[4]-p[2],p[5]-p[3]),a=Math.atan2(p[3]-p[1],p[2]-p[0]);if(e2>e1){[e1,e2]=[e2,e1];a=Math.atan2(p[5]-p[3],p[4]-p[2])}
-  let u=hsh(h.id)*COMP.RW.reduce((x,y)=>x+y,0),ri=0;for(;ri<COMP.RW.length-1;ri++){u-=COMP.RW[ri];if(u<=0)break}
-  return h.g={e1,e2,a,r:COMP.rm[ri],pr:hsh(h.id,1)<.45?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,pp:hsh(h.id,4)<.4?PPL.filter(m=>m.k!==12&&m.k!==13)[Math.floor(hsh(h.id,5)*17)]:null}}
-function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.roofs.complete||!COMP.props.complete)return;
-  if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(.11))}
-  if(COMP.pat){ctx.globalAlpha=.33*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
-  const list=[];for(let gx=Math.floor((vx0-20)/G);gx<=Math.floor((vx1+20)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+20)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR&&!(h.built===YEAR))list.push(h)}
-  ctx.globalAlpha=A;
-  for(const h of list){const g=geomOf(h);ctx.save();ctx.translate(h.cx+1.6,h.cy+2);ctx.rotate(g.a);ctx.fillStyle='rgba(40,25,10,.22)';ctx.fillRect(-g.e1*.5,-g.e2*.5,g.e1,g.e2);ctx.restore()}
-  for(const h of list){const g=geomOf(h),r=g.r;ctx.save();ctx.translate(h.cx,h.cy);ctx.rotate(g.a);ctx.drawImage(COMP.roofs,r.x,0,r.w,r.h,-g.e1*.52,-g.e2*.52,g.e1*1.04,g.e2*1.04);ctx.restore()}
-  for(const h of list){const g=geomOf(h);const sn=Math.sin(g.a),cs=Math.cos(g.a);
-    if(g.pr&&!inClose(h.cx,h.cy)){const m=g.pr,sc=Math.min(g.e1,g.e2)*1.12*.75/Math.max(m.w,m.h),gap=g.e2*.56+Math.min(g.e1,g.e2)*.45;const x=h.cx-sn*gap,y=h.cy+cs*gap;ctx.drawImage(COMP.props,m.x,0,m.w,m.h,x-m.w*sc/2,y-m.h*sc/2,m.w*sc,m.h*sc)}
-    if(g.pp&&per!=='night'&&!inClose(h.cx,h.cy)){const m=g.pp,hh=5.7,ww=m.w/m.h*hh,gap=g.e2*.56+2.6;const x=h.cx+sn*gap,y=h.cy-cs*gap;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,x-ww/2,y-hh,ww,hh)}}
+function geomOf(h){if(h.g)return h.g;const p=h.p;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);y0=Math.min(y0,p[i+1]);y1=Math.max(y1,p[i+1])}
+  const bw=x1-x0,bh=y1-y0,m=COMP.hm[Math.floor(hsh(h.id)*COMP.hm.length)],w=Math.max(bw,bh*1.1)*1.3,hh=w*m.h/m.w,by=h.cy+bh*.5+hh*.18;
+  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);
+  return h.g={m,w,hh,by,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.complete||!COMP.props.complete)return;
+  if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(42/384))}
+  if(COMP.pat){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
+  const list=[];for(let gx=Math.floor((vx0-25)/G);gx<=Math.floor((vx1+25)/G);gx++)for(let gy=Math.floor((vy0-10)/G);gy<=Math.floor((vy1+40)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR&&h.built!==YEAR)list.push(h)}
+  const it=[];for(const h of list){const g=geomOf(h);it.push([g.by,0,h,g]);if(g.pr)it.push([g.by+1.5,1,h,g]);if(g.pp&&per!=='night')it.push([g.by+2.5,2,h,g])}
+  it.sort((a,b)=>a[0]-b[0]);ctx.globalAlpha=A;
+  for(const [by,t,h,g] of it){if(t===0){const m=g.m;ctx.fillStyle='rgba(50,32,14,.22)';ctx.beginPath();ctx.ellipse(h.cx+2,by-g.hh*.22,g.w*.52,g.hh*.3,0,0,7);ctx.fill();ctx.drawImage(COMP.houses,m.x,0,m.w,m.h,h.cx-g.w/2,by-g.hh,g.w,g.hh)}
+    else if(t===1){const m=g.pr,sc=6/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h.cx+g.prx-m.w*sc/2,by-m.h*sc,m.w*sc,m.h*sc)}
+    else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
