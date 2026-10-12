@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 35 / 35
+通过 43 / 43
 
 
 ## 一、拉取
@@ -43,3 +43,13 @@
 - ✅ 60 年 Horrea Alexandrina 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.87，全街区 0.87
 - ✅ 60 年 Forum of Theodosius 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.73，全街区 0.87
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nangang_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
+
+## 四、线上
+- ✅ index.html —— 一致
+- ✅ scene.json —— 一致
+- ✅ city.json —— 一致
+- ✅ houses.json —— 一致
+- ✅ bare.jpg —— 一致
+- ✅ ng_af40.jpg —— 一致
+- ✅ ng_af50.jpg —— 一致
+- ✅ ng_af60.jpg —— 一致
