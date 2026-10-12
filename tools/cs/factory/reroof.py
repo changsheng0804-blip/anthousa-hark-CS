@@ -11,6 +11,7 @@ from scipy import ndimage as ndi
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 LIV = os.path.join(ROOT, 'docs', 'living')
 PW, PH = 1820, 2048
+PAD_L, PAD_B, ASH_D = int(os.environ.get('PAD_L', 11)), int(os.environ.get('PAD_B', 4)), int(os.environ.get('ASH_D', 10))
 
 
 def main():
@@ -29,20 +30,26 @@ def main():
     for s in fr['structures']:
         if s['geom'] == 'polygon' and s['type'] not in ('district', 'farmland') and s['built'] <= Y and not (s['destroyed'] and s['destroyed'] <= Y):
             kd.polygon([tuple(p) for p in s['pts']], fill=255)
+    # 验收（accept.py）发现：保护区按圆圈和 15 像素外扩，会把火场和粮仓旁边还站着的房子一起「保护」成 AI 的灰和空地。
+    # 改为：公共建筑只外扩 5 像素；火场只保护底账里真正烧掉的那些地块
+    keep = np.asarray(keep.filter(ImageFilter.MaxFilter(PAD_L))) > 0
+    bk = Image.new('L', (PW, PH), 0); bkd = ImageDraw.Draw(bk)
     for h in hs:
         if h[3] == 48 and Y >= 48:
-            p = h[4]; c = np.mean(np.array(p).reshape(-1, 2), 0); kd.ellipse([c[0] - 26, c[1] - 26, c[0] + 26, c[1] + 26], fill=255)
-    keep = np.asarray(keep.filter(ImageFilter.MaxFilter(15))) > 0
+            bkd.polygon([(h[4][i], h[4][i + 1]) for i in range(0, len(h[4]), 2)], fill=255)
+    keepL = keep.copy()   # 公共建筑 + 水：房子不铺进去
+    keep |= ndi.binary_dilation(np.asarray(bk) > 0, iterations=PAD_B)
     # AI 画的火烧地如果比底账里真正烧掉的地块大，多出来的部分不算数
     burnt = Image.new('L', (PW, PH), 0); bd = ImageDraw.Draw(burnt)
     for h in hs:
         if h[3] == 48 and Y >= 48 and Y - 48 < 6:
             bd.polygon([(h[4][i], h[4][i + 1]) for i in range(0, len(h[4]), 2)], fill=255)
     bdist = ndi.distance_transform_edt(~(np.asarray(burnt) > 0))
-    ash_extra = (np.asarray(Image.fromarray(np.uint8(a.mean(2).clip(0,255))).filter(ImageFilter.GaussianBlur(4))) < 95) & (bdist > 24) & ~(b > r + 15)
+    ash_extra = (np.asarray(Image.fromarray(np.uint8(a.mean(2).clip(0,255))).filter(ImageFilter.GaussianBlur(4))) < 95) & (bdist > ASH_D) & ~(b > r + 15)
     ash_extra = ndi.binary_opening(ash_extra, iterations=3)
     blue = (b > r + 15)
     keep |= ndi.binary_dilation(blue, iterations=6)
+    keepL |= ndi.binary_dilation(blue, iterations=6)
 
     # 1) 零件库：AI 画上的每一个屋顶
     lab, n = ndi.label(roof & ~keep)
@@ -92,7 +99,18 @@ def main():
     noise = np.random.default_rng(7).normal(0, 6, a.shape[:2])[..., None]
     ground[erase] += noise[erase]
     canvas = Image.fromarray(ground.clip(0, 255).astype('uint8'))
-    keepimg = im
+    # 保护区先贴回 AI 原画，再铺房子：火场里幸存的房子也照底账铺上（验收发现原来会被灰盖掉）
+    km = Image.fromarray((keep * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(4))
+    canvas = Image.composite(im, canvas, km)
+    # 公共建筑可以从另一张候选「借」：一张画的火场好、另一张画的粮仓对（DONOR=候选图 DONOR_IDS=id,id）
+    if os.environ.get('DONOR'):
+        dn = Image.open(os.environ['DONOR']).convert('RGB').resize((PW, PH), Image.LANCZOS)
+        dm = Image.new('L', (PW, PH), 0); dd = ImageDraw.Draw(dm)
+        for s in fr['structures']:
+            if s['id'] in os.environ.get('DONOR_IDS', '').split(','):
+                dd.polygon([tuple(p) for p in s['pts']], fill=255)
+        dm = dm.filter(ImageFilter.MaxFilter(17)).filter(ImageFilter.GaussianBlur(3))
+        canvas = Image.composite(dn, canvas, dm)
 
     # 3) 按底账铺回每一栋房子（由北往南，南边的压住北边的阴影）
     items = []
@@ -104,7 +122,7 @@ def main():
     placed = 0
     for _, h, P in items:
         c = P.mean(0)
-        if keep[int(min(PH - 1, max(0, c[1]))), int(min(PW - 1, max(0, c[0])))]:
+        if keepL[int(min(PH - 1, max(0, c[1]))), int(min(PW - 1, max(0, c[0])))]:
             continue
         e1, e2 = P[1] - P[0], P[2] - P[1]
         L1, L2 = np.hypot(*e1), np.hypot(*e2)
@@ -126,9 +144,6 @@ def main():
             piece = piece.rotate(-rot, Image.BICUBIC, expand=True); pmI = pmI.rotate(-rot, Image.BICUBIC, expand=True)
         canvas.paste(piece, (int(c[0] - piece.width / 2 + 2), int(c[1] - piece.height / 2 + 2)), pmI)
         placed += 1
-    # 保护区贴回 AI 原画
-    km = Image.fromarray((keep * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(4))
-    canvas = Image.composite(keepimg, canvas, km)
     canvas.save(os.path.join(Q, outn), quality=88)
     print(outn, 'library', len(lib), 'placed', placed)
 

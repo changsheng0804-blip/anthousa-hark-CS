@@ -80,7 +80,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
 <div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>60 年</span></div><input id="yr" type="range" min="1" max="60" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
-<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。干山上另有两百多户人家，由隔壁的街坊讲他们的事（刘线）：故事由 AI 从每户推演出的家庭写出，再由脚本逐条对照底账核对年份、人名、建筑和灾害，对不上的重写。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
+<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、港口、粮仓的位置和每栋房子建成、拆毁的年份，都来自安托萨历史引擎的底账。画面由 AI 依引擎底图绘制：建城 40、50、60 年各一张，再由脚本把画上的每一个屋顶按底账逐栋挪回原位；中间的年份按每栋房子的建成年份从上一张长到下一张。每张画上线前都过一遍自动验收：房子对位、水面、火场范围、公共建筑，逐项和底账核对。每栋房子里的一家人由房子的编号推演出来，同一栋房子永远是同一家人。这是生产线长出来的第二个街区。<br><button class="btn" id="infox">好</button></div>
 
 <div id="intro">
  <div class="bg" id="ibg"></div><div class="veil"></div>
@@ -616,7 +616,7 @@ function glowYear(){const y=$('year');y.classList.add('glow');setTimeout(()=>y.c
 function greet(){say(DAPH,'新来的？水，一个铜子一碗。……第一次来安托萨吧？我叫达芙涅，我爸是运水的。你想先去哪儿？',[['跟着你走走',startTour],['随便敲一扇门',()=>{hush();say(DAPH,'那就去吧。随便点一栋房子，里面的人会告诉你他们是谁。点完了再拨拨年代，看看他们以前是什么样。',[['好',hush]])}],['这座城是怎么长出来的？',()=>{hush();glowYear();say(DAPH,'拨下面那个年代。五十年前，这一片还多半是空地。你看着我，我也会跟着变小。',[['好',hush]])}]])}
 $('daph').onclick=()=>{if(SCENE.id==='xero'){flyTo(DHOME[0],DHOME[1],1.3);openNamed(DAPH);return}flyTo(QUAY[0],QUAY[1],1.4);greet()};
 $('scn').textContent=SCENE.title;$('other').textContent=SCENE.other.label;$('other').onclick=()=>location.href=SCENE.other.url;if(SCENE.next){$('next').style.display='';$('next').textContent=SCENE.next.label;$('next').onclick=()=>location.href=SCENE.next.url}if(SCENE.banner){const b=document.createElement('div');b.className='panel';b.style.cssText='position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:50;padding:22px 30px;text-align:center;max-width:440px;transition:opacity 1s';b.innerHTML=SCENE.banner;document.body.appendChild(b);b.onclick=()=>b.remove();setTimeout(()=>{b.style.opacity=0;setTimeout(()=>b.remove(),1000)},7000)}
-$('info').onclick=()=>$('infobox').style.display='block';$('infox').onclick=()=>$('infobox').style.display='none';
+if(SCENE.info){const ib=$('infobox');ib.innerHTML='<b style="color:var(--gold2)">这是怎么做的</b><br>'+SCENE.info+'<br><button class="btn" id="infox">知道了</button>'}$('info').onclick=()=>$('infobox').style.display='block';$('infox').onclick=()=>$('infobox').style.display='none';$('infox').onclick=()=>$('infobox').style.display='none';
 
 /* ---------- intro ---------- */
 function startIntro(){const ib=$('ibg');requestAnimationFrame(()=>ib.style.opacity=1);const lns=[...document.querySelectorAll('#intro .ln')];

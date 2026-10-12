@@ -24,7 +24,7 @@ def main():
     qid, x0, y0 = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
     keys = [int(k) for k in sys.argv[4:]] or [40, 50, 60]
     w = json.load(open(os.path.join(ROOT, 'world.json')))
-    out = os.path.join(ROOT, 'docs', 'living', qid)
+    out = os.environ.get('GROW_OUT') or os.path.join(ROOT, 'docs', 'living', qid)
     os.makedirs(out, exist_ok=True)
     T = lambda x, y: ((x - x0) * S, (y - y0) * S)
     fr = box(x0 - 2, y0 - 2, x0 + FW + 2, y0 + FH + 2)
