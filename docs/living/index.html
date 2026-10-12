@@ -111,8 +111,8 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.roofs.complet
   if(COMP.pat){ctx.globalAlpha=.33*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
   const list=[];for(let gx=Math.floor((vx0-20)/G);gx<=Math.floor((vx1+20)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+20)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR&&!(h.built===YEAR))list.push(h)}
   ctx.globalAlpha=A;
-  for(const h of list){const g=geomOf(h);ctx.save();ctx.translate(h.cx+.85,h.cy+1);ctx.rotate(g.a);ctx.fillStyle='rgba(40,25,10,.28)';ctx.fillRect(-g.e1*.56,-g.e2*.56,g.e1*1.12,g.e2*1.12);ctx.restore()}
-  for(const h of list){const g=geomOf(h),r=g.r;ctx.save();ctx.translate(h.cx,h.cy);ctx.rotate(g.a);ctx.drawImage(COMP.roofs,r.x,0,r.w,r.h,-g.e1*.56,-g.e2*.56,g.e1*1.12,g.e2*1.12);ctx.restore()}
+  for(const h of list){const g=geomOf(h);ctx.save();ctx.translate(h.cx+1.6,h.cy+2);ctx.rotate(g.a);ctx.fillStyle='rgba(40,25,10,.22)';ctx.fillRect(-g.e1*.5,-g.e2*.5,g.e1,g.e2);ctx.restore()}
+  for(const h of list){const g=geomOf(h),r=g.r;ctx.save();ctx.translate(h.cx,h.cy);ctx.rotate(g.a);ctx.drawImage(COMP.roofs,r.x,0,r.w,r.h,-g.e1*.52,-g.e2*.52,g.e1*1.04,g.e2*1.04);ctx.restore()}
   for(const h of list){const g=geomOf(h);const sn=Math.sin(g.a),cs=Math.cos(g.a);
     if(g.pr&&!inClose(h.cx,h.cy)){const m=g.pr,sc=Math.min(g.e1,g.e2)*1.12*.75/Math.max(m.w,m.h),gap=g.e2*.56+Math.min(g.e1,g.e2)*.45;const x=h.cx-sn*gap,y=h.cy+cs*gap;ctx.drawImage(COMP.props,m.x,0,m.w,m.h,x-m.w*sc/2,y-m.h*sc/2,m.w*sc,m.h*sc)}
     if(g.pp&&per!=='night'&&!inClose(h.cx,h.cy)){const m=g.pp,hh=5.7,ww=m.w/m.h*hh,gap=g.e2*.56+2.6;const x=h.cx+sn*gap,y=h.cy-cs*gap;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,x-ww/2,y-hh,ww,hh)}}
@@ -478,7 +478,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   // smoke
   for(const s of smokes){if(!vis(s.x,s.y,120))continue;const str=per==='morning'||per==='evening'?1:.55;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
   // construction: houses going up this year, public works about to open
-  if(cam.z>=.7){ctx.lineWidth=.9;for(const h of buildingNow){if(!vis(h.cx,h.cy)||inClose(h.cx,h.cy))continue;const p=h.p;ctx.strokeStyle='rgba(120,80,40,.85)';ctx.beginPath();for(let i=0;i<p.length;i+=2){const x=h.cx+(p[i]-h.cx)*2.0,y=h.cy+(p[i+1]-h.cy)*2.0;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
+  if(cam.z>=.7){ctx.lineWidth=.9;const compOn=COMP&&cam.z>=2.6;for(const h of buildingNow){if(compOn){if(vis(h.cx,h.cy)&&!inClose(h.cx,h.cy)){const m=COMP.pm.find(q=>q.k===11)||COMP.pm[0];const sc=7/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h.cx-m.w*sc/2,h.cy-m.h*sc/2,m.w*sc,m.h*sc)}continue}if(!vis(h.cx,h.cy)||inClose(h.cx,h.cy))continue;const p=h.p;ctx.strokeStyle='rgba(120,80,40,.85)';ctx.beginPath();for(let i=0;i<p.length;i+=2){const x=h.cx+(p[i]-h.cx)*2.0,y=h.cy+(p[i+1]-h.cy)*2.0;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
       const r=8;for(let k=-r;k<=r;k+=3){ctx.beginPath();ctx.moveTo(h.cx+k-3,h.cy-r*.6);ctx.lineTo(h.cx+k+3,h.cy+r*.6);ctx.stroke()}
       if(cam.z>=1.5&&per!=='night'){const m=PPL.find(q=>q.k===17);const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+6,h.cy-hh+3,ww,hh)}}
     for(const k in late){const L=late[k];if(!(L.built>YEAR&&L.built<=YEAR+2))continue;const pts=L.p.flat?L.p:L.p;ctx.fillStyle='rgba(140,100,60,.45)';ctx.strokeStyle='rgba(110,70,35,.9)';ctx.beginPath();polyPath(ctx,L.p.flat(),1);ctx.fill();ctx.stroke();
