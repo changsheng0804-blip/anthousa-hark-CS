@@ -762,7 +762,10 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   const SPR={'搬运工':1,'水手':11,'粮商':2,'船匠':17};
   const sp=k=>PPL.find(m=>m.k===k)||PPL[0];
   const Q=C.quay;const dQ=(x,y)=>Math.hypot(x-Q[0],y-Q[1]);
-  const ships=C.ships.map((s,i)=>({...s,i,t0:C.t_in+i*C.t_gap}));
+  /* cs8 再来：船太快。领头的是大船，其余依次跟进；每艘按自己水路的长短走（C.speed 像素/小时） */
+  const plen=P=>{let L=0;for(let k=1;k<P.length;k++)L+=Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);return L};
+  const order=C.ships.map((s,i)=>i).sort((a,b)=>(C.ships[b].main?1:0)-(C.ships[a].main?1:0));
+  const ships=C.ships.map((s,i)=>({...s,i,t0:C.t_in+order.indexOf(i)*C.t_gap,ts:s.path?Math.max(1.2,plen(s.path)/C.speed):C.t_sail}));
   /* cs7 再来：人不能从海里走。heart.py 从底账算出人走的网（陆地 + 港墙顶，水里不能走），存成方向场；每个人沿着它走到码头/港墙 */
   const WK=C.walk;const DIR={0:[-1,0],1:[1,0],2:[0,-1],3:[0,1],4:[-1,-1],5:[1,1],6:[-1,1],7:[1,-1]};
   const cellAt=(f,x,y)=>{const j=Math.floor(y/WK.R),i=Math.floor(x/WK.R);if(j<0||i<0||j>=WK.H||i>=WK.W)return 'w';return f[j*WK.W+i]};
@@ -770,7 +773,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   function trail(f,x,y){/* 从 (x,y) 顺着方向场走到终点；家门口不在网上就找最近的一格 */
     let j=Math.floor(y/WK.R),i=Math.floor(x/WK.R);const at=(j,i)=>j>=0&&i>=0&&j<WK.H&&i<WK.W?f[j*WK.W+i]:'w';
     if(!/[0-7s]/.test(at(j,i))){let best=null;for(let r=1;r<8&&!best;r++)for(let dj=-r;dj<=r;dj++)for(let di=-r;di<=r;di++)if(!best&&/[0-7s]/.test(at(j+dj,i+di)))best=[j+dj,i+di];if(!best)return null;[j,i]=best}
-    const P=[[x,y]];let n=0;while(at(j,i)!=='s'&&n++<2000){const d=DIR[at(j,i)];j+=d[0];i+=d[1];if(n%2===0)P.push([(i+.5)*WK.R,(j+.5)*WK.R])}
+    const P=FLEET_walkable(x,y)?[[x,y]]:[];let n=0;P.push([(i+.5)*WK.R,(j+.5)*WK.R]);while(at(j,i)!=='s'&&n++<2000){const d=DIR[at(j,i)];j+=d[0];i+=d[1];P.push([(i+.5)*WK.R,(j+.5)*WK.R])}
     P.push([(i+.5)*WK.R,(j+.5)*WK.R]);return P}
   FLEET={C,on:false,slow:false,cache:{},ships,msgs:{},lineCache:{}};
   FLEET.active=Y=>Y>=C.from&&dayIdx%3===0;
@@ -787,7 +790,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
         out.push({kind:'kid',h,kid,sp:sp(9),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*4,e[1]+(r()-.5)*4],go:6.6+r()*1.2,back:11+r()*2,ph:r()})}}}
     const tav=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach*1.2&&famAt(household(h),Y).trade==='酒馆老板');
     const R={crowd:out,tav,g:granary(Y)};FLEET.cache[Y]=R;return R};
-  function shipPos(s,c){const u=sm((c-s.t0)/C.t_sail);
+  function shipPos(s,c){const u=sm((c-s.t0)/s.ts);
     if(s.path){const[px,py]=along(s.path,u);const[qx,qy]=along(s.path,Math.min(1,u+.01));let ang=u>=.98?s.ang:Math.atan2(qy-py,qx-px)+Math.PI;let x=px,y=py;   /* 水路是 heart.py 从底账算的 */
       if(s.main&&c>=C.snap&&c<C.hold+.15){const k=c<C.hold?sm((c-C.snap)/(C.hold-C.snap)):1-sm((c-C.hold)/.15);x+=C.drift[0]*k;y+=C.drift[1]*k;ang+=.12*k}return[x,y,ang,u]}
     const w=C.mouth;
@@ -805,8 +808,10 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     if(g&&unload&&(m.trade==='搬运工'||m.trade==='粮商')){const route=[m.spot,...C.route,g.xy];
       if(m.trade==='粮商'){const[x,y,f]=along(route,sm((c-C.hold-.3)*1.5));return[x,y,f,false]}
       const u=((c-C.hold)/1.0+m.ph)%1;const fw=u<.5;const[x,y,f]=along(fw?route:route.slice().reverse(),fw?u*2:(u-.5)*2);return[x,y,f,!fw]}
-    let p=m.spot.slice();if(climax&&m.kind==='work'){const k=sm((c-C.snap)*4)*(1-sm((c-C.hold-.3)*3));p=lerp(p,C.bollard,.35*k)}return[p[0],p[1],false,false]};
+    let p=m.spot.slice();if(climax&&m.kind==='work'){const k=sm((c-C.snap)*4)*(1-sm((c-C.hold-.3)*3));const p2=lerp(p,C.bollard,.35*k);if(FLEET_walkable(p2[0],p2[1]))p=p2}
+    if(!FLEET_walkable(p[0],p[1]))p=m.path[m.path.length-1].slice();return[p[0],p[1],false,false]};
   FLEET.shipPos=(s,c)=>shipPos(s,c);
+  FLEET.tavPeople=h=>{const r2=rng(hash('tv'+h.id));const o=[];for(let k=0;k<7;k++){const a=r2()*6.28,d=9+r2()*9;const x=h.cx+Math.cos(a)*d,y=h.cy+Math.sin(a)*d*.6+4;if(FLEET_walkable(x,y))o.push([x,y])}return o};   /* 酒馆门口挤的人也不下水 */
   function drawBig(x,y,a,s,furl){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.fillStyle='rgba(20,30,40,.25)';ctx.beginPath();ctx.ellipse(1.5*s,2.5*s,15*s,5.5*s,0,0,7);ctx.fill();
     ctx.fillStyle='#4e321d';ctx.beginPath();ctx.ellipse(0,0,15*s,5.2*s,0,0,7);ctx.fill();ctx.fillStyle='#7a5434';ctx.beginPath();ctx.ellipse(0,-.6*s,12.5*s,3.4*s,0,0,7);ctx.fill();
     ctx.fillStyle='#d9c08a';for(let k=-2;k<=2;k++)ctx.fillRect(k*3.6*s-1.2*s,-1.6*s,2.4*s,2.4*s);
@@ -833,7 +838,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     const b=C.bollard;if(c>=C.snap-.05&&c<C.snap+.25)bubble(b[0],b[1]-14,'缆绳断了！');else if(c>=C.snap+.25&&c<C.hold)bubble(b[0]-30,b[1]-14,'快！再扔一根过来！');else if(c>=C.hold&&c<C.hold+.3)bubble(b[0],b[1]-14,'拉住了！');
     // 夜里的酒馆
     if(c>=18.6&&c<23.6){R.tav.forEach((h,j)=>{if(!vis(h.cx,h.cy,60))return;ctx.fillStyle=`rgba(255,170,80,${.28+.08*Math.sin(t*2+j)})`;ctx.beginPath();ctx.arc(h.cx,h.cy,10,0,7);ctx.fill();
-      const r2=rng(hash('tv'+h.id));for(let k=0;k<7;k++){const a=r2()*6.28,d=9+r2()*9;person(sp(k%3?11:2),h.cx+Math.cos(a)*d,h.cy+Math.sin(a)*d*.6+4,t,k+j,k%2)}
+      FLEET.tavPeople(h).forEach(([x,y],k)=>person(sp(k%3?11:2),x,y,t,k+j,k%2));
       if(cam.z>=1.6&&Math.floor(t/5+j)%4===0)bubble(h.cx,h.cy-12,C.tavern[(Math.floor(t/5)+j)%C.tavern.length])})}
     // 消息栏：照钟点报
     for(const[hh,msg]of C.ticker){const k=Y+':'+dayIdx+':'+hh;if(c>=hh&&c<hh+.4&&!FLEET.msgs[k]){FLEET.msgs[k]=1;$('tk').textContent=msg;$('ticker').style.opacity=1;tkT=14}}};

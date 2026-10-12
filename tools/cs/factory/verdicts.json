@@ -71,6 +71,17 @@
    "date": "2026-10-12",
    "what": "人走的网：陆地+港墙顶，水里不能走",
    "machine": "pass",
+   "owner": "再来",
+   "issue": "还有人在海里走（底账的岸和画上的岸对不上）；船太快",
+   "check": "check_fleet.js 人只走底账和画都是陆地的格子、船速上限",
+   "script": "tools/cs/check_fleet.js"
+  },
+  {
+   "v": "cs9",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "人走的网同时服从底账和画；船按水路长短慢慢进港",
+   "machine": "pass",
    "owner": "待评"
   }
  ]

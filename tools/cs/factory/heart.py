@@ -76,6 +76,15 @@ def main():
     for s in fr['structures']:
         if s['type'] == 'road' and standing(s, Y): dr.line([(x / R, y / R) for x, y in s['pts']], fill=255, width=4)
     house = np.asarray(hm) > 0; road = np.asarray(rm) > 0
+    # 画上的水：每张年代画都算一遍（页面在两张画之间渐变，两张都得对）。人只走底账和画都算陆地的地方，船只走两边都是水的地方
+    pw = np.zeros((GH, GW), bool); pall = np.ones((GH, GW), bool)
+    for k in sc['keys']:
+        a_ = np.asarray(Image.open(os.path.join(Q, k[1])).convert('RGB').resize((GW, GH), Image.BOX)).astype(int)
+        wk = (a_[..., 2] > a_[..., 0] + 15) & (a_[..., 2] > a_[..., 1] - 10)
+        wk = ndi.binary_fill_holes(ndi.binary_closing(wk, iterations=1))   # 画上的船、浪花四面是水，不算陆地
+        pw |= ndi.binary_opening(wk, iterations=1); pall &= wk
+    band = np.zeros((GH, GW), bool); band[:30], band[-30:], band[:, :30], band[:, -30:] = True, True, True, True   # 画边有晕边，图边一圈只看底账
+    shipwater = water & (ndi.binary_erosion(pall, iterations=2) | band)
     clear = ndi.distance_transform_edt(water) * R          # 水面离岸多远（像素）
     shore_d = ndi.distance_transform_edt(landm) * R        # 陆地离水多远
     # 3. 粮仓：底账里最大的那座（页面上按年份换）
@@ -86,7 +95,7 @@ def main():
     gj, gi = int(gc[1] / R), int(gc[0] / R)
     Dg, Pg = dijkstra(lc, [(gj, gi)])
     # 5. 水上寻路：从图边的水出发，离岸越近越贵（大船不贴岸走）
-    wc = np.where(water, 1 + 40.0 / np.maximum(clear, 4), np.inf)
+    wc = np.where(shipwater, 1 + 40.0 / np.maximum(clear, 4), np.inf)
     edge = [(j, i) for j in range(GH) for i in (0, GW - 1) if water[j, i]] + [(j, i) for i in range(GW) for j in (0, GH - 1) if water[j, i]]
     # 港墙：底账的港口多边形四周是墙，船只能从口子进；口子开在离粮仓最近、外面是开阔水面的那段墙上（陆上的墙不算）
     wallm = Image.new('L', (GW, GH), 0); dwm = ImageDraw.Draw(wallm); gates = []
@@ -166,7 +175,8 @@ def main():
     def pool(mk, f): return np.array(Image.fromarray(mk.astype('uint8') * 255).resize((W8, H8), Image.BOX)) / 255.0
     land8 = pool(landm, 0) >= 0.5; wall8 = pool(wallA, 0) > 0.05
     road8 = pool(road, 0) > 0.2; house8 = pool(house, 0) > 0.5
-    walk8 = land8 | wall8
+    pw8 = pool(pw, 0) > 0.3
+    walk8 = (land8 | wall8) & ~pw8
     cost8 = np.where(walk8, np.where(road8 | wall8, 1.0, np.where(house8, 6.0, 2.0)), np.inf)
     def field(srcs):
         global GH, GW

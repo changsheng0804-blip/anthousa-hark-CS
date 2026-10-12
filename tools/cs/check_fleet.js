@@ -14,12 +14,13 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
   console.log('Y',Y,'crowd',R.crowd.length,'kids',R.crowd.filter(m=>m.kind==='kid').length,'taverns',R.tav.length,'granary',R.g&&R.g.id)}
 /* cs7 再来（所有者：人从海里走过去）→ 硬规则：人只走在陆地和港墙上，船只在水上 */
 {const W=F.FLEET.C.walk;const ch=(x,y)=>{const j=Math.floor(y/W.R),i=Math.floor(x/W.R);return j<0||i<0||j>=W.H||i>=W.W?'w':W.quay[j*W.W+i]};
- const dry=(x,y)=>{for(const[dx,dy]of[[0,0],[6,0],[-6,0],[0,6],[0,-6]]){const c=ch(x+dx,y+dy);if(c!=='w')return true}return false};
+ const dry=(x,y)=>{const c=ch(x,y);return c!=='w'&&c!=='x'};   /* 收紧：本格必须是人走的网（底账和画都是陆地） */
  let wet=0,tot=0,swet=0,stot=0,eg=null;
  for(const Y of [40,50,57,60]){A.setYear(Y);const R=F.FLEET.crowd(Y);
   for(let cl=6;cl<23.5;cl+=.05){for(const m of R.crowd){const q=F.FLEET.pos(m,cl,R.g);if(!q)continue;tot++;if(!dry(q[0],q[1])){wet++;if(!eg)eg=[Y,cl.toFixed(2),m.kind,m.trade,q[0]|0,q[1]|0]}}
    if(process.env.DUMP&&Y===50)for(const m of R.crowd){const q=F.FLEET.pos(m,cl,R.g);if(q)require('fs').appendFileSync(process.env.DUMP,(q[0]|0)+','+(q[1]|0)+','+m.kind+'\\n')}
-   for(const sh of F.FLEET.ships){if(cl<sh.t0)continue;const p=F.FLEET.shipPos(sh,cl);stot++;if(ch(p[0],p[1])!=='w')swet++}}}
+   if(Math.abs(cl-20)<.026)for(const h of R.tav)for(const[x,y]of F.FLEET.tavPeople(h)){tot++;if(!dry(x,y)){wet++;if(!eg)eg=[Y,'tavern',h.id]}}
+   for(const sh of F.FLEET.ships){if(cl<sh.t0)continue;const p=F.FLEET.shipPos(sh,cl);stot++;if(ch(p[0],p[1])!=='w')swet++;if(!F.FLEET.C.speed||F.FLEET.C.speed>450||sh.ts<1.2)swet++   /* cs8 再来：船太快。大船一小时走不过 450 像素（约 30 米格子），整支船队要两三个钟头才进完港 */}}}
  console.log('people in water',wet,'/',tot,eg?JSON.stringify(eg):'','ships on land',swet,'/',stot);if(wet||swet)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
