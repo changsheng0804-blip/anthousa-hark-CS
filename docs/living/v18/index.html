@@ -93,7 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='18';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='18d';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -530,7 +530,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
     for(const st of SN){if(!lv.includes(st.k))continue;const nm=snLabel(st,YEAR);if(!nm)continue;
       for(const a of st.a){if(a[3]>YEAR||!vis(a[0],a[1]))continue;
-        const fs=(st.k==='m'?15:st.k==='s'?13:11.5)/cam.z;ctx.font=`${st.k==='m'?'bold ':''}${fs}px serif`;const tw=ctx.measureText(nm).width;
+        const fs=(st.k==='m'?17:st.k==='s'?15:13.5)/cam.z;ctx.font=`${st.k==='m'?'bold ':''}${fs}px serif`;const tw=ctx.measureText(nm).width;
         const c=Math.abs(Math.cos(a[2])),sn=Math.abs(Math.sin(a[2]));const bw=tw*c+fs*sn,bh=tw*sn+fs*c;const bx=[a[0]-bw/2,a[1]-bh/2,bw,bh];
         if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3]))continue;LB.push(bx);
         ctx.translate(a[0],a[1]);ctx.rotate(a[2]);ctx.lineJoin='round';ctx.lineWidth=3.2/cam.z;ctx.strokeStyle='rgba(246,236,212,.88)';ctx.strokeText(nm,0,0);ctx.fillStyle=st.k==='m'?'rgba(92,40,22,.95)':'rgba(58,40,26,.92)';ctx.fillText(nm,0,0);ctx.rotate(-a[2]);ctx.translate(-a[0],-a[1])}}
