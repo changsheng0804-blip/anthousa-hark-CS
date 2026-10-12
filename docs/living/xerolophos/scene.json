@@ -59,5 +59,6 @@
  "compose": {
   "kit": "kits/hill/"
  },
- "streets": "streets.json"
+ "streets": "streets.json",
+ "junctions": "junctions.json"
 }

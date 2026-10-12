@@ -125,7 +125,8 @@ def rect_mask(poly):
 def try_lot(poly, rank, kind, si):
     cx = sum(p[0] for p in poly) / 4; cy = sum(p[1] for p in poly) / 4
     if not interior(cx, cy, 22) or nobuild(cx, cy): return None
-    rm = rect_mask(poly)
+    sh = [(cx + (x - cx) * 0.9, cy + (y - cy) * 0.9) for x, y in poly]
+    rm = rect_mask(sh)
     if rm is None: return None
     x0, y0, m = rm; h_, w_ = m.shape
     if (road[y0:y0 + h_, x0:x0 + w_] & m).any() or (lotmap[y0:y0 + h_, x0:x0 + w_] & m).any(): return None
@@ -143,13 +144,15 @@ for si in order:
             ux, uy = (bx - ax) / L, (by - ay) / L
             t = random.uniform(0, 4)
             while t < L:
-                wid = random.uniform(11, 17) if s['kind'] != 'main' else random.uniform(13, 19)
-                dep = random.uniform(9, 14) if s['kind'] != 'main' else random.uniform(12, 17)
+                kd = s['kind']
+                shop = kd == 'main' or (kd == 'street' and random.random() < 0.3)
+                if shop: wid = random.uniform(10.5, 13); dep = random.uniform(13, 16)
+                else: wid = random.uniform(11, 17); dep = random.uniform(9, 14)
                 off = s['w'] / 2 + 3 + dep / 2
                 cx = ax + ux * (t + wid / 2) - uy * off * side; cy = ay + uy * (t + wid / 2) + ux * off * side
                 lot = try_lot(rect(cx, cy, ux, uy, wid / 2, dep / 2), 0, s['kind'], si)
-                if lot: lot['door'] = side; lot['fx'] = 1 if (uy * side) < -0.15 else 0; lots.append(lot)
-                t += wid + random.uniform(0.8, 2.2)
+                if lot: lot['t'] = 1 if shop else 0; lot['door'] = side; lot['fx'] = 1 if (uy * side) < -0.15 else 0; lots.append(lot)
+                t += wid + (random.uniform(0.2, 0.6) if shop else random.uniform(0.8, 2.6))
 front = len(lots)
 # rear row (houses reached through yards): fills capacity behind the street fronts
 for L0 in list(lots[:front]):
@@ -164,14 +167,14 @@ for L0 in list(lots[:front]):
         # pick the direction pointing away from the street: the lot must not be nearer the street
         if road[int(min(H - 1, max(0, ny))), int(min(W - 1, max(0, nx)))]: continue
         lot = try_lot(rect(nx, ny, ux, uy, el / 2 - 0.5, dep / 2), 1, 'rear', L0['si'])
-        if lot: lot['fx'] = 1 - L0['fx']; lots.append(lot); break
+        if lot: lot['t'] = 0; lot['fx'] = 1 - L0['fx']; lots.append(lot); break
 print('streets', len(streets), 'front lots', front, 'rear', len(lots) - front, file=sys.stderr)
 
 # ---------------- assign houses ----------------
 G = 40
 grid = {}
 for i, l in enumerate(lots): grid.setdefault((int(l['cx'] // G), int(l['cy'] // G)), []).append(i)
-KP = {'main': -10, 'street': -5, 'cross': -2, 'lane': 0, 'rear': 6}
+KP = {'main': -45, 'street': -20, 'cross': -6, 'lane': 0, 'rear': 12}
 for i, l in enumerate(lots):
     gx, gy = int(l['cx'] // G), int(l['cy'] // G)
     l['nb'] = [j for ix in (gx - 1, gx, gx + 1) for iy in (gy - 1, gy, gy + 1) for j in grid.get((ix, iy), []) if j != i and math.hypot(lots[j]['cx'] - l['cx'], lots[j]['cy'] - l['cy']) < 21]
@@ -194,7 +197,7 @@ for h in hs:
                     l = lots[li]
                     if l['z'] != z or not free(l, b, e): continue
                     nb = sum(1 for j in l['nb'] if not free(lots[j], b, b + 1))
-                    dist = math.hypot(l['cx'] - ox, l['cy'] - oy) + l['rank'] * 18 + KP[l['kind']] - 22 * min(nb, 2)
+                    dist = 0.6 * math.hypot(l['cx'] - ox, l['cy'] - oy) + l['rank'] * 18 + KP[l['kind']] - 22 * min(nb, 2)
                     cand.append((dist, li))
         if cand:
             best = min(cand)
@@ -209,7 +212,7 @@ for h in houses:
     hid, dd, b, e, poly = h
     if hid in assigned:
         l = lots[assigned[hid]]
-        newH.append([hid, dd, b, e, [round(c, 1) for p in l['p'] for c in p], l['fx']])
+        newH.append([hid, dd, b, e, [round(c, 1) for p in l['p'] for c in p], l['fx'], l['t']])
     elif hid in far:
         continue  # dropped: no room on any street (counted)
     else:
@@ -237,6 +240,30 @@ for s_ in streets:
                             if math.hypot(hx - mx, hy - my) < s_['w'] / 2 + 16: y = min(y, hb)
                 if y == 999: continue
             outS.append([round(x1, 1), round(y1, 1), round(x2, 1), round(y2, 1), s_['w'], k, max(y, -99)])
+# junctions: where two different streets meet; wells, stalls, ovens grow there
+cell = {}
+for si_, s_ in enumerate(streets):
+    for (ax, ay), (bx, by) in zip(s_['pts'][:-1], s_['pts'][1:]):
+        L = math.hypot(bx - ax, by - ay)
+        for j in range(int(L // 3) + 1):
+            x = ax + (bx - ax) * j / max(1, L // 3); y = ay + (by - ay) * j / max(1, L // 3)
+            cell.setdefault((int(x // 10), int(y // 10)), set()).add(si_)
+jc = []
+for (cx_, cy_), ss in cell.items():
+    if len(ss) >= 2:
+        x, y = cx_ * 10 + 5, cy_ * 10 + 5
+        if all(math.hypot(x - a, y - b) > 40 for a, b in jc): jc.append((x, y))
+segy = {}
+for q in outS: segy.setdefault((int(q[0] // 30), int(q[1] // 30)), []).append(q)
+JU = []
+for x, y in jc:
+    ys = [q[6] for ix in (int(x // 30) - 1, int(x // 30), int(x // 30) + 1) for iy in (int(y // 30) - 1, int(y // 30), int(y // 30) + 1) for q in segy.get((ix, iy), []) if q[5] != 'm' and math.hypot(q[0] - x, q[1] - y) < 25]
+    if len(ys) < 3: continue
+    yy = sorted(ys)[min(len(ys) - 1, 2)] + 2  # a few years after the lanes fill in
+    r = random.random(); kind = 'well' if r < .45 else 'stall' if r < .8 else 'oven'
+    JU.append([round(x), round(y), yy, kind])
+json.dump(JU, open(X + 'junctions.json', 'w'))
+print('junctions', len(JU), file=sys.stderr)
 D2 = dict(D); D2['houses'] = newH
 json.dump(D2, open(X + 'houses.json', 'w'), separators=(',', ':'))
 json.dump(outS, open(X + 'streets.json', 'w'), separators=(',', ':'))

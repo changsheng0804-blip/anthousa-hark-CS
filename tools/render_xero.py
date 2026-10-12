@@ -12,6 +12,9 @@ OLD = json.load(open(X + 'houses_v12.json'))['houses']
 S = json.load(open(X + 'streets.json'))
 K = X + 'kits/hill/'
 sheet = Image.open(K + 'houses.webp').convert('RGBA'); HM = json.load(open(K + 'houses.json'))
+shops = Image.open(K + 'shops.webp').convert('RGBA'); SM = json.load(open(K + 'shops.json'))
+props = Image.open(K + 'props.webp').convert('RGBA'); PM = {m['k']: m for m in json.load(open(K + 'props.json'))}
+JU = json.load(open(X + 'junctions.json'))
 orig = {k: Image.open(X + f'xero_af{k}_v12.jpg').convert('RGB') for k in (40, 50, 60)}
 
 def hsh(n, k=0):
@@ -66,7 +69,9 @@ cache = {}
 def sprite(k, w, h):
     key = (k, w, h)
     if key not in cache:
-        mm = HM[k]; cache[key] = sheet.crop((mm['x'], 0, mm['x'] + mm['w'], mm['h'])).resize((w, h), Image.LANCZOS)
+        if k[0] == 'p': mm = PM[k[1]]; src = props
+        else: mm = (SM if k[0] else HM)[k[1]]; src = shops if k[0] else sheet
+        cache[key] = src.crop((mm['x'], 0, mm['x'] + mm['w'], mm['h'])).resize((w, h), Image.LANCZOS)
     return cache[key]
 
 SS = 2  # supersample
@@ -83,14 +88,20 @@ def render(Y):
     sh = Image.new('RGBA', big.size, (0, 0, 0, 0)); sd = ImageDraw.Draw(sh)
     items = []
     for hh_ in HS:
-        hid, dd, b, e, p = hh_[:5]; fx = hh_[5] if len(hh_) > 5 else 0
+        hid, dd, b, e, p = hh_[:5]; fx = hh_[5] if len(hh_) > 5 else 0; ty = hh_[6] if len(hh_) > 6 else 0
         if not (b <= Y < e): continue
         xs = p[0::2]; ys = p[1::2]; cx = sum(xs) / 4; cy = sum(ys) / 4
         bw = max(xs) - min(xs); bh = max(ys) - min(ys)
-        k = int(hsh(hid) * len(HM)); mm = HM[k]
-        ar = math.hypot(p[0]-p[2], p[1]-p[3]) * math.hypot(p[2]-p[4], p[3]-p[5]); w = math.sqrt(ar) * 1.8; hh = w * mm['h'] / mm['w']; by = cy + bh * .5 + hh * .18
-        items.append((by, cx, w, hh, k, b == Y, fx))
+        SH = SM if ty else HM; k = int(hsh(hid) * len(SH)); mm = SH[k]
+        ar = math.hypot(p[0]-p[2], p[1]-p[3]) * math.hypot(p[2]-p[4], p[3]-p[5]); w = math.sqrt(ar) * (1.55 if ty else 1.8); hh = w * mm['h'] / mm['w']; by = cy + bh * .5 + hh * .18
+        items.append((by, cx, w, hh, (ty, k), b == Y, fx))
         sd.ellipse([(cx + 2 - w * .52) * SS, (by - hh * .22 - hh * .3) * SS, (cx + 2 + w * .52) * SS, (by - hh * .22 + hh * .3) * SS], fill=(50, 32, 14, 56))
+    for jx, jy, jyr, kind in JU:
+        if jyr > Y: continue
+        ks = {'well': [(16, 0, 0, 8), (15, 6, 3, 6)], 'stall': [((12 if (jx + jy) % 2 else 17), 0, 0, 8)], 'oven': [(0, 0, 0, 8)]}[kind]
+        for pk, dx, dy, sz in ks:
+            mm = PM[pk]; sc = sz / max(mm['w'], mm['h'])
+            items.append((jy + dy + 2, jx + dx, mm['w'] * sc, mm['h'] * sc, ('p', pk), False, 0))
     big.alpha_composite(sh)
     items.sort()
     for by, cx, w, hh, k, new, fx in items:
