@@ -162,13 +162,13 @@ def compare(q, fix):
         hp = os.path.join(HERE, 'heart.py')
         r = sh(sys.executable, hp, q, '--json')
         try:
-            now_ = json.loads(r.stdout.strip().splitlines()[-1]); same = all(sc['fleet'].get(k) == v for k, v in now_.items())
+            now_ = json.loads(r.stdout.strip().splitlines()[-1]); cr = json.load(open(os.path.join(LIV, q, 'city.json'))).get('roads'); same = all((cr == v) if k == '_roads' else (sc['fleet'].get(k) == v) for k, v in now_.items())
         except Exception:
             now_, same = None, False
         if not same and FIX and now_ is not None:
             sh(sys.executable, hp, q); sc = json.load(open(os.path.join(LIV, q, 'scene.json'))); same = True
             rec(S, '--fix：心跳位置按最新底账重算', True)
-        rec(S, '心跳的位置是从底账算的（泊位、水路、扛包路线）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
+        rec(S, '心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
     # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
     if sc.get('fleet'):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})

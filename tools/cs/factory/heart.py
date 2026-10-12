@@ -192,7 +192,7 @@ def main():
             r_ = []
             for i in range(W8):
                 if not walk8[j, i]: r_.append('w' if not land8[j, i] else 'x')
-                elif not np.isfinite(D[j, i]): r_.append('x')
+                elif not np.isfinite(D[j, i]): r_.append('u')   # 能走、只是走不到码头
                 elif Pp[j, i][0] < 0: r_.append('s')
                 else: r_.append(dirs[(Pp[j, i][0] - j, Pp[j, i][1] - i)])
             rows.append(''.join(r_))
@@ -215,11 +215,31 @@ def main():
     dv.rectangle([bol[0] - 6, bol[1] - 6, bol[0] + 6, bol[1] + 6], fill=(255, 255, 255))
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True); base.resize((910, 1024)).save(os.path.join(HERE, 'out', f'{q}_heart.jpg'), quality=85)
     print('gates', [list(map(int, g)) for g in gates]); print(json.dumps({k: v for k, v in out.items() if k not in ('ships', 'walk')}, ensure_ascii=False)); print('ships', [(s['at'], len(s['path'])) for s in ships])
+    # 12. 街：城里走动的人和摊子沿 city.json 的 roads 走。roads 也从底账长：已建的路，切掉落在水里（底账或画）的那几截
+    croads = []
+    for st in fr['structures']:
+        if st['type'] != 'road' or not standing(st, Y): continue
+        run = []
+        P = st['pts']
+        for a_, b_ in zip(P, P[1:]):
+            n = max(1, int(math.hypot(b_[0] - a_[0], b_[1] - a_[1]) / 8))
+            for t in range(n):
+                x, y = a_[0] + (b_[0] - a_[0]) * t / n, a_[1] + (b_[1] - a_[1]) * t / n
+                j, i = math.floor(y / R8), math.floor(x / R8)
+                ok_ = 0 <= j < H8 and 0 <= i < W8 and walk8[j, i]
+                if ok_: run.append((x, y))
+                else:
+                    if len(run) >= 6: croads.append((st['id'], run))
+                    run = []
+        if len(run) >= 6: croads.append((st['id'], run))
+    city_roads = [{'id': f'{i}' if k == 0 else f'{i}_{k}', 'pts': [[int(x), int(y)] for x, y in rdp(r_, 2)]} for k, (i, r_) in enumerate(croads)]
     if '--json' in sys.argv:
-        print(json.dumps(out, ensure_ascii=False)); return
+        print(json.dumps({**out, '_roads': city_roads}, ensure_ascii=False)); return
     if '--dry' not in sys.argv:
         for k in ('enter', 'mouth'): C.pop(k, None)
         C.update(out); json.dump(sc, open(os.path.join(Q, 'scene.json'), 'w'), ensure_ascii=False)
+        cj = json.load(open(os.path.join(Q, 'city.json'))); cj['roads'] = city_roads
+        json.dump(cj, open(os.path.join(Q, 'city.json'), 'w'), ensure_ascii=False); print('roads', [(r_['id'], len(r_['pts'])) for r_ in city_roads])
 
 
 if __name__ == '__main__':

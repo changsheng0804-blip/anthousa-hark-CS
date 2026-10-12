@@ -82,6 +82,17 @@
    "date": "2026-10-12",
    "what": "人走的网同时服从底账和画；船按水路长短慢慢进港",
    "machine": "pass",
+   "owner": "再来",
+   "issue": "街上的人还在海里走：city.json 的路是别的街区抄来的",
+   "check": "check_fleet.js 街的每个点都在人走的网上",
+   "script": "tools/cs/check_fleet.js"
+  },
+  {
+   "v": "cs10",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "街从底账长、切掉水里的几截；街上的人和摊子不下水",
+   "machine": "pass",
    "owner": "待评"
   }
  ]
