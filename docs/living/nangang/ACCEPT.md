@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 43 / 43
+通过 35 / 36
 
 
 ## 一、拉取
@@ -28,6 +28,13 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ nangang ⇄ xerolophos 来回都能走
+- ❌ 粮脉与底账、敲门卡一致 —— 1:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/workspace/work/ah/tools/cs/check_vein.js' ]
+}
+
+Node.js v22.23.3
+  → 修：看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD
 
 ## 三、画面
 - ✅ 40 年 房子对位 —— 0.886（命中 0.869 / 空地干净 0.904）
@@ -43,13 +50,3 @@
 - ✅ 60 年 Horrea Alexandrina 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.87，全街区 0.87
 - ✅ 60 年 Forum of Theodosius 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.73，全街区 0.87
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nangang_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ ng_af40.jpg —— 一致
-- ✅ ng_af50.jpg —— 一致
-- ✅ ng_af60.jpg —— 一致
