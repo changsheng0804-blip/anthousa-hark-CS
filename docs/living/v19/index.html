@@ -93,20 +93,20 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='19';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='19b';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
 const W=1820,H=2048;
-const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
+const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(vv(f)).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
-const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
+const SCENES=await fetch(vv('scenes.json')).then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
-let SN=SCENE.streetnames?await fetch(SCENE.streetnames).then(r=>r.ok?r.json():[]):[];
+let SN=SCENE.streetnames?await fetch(vv(SCENE.streetnames)).then(r=>r.ok?r.json():[]):[];
 function snName(st,Y){for(const r of st.r)if(r[1]<=Y&&Y<r[2])return r;return null}
 function snLabel(st,Y){const r=snName(st,Y);if(!r)return null;const i=st.r.indexOf(r);return (i>0&&Y-r[1]<4)?r[0]+'（原'+st.r[i-1][0]+'）':r[0]}
 function streetAt(x,y,Y,maxd=45){let b=null,bd=maxd*maxd;for(const st of SN){if(!snName(st,Y)||st.y>Y)continue;const p=st.p;for(let i=0;i+1<p.length;i++){const ax=p[i][0],ay=p[i][1],dx=p[i+1][0]-ax,dy=p[i+1][1]-ay;const t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy+1e-9)));const ex=x-ax-t*dx,ey=y-ay-t*dy,d=ex*ex+ey*ey;if(d<bd){bd=d;b=st}}}return b?snLabel(b,Y):null}
-let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(K+f).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(SCENE.junctions).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(SCENE.streets).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
+let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(vv(K+f)).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(vv(SCENE.junctions)).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(vv(SCENE.streets)).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
 const HWALL=[[228,212,182],[216,194,156],[238,228,206],[204,176,136],[224,204,172],[210,200,184]],HROOF=[[186,94,60],[172,86,54],[198,112,70],[160,80,52],[180,102,66],[150,96,72]];
 const shd=(c,k)=>`rgb(${Math.min(255,c[0]*k|0)},${Math.min(255,c[1]*k|0)},${Math.min(255,c[2]*k|0)})`;
@@ -143,8 +143,8 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
     else if(t===3){const q=g,m=COMP.pm.find(z=>z.k===q[0]);if(m){const sc=q[3]/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h[0]+q[1]-m.w*sc/2,by-2-m.h*sc,m.w*sc,m.h*sc)}}
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
-const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
-const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
+const STORIES=await fetch(vv('stories.json')).then(r=>r.ok?r.json():{}).catch(()=>({}));
+const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f+(f.includes('?')?'':'?v='+BUILD)}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
