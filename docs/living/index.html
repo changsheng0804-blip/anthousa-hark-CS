@@ -99,6 +99,7 @@ const $=id=>document.getElementById(id);
 const W=1820,H=2048;
 const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
+const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
@@ -384,7 +385,7 @@ $('ystat').textContent=`这一角 ${houses.filter(h=>h.built<=50&&h.destroyed>50
 
 /* ---------- ticker ---------- */
 const TK={morning:['米利翁门开始发面包','一艘特罗阿德的粮船进了港','圣伊琳娜的晨钟响了','运水人挑着罐子往山坡上走'],day:['银钱商在柱廊下吵了起来','一个亚历山大里亚来的修士在广场上布道','卸粮工在粮仓前排成了长队','有人在大道上丢了一头驴'],race:['蓝党赢下第三场','绿党的人把帽子扔上了跑道','竞技场的吼声隔着三条街都听得见'],evening:['一支婚礼队伍举着火把走过大道','阿纳斯塔西娅门口又挤满了人','酒馆里有人说皇帝在东方打了败仗'],night:['打更人喊：小心火烛','金角湾上只剩几盏船灯','卫城的守夜兵点起了火盆']};
-let tkT=0;function tick(){const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
+let tkT=0;$('ticker').style.cursor='pointer';$('ticker').onclick=()=>{if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock<tkScene.h[1])flyTo(tkScene.at[0],tkScene.at[1]-20,2.2)};function tick(){if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock>=tkScene.h[0]&&clock<tkScene.h[1])return;tkScene=null;const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
 
 /* ---------- sound (synthesized) ---------- */
 let AC=null,master,sea,crowd,crowdF,roar,soundOn=false;
@@ -440,7 +441,7 @@ function grade(t){ // returns [color, alpha]
   if(t<4.5||t>=21)return['rgba(12,22,58,',.55];if(t<6)return['rgba(255,150,90,',.25*(1-(t-4.5)/1.5)+.1];if(t<8)return['rgba(255,190,120,',.12*(1-(t-6)/2)];
   if(t<16)return['rgba(0,0,0,',0];if(t<18.5)return['rgba(255,170,70,',.18*(t-16)/2.5];if(t<21)return['rgba(30,30,80,',.18+.37*(t-18.5)/2.5];return['rgba(12,22,58,',.55]}
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
-  clock=(clock+dt*speed*24/DAY)%24;const per=periodOf(clock);race.on=has('hippodrome')&&clock>=13&&clock<17;
+  clock=(clock+dt*speed*(sceneSlow?.3:1)*24/DAY)%24;const per=periodOf(clock);race.on=has('hippodrome')&&clock>=13&&clock<17;
   const hr=Math.floor(clock);if(hr!==bellHour){bellHour=hr;if(hr===6||hr===18){const d=Math.min(dist(cam.x,cam.y,LM.church_peace.xy[0],LM.church_peace.xy[1]),dist(cam.x,cam.y,LM.church_megale.xy[0],LM.church_megale.xy[1]));const v=.06+.16*clamp(1-d/1200,0,1);for(let k=0;k<5;k++)setTimeout(()=>bell(v,hr===6?294:262),k*1700)}
     if(hr===13)race.score='蓝 0 · 绿 0 · 红 0 · 白 0';}
   if(race.on&&Math.random()<dt*.05){const s=race.score.match(/\d+/g).map(Number);s[Math.floor(Math.random()*4)]++;race.score=`蓝 ${s[0]} · 绿 ${s[1]} · 红 ${s[2]} · 白 ${s[3]}`}
@@ -510,18 +511,40 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     if(sel&&sel.kind==='house'){const h=sel.hh.h;ctx.strokeStyle='#ffe29a';ctx.lineWidth=2.5/cam.z;ctx.beginPath();polyPath(ctx,h.p,2.4);ctx.stroke()}}
   else if(sel&&sel.kind==='house'){const h=sel.hh.h;ctx.strokeStyle='#ffe29a';ctx.lineWidth=2.5/cam.z;ctx.beginPath();polyPath(ctx,h.p,2.4);ctx.stroke()}
   // named characters
-  for(const P of NAMED){let w=P.where(YEAR);if(!w||!isPresent(P))continue;if(P===DAPH&&YEAR===50&&SCENE.id!=='xero')w=daphPos;const r=15/Math.max(cam.z,.6);
+  sceneDaph=null;const scDraw=drawScenes(t,vis);
+  for(const P of NAMED){let w=P.where(YEAR);if(!w||!isPresent(P))continue;if(P===DAPH&&YEAR===50&&SCENE.id!=='xero')w=daphPos;if(P===DAPH&&sceneDaph)w=sceneDaph;const r=15/Math.max(cam.z,.6);
     ctx.save();ctx.beginPath();ctx.arc(w[0],w[1],r,0,7);ctx.closePath();ctx.fillStyle='#000';ctx.fill();ctx.clip();ctx.drawImage(P.img,w[0]-r,w[1]-r,2*r,2*r);ctx.restore();
     const p=.5+.5*Math.sin(t*3);ctx.strokeStyle=`rgba(255,215,120,${.6+.4*p})`;ctx.lineWidth=2.5/Math.max(cam.z,.6);ctx.beginPath();ctx.arc(w[0],w[1],r+2/cam.z,0,7);ctx.stroke();
     if(cam.z>.8){ctx.font=`${12/cam.z}px serif`;ctx.fillStyle='rgba(20,17,13,.8)';const tw=ctx.measureText(P.name).width;ctx.fillRect(w[0]-tw/2-3/cam.z,w[1]+r+3/cam.z,tw+6/cam.z,16/cam.z);ctx.fillStyle='#f0d79a';ctx.fillText(P.name,w[0]-tw/2,w[1]+r+15/cam.z)}}
+  scDraw();
   updateSound();
   tkT-=dt;if(tkT<0){tkT=12;tick()}
   if(sel&&Math.floor(now/4000)!==Math.floor((now-dt*1000)/4000)&&sel.kind!=='house')renderCard();
   requestAnimationFrame(frame)}
+function homeOf(id){const h=houseById(id);return h?[h.cx,h.cy]:null}
+function drawScenes(t,vis){const bubbles=[];let started=null;sceneSlow=false;
+  for(const S of SCENES){if(YEAR<S.y[0]||YEAR>S.y[1]||clock<S.h[0]||clock>=S.h[1])continue;
+    const u=(clock-S.h[0])/(S.h[1]-S.h[0]);const walkIn=.18,walkOut=.88;const key=S.where+YEAR+S.h[0];if(key!==lastSceneKey&&u<.5){started=S;lastSceneKey=key}
+    const n=S.cast.length;const pos={};
+    S.cast.forEach(([id,name,k,from],i)=>{let hm=homeOf(from)||S.at;const a=(i/n)*Math.PI*2+.6,spot=[S.at[0]+Math.cos(a)*7,S.at[1]+Math.sin(a)*4];let q=u<walkIn?u/walkIn:u>walkOut?1-(u-walkOut)/(1-walkOut):1;q=q*q*(3-2*q);const x=hm[0]+(spot[0]-hm[0])*q,y=hm[1]+(spot[1]-hm[1])*q;pos[id]=[x,y];
+      if(id==='daph'){sceneDaph=[x,y];return}
+      if(cam.z>=.9){const m=PPL.find(z=>z.k===k)||PPL[0];const hh=11,ww=m.w/m.h*hh;const bob=(q<1&&q>0)?Math.abs(Math.sin(t*8+i))*1:0;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,x-ww/2,y-hh-bob,ww,hh);
+        if(cam.z>=1.4){ctx.font=`${10/cam.z}px serif`;const tw=ctx.measureText(name).width;ctx.fillStyle='rgba(20,17,13,.7)';ctx.fillRect(x-tw/2-2/cam.z,y+1/cam.z,tw+4/cam.z,12/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(name,x-tw/2,y+10/cam.z)}}});
+    if(u>walkIn&&u<walkOut){const L=S.lines.length;const li=Math.min(L-1,Math.floor((u-walkIn)/(walkOut-walkIn)*L));const [who,txt]=S.lines[li];if(cam.z>=.9&&vis(S.at[0],S.at[1]))sceneSlow=true;bubbles.push({p:pos[who]||S.at,txt,S,who:(S.cast.find(c=>c[0]===who)||[0,''])[1]})}
+    else if(cam.z<.9){bubbles.push({p:S.at,txt:null,S})}}
+  if(started){tkScene=started;$('tk').textContent=started.where+'，有人在说话 · 点这里去听';$('ticker').style.opacity=1;tkT=Math.max(tkT,10)}
+  return ()=>{for(const b of bubbles){const [x,y]=b.p;const pulse=.5+.5*Math.sin(t*4);
+    if(!b.txt||cam.z<.9){const r=7/cam.z;ctx.fillStyle=`rgba(255,240,210,${.75+.25*pulse})`;ctx.beginPath();ctx.ellipse(x,y-22/cam.z,r*1.4,r,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(x-3/cam.z,y-16/cam.z);ctx.lineTo(x,y-10/cam.z);ctx.lineTo(x+2/cam.z,y-16/cam.z);ctx.fill();ctx.fillStyle='#5a3a22';for(let k=-1;k<=1;k++){ctx.beginPath();ctx.arc(x+k*4/cam.z,y-22/cam.z,1.2/cam.z,0,7);ctx.fill()}continue}
+    const fs=13/cam.z,pad=6/cam.z;ctx.font=`${fs}px serif`;const head=b.who?b.who+'：':'';const tw=Math.min(ctx.measureText(head+b.txt).width,240/cam.z);
+    const lines=[];{let cur='';for(const ch of head+b.txt){if(ctx.measureText(cur+ch).width>240/cam.z){lines.push(cur);cur=ch}else cur+=ch}lines.push(cur)}
+    const bw=tw+pad*2,bh=lines.length*fs*1.35+pad*1.6,bx=x-bw/2,by=y-24/cam.z-bh;
+    ctx.fillStyle='rgba(250,242,224,.96)';ctx.strokeStyle='rgba(120,85,40,.9)';ctx.lineWidth=1/cam.z;ctx.beginPath();ctx.roundRect?ctx.roundRect(bx,by,bw,bh,5/cam.z):ctx.rect(bx,by,bw,bh);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x-4/cam.z,by+bh);ctx.lineTo(x,y-13/cam.z);ctx.lineTo(x+4/cam.z,by+bh);ctx.fill();
+    ctx.fillStyle='#2a1d10';lines.forEach((l,i)=>{if(i===0&&head){ctx.fillStyle='#8a5a1e';ctx.fillText(head,bx+pad,by+pad+fs*(i+.95));const hw=ctx.measureText(head).width;ctx.fillStyle='#2a1d10';ctx.fillText(l.slice(head.length),bx+pad+hw,by+pad+fs*(i+.95))}else ctx.fillText(l,bx+pad,by+pad+fs*1.35*i+fs*.95)})}}}
 function qp(th,mx,my,u){const a=(1-u)*(1-u),b=2*u*(1-u),c=u*u;return[a*th.fx+b*mx+c*th.x,a*th.fy+b*my+c*th.y]}
 function drawQ(th,mx,my,k){ctx.beginPath();ctx.moveTo(th.fx,th.fy);const N=24;for(let i=1;i<=N*k;i++){const q=qp(th,mx,my,i/N);ctx.lineTo(q[0],q[1])}ctx.stroke()}
 requestAnimationFrame(frame);
-window.__anth={household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
+window.__anth={cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
 })();
 </script>
 </body>
