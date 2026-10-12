@@ -1,0 +1,87 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "坡上的第二口池子"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_carriers",
+    "type": "road",
+    "name": "Carriers' Steps",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       440.0,
+       463.0
+      ],
+      [
+       440.0,
+       428.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A stepped lane from the Mese straight up the middle of the hill, so a carrier no longer threads between houses with a full jar.",
+   "year": 62
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "cistern_slope",
+    "type": "cistern",
+    "name": "Second Cistern of the Water-Carriers",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       437.0,
+       422.5
+      ],
+      [
+       443.0,
+       422.5
+      ],
+      [
+       443.0,
+       427.5
+      ],
+      [
+       437.0,
+       427.5
+      ]
+     ]
+    },
+    "label": "Carriers II",
+    "dna": {
+     "motif": "cistern",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "The water-carriers' first cistern (AF 54) sits at the foot of the hill and the queue there runs till dark; the families of the upper slope pool their coppers again for a second cistern at the head of the new steps.",
+   "year": 62
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "cistern_slope",
+     "reason": "no road within 25 units; nobody could reach it",
+     "fix": "the Carriers' Steps are listed first, so the lane exists when the cistern is judged"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "城外的砖礼拜堂"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "church_arian_brick",
+    "type": "church",
+    "name": "Arian Church outside the Gate",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       391.0,
+       464.0
+      ],
+      [
+       397.0,
+       464.0
+      ],
+      [
+       397.0,
+       468.0
+      ],
+      [
+       391.0,
+       468.0
+      ]
+     ]
+    },
+    "label": "Arian church",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 1,
+     "scale": "civic"
+    }
+   },
+   "why": "For ten years the Arians of the hill have prayed in a timber yard beyond the wall, and their priests will not come into the city even to bless a sick child. They raise a small brick church outside the Founder's gate.",
+   "year": 64
+  }
+ ],
+ "review": []
+}

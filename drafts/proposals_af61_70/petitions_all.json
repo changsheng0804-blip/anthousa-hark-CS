@@ -1,0 +1,273 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "干山上的请愿"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_carriers",
+    "type": "road",
+    "name": "Carriers' Steps",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       440.0,
+       463.0
+      ],
+      [
+       440.0,
+       428.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A stepped lane from the Mese straight up the middle of the hill, so a carrier no longer threads between houses with a full jar.",
+   "year": 62
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "cistern_slope",
+    "type": "cistern",
+    "name": "Second Cistern of the Water-Carriers",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       437.0,
+       422.5
+      ],
+      [
+       443.0,
+       422.5
+      ],
+      [
+       443.0,
+       427.5
+      ],
+      [
+       437.0,
+       427.5
+      ]
+     ]
+    },
+    "label": "Carriers II",
+    "dna": {
+     "motif": "cistern",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "civic"
+    }
+   },
+   "why": "The water-carriers' first cistern (AF 54) sits at the foot of the hill and the queue there runs till dark; the families of the upper slope pool their coppers again for a second cistern at the head of the new steps.",
+   "year": 62
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_exo",
+    "type": "road",
+    "name": "Lane of the Newcomers",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       398.0,
+       473.0
+      ],
+      [
+       392.0,
+       450.0
+      ],
+      [
+       386.0,
+       430.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A lane leaves the Mese just outside the Founder's gate and climbs north along the wall.",
+   "year": 63
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "d_exokionion",
+    "type": "district",
+    "name": "Exokionion",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       370,
+       425
+      ],
+      [
+       404,
+       425
+      ],
+      [
+       400,
+       500
+      ],
+      [
+       366,
+       505
+      ]
+     ]
+    },
+    "label": "EXOKIONION"
+   },
+   "why": "Grown sons with nowhere to sleep and the families still coming off the grain ships build outside the Founder's wall, along the Mese and the new lane, where the Arians already walk on feast days.",
+   "year": 63
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_firebreak_hill",
+    "type": "road",
+    "name": "Firebreak of the Dry Hill",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       421.0,
+       464.0
+      ],
+      [
+       430.0,
+       430.0
+      ],
+      [
+       441.0,
+       404.0
+      ],
+      [
+       456.0,
+       388.0
+      ],
+      [
+       466.0,
+       369.0
+      ]
+     ]
+    },
+    "width": 2.0
+   },
+   "why": "The families burned out of the South Harbor in AF 48 rebuilt wall to wall on the hill. They ask for a lane cut from the Mese to the Modestus road, wide enough that a fire cannot jump it, and give up the houses in its way.",
+   "year": 61
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "church_arian_brick",
+    "type": "church",
+    "name": "Arian Church outside the Gate",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       391.0,
+       464.0
+      ],
+      [
+       397.0,
+       464.0
+      ],
+      [
+       397.0,
+       468.0
+      ],
+      [
+       391.0,
+       468.0
+      ]
+     ]
+    },
+    "label": "Arian church",
+    "dna": {
+     "motif": "basilica",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 1,
+     "scale": "civic"
+    }
+   },
+   "why": "For ten years the Arians of the hill have prayed in a timber yard beyond the wall, and their priests will not come into the city even to bless a sick child. They raise a small brick church outside the Founder's gate.",
+   "year": 64
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "xenon_xerolophos",
+    "type": "monastery",
+    "name": "House of the Widows and Orphans",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       441.5,
+       451.0
+      ],
+      [
+       446.5,
+       451.0
+      ],
+      [
+       446.5,
+       455.0
+      ],
+      [
+       441.5,
+       455.0
+      ]
+     ]
+    },
+    "label": "Widows' house",
+    "dna": {
+     "motif": "monastery",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "domestic"
+    }
+   },
+   "why": "On the hill one household in seven has no grown man left and small children at home. Neighbours and the monks who took in their sons build a house where widows bake for the street and orphans learn a trade.",
+   "year": 65
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "cistern_slope",
+     "reason": "no road within 25 units; nobody could reach it",
+     "fix": "the Carriers' Steps are listed first, so the lane exists when the cistern is judged"
+    },
+    {
+     "id": "r_firebreak",
+     "reason": "r_firebreak: id already used (the Street of the Embers, AF 22)",
+     "fix": "renamed r_firebreak_hill"
+    }
+   ]
+  }
+ ]
+}

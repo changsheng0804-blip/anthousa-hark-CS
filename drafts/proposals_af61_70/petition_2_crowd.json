@@ -1,0 +1,72 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "城墙外的新街坊"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_exo",
+    "type": "road",
+    "name": "Lane of the Newcomers",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       398.0,
+       473.0
+      ],
+      [
+       392.0,
+       450.0
+      ],
+      [
+       386.0,
+       430.0
+      ]
+     ]
+    },
+    "width": 1.2
+   },
+   "why": "A lane leaves the Mese just outside the Founder's gate and climbs north along the wall.",
+   "year": 63
+  },
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "d_exokionion",
+    "type": "district",
+    "name": "Exokionion",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       370,
+       425
+      ],
+      [
+       404,
+       425
+      ],
+      [
+       400,
+       500
+      ],
+      [
+       366,
+       505
+      ]
+     ]
+    },
+    "label": "EXOKIONION"
+   },
+   "why": "Grown sons with nowhere to sleep and the families still coming off the grain ships build outside the Founder's wall, along the Mese and the new lane, where the Arians already walk on feast days.",
+   "year": 63
+  }
+ ],
+ "review": []
+}

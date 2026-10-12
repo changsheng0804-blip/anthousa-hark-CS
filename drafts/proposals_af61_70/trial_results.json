@@ -1,0 +1,187 @@
+{
+ "petition_1_water": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 153918, \"food\": 193202, \"water\": 203000, \"houses\": 17102, \"houses_added\": 580, \"structures\": 60}"
+  ],
+  "accepted": [
+   "r_carriers",
+   "cistern_slope"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 153918,
+   "food": 193202,
+   "water": 203000,
+   "houses": 17102,
+   "houses_added": 580,
+   "structures": 60
+  },
+  "events": [],
+  "houses_pulled_down": {
+   "r_carriers": 40,
+   "cistern_slope": 15
+  },
+  "xero_houses_60": 746,
+  "xero_houses_70": 732,
+  "new_district_houses": 0
+ },
+ "petition_3_fire": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 153063, \"food\": 193202, \"water\": 188000, \"houses\": 17007, \"houses_added\": 585, \"structures\": 59}"
+  ],
+  "accepted": [
+   "r_firebreak_hill"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 153063,
+   "food": 193202,
+   "water": 188000,
+   "houses": 17007,
+   "houses_added": 585,
+   "structures": 59
+  },
+  "events": [],
+  "houses_pulled_down": {
+   "r_firebreak_hill": 155
+  },
+  "xero_houses_60": 746,
+  "xero_houses_70": 666,
+  "new_district_houses": 0
+ },
+ "baseline": {
+  "build_all_rc": 1,
+  "check": [
+   "era 61-70: nothing happened (no-progress brake)"
+  ],
+  "accepted": [],
+  "rejected": [],
+  "stats": {
+   "population": 154413,
+   "food": 193202,
+   "water": 188000,
+   "houses": 17157,
+   "houses_added": 580,
+   "structures": 58
+  },
+  "events": [],
+  "houses_pulled_down": {},
+  "xero_houses_60": 746,
+  "xero_houses_70": 790,
+  "new_district_houses": 0
+ },
+ "petition_2_crowd": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 159489, \"food\": 193202, \"water\": 188000, \"houses\": 17721, \"houses_added\": 1144, \"structures\": 59}"
+  ],
+  "accepted": [
+   "r_exo",
+   "d_exokionion"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 159489,
+   "food": 193202,
+   "water": 188000,
+   "houses": 17721,
+   "houses_added": 1144,
+   "structures": 59
+  },
+  "events": [],
+  "houses_pulled_down": {},
+  "xero_houses_60": 746,
+  "xero_houses_70": 796,
+  "new_district_houses": 534
+ },
+ "petition_4_faith": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 154413, \"food\": 193202, \"water\": 188000, \"houses\": 17157, \"houses_added\": 580, \"structures\": 59}"
+  ],
+  "accepted": [
+   "church_arian_brick"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 154413,
+   "food": 193202,
+   "water": 188000,
+   "houses": 17157,
+   "houses_added": 580,
+   "structures": 59
+  },
+  "events": [],
+  "houses_pulled_down": {},
+  "xero_houses_60": 746,
+  "xero_houses_70": 790,
+  "new_district_houses": 0
+ },
+ "petition_5_widow": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 154278, \"food\": 193202, \"water\": 188000, \"houses\": 17142, \"houses_added\": 580, \"structures\": 59}"
+  ],
+  "accepted": [
+   "xenon_xerolophos"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 154278,
+   "food": 193202,
+   "water": 188000,
+   "houses": 17142,
+   "houses_added": 580,
+   "structures": 59
+  },
+  "events": [],
+  "houses_pulled_down": {
+   "xenon_xerolophos": 15
+  },
+  "xero_houses_60": 746,
+  "xero_houses_70": 777,
+  "new_district_houses": 0
+ },
+ "petitions_all": {
+  "build_all_rc": 0,
+  "check": [
+   "all checks passed for 8 eras, year 70",
+   "{\"population\": 157410, \"food\": 193202, \"water\": 203000, \"houses\": 17490, \"houses_added\": 1136, \"structures\": 64}"
+  ],
+  "accepted": [
+   "r_carriers",
+   "cistern_slope",
+   "r_exo",
+   "d_exokionion",
+   "r_firebreak_hill",
+   "church_arian_brick",
+   "xenon_xerolophos"
+  ],
+  "rejected": [],
+  "stats": {
+   "population": 157410,
+   "food": 193202,
+   "water": 203000,
+   "houses": 17490,
+   "houses_added": 1136,
+   "structures": 64
+  },
+  "events": [],
+  "houses_pulled_down": {
+   "r_carriers": 40,
+   "cistern_slope": 15,
+   "r_firebreak_hill": 155,
+   "xenon_xerolophos": 13
+  },
+  "xero_houses_60": 746,
+  "xero_houses_70": 607,
+  "new_district_houses": 537
+ }
+}

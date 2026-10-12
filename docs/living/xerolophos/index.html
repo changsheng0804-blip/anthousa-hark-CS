@@ -49,6 +49,8 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
+#gsp{background:none;border:none;padding:0;font:inherit;font-size:12px;color:var(--mute);cursor:pointer;text-decoration:underline dotted rgba(212,168,90,.5);text-underline-offset:3px}#gsp:hover{color:var(--gold2)}
+#card .gt{margin:10px 0 4px;font-size:14px;color:var(--gold2)}#card .gt i{font-style:normal;font-size:12px;color:var(--mute);margin-left:6px}#card .gq{font-size:13.5px;line-height:1.7;margin:2px 0 4px;cursor:pointer}#card .gq:hover{color:var(--gold2)}#card .gh{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}#card .gh button{background:rgba(212,168,90,.12);border:1px solid rgba(212,168,90,.35);border-radius:999px;color:var(--ivory);font:inherit;font-size:11.5px;padding:2px 8px;cursor:pointer}#card .gh button:hover{border-color:var(--gold)}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
 #intro{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
 #intro .bg{position:absolute;inset:-6%;background:url(../arrival.jpg) center/cover no-repeat;opacity:0;transition:opacity 3s;animation:kb 60s ease-out forwards}
@@ -65,6 +67,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
  #card{left:8px;right:8px;width:auto;top:auto;bottom:96px;max-height:48%}
  #ticker{bottom:auto;top:84px;left:8px;max-width:60%;font-size:12px}
  #talk{bottom:96px}
+ #year .yhint{display:none}
  #topr{top:auto;bottom:100px;right:8px;flex-direction:column;align-items:flex-end}
 }
 </style>
@@ -77,7 +80,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
-<div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>60 年</span></div><input id="yr" type="range" min="1" max="60" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
+<div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>60 年</span></div><input id="yr" type="range" min="1" max="60" step="1" value="50"><div class="row"><span id="ystat"></span><button id="gsp" title="这一年街坊们议论最多的事">街坊在说什么</button><span class="yhint">拖动看城长大，被选中的人会跟着变老</span></div></div>
 <div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。干山上另有两百多户人家，由隔壁的街坊讲他们的事（刘线）：故事由 AI 从每户推演出的家庭写出，再由脚本逐条对照底账核对年份、人名、建筑和灾害，对不上的重写。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
 
 <div id="intro">
@@ -119,6 +122,7 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
   ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 /* 刘线：数百户由邻居讲的故事，经 tools/check_stories.py 对照底账核对。liu2：不再阻塞首屏，后台加载完再刷新已打开的卡片 */
+const TALK={};fetch('talk.json').then(r=>r.ok?r.json():{}).then(v=>{Object.assign(TALK,v.years||{});$('gsp').style.display=Object.keys(TALK).length?'':'none'}).catch(()=>{$('gsp').style.display='none'});
 const VOICES={};fetch('voices.json').then(r=>r.ok?r.json():{}).then(v=>{Object.assign(VOICES,v);try{if(sel)renderCard()}catch(e){}}).catch(()=>{});
 /* liu2：没有故事的人家，「此刻」按行当和时辰挑一句山上的日常（干山上没有码头，只有运水人会下山去港口卖水） */
 const TODAY_HILL={
@@ -323,6 +327,19 @@ function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
 function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
+/* liu3 · 街坊在说什么：tools/petitions.py 从街坊闲话里数出每年议论最多的三件事（talk.json），点一下跳到那户人家 */
+function goHouse(id){const h=houseById(id);if(!h)return;flyTo(h.cx,h.cy,Math.max(cam.z,1.8));openHouse(id)}
+function renderGossip(Y){const T=TALK[Y]||[];const esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]);
+  const up=id=>{const h=houseById(id);return h&&h.built<=Y&&h.destroyed>Y};
+  let html=`<h2>街坊在说什么</h2><div class="meta">建城 ${Y} 年 · 克塞罗洛福斯 · 按议论的户数（前两年的话也还在传）</div>`;
+  const rows=T.map(t=>({...t,hs:t.houses.filter(up)})).filter(t=>t.hs.length);
+  if(!rows.length)html+=`<div class="now">这一年山上还没几户人家开口。把年代往后拨。</div>`;
+  const used=new Set();
+  for(const t of rows){const q=[[t.quote_house,t.quote],...(t.alt||[])].find(c=>!used.has(c[1])&&up(c[0]))||[t.quote_house,t.quote];used.add(q[1]);
+    html+=`<div class="gt">${esc(t.zh)}<i>${t.n} 户在说</i></div><div class="gq" data-go="${q[0]}">“${esc(q[1])}”</div><div class="gh">`+t.hs.slice(0,6).map(id=>{const al=aliveAt(household(houseById(id)),Y);return `<button data-go="${id}">${esc(al[0]?al[0].n+'家':'这一家')}</button>`}).join('')+`</div>`}
+  showCard(html+`<div class="pin">◆ 点一句话或一户人家，跳过去看</div>`)}
+$('gsp').addEventListener('click',e=>{e.stopPropagation();hush();sel={kind:'gossip'};threads=[];renderCard()});
+$('cardbody').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;e.stopPropagation();goHouse(+b.dataset.go)});
 function tiePos(k,Y){if(k==='daph'){const w=DAPH.where(Y);return w}if(k==='theo'){const w=THEO.where(Y);return w}const t=houseById(+k);return t?[t.cx,t.cy,t.id]:null}
 function renderDeep(h,S,Y,per){
   const beats=S.beats.filter(b=>b[0]<=Y);const cur=beats[beats.length-1];
@@ -346,6 +363,7 @@ function isPresent(P){const t=clock;if(SCENE.id==='xero')return true;return P.ke
 function renderCard(){
   const Y=YEAR,per=periodOf(clock);threads=[];
   if(!sel){return}
+  if(sel.kind==='gossip'){renderGossip(Y);return}
   if(sel.kind==='house'&&STORIES[sel.hh.h.id]){renderDeep(sel.hh.h,STORIES[sel.hh.h.id],Y,per);return}
   if(sel.kind==='house'){
     const hh=sel.hh,h=hh.h;

@@ -1,0 +1,51 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "孤寡院"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "xenon_xerolophos",
+    "type": "monastery",
+    "name": "House of the Widows and Orphans",
+    "geom": {
+     "type": "polygon",
+     "coords": [
+      [
+       441.5,
+       451.0
+      ],
+      [
+       446.5,
+       451.0
+      ],
+      [
+       446.5,
+       455.0
+      ],
+      [
+       441.5,
+       455.0
+      ]
+     ]
+    },
+    "label": "Widows' house",
+    "dna": {
+     "motif": "monastery",
+     "materials": [
+      "brick"
+     ],
+     "ornament": 0,
+     "scale": "domestic"
+    }
+   },
+   "why": "On the hill one household in seven has no grown man left and small children at home. Neighbours and the monks who took in their sons build a house where widows bake for the street and orphans learn a trade.",
+   "year": 65
+  }
+ ],
+ "review": []
+}
