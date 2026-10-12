@@ -5,3 +5,9 @@
 4. `python3 tools/check_stories.py tools/batches/*.json` 逐条核对；不通过的重写。`--merge docs/living/xerolophos/voices.json tools/batches/b0*.json` 合并（未通过的自动丢弃）。
 5. `python3 tools/smoke_voices.py http://localhost:8765/docs/living/xerolophos/ shot.png` 无头浏览器点房子自查。
 页面读取 `voices.json`：只在那一家（fam = 搬进来的年份）还住着时显示；「此刻」只在故事最后一条之后、且提到的人都在家时显示；手写的 stories.json 优先。
+
+## liu2（2026-10-12）
+6. 查重：`python3 tools/dedup.py` 看全街最高频的意象/套话；`--flag` 列出超额的行。规则：同一意象（鳏夫、罐子换布、碗挂墙上、孤儿守空屋……共几十条）全街 ≤3 户，同一 6 字套话（名字、地名遮掉后）≤3 户，「此刻」里的日常套路（开窑、坐上织机、发面……）≤6 行。`check_stories.py` 自动跑查重，超额即不通过。
+7. 新来的人家：`python3 tools/select_newcomers.py 165 > ../briefs2.txt` 选建城 50 年后搬来的人家（含 50–60 年间换了人家的房子），讲述人在故事覆盖的每一年都住在附近（记 `nar.fam`）。批次用紧凑文本写（`tools/batches/b09.txt`…，格式见 `tools/parse_batch.py`），`parse_batch.py` 转 JSON；`tools/check_combined.sh 批次.json…` 连同现有 voices.json 一起核对 + 查重。
+8. 「此刻」随时辰：每户 `now` 是 `{morning, day, evening, night}` 四句；核对脚本查每句里有没有错时辰的词、山上人家有没有被写去码头/海上（运水人除外）。页面按 `periodOf(clock)` 取对应一句；没有故事的人家用页面里按行当分的 `TODAY_HILL`。
+9. 自查：`python3 tools/smoke_liu2.py http://localhost:8765/docs/living/xerolophos/ ../shots` —— 不同年份 × 四个时辰点房子、截图、查控制台。

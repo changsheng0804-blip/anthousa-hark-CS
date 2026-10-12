@@ -8,13 +8,18 @@ against the engine ledger and the page's own household derivation:
   - every building named is already built that year (or under construction, with a construction word, at most 3 years early);
   - fires, the Arian expulsion, Adrianople only after they happened; no disaster the ledger does not have;
   - faith, origin and trade words agree with the family (or the narrator's family / a tied neighbour);
-  - the narrator lives in the house they speak from, in every year they speak about.
+  - the narrator lives in the house they speak from, in every year they speak about;
+  - (liu2) the 'now' line has a version for each time of day (morning/day/evening/night) with no words from the wrong hour,
+    and nothing that puts a hill family at the quay or at sea unless their trade takes them there;
+  - (liu2) repetition across the whole street: tools/dedup.py — one image in at most 3 households, one 6-character stock phrase in at most 3.
 usage:
   python3 tools/check_stories.py                      # check voices.json (exit 1 on any failure)
   python3 tools/check_stories.py batch1.json ...      # check raw batches; prints failures per house
   python3 tools/check_stories.py --merge OUT.json batch*.json   # merge passing entries (adds fam/nar/nowY), report dropped
 """
 import json, os, re, subprocess, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from dedup import repetition, MOTIF_MAX, PHRASE_N, PHRASE_MAX
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 XD = os.path.join(ROOT, 'docs', 'living', 'xerolophos')
@@ -62,6 +67,19 @@ EVENTS = [  # (pattern, earliest year)
 ]
 BANNED = re.compile('地震|瘟疫|鼠疫|饥荒|洪水|海啸') if not QUAKES else re.compile('海啸')
 DEATH = re.compile('死|去世|走了|没了|埋|坟|夭折|没留住|下葬|忌日|过世|不在了|没能')
+
+# ---- time of day (liu2) ----
+PERIODS = ('morning', 'day', 'evening', 'night')
+PERIOD_BAD = {  # words that contradict the hour
+    'morning': [('黄昏|傍晚|半夜|深夜|夜里|月亮|星星|掌灯|点灯|天黑|收摊|打烊|关门', '清晨版本里出现了夜晚/黄昏的词')],
+    'day': [('天不亮|天没亮|黄昏|傍晚|半夜|深夜|月亮|星星|掌灯|天黑|鸡叫|睡着了', '白天版本里出现了清晨/夜里的词')],
+    'evening': [('天不亮|天没亮|清早|一早|晌午|正午|鸡叫|半夜|深夜', '黄昏版本里出现了清晨/深夜的词')],
+    'night': [('天不亮就|清早|一早|晌午|正午|太阳(底下|正)|大中午', '夜里版本里出现了白天的词')],
+}
+# things that do not belong on the dry hill unless the family's trade takes them there (a water-carrier may sell water at the quay)
+HILL_BAD = [
+    ('码头|粮船|渔网|补网|出海|港口|船上', '山上的人家此刻不在码头/海上', {'运水人'}),
+]
 
 # ---- lexicons ----
 NAMES = set()
@@ -180,7 +198,8 @@ def check_entry(hid, e, sel=None):
     if not sel: return None, [f'{hid}: 不在选中的人家名单里']
     fam = next((f for f in h['fams'] if f['B'] == sel['fam']), None)
     if fam is None: return None, [f'{hid}: 这栋房子没有建城 {sel["fam"]} 年搬来的人家']
-    nh = HH.get(sel['nar']['house']); nf = fam_at(nh, 55) if nh else None
+    nh = HH.get(sel['nar']['house'])
+    nf = (next((f for f in nh['fams'] if f['B'] == sel['nar']['fam']), None) if 'fam' in sel['nar'] else fam_at(nh, 55)) if nh else None
     nar = [p for p in (nf['people'] if nf else []) if p['n'] == sel['nar']['n']]
     ties = e.get('ties', [])
     tie_fams = []
@@ -191,7 +210,8 @@ def check_entry(hid, e, sel=None):
         tie_fams.append(fam_at(th, tie[2]))
     ctx = {'fam': fam, 'nar_name': sel['nar']['n'], 'tie_fams': tie_fams + ([nf] if nf else []),
            'other_faiths': {f['faith'] for f in tie_fams}, 'other_origins': {f['origin'] for f in tie_fams},
-           'other_trades': {f['trade'] for f in tie_fams}, 'nar_fam': nf}
+           'other_trades': {f['trade'] for f in tie_fams} | {f['trade'] for f in h['fams'] if f['B'] < fam['B']},  # liu2: the family that lived here before may be named by trade
+           'nar_fam': nf}
     lo, hi = max(fam['B'], h['built']), min(60, fam['out'], h['destroyed'] - 1)
     life = e.get('life', [])
     if not (2 <= len(life) <= 3): errs.append(f'{hid}: 人生线应有 2–3 条，现在 {len(life)} 条')
@@ -202,11 +222,22 @@ def check_entry(hid, e, sel=None):
         prev = y
         if not nar or not home(nar[0], y) or y < nf['B']: errs.append(f'{hid} 第{i+1}条: 讲述人 {sel["nar"]["n"]} 在建城 {y} 年还没住在隔壁')
         check_line(t, y, ctx, errs, f'{hid} 第{i+1}条({y})')
-    # 'now' line: valid years = every person named is home
+    # 'now' lines (liu2: one per time of day — morning/day/evening/night; a plain string is still accepted)
+    # valid years = every person named in any version is home
     now = e.get('now', '')
     nowY = None
+    if isinstance(now, dict):
+        miss = [k for k in PERIODS if not now.get(k)]
+        if miss: errs.append(f'{hid}: “此刻”缺时辰版本 {"/".join(miss)}')
+        for k, t in now.items():
+            if k not in PERIODS: errs.append(f'{hid}: “此刻”的时辰 {k} 不认识')
+            for pat, why in PERIOD_BAD.get(k, []):
+                if re.search(pat, t): errs.append(f'{hid} 此刻.{k}: {why}')
+            for pat, why, trades in HILL_BAD:
+                if re.search(pat, t) and fam['trade'] not in trades: errs.append(f'{hid} 此刻.{k}: {why}')
+    nowAll = '。'.join(now.values()) if isinstance(now, dict) else now
     if now:
-        ns = [n for n in names_in(now)]
+        ns = [n for n in names_in(nowAll)]
         ys = [Y for Y in range(lo, hi + 1) if all(any(home(p, Y) for p in person(fam, n)) for n in ns if person(fam, n) or n not in CHARS)]
         if not ys: errs.append(f'{hid}: “此刻”里的人从没同时在家')
         else:
@@ -217,7 +248,9 @@ def check_entry(hid, e, sel=None):
             a = max(a, e.get('nowFrom', life[-1][0] if life else a))
             if a > b: errs.append(f'{hid}: “此刻”在故事的最后一条之后就不成立了'); a = b
             nowY = [a, b]
-            for Y in (a, b): check_line(now, Y, ctx, errs, f'{hid} 此刻({Y})')
+            for Y in (a, b):
+                for k, t in (now.items() if isinstance(now, dict) else [('', now)]):
+                    check_line(t, Y, ctx, errs, f'{hid} 此刻{"." + k if k else ""}({Y})')
     else: errs.append(f'{hid}: 缺“此刻”')
     obj = e.get('obj')
     if not (isinstance(obj, list) and len(obj) == 2): errs.append(f'{hid}: 缺屋里的物件')
@@ -225,6 +258,7 @@ def check_entry(hid, e, sel=None):
     for tie in ties:
         if len(tie) == 3: check_line(tie[1], tie[2], ctx, errs, f'{hid} 连线({tie[2]})')
     out = dict(e); out['fam'] = fam['B']; out['nar'] = {'house': sel['nar']['house'], 'n': sel['nar']['n']}; out['nowY'] = nowY
+    if 'fam' in sel['nar']: out['nar']['fam'] = sel['nar']['fam']
     return out, errs
 
 def main(argv):
@@ -241,12 +275,15 @@ def main(argv):
         else: good[k] = out
     for k, errs in bad.items():
         for x in errs: print('✗', x)
+    rep = repetition({k: v for k, v in entries.items()})
+    for x in rep: print('✗ 查重', x)
+    if rep: print(f'查重：{len(rep)} 行超过上限（同一意象 ≤{MOTIF_MAX} 户，同一 {PHRASE_N} 字套话 ≤{PHRASE_MAX} 户）')
     print(f'核对 {len(entries)} 户：通过 {len(good)}，未通过 {len(bad)}')
     if merge:
         json.dump(good, open(merge, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
         print(f'写入 {merge}：{len(good)} 户（未通过的已丢弃）')
         return 0
-    return 1 if bad else 0
+    return 1 if (bad or rep) else 0
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

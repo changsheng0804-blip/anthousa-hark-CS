@@ -118,7 +118,19 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
-const VOICES=await fetch('voices.json').then(r=>r.ok?r.json():{}).catch(()=>({}));/* 刘线：数百户由邻居讲的故事，经 tools/check_stories.py 对照底账核对 */
+/* 刘线：数百户由邻居讲的故事，经 tools/check_stories.py 对照底账核对。liu2：不再阻塞首屏，后台加载完再刷新已打开的卡片 */
+const VOICES={};fetch('voices.json').then(r=>r.ok?r.json():{}).then(v=>{Object.assign(VOICES,v);try{if(sel)renderCard()}catch(e){}}).catch(()=>{});
+/* liu2：没有故事的人家，「此刻」按行当和时辰挑一句山上的日常（干山上没有码头，只有运水人会下山去港口卖水） */
+const TODAY_HILL={
+ '陶匠':{morning:['开窑看昨夜那一窑成了几只','和泥，赤脚踩得啪啪响','把晾干的坯子搬到太阳底下'],day:['在转盘前拉坯','给新罐子刷釉','挑着一担罐子下坡去卖'],evening:['封窑，往火口里添最后一捆荆条','数今天烧裂了几只','坐在窑边吃晚饭'],night:['守着窑火打盹','睡了，窑还温着','听窑里罐子冷下来的轻响']},
+ '面包师':{morning:['天没亮就生了炉子','头一炉饼出炉，门口已经有人在等','揉面揉得满头是汗'],day:['在门口卖饼','给坡下的酒馆送饼','扫面粉，扫出一小堆'],evening:['把卖剩的饼分给邻居','封了炉门','数今天的铜钱'],night:['把明天的面盖上湿布','睡了，炉灰还热','借着炉火补衣服']},
+ '运水人':{morning:['在蓄水池边排队','挑着第一担水上坡','把水罐一只只冲干净'],day:['挑着水罐上坡，见人就点头','下山去金角湾码头卖水','给坡上的面包铺送水'],evening:['挑完最后一趟，坐在门口揉肩','给自家缸里添满水','在池边跟别的运水人说闲话'],night:['睡了，水罐倒扣在门外','肩膀疼得睡不着','给磨破的垫肩缝补']},
+ '织工':{morning:['把经线绷上织机','到门口借着晨光理线','煮一锅染料'],day:['织机咔嗒咔嗒响了一整天','把一匹布送去主顾家','把染好的线晾在绳上'],evening:['收了机，把布卷起来','跟邻居换了一块饼','借着最后的天光接断线'],night:['还在织，梭子声一下一下','睡了，织机上搭着半匹布','在黑里摸着理线']},
+ '鞋匠':{morning:['把皮子泡上水','在门口磨锥子','给搬运工补一双磨穿的鞋'],day:['坐在门口绱鞋','给一个孩子量脚','去坡下收皮子'],evening:['把做好的鞋一双双摆进柜子','去主顾家送鞋','收摊，把鞋楦挂回墙上'],night:['借着炉火钉鞋跟','睡了，锤子搁在门边','给自家孩子缝鞋']},
+ '酒馆老板':{morning:['把昨夜的酒碗洗干净','卸下门板，洒水压尘','去坡下的酒窖搬酒'],day:['在柜台后舀酒','跟送酒的人讲价','给几个挑水的人倒水歇脚'],evening:['酒馆里挤满了收工的人','听人说皇帝在东方打了败仗','把醉倒的客人扶到门外'],night:['数今天的铜钱','送走最后一个酒客','插上门闩，熄了灯']}};
+function todayFor(F,Y,per,id){const r=rng(hash(id+':'+Y+':'+per));if(SCENE.id!=='xero')return pick(r,city.today[per==='evening'?'evening':per]);
+ const T=TODAY_HILL[F.trade];let a=T?T[per].slice():city.today[per].filter(t=>!/码头|粮船|渔网/.test(t));
+ if(per==='evening'&&F.faith==='尼西亚派'&&Y>=49)a.push('去阿纳斯塔西娅听格里高利讲道');if(per==='day'&&Y>=25)a.push('下午挤进竞技场喊破了嗓子');return pick(r,a)}
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
@@ -342,9 +354,9 @@ function renderCard(){
     const males=al.filter(p=>p.s==='m'&&!p.bride&&Y-p.b>=16).sort((a,b)=>a.b-b.b);const head=males[0]||al.slice().sort((a,b)=>a.b-b.b)[0];
     const nm=head?head.n+'家':'这一家';
     const ppl=gone?'<i>这家人已经搬走了。</i>':(al.length?al.slice().sort((a,b)=>a.b-b.b).map(p=>`${p.n}（${relLabel(p,head,al)}，${Y-p.b} 岁）`).join('、'):'<i>屋里没人了，只剩邻居偶尔来看看。</i>');
-    let today=gone?'':pick(rng(hash(h.id+':'+Y+':'+per)),city.today[per==='evening'?'evening':per]);
+    let today=gone?'':todayFor(F,Y,per,h.id);
     const V=VOICES[h.id],vOn=V&&V.fam===F.B&&!gone&&al.length>0;let vHTML='',objHTML=`<b>${hh.obj}</b>`,narH=null,narN='';
-    if(vOn){if(V.nowY&&Y>=V.nowY[0]&&Y<=V.nowY[1]&&per!=='night')today=V.now;
+    if(vOn){const vn=V.now,nowT=typeof vn==='string'?(per!=='night'?vn:''):((vn&&vn[per])||'');if(V.nowY&&Y>=V.nowY[0]&&Y<=V.nowY[1]&&nowT)today=nowT;
       objHTML=`<b>${V.obj[0]}</b>。${V.obj[1]}`;narH=houseById(V.nar.house);
       const nf=narH?famAt(household(narH),Y):null;narN=V.nar.n;const by=`——${nf?nf.trade+'家的':''}${narN}说`;
       const beats=V.life.filter(b=>b[0]<=Y),cur=beats[beats.length-1];
