@@ -93,6 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
+const BUILD='16';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -111,7 +112,7 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
   if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(42/384))}
   if(COMP.pat){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
   if(COMP.st.length){ctx.lineCap='round';const SC={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.85)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
-   for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k][pas];if(!col)continue;ctx.strokeStyle=col;ctx.globalAlpha=A;ctx.beginPath();for(const q of COMP.st){if(q[5]!==k||q[6]>YEAR)continue;if(Math.max(q[0],q[2])<vx0-10||Math.min(q[0],q[2])>vx1+10||Math.max(q[1],q[3])<vy0-10||Math.min(q[1],q[3])>vy1+10)continue;ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3]);ctx.lineWidth=q[4]+(pas?0:2)}ctx.stroke()}}
+   for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k][pas];if(!col)continue;ctx.strokeStyle=col;ctx.globalAlpha=A;ctx.beginPath();for(const q of COMP.st){if(q[5]!==k||q[6]>YEAR||(q[7]&&q[7]<=YEAR))continue;if(Math.max(q[0],q[2])<vx0-10||Math.min(q[0],q[2])>vx1+10||Math.max(q[1],q[3])<vy0-10||Math.min(q[1],q[3])>vy1+10)continue;ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3]);ctx.lineWidth=q[4]+(pas?0:2)}ctx.stroke()}}
   const list=[];for(let gx=Math.floor((vx0-40)/G);gx<=Math.floor((vx1+40)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+60)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR)list.push(h)}
   const it=[];for(const h of list){const g=geomOf(h);it.push([g.by,0,h,g]);if(g.pr)it.push([g.by+1.5,1,h,g]);if(g.pp&&per!=='night')it.push([g.by+2.5,2,h,g])}
   for(const j of COMP.ju){if(j[2]>YEAR||j[0]<vx0-15||j[0]>vx1+15||j[1]<vy0-15||j[1]>vy1+15)continue;const L=j[3]==='well'?[[16,0,0,8],[15,6,3,6]]:j[3]==='stall'?[[(j[0]+j[1])%2?12:17,0,0,8]]:[[0,0,0,8]];for(const q of L)it.push([j[1]+q[2]+2,3,j,q])}

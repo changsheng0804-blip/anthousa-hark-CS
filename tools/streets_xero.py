@@ -43,6 +43,20 @@ def nobuild(x, y):
     if seg_d(x, y, *AQ) < 16: return True
     return False
 
+# ---------------- settlement age: old quarters wind, new quarters are straight ----------------
+AG = 40; agrid = {}
+for h in houses:
+    pp = h[4]; hx = sum(pp[0::2]) / 4; hy = sum(pp[1::2]) / 4
+    agrid.setdefault((int(hx // AG), int(hy // AG)), []).append(h[2])
+def age(x, y):
+    ys = []
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1): ys += agrid.get((int(x // AG) + i, int(y // AG) + j), [])
+    if len(ys) < 4: return 45
+    ys.sort(); return ys[len(ys) // 5]
+def old(x, y):
+    if pip(x, y, ZONES['fire_ruins']): return 0.0   # burnt ground re-laid as a planned grid after 48
+    return max(0.0, min(1.0, (38 - age(x, y)) / 28))
 # ---------------- streets ----------------
 streets = []  # dict(w, kind, pts)
 for r in city['roads']:
@@ -59,7 +73,11 @@ u = umin + 40; i = 0
 while u < umax:
     w = 8 if i % 2 == 0 else 5
     ph = random.random() * 6.28; amp = random.uniform(3, 9)
-    pts = [P(u + amp * math.sin(v / 210 + ph), v) for v in np.arange(vmin, vmax + 1, 30)]
+    ph2, ph3 = random.random() * 6.28, random.random() * 6.28
+    pts = []
+    for v in np.arange(vmin, vmax + 1, 15):
+        bx, by = P(u + amp * math.sin(v / 210 + ph), v); o = old(bx, by)
+        pts.append(P(u + amp * math.sin(v / 210 + ph) * (1 - 0.8 * (o == 0)) + o * (14 * math.sin(v / 60 + ph2) + 7 * math.sin(v / 23 + ph3)), v))
     longs.append((u, w, pts, ph, amp)); u += random.uniform(64, 82); i += 1
 def ulong(L, v): u, w, pts, ph, amp = L; return u + amp * math.sin(v / 210 + ph)
 # break long lanes randomly (dead ends) - lanes only
@@ -69,7 +87,7 @@ for (u0, w, pts, ph, amp) in longs:
     else:
         cur = []
         for p in pts:
-            if random.random() < 0.05 and len(cur) > 3:
+            if random.random() < 0.025 + 0.09 * old(*p) and len(cur) > 6:
                 streets.append(dict(w=w, kind='lane', pts=cur)); cur = []
                 continue
             cur.append(p)
@@ -82,7 +100,18 @@ while v < vmax:
         if random.random() < 0.72:
             vv = v + tilt * a[0]
             ua, ub = ulong(a, vv), ulong(b, vv + tilt * (b[0] - a[0]))
-            streets.append(dict(w=6, kind='cross', pts=[P(ua, vv), P(ub, vv + tilt * (b[0] - a[0]))]))
+            A_, B_ = P(ua, vv), P(ub, vv + tilt * (b[0] - a[0]))
+            o = old((A_[0] + B_[0]) / 2, (A_[1] + B_[1]) / 2)
+            if o < 0.15:   # planned: square to the long streets
+                vm = vv + tilt * (b[0] - a[0]) / 2; A_, B_ = P(ua, vm), P(ub, vm)
+                streets.append(dict(w=7, kind='cross', pts=[A_, B_]))
+            else:          # old: kinked alley, plus stray short alleys
+                km = random.uniform(-22, 22) * o
+                M_ = P((ua + ub) / 2 + random.uniform(-8, 8) * o, vv + tilt * (b[0] - a[0]) / 2 + km)
+                streets.append(dict(w=6 - 2 * o, kind='cross', pts=[A_, M_, B_]))
+                if random.random() < 0.8 * o:
+                    v2 = vv + random.uniform(40, 100); u2 = ua + random.uniform(10, 25)
+                    streets.append(dict(w=4, kind='lane', pts=[P(ulong(a, v2), v2), P(u2 + random.uniform(15, 30), v2 + random.uniform(-25, 25)), P(u2 + random.uniform(30, 45), v2 + random.uniform(-30, 30))]))
     v += random.uniform(130, 175)
 
 # clip streets to interior
@@ -104,6 +133,32 @@ for s in streets:
         S2 += clip(s)
 streets = S2
 
+# ---- audit fix A: a lane end that stops just short of another street is joined to it
+def _sd(px, py, a, b):
+    ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
+    t = max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy + 1e-9)))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy), (ax + t * dx, ay + t * dy)
+SG = {}
+for si, s in enumerate(streets):
+    for a, b in zip(s['pts'][:-1], s['pts'][1:]):
+        for gx in range(int(min(a[0], b[0]) // 40) - 1, int(max(a[0], b[0]) // 40) + 2):
+            for gy in range(int(min(a[1], b[1]) // 40) - 1, int(max(a[1], b[1]) // 40) + 2):
+                SG.setdefault((gx, gy), []).append((si, a, b))
+snapped = 0
+for si, s in enumerate(streets):
+    if s['kind'] == 'main': continue
+    for end in (0, -1):
+        ex, ey = s['pts'][end]
+        best = None
+        for sj, a, b in SG.get((int(ex // 40), int(ey // 40)), []):
+            if sj == si: continue
+            dd, q = _sd(ex, ey, a, b)
+            if best is None or dd < best[0]: best = (dd, q)
+        if best and 0.5 < best[0] < 22 and not nobuild(*best[1]):
+            if end == 0: s['pts'].insert(0, list(best[1]))
+            else: s['pts'].append(list(best[1]))
+            snapped += 1
+print('snapped lane ends', snapped, file=sys.stderr)
 # road raster for collision
 road = Image.new('L', (W, H), 0); rd = ImageDraw.Draw(road)
 for s in streets:
@@ -207,6 +262,7 @@ for h in hs:
     l = lots[best[1]]; l['occ'].append((b, e)); assigned[hid] = best[1]
 print('assigned', len(assigned), 'kept outside', kept, 'unplaced', len(far), file=sys.stderr)
 
+HB = {h[0]: h for h in houses}
 newH = []
 for h in houses:
     hid, dd, b, e, poly = h
@@ -223,7 +279,7 @@ for h in newH:
     p = h[4]; cx = sum(p[0::2]) / 4; cy = sum(p[1::2]) / 4
     hg.setdefault((int(cx // 30), int(cy // 30)), []).append((cx, cy, h[2]))
 outS = []
-for s_ in streets:
+for si_, s_ in enumerate(streets):
     k = s_['kind'][0]
     for (ax, ay), (bx, by) in zip(s_['pts'][:-1], s_['pts'][1:]):
         L = math.hypot(bx - ax, by - ay); nseg = max(1, int(L // 18))
@@ -232,14 +288,110 @@ for s_ in streets:
             x2, y2 = ax + (bx - ax) * (j + 1) / nseg, ay + (by - ay) * (j + 1) / nseg
             mx, my = (x1 + x2) / 2, (y1 + y2) / 2
             if k == 'm': y = 0
+            elif True:
+                y = 999
             else:
                 y = 999
                 for ix in (int(mx // 30) - 1, int(mx // 30), int(mx // 30) + 1):
                     for iy in (int(my // 30) - 1, int(my // 30), int(my // 30) + 1):
                         for hx, hy, hb in hg.get((ix, iy), []):
                             if math.hypot(hx - mx, hy - my) < s_['w'] / 2 + 16: y = min(y, hb)
-                if y == 999: continue
-            outS.append([round(x1, 1), round(y1, 1), round(x2, 1), round(y2, 1), s_['w'], k, max(y, -99)])
+            outS.append([round(x1, 1), round(y1, 1), round(x2, 1), round(y2, 1), s_['w'], k, y, si_])
+# ---- audit fix B: every house's own street exists by the year the house is built
+SGG = {}
+for i, q in enumerate(outS): SGG.setdefault((int((q[0] + q[2]) / 2 // 30), int((q[1] + q[3]) / 2 // 30)), []).append(i)
+def segd(px, py, q):
+    return _sd(px, py, (q[0], q[1]), (q[2], q[3]))[0]
+for hid, li in assigned.items():
+    l = lots[li]; b = next(h[2] for h in [HB[hid]])
+    best = None
+    for ix in range(int(l['cx'] // 30) - 2, int(l['cx'] // 30) + 3):
+        for iy in range(int(l['cy'] // 30) - 2, int(l['cy'] // 30) + 3):
+            for i in SGG.get((ix, iy), []):
+                if outS[i][7] != l['si']: continue
+                dd = segd(l['cx'], l['cy'], outS[i])
+                if best is None or dd < best[0]: best = (dd, i)
+    if best: outS[best[1]][6] = min(outS[best[1]][6], b)
+# ---- audit fix C: a road never appears cut off; the shortest way to the network appears with it
+import heapq
+nbr = [[] for _ in outS]
+for i, q in enumerate(outS):
+    for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+        for ix in (int(ex // 30) - 1, int(ex // 30), int(ex // 30) + 1):
+            for iy in (int(ey // 30) - 1, int(ey // 30), int(ey // 30) + 1):
+                for j in SGG.get((ix, iy), []):
+                    if j != i and segd(ex, ey, outS[j]) <= max(1.5, outS[j][4] / 2 + 0.5):
+                        nbr[i].append(j); nbr[j].append(i)
+def edge(q): return min(q[0], q[2], q[1], q[3]) < 4 or max(q[0], q[2]) > W - 4 or max(q[1], q[3]) > H - 4
+conn = [q[5] == 'm' or edge(q) for q in outS]  # a road leaving the quarter's edge joins the rest of the city
+# spread connectivity through segments already present
+def spread(seed, Y):
+    st = [seed]
+    while st:
+        i = st.pop()
+        for j in nbr[i]:
+            if not conn[j] and outS[j][6] <= Y: conn[j] = True; st.append(j)
+for i in range(len(outS)):
+    if conn[i]: spread(i, 0)
+unreach = []
+order_ = sorted([i for i in range(len(outS)) if outS[i][6] < 999], key=lambda i: outS[i][6])
+for i in order_:
+    if conn[i]: continue
+    Y = outS[i][6]
+    dist = {i: 0}; prev = {}; pq = [(0, i)]; tgt = None
+    while pq:
+        d0, a = heapq.heappop(pq)
+        if d0 > dist.get(a, 1e9): continue
+        if conn[a] and outS[a][6] <= Y: tgt = a; break
+        for b2 in nbr[a]:
+            q = outS[b2]; L = math.hypot(q[2] - q[0], q[3] - q[1]) * (1 if q[6] <= Y else 3)
+            if d0 + L < dist.get(b2, 1e9): dist[b2] = d0 + L; prev[b2] = a; heapq.heappush(pq, (d0 + L, b2))
+    if tgt is None: unreach.append(i); continue
+    a = tgt
+    while a != i: a = prev[a]; outS[a][6] = min(outS[a][6], Y); conn[a] = True
+    conn[i] = True; spread(i, Y)
+# ---- audit fix C2: islands with no way to the network get a short connecting lane, or are dropped
+fixed = 0; dropped_isl = 0
+for i in unreach:
+    if conn[i]: continue
+    # collect island
+    isl = {i}; st = [i]
+    while st:
+        a_ = st.pop()
+        for b2 in nbr[a_]:
+            if b2 not in isl: isl.add(b2); st.append(b2)
+    best = None
+    for a_ in isl:
+        q = outS[a_]
+        for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+            for ix in range(int(ex // 30) - 2, int(ex // 30) + 3):
+                for iy in range(int(ey // 30) - 2, int(ey // 30) + 3):
+                    for j in SGG.get((ix, iy), []):
+                        if j in isl or not conn[j]: continue
+                        dd, pq_ = _sd(ex, ey, (outS[j][0], outS[j][1]), (outS[j][2], outS[j][3]))
+                        if best is None or dd < best[0]: best = (dd, ex, ey, pq_, j)
+    Ymin = min(outS[a_][6] for a_ in isl)
+    if best and best[0] < 60 and not nobuild((best[1] + best[3][0]) / 2, (best[2] + best[3][1]) / 2):
+        _, ex, ey, (px, py), j = best
+        outS.append([round(ex, 1), round(ey, 1), round(px, 1), round(py, 1), 4, 'l', Ymin, -1]); nbr.append([j]); conn.append(True)
+        for a_ in isl:
+            conn[a_] = True; outS[a_][6] = max(outS[a_][6], Ymin) if outS[a_][6] < 999 else 999
+        # connecting lane appears with the island's first house; island's other segments keep their years but now need the path inside the island too
+        for a_ in isl:
+            if outS[a_][6] < 999: outS[a_][6] = min(outS[a_][6], max(Ymin, outS[a_][6]))
+        fixed += 1
+    else:
+        for a_ in isl: outS[a_][6] = 999
+        dropped_isl += 1
+print('islands joined', fixed, 'dropped', dropped_isl, file=sys.stderr)
+# ---- audit fix D: roads close when a cistern is dug over them
+for q in outS:
+    mx, my = (q[0] + q[2]) / 2, (q[1] + q[3]) / 2
+    for k, zz in late.items():
+        if k.startswith('cistern') and q[5] != 'm' and pip(mx, my, zz['p']):
+            if zz['built'] <= q[6]: q[6] = 999
+            else: q.append(zz['built'])
+outS = [q[:7] + q[8:] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
 cell = {}
 for si_, s_ in enumerate(streets):
