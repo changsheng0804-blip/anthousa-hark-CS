@@ -39,6 +39,17 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
  for(const wk of FL.walkers){const r=FL.roads[wk.r];for(let s=0;s<=r.L;s+=40){const q=FL.walkerXY(wk,s);near(q[0],q[1])}}
  const empty=cnt.map((c,i)=>c?-1:i*100).filter(i=>i>=0);
  console.log('wide street empty 100px segments',empty.length,'/ 18',JSON.stringify(empty),'counts',cnt.join(','));if(empty.length)bad++}
+/* cs15 · backlog 2（节奏）：① 船的真实速度不过 450 像素/小时，最后一段（离泊位 70 像素内）要明显慢下来、25 像素内不到巡航速度的一半；② 散场分三拨：码头上的人走的钟点聚成 3 堆，堆与堆之间空 0.2 小时以上，每堆至少 15% */
+{const FS=F.FLEET;const V=FS.C.speed;let peak=0,s70=0,s25=0,bad2=[];
+ for(const sh of FS.ships){if(!sh.path)continue;let L=0;for(let k=1;k<sh.path.length;k++)L+=Math.hypot(sh.path[k][0]-sh.path[k-1][0],sh.path[k][1]-sh.path[k-1][1]);
+  let prev=FS.shipPos(sh,sh.t0),tr=0;const dt=.005;let lastV=1e9,mono=true;
+  for(let c=sh.t0+dt;c<sh.t0+sh.ts+.05;c+=dt){if(sh.main&&c>=FS.C.snap-.01)break;const p=FS.shipPos(sh,c);const d=Math.hypot(p[0]-prev[0],p[1]-prev[1]);tr+=d;const v=d/dt;prev=p;if(tr>L)break;
+   peak=Math.max(peak,v);const rem=L-tr;if(rem<=70&&rem>25)s70=Math.max(s70,v);if(rem<=25&&rem>3)s25=Math.max(s25,v);if(rem<=140){if(v>lastV*1.12+2)mono=false;lastV=Math.min(lastV,v)   /* 拐角处直线距离会让测出来的速度抖 10% 左右，容许 12% */}}
+  if(!mono)bad2.push('速度回升')}
+ const ok1=peak<=450&&s70<=.8*V&&s25<=.5*V&&!bad2.length;
+ let ok2=true,info='';for(const Y of [40,50,57,60]){A.setYear(Y);const bs=F.FLEET.crowd(Y).crowd.filter(m=>m.kind==='work').map(m=>m.back).sort((a,b)=>a-b);const gr=[[bs[0]]];for(let i=1;i<bs.length;i++){if(bs[i]-bs[i-1]>=.2)gr.push([]);gr[gr.length-1].push(bs[i])}
+  const small=gr.filter(g=>g.length<bs.length*.15).length;if(gr.length!==3||small){ok2=false;info+=' Y'+Y+':'+gr.length+'堆'}}
+ console.log('ship peak speed',peak|0,'px/h (<=450); at 70px',s70|0,'at 25px',s25|0,bad2.join(),'| leave waves',ok2?'3 waves':info);if(!ok1||!ok2)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);

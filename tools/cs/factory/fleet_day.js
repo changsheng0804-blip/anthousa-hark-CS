@@ -13,7 +13,12 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   /* cs8 再来：船太快。领头的是大船，其余依次跟进；每艘按自己水路的长短走（C.speed 像素/小时） */
   const plen=P=>{let L=0;for(let k=1;k<P.length;k++)L+=Math.hypot(P[k][0]-P[k-1][0],P[k][1]-P[k-1][1]);return L};
   const order=C.ships.map((s,i)=>i).sort((a,b)=>(C.ships[b].main?1:0)-(C.ships[a].main?1:0));
-  const ships=C.ships.map((s,i)=>({...s,i,t0:C.t_in+order.indexOf(i)*C.t_gap,ts:s.path?Math.max(1.2,plen(s.path)/C.speed):C.t_sail}));
+  /* cs15 · backlog 2：船进港最后一段慢下来。起步 40 像素匀加速，中间匀速 C.speed，离泊位最后 140 像素匀减速到停 */
+  const SD0=40,SD1=140;
+  function prof(s,c){const v=C.speed,L=s.L,T=c-s.t0;if(T<=0)return 0;const T1=2*SD0/v,T3=2*SD1/v,T2=(L-SD0-SD1)/v;let d;
+    if(T<T1)d=v*T*T/(2*T1);else if(T<T1+T2)d=SD0+v*(T-T1);else{const r=Math.min(T-T1-T2,T3);d=SD0+v*T2+v*r-v*r*r/(2*T3)}
+    return Math.min(1,d/L)}
+  const ships=C.ships.map((s,i)=>({...s,i,t0:C.t_in+order.indexOf(i)*C.t_gap,L:s.path?plen(s.path):0,ts:s.path?Math.max(1.2,(plen(s.path)+SD0+SD1)/C.speed):C.t_sail}));
   /* cs7 再来：人不能从海里走。heart.py 从底账算出人走的网（陆地 + 港墙顶，水里不能走），存成方向场；每个人沿着它走到码头/港墙 */
   const WK=C.walk;const DIR={0:[-1,0],1:[1,0],2:[0,-1],3:[0,1],4:[-1,-1],5:[1,1],6:[-1,1],7:[1,-1]};
   const cellAt=(f,x,y)=>{const j=Math.floor(y/WK.R),i=Math.floor(x/WK.R);if(j<0||i<0||j>=WK.H||i>=WK.W)return 'w';return f[j*WK.W+i]};
@@ -32,13 +37,13 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     const hs=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach).sort((a,b)=>dQ(a.cx,a.cy)-dQ(b.cx,b.cy));
     for(const h of hs){const hh=household(h);const F=famAt(hh,Y);const al=aliveAt(hh,Y);if(!al.length)continue;
       if(SPR[F.trade]&&out.filter(c=>c.kind==='work').length<C.max){const P=trail(WK.quay,h.cx,h.cy);if(P){const e=P[P.length-1];
-        out.push({kind:'work',trade:F.trade,h,sp:sp(SPR[F.trade]),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*6,e[1]+(r()-.5)*4],go:7.4+r()*1.8,back:16.6+r()*1.3,ph:r()})}}
+        out.push({kind:'work',trade:F.trade,h,sp:sp(SPR[F.trade]),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*6,e[1]+(r()-.5)*4],go:7.4+r()*1.8,back:[16.8,17.3,17.8][out.filter(c=>c.kind==='work').length%3]+r()*.2,ph:r()})}}
       const kid=al.find(p=>Y-p.b>=6&&Y-p.b<=13);
       if(kid&&dQ(h.cx,h.cy)<C.reach*.7&&out.filter(c=>c.kind==='kid').length<C.kids){const P=trail(WK.wall,h.cx,h.cy);if(P){const e=P[P.length-1];
         out.push({kind:'kid',h,kid,sp:sp(9),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*4,e[1]+(r()-.5)*4],go:6.6+r()*1.2,back:11+r()*2,ph:r()})}}}
     const tav=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach*1.2&&famAt(household(h),Y).trade==='酒馆老板');
     const R={crowd:out,tav,g:granary(Y)};FLEET.cache[Y]=R;return R};
-  function shipPos(s,c){const u=sm((c-s.t0)/s.ts);
+  function shipPos(s,c){const u=s.path?prof(s,c):sm((c-s.t0)/s.ts);
     if(s.path){const[px,py]=along(s.path,u);const[qx,qy]=along(s.path,Math.min(1,u+.01));let ang=u>=.98?s.ang:Math.atan2(qy-py,qx-px)+Math.PI;let x=px,y=py;   /* 水路是 heart.py 从底账算的 */
       if(s.main&&c>=C.snap&&c<C.hold+.15){const k=c<C.hold?sm((c-C.snap)/(C.hold-C.snap)):1-sm((c-C.hold)/.15);x+=C.drift[0]*k;y+=C.drift[1]*k;ang+=.12*k}return[x,y,ang,u]}
     const w=C.mouth;
