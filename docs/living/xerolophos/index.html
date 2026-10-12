@@ -110,10 +110,10 @@ function geomOf(h){if(h.g)return h.g;const p=h.p;let x0=1e9,x1=-1e9,y0=1e9,y1=-1
 function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.complete||!COMP.props.complete)return;
   if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(42/384))}
   if(COMP.pat){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
-  const list=[];for(let gx=Math.floor((vx0-25)/G);gx<=Math.floor((vx1+25)/G);gx++)for(let gy=Math.floor((vy0-10)/G);gy<=Math.floor((vy1+40)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR&&h.built!==YEAR)list.push(h)}
+  const list=[];for(let gx=Math.floor((vx0-40)/G);gx<=Math.floor((vx1+40)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+60)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR)list.push(h)}
   const it=[];for(const h of list){const g=geomOf(h);it.push([g.by,0,h,g]);if(g.pr)it.push([g.by+1.5,1,h,g]);if(g.pp&&per!=='night')it.push([g.by+2.5,2,h,g])}
   it.sort((a,b)=>a[0]-b[0]);ctx.globalAlpha=A;
-  for(const [by,t,h,g] of it){if(t===0){const m=g.m;ctx.fillStyle='rgba(50,32,14,.22)';ctx.beginPath();ctx.ellipse(h.cx+2,by-g.hh*.22,g.w*.52,g.hh*.3,0,0,7);ctx.fill();ctx.drawImage(COMP.houses,m.x,0,m.w,m.h,h.cx-g.w/2,by-g.hh,g.w,g.hh)}
+  for(const [by,t,h,g] of it){if(t===0){const m=g.m;ctx.fillStyle='rgba(50,32,14,.22)';ctx.beginPath();ctx.ellipse(h.cx+2,by-g.hh*.22,g.w*.52,g.hh*.3,0,0,7);ctx.fill();if(h.built===YEAR)ctx.globalAlpha=A*.55;ctx.drawImage(COMP.houses,m.x,0,m.w,m.h,h.cx-g.w/2,by-g.hh,g.w,g.hh);ctx.globalAlpha=A}
     else if(t===1){const m=g.pr,sc=6/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h.cx+g.prx-m.w*sc/2,by-m.h*sc,m.w*sc,m.h*sc)}
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
