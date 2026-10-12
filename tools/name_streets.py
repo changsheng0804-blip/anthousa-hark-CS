@@ -49,7 +49,7 @@ def give(si, n, force=False):
         k += 1; n = (base[:-1] + '二三四五六七八九'[k - 2] + base[-1]) if base[-1] in '巷街' and k < 10 else base + str(k)
     names[si] = n; used.add(n); return True
 # 1. main roads (order in city.json roads)
-MAIN = {'r_mese': '梅塞大道', 'r_north3': '水渠大街', 'r_west_s': '下港坡路', 'r_mese_north': '北梅塞路'}
+MAIN = {'r_baths': '浴场大道', 'r_mese': '梅塞大道', 'r_north3': '水渠大街', 'r_west_s': '下港坡路', 'r_mese_north': '北梅塞路'}
 mains = [i for i, s in enumerate(ST) if s['k'] == 'main']
 for i, r in zip(mains, city['roads']): give(i, MAIN.get(r['id'], '大路'))
 # 2. story households name their street

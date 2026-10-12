@@ -479,6 +479,125 @@ for q in outS:
         if k.startswith('cistern') and q[5] != 'm' and pip(mx, my, zz['p']):
             if zz['built'] <= q[6]: q[6] = 999
             else: q.append(zz['built'])
+# ---- audit fix H (hard rule): no building, walls or roof, ever stands on a road that exists while it stands
+def endy(q): return q[8] if len(q) > 8 else 99999
+HG = {}
+def hg_add(i, q):
+    for ix in range(int(min(q[0], q[2]) // 20) - 1, int(max(q[0], q[2]) // 20) + 2):
+        for iy in range(int(min(q[1], q[3]) // 20) - 1, int(max(q[1], q[3]) // 20) + 2):
+            HG.setdefault((ix, iy), []).append(i)
+for i, q in enumerate(outS):
+    if q[6] < 999: hg_add(i, q)
+def _segseg(a, b, c, d_):
+    def cr(o, p_, q_): return (p_[0] - o[0]) * (q_[1] - o[1]) - (p_[1] - o[1]) * (q_[0] - o[0])
+    d1, d2, d3, d4 = cr(c, d_, a), cr(c, d_, b), cr(a, b, c), cr(a, b, d_)
+    if ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0)): return 0.0
+    return min(_sd0(a[0], a[1], c, d_), _sd0(b[0], b[1], c, d_), _sd0(c[0], c[1], a, b), _sd0(d_[0], d_[1], a, b))
+def hull(pts):
+    pts = sorted(set(pts))
+    if len(pts) < 3: return pts
+    def cr(o, a, b): return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
+    for p_ in pts:
+        while len(lo) >= 2 and cr(lo[-2], lo[-1], p_) <= 0: lo.pop()
+        lo.append(p_)
+    for p_ in reversed(pts):
+        while len(up) >= 2 and cr(up[-2], up[-1], p_) <= 0: up.pop()
+        up.append(p_)
+    return lo[:-1] + up[:-1]
+def foot(flat):
+    pts = [(flat[i], flat[i + 1]) for i in range(0, 8, 2)]; cx = sum(p_[0] for p_ in pts) / 4; cy = sum(p_[1] for p_ in pts) / 4
+    return [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]
+def volume(fp, hgt): return hull(fp + [(x, y - hgt) for x, y in fp])
+def clashes(vol, b, e, margin=0.8, out=None):
+    vol = list(vol)
+    xs = [p_[0] for p_ in vol]; ys = [p_[1] for p_ in vol]
+    cand = set()
+    for ix in range(int(min(xs) // 20), int(max(xs) // 20) + 1):
+        for iy in range(int(min(ys) // 20), int(max(ys) // 20) + 1): cand.update(HG.get((ix, iy), ()))
+    hit = []
+    for j in cand:
+        q = outS[j]
+        if q[6] >= 999 or q[6] >= e or endy(q) <= b: continue
+        a_, b_ = (q[0], q[1]), (q[2], q[3])
+        inside = pip(q[0], q[1], vol) or pip(q[2], q[3], vol)
+        dmin = 0 if inside else min(_segseg(vol[k], vol[(k + 1) % len(vol)], a_, b_) for k in range(len(vol)))
+        if dmin < q[4] / 2 + margin: hit.append(j)
+    return hit
+def forbidden(vol, b, e):
+    for x, y in vol:
+        if wall_x(y) - 40 < x < wall_x(y) + 8: return True
+        if nobuild(x, y): return True
+        for k, zz in late.items():
+            if k.startswith('cistern') and zz['built'] < e and pip(x, y, zz['p']): return True
+    return False
+HT = {}
+newIdx = {h[0]: i for i, h in enumerate(newH)}
+moved = dropped_seg = lowered = stuck = 0
+def want_h(l): return 7 if (l['t'] and l['kind'] == 'main') else 6 if l['t'] else 5 if l['rank'] == 0 else 4
+for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
+    hb, he = HB[hid][2], HB[hid][3]
+    l = lots[li]; fp = foot([c for p_ in l['p'] for c in p_])
+    if clashes(fp, hb, he) or forbidden(fp, hb, he):
+        # move to the nearest free lot whose footprint is clear for the house's whole life
+        best = None
+        gx, gy = int(l['cx'] // G), int(l['cy'] // G)
+        for ix in range(gx - 3, gx + 4):
+            for iy in range(gy - 3, gy + 4):
+                for lj in grid.get((ix, iy), []):
+                    L2 = lots[lj]
+                    if lj == li or L2['z'] != l['z'] or not free(L2, hb, he): continue
+                    f2 = foot([c for p_ in L2['p'] for c in p_])
+                    if clashes(volume(f2, 2), hb, he) or forbidden(f2, hb, he): continue
+                    dd = math.hypot(L2['cx'] - l['cx'], L2['cy'] - l['cy'])
+                    if best is None or dd < best[0]: best = (dd, lj)
+        if best:
+            l['occ'].remove((hb, he)); li = best[1]; l = lots[li]; l['occ'].append((hb, he)); assigned[hid] = li
+            newH[newIdx[hid]][4] = [round(c, 1) for p_ in l['p'] for c in p_]; newH[newIdx[hid]][5] = l['fx']; newH[newIdx[hid]][6] = l['t']
+            fp = foot([c for p_ in l['p'] for c in p_]); moved += 1
+        else:
+            # the road gives way instead: late connector stubs / lanes open only after the house is gone
+            for j in clashes(fp, hb, he):
+                q = outS[j]
+                if q[5] in ('l', 'c') and he < 999: q[6] = max(q[6], he)
+                elif q[5] in ('l',): q[6] = 999
+                dropped_seg += 1
+            if clashes(fp, hb, he): stuck += 1
+    hgt = want_h(l)
+    while hgt > 0 and clashes(volume(fp, hgt) if hgt > 0 else fp, hb, he, 0.6): hgt -= 0.5
+    if hgt < want_h(l): lowered += 1
+    HT[hid] = hgt
+for h in newH:
+    if h[0] in HT:
+        while len(h) < 7: h.append(0)
+        h[7:] = [HT[h[0]]]
+# houses beyond the wall keep clear of the wall itself
+wall_moved = 0
+for h in newH:
+    if h[0] in HT: continue
+    p_ = h[4]; xs = p_[0::2]; ys = p_[1::2]
+    if any(wall_x(y) - 40 < x < wall_x(y) + 8 for x, y in zip(xs, ys)):
+        sh_ = max(x - (wall_x(y) - 42) for x, y in zip(xs, ys))
+        h[4] = [round(c - sh_, 1) if i % 2 == 0 else c for i, c in enumerate(p_)]; wall_moved += 1
+kept_moved = 0
+for h in newH:
+    if h[0] in HT: continue
+    b_, e_ = h[2], h[3]
+    best = None
+    for r_ in (0, 3, 6, 9, 12, 16):
+        for k_ in range(8 if r_ else 1):
+            dx_, dy_ = r_ * math.cos(k_ * math.pi / 4), r_ * math.sin(k_ * math.pi / 4)
+            fl = [c + (dx_ if i % 2 == 0 else dy_) for i, c in enumerate(h[4])]
+            fp_ = foot(fl)
+            if not clashes(volume(fp_, 4), b_, e_) and not any(wall_x(y) - 40 < x < wall_x(y) + 8 for x, y in fp_): best = fl; break
+        if best: break
+    if best is None: best = h[4]
+    elif best != h[4]: kept_moved += 1
+    h[4] = [round(c, 1) for c in best]
+    while len(h) < 7: h.append(0)
+    h[7:] = [4]
+print('kept outside moved', kept_moved, file=sys.stderr)
+print('fixH moved', moved, 'roads gave way', dropped_seg, 'lowered', lowered, 'stuck', stuck, 'wall', wall_moved, file=sys.stderr)
 json.dump({'si': [q[7] for q in outS if q[6] < 999], 'streets': [dict(k=st['kind'], w=st['w'], pts=[[round(c, 1) for c in p_] for p_ in st['pts']]) for st in streets]}, open('/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen/_streets_meta.json', 'w'))
 outS = [q[:7] + q[8:] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
