@@ -49,6 +49,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
+#card .cstalk{margin:10px 0;padding:8px 10px;border:1px solid rgba(212,168,90,.35);border-radius:6px}#card .cswho{font-size:12.5px;color:var(--mute);margin-bottom:6px}#card .cssp,#card .csgo{color:var(--gold2);cursor:pointer;border-bottom:1px dotted var(--gold)}#card .cssp.on{color:var(--ivory);border-bottom:1px solid var(--ivory)}#card .csqs{display:flex;flex-wrap:wrap;gap:5px}#card .csq{font-size:12px;padding:3px 8px;border:1px solid rgba(212,168,90,.4);border-radius:12px;cursor:pointer;color:var(--ivory)}#card .csq.on{background:rgba(212,168,90,.25)}#card .csans{font-size:14px;line-height:1.8;margin-top:8px;color:var(--ivory)}#card .csans b{color:var(--gold2);font-weight:normal}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
 #intro{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
 #intro .bg{position:absolute;inset:-6%;background:url(../arrival.jpg) center/cover no-repeat;opacity:0;transition:opacity 3s;animation:kb 60s ease-out forwards}
@@ -363,7 +364,7 @@ function renderCard(){
       if(cur)vHTML=`<div class="story">${cur[1]}<div class="by">${by}</div></div>`;else vHTML=`<div class="story fut">${narN}还没搬来，这一家的事，过几年才有人讲。</div>`;
       vHTML+=`<details><summary>邻居讲的这一家</summary><div class="life">${V.life.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">建城 ${y} 年</span>${y>Y?'……':t}</div>`).join('')}</div></details>`}
     showCard(`<h2>${al.length?nm:'空房子'}</h2><div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'来自'+F.origin} · ${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>`
-      +`<div class="ppl">${ppl}</div>`+(today?`<div class="now">此刻：${today}</div>`:'')
+      +`<div class="ppl">${ppl}</div>`+(today?`<div class="now">此刻：${today}</div>`:'')+csTalkHTML(hh,Y)
       +vHTML+`<div class="obj">屋里有：${objHTML}</div>`+(vOn?`<details><summary>这一家的年代（底账）</summary>${lifeHTML(hh.ev,Y)}</details>`:lifeHTML(hh.ev,Y))+`<div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
     if(!gone&&al.length){
       const [wl]=nearestLM(h.cx,h.cy,l=>landType(l.id)===landType(nearestLM(h.cx,h.cy)[0].id)&&!(late[l.id]&&late[l.id].built>Y));if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'在'+wl.name+'一带干活：'+F.trade});
@@ -388,6 +389,85 @@ function renderCard(){
   }
   threadT=performance.now();
 }
+
+/* ---------- CS 线 · cs1：敲门问话（每一扇门都能问，答案只从底账推演的这一家里来） ---------- */
+const CSQ=[['from','你们家从哪来？'],['work','靠什么过日子？'],['family','家里都有谁？'],['house','这房子以前住过谁？'],['city','这些年城里出过什么事？'],['faith','你们信哪一派？'],['nb','隔壁住的是谁？'],['talk','街坊怎么说你们？']];
+function csSpeakers(al,Y){return al.filter(p=>Y-p.b>=7).sort((a,b)=>a.b-b.b)}
+function csNeighbors(h,Y,k=3){return houses.filter(o=>o.id!==h.id&&o.built<=Y&&o.destroyed>Y).map(o=>[o,dist(h.cx,h.cy,o.cx,o.cy)]).sort((a,b)=>a[1]-b[1]).slice(0,k).filter(x=>{const hh=household(x[0]);return aliveAt(hh,Y).length>0})}
+function csHeadOf(hh,Y){const al=aliveAt(hh,Y);const m=al.filter(p=>p.s==='m'&&!p.bride&&Y-p.b>=16).sort((a,b)=>a.b-b.b);return m[0]||al.slice().sort((a,b)=>a.b-b.b)[0]}
+function csGo(id,label){return `<a class="csgo" data-go="${id}">${label}</a>`}
+function csAnswer(hh,Y,q,sp){
+  const h=hh.h,F=famAt(hh,Y),al=aliveAt(hh,Y),age=Y-sp.b,r=rng(hash('cs'+h.id+q+Y+sp.n));
+  const kid=age<13,old=age>=60,I=kid?'我':'我';const head=csHeadOf(hh,Y);
+  const myFam=sp.fam||F;const born=sp.b>=myFam.B;const bride=sp.bride;
+  const here=Y-F.B;
+  const tail=old?pick(r,['，老啦。','。那时候的事，我比谁都记得清。','。一晃这么多年。']):kid?pick(r,['。我妈说的。','。我爷爷讲过好多遍。','。']):'。';
+  switch(q){
+  case 'from':{
+    if(F.origin==='本城生'){return born?`${I}就生在这栋房子里${kid?'':'，生在建城 '+sp.b+' 年'}。我们家是本城人，没从别处来过`+tail:(bride?(sp.married?`我是嫁进来的，建城 ${sp.married} 年。他们家是本城人，在这儿住了 ${here} 年了`:`我跟着当家的一起搬进来的。我们是本城人，在这儿住了 ${here} 年了`)+tail:`我们家是本城人，建城 ${F.B<1?'以前':F.B+' 年'}就住进了这栋房子`+tail)}
+    const arr=hh.ev.find(e=>e[0]===F.B&&/搬|住进/.test(e[1]));const why=arr?arr[1].replace(/^[^。]*。/,'').replace(/他们/g,'我们'):'';const burnt=/大火/.test(why);
+    if(born)return `${I}是在这儿生的。${sp.b-F.B>22?'家里老一辈':kid?'爸妈':'爹娘'}是从${F.origin}来的，建城 ${F.B} 年${why?'，'+why.replace(/。$/,''):''}。${kid?'我没去过'+F.origin+'。':'我只在他们嘴里见过'+F.origin+'。'}`;
+    if(bride&&sp.married&&sp.married>F.B)return `我是嫁过来的，建城 ${sp.married} 年进的这个门。他们家早先从${F.origin}来，${why?why.replace(/。$/,''):'来了好些年了'}。`;
+    return `从${F.origin}来的。建城 ${F.B} 年，${age-(Y-F.B)} 岁那年${why?'，'+why.replace(/。$/,''):''}。${burnt?'在这山上重新开始。':old?'那时候我还年轻，城墙还没这么长。':'刚来那几年，谁都不认识。'}`}
+  case 'work':{
+    const [lm]=nearestLM(h.cx,h.cy);
+    if(kid)return `${F.trade==='运水人'?'爸爸挑水':'家里是'+F.trade}。${pick(r,['我帮着跑腿，送东西。','我还小，就在门口帮忙看摊。','等我长大，也干这个。'])}`;
+    if(sp.s==='f'&&sp!==head)return `家里是${F.trade}，男人在${lm?lm.name+'那一带':'外头'}干活。我${pick(r,['纺线、做饭、挑水，一天到晚闲不住','管着账，谁欠了钱我都记在蜡板上','带孩子，空了给邻居缝补点东西'])}。`;
+    return `${F.trade}。${lm?'活在'+lm.name+'一带，':''}${pick(r,['一年到头不得闲，够一家人吃饭。','好年景能攒几个铜子，坏年景就欠着。','粮船晚到一个月，日子就难过。'])}${old?'现在是儿孙们在干，我就坐着看。':''}`}
+  case 'family':{
+    const ppl=al.filter(p=>p!==sp).sort((a,b)=>a.b-b.b).map(p=>`${p.n}（${(sp===head?relLabel(p,head,al):(p===head?'当家的':'当家的'+relLabel(p,head,al)))}，${Y-p.b} 岁）`);
+    const deadKids=myFam.people.filter(p=>p.d<=Y&&p.d-p.b<5&&p.b>=myFam.B);
+    const out=myFam.people.filter(p=>p.left&&p.left<=Y&&p.d>Y);
+    let s=ppl.length?`屋里还有：${ppl.join('、')}。`:'屋里就剩我一个了。';
+    if(out.length)s+=out.map(p=>typeof p.to==='number'?`${p.n}嫁到了${csGo(p.to,'那边那家')}`:p.to==='外城'?`${p.n}嫁到了城外`:`${p.n}走了，`+(p.s==='m'?'在外头':'')).slice(0,2).join('；')+'。';
+    if(deadKids.length&&!kid)s+=`${deadKids.length===1?'还有一个孩子，'+deadKids[0].n+'，没养住':'有 '+deadKids.length+' 个孩子没养住'}。${pick(r,['不说了。','这条坡上谁家不是这样。','我到现在还记得'+deadKids[deadKids.length-1].n+'的样子。'])}`;
+    return s}
+  case 'house':{
+    const fi=hh.fams.indexOf(F);
+    let s=h.built<1?'这房子比城还老，拜扎斯那会儿就有了。':`这房子是建城 ${h.built} 年盖的。`;
+    if(fi>0){const p=hh.fams[fi-1];const ph=p.people.find(x=>x.g===0&&x.s==='m');s+=`我们之前住的是${ph?ph.n+'一家':'另一户人家'}，${p.origin==='本城生'?'本城人':'从'+p.origin+'来的'}，干${p.trade}。他们走了以后，房子空了一阵。`}
+    else s+=`${F.B<=h.built+1?'盖好就是我们家住着，没换过人。':'我们是头一家。'}`;
+    if(h.destroyed<=MAXY&&h.destroyed>Y&&old)s+='听说这一片以后要拆，谁知道呢。';
+    return s}
+  case 'city':{
+    const seen=CITYEV.filter(e=>e[0]<=Y);if(!seen.length)return '城还小，没出过什么大事。';
+    const inCity=F.origin==='本城生'||hh.ev.some(e=>e[0]===F.B&&/大火|城里另一头/.test(e[1]));const t0=inCity?sp.b+5:Math.max(F.B,sp.b+5);const lived=seen.filter(e=>e[0]>=t0);const before=seen.filter(e=>e[0]<t0);
+    const mine=hh.ev.filter(e=>e[0]<=Y&&CITYEV.some(c=>c[0]===e[0]&&c[1]===e[1]));
+    let s='';
+    if(lived.length){const e=mine.length?mine[mine.length-1]:lived[lived.length-1];s+=`建城 ${e[0]} 年，${e[1].replace(/^全家/,'我们全家').replace(/^从/,'我们从')}。`;const e2=lived.find(x=>x!==e&&x[0]!==e[0]);if(e2&&!kid)s+=`还有第 ${e2[0]} 年，${e2[1]}。`}
+    const lb=before[before.length-1];const pre=lb&&lb[0]>=F.B?(sp.b>lb[0]?'那会儿我还没出生，':'那会儿我还小，')+'是听大人讲的。':`是在我们${F.origin==='本城生'?'家搬进来':'来'}以前，${pick(r,['听街坊说的。','我没赶上。'])}`;
+    if(before.length&&!lived.length)s+=`${lb[1].replace(/^全家/,'').replace(/^他们/,'')}的事，${pre}`;
+    else if(before.length)s+=`再早的${before.length>1?'大火、水渠那些':'事'}，${pick(r,['我没赶上，是听老人讲的。','那会儿我们还没来。'])}`;
+    return s||'这些年还算太平。'}
+  case 'faith':{
+    const f=F.faith;
+    if(f==='阿里乌派')return Y>=51?`阿里乌派。${pick(r,['现在城里的教堂不让我们进了，过节得走出城门去祈祷。','皇帝换了，风向也换了。我们出城去做礼拜，不吵不闹。'])}`:`阿里乌派，跟皇帝一样。${pick(r,['和平教堂离得不远。','礼拜天去和平教堂。'])}`;
+    if(f==='尼西亚派')return Y>=51?`尼西亚派。${pick(r,['这几年总算轮到我们了。','新皇帝站在我们这边。'])}`:Y>=49?'尼西亚派。阿纳斯塔西娅那间小屋子，挤得都站不下。':'尼西亚派。城里阿里乌派当家，我们小声点就是了。';
+    return `${kid?'我不知道。':pick(r,['你别往外说。','在家里拜拜老神，出门就画个十字。'])}${kid?'奶奶在墙角供着一个小神像。':'我们家还拜旧神。卫城上那座老庙，我年轻时还进去过。'}`}
+  case 'nb':{
+    const nb=csNeighbors(h,Y);if(!nb.length)return '这一片还没几户人家。';
+    return '挨着住的：'+nb.map(([o])=>{const hh2=household(o);const F2=famAt(hh2,Y);const hd=csHeadOf(hh2,Y);return csGo(o.id,(hd?hd.n+'家':'一户人家'))+`，${F2.trade}，${F2.origin==='本城生'?'本城人':F2.origin+'来的'}`}).join('；')+`。${pick(r,['你去敲敲看。','去问问他们，他们知道的比我多。','替我问声好。'])}`}
+  case 'talk':{
+    const V=VOICES[h.id];
+    if(V&&V.fam===F.B){const nh=houseById(V.nar.house);const b=V.life.filter(x=>x[0]<=Y).pop();if(b)return `${nh?csGo(nh.id,V.nar.n):V.nar.n}最爱讲我们家：“${b[1]}”${pick(r,['她那张嘴。','也就她记得这么清楚。','说得倒也没错。'])}`}
+    for(const id in VOICES){const W=VOICES[id];if(W.nar.house===h.id&&al.some(p=>p.n===W.nar.n)){const tg=houseById(+id);const b=W.life.filter(x=>x[0]<=Y).pop();if(tg&&b&&tg.built<=Y&&tg.destroyed>Y){const who=al.find(p=>p.n===W.nar.n);return `${who===sp?'我':who.n}倒是常说起${csGo(tg.id,'那一家')}：“${b[1]}”`}}}
+    const nb=csNeighbors(h,Y,1)[0];if(nb){const hd=csHeadOf(household(nb[0]),Y);return `${hd?csGo(nb[0].id,hd.n):'隔壁'}${pick(r,['说我们家门口总是吵。','说我们家的狗半夜叫。','说我们欠了他半袋面粉。其实早还了。'])}`}
+    return '这一片人少，没人说闲话。'}
+  }
+  return ''}
+function csTalkHTML(hh,Y){
+  const al=aliveAt(hh,Y);if(!al.length||Y>=hh.h.destroyed)return '';
+  const sps=csSpeakers(al,Y);if(!sps.length)return '';
+  if(!sel.cs||sel.cs.id!==hh.h.id)sel.cs={id:hh.h.id,sp:0,q:null};
+  const st=sel.cs;st.sp=Math.min(st.sp,sps.length-1);const sp=sps[st.sp];
+  const who=sps.map((p,i)=>`<a class="cssp${i===st.sp?' on':''}" data-sp="${i}">${p.n}</a>`).join(' ');
+  const qs=CSQ.map(([k,t])=>`<a class="csq${st.q===k?' on':''}" data-q="${k}">${t}</a>`).join('');
+  const ans=st.q?`<div class="csans"><b>${sp.n}（${Y-sp.b} 岁）：</b>${csAnswer(hh,Y,st.q,sp)}</div>`:'';
+  return `<div class="cstalk"><div class="cswho">敲门，问 ${who}</div><div class="csqs">${qs}</div>${ans}</div>`}
+window.__cs={csAnswer,csTalkHTML,CSQ,csSpeakers,openHouse};
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('#card [data-q],#card [data-sp],#card [data-go]');if(!t||!sel||sel.kind!=='house')return;e.preventDefault();
+  if(t.dataset.go){const id=+t.dataset.go;const tg=houseById(id);if(tg){openHouse(id);flyTo(tg.cx,tg.cy,Math.max(cam.z,1.6),1100)}return}
+  if(t.dataset.sp!==undefined){sel.cs.sp=+t.dataset.sp}if(t.dataset.q)sel.cs.q=t.dataset.q;renderCard();blip(720,.05)});
 
 /* ---------- life on the map ---------- */
 const roads=city.roads.map(r=>{const pts=r.pts;let L=0;const seg=[];for(let i=0;i<pts.length-1;i++){const l=dist(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1]);seg.push(l);L+=l}return{pts,seg,L}});
