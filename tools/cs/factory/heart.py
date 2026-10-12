@@ -177,6 +177,16 @@ def main():
     road8 = pool(road, 0) > 0.2; house8 = pool(house, 0) > 0.5
     pw8 = pool(pw, 0) > 0.3
     walk8 = (land8 | wall8) & ~pw8
+    # cs13 · 栈桥：画上画了、底账没有的栈桥（三张画都是陆地、在底账的水里、离岸 ≤ 120 像素、至少 8 像素宽、连着岸）。人要走得上去
+    band2 = np.zeros((GH, GW), bool); band2[:30], band2[-30:], band2[:, :30], band2[:, -30:] = True, True, True, True
+    pc = ~pw & ~landm & ~band2 & (clear <= 120)
+    pc = ndi.binary_opening(pc, structure=np.ones((2, 2), bool))
+    pier_px = ndi.binary_propagation(ndi.binary_dilation(landm, iterations=2) & pc, mask=pc)
+    pier8 = pool(pier_px, 0) >= 0.4
+    if not os.environ.get('PIER_OFF'): walk8 = walk8 | pier8
+    if '--piers' in sys.argv:
+        pj, pi_ = np.nonzero(pier_px); ok_ = walk8[np.minimum(pj * R // R8, H8 - 1), np.minimum(pi_ * R // R8, W8 - 1)]
+        print(f'piers walkable {int(ok_.sum())} / {len(pj)}'); return
     cost8 = np.where(walk8, np.where(road8 | wall8, 1.0, np.where(house8, 6.0, 2.0)), np.inf)
     def field(srcs):
         global GH, GW

@@ -169,6 +169,12 @@ def compare(q, fix):
             sh(sys.executable, hp, q); sc = json.load(open(os.path.join(LIV, q, 'scene.json'))); same = True
             rec(S, '--fix：心跳位置按最新底账重算', True)
         rec(S, '心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
+    # cs13 · 栈桥：画上的栈桥（三张画都是陆地、底账是水、连着岸）人要走得上去，≥ 95% 的栈桥像素落在人走的网里
+    if sc.get('fleet', {}).get('derived'):
+        r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--piers')
+        mp = re.search(r'piers walkable (\d+) / (\d+)', r.stdout)
+        okp = bool(mp) and int(mp.group(2)) > 0 and int(mp.group(1)) >= 0.95 * int(mp.group(2))
+        rec(S, '画上的栈桥人走得上去', okp, mp.group(0) if mp else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（栈桥并进 walk 网）')
     # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
     if sc.get('fleet'):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
