@@ -161,10 +161,37 @@ def main():
     # 10. 扛包的路：码头 → 粮仓，沿街走
     rt = [(i * R, j * R) for j, i in back(Pg, (bj, bi))]
     route = [list(map(int, v)) for v in rdp(rt, 14)][1:-1]
+    # 11. 人走的网：陆地 + 港墙顶（港墙就是街道伸进海里的那一截）；水里不能走。8 像素一格，存成方向场
+    R8 = 8; H8, W8 = PH // R8, PW // R8
+    def pool(mk, f): return np.array(Image.fromarray(mk.astype('uint8') * 255).resize((W8, H8), Image.BOX)) / 255.0
+    land8 = pool(landm, 0) >= 0.5; wall8 = pool(wallA, 0) > 0.05
+    road8 = pool(road, 0) > 0.2; house8 = pool(house, 0) > 0.5
+    walk8 = land8 | wall8
+    cost8 = np.where(walk8, np.where(road8 | wall8, 1.0, np.where(house8, 6.0, 2.0)), np.inf)
+    def field(srcs):
+        global GH, GW
+        oh, ow = GH, GW; GH, GW = H8, W8
+        src = []
+        for p in srcs:
+            j, i = int(p[1] / R8), int(p[0] / R8)
+            if 0 <= j < H8 and 0 <= i < W8 and walk8[j, i]: src.append((j, i))
+        D, Pp = dijkstra(cost8, src); GH, GW = oh, ow
+        dirs = {(-1, 0): '0', (1, 0): '1', (0, -1): '2', (0, 1): '3', (-1, -1): '4', (1, 1): '5', (-1, 1): '6', (1, -1): '7'}
+        rows = []
+        for j in range(H8):
+            r_ = []
+            for i in range(W8):
+                if not walk8[j, i]: r_.append('w' if not land8[j, i] else 'x')
+                elif not np.isfinite(D[j, i]): r_.append('x')
+                elif Pp[j, i][0] < 0: r_.append('s')
+                else: r_.append(dirs[(Pp[j, i][0] - j, Pp[j, i][1] - i)])
+            rows.append(''.join(r_))
+        return ''.join(rows)
+    walk = {'R': R8, 'W': W8, 'H': H8, 'quay': field(spots), 'wall': field(wall)}
     I = lambda v: [I(x) for x in v] if isinstance(v, (list, tuple)) else int(v)
     ships = [{**s, 'at': I(s['at']), 'path': I(s['path'])} for s in ships]; spots, wall, route, bol = I(spots), I(wall), I(route), I(bol)
     out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'wall': wall, 'route': route,
-           'drift': [int(nx * 20), int(ny * 20)], 'derived': f'heart.py 从底账算（建城 {Y} 年的陆地、港口、粮仓 {g0["id"]}、路、房子）'}
+           'drift': [int(nx * 20), int(ny * 20)], 'walk': walk, 'derived': f'heart.py 从底账算（建城 {Y} 年的陆地、港口、粮仓 {g0["id"]}、路、房子）'}
     out.pop('enter', None)
     # 目检图
     base = Image.open(os.path.join(Q, f'ng_af{Y}.jpg' if os.path.exists(os.path.join(Q, f'ng_af{Y}.jpg')) else 'bare.jpg')).convert('RGB').resize((PW, PH))
@@ -177,7 +204,7 @@ def main():
     for p in wall: dv.ellipse([p[0] - 6, p[1] - 6, p[0] + 6, p[1] + 6], fill=(0, 255, 255))
     dv.rectangle([bol[0] - 6, bol[1] - 6, bol[0] + 6, bol[1] + 6], fill=(255, 255, 255))
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True); base.resize((910, 1024)).save(os.path.join(HERE, 'out', f'{q}_heart.jpg'), quality=85)
-    print('gates', [list(map(int, g)) for g in gates]); print(json.dumps({k: v for k, v in out.items() if k != 'ships'}, ensure_ascii=False)); print('ships', [(s['at'], len(s['path'])) for s in ships])
+    print('gates', [list(map(int, g)) for g in gates]); print(json.dumps({k: v for k, v in out.items() if k not in ('ships', 'walk')}, ensure_ascii=False)); print('ships', [(s['at'], len(s['path'])) for s in ships])
     if '--json' in sys.argv:
         print(json.dumps(out, ensure_ascii=False)); return
     if '--dry' not in sys.argv:
