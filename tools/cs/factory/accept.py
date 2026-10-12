@@ -86,7 +86,18 @@ def pull(q, do_pull):
                 rec(S, '--fix：变化都在建城 %d 年以后，已换上新数据，画面不用重画' % last, True)
                 ok = True; fr = nf
             else:
-                rec(S, '--fix：有变化落在页面年代以内', False, '', '要重画：paint → critic → reroof')
+                # 打通：房子的变化 → 照配方重铺屋顶，只动变了的那几栋；公共建筑变了才需要 AI 重画那一块
+                sc_ = json.load(open(os.path.join(LIV, q, 'scene.json')))
+                sk = [s_['id'] for s_ in nf['structures'] if s_ not in fr['structures'] and s_['built'] <= last]
+                if sc_.get('paint') and not sk:
+                    import shutil
+                    for fn in ('houses.json', 'frame.json'):
+                        shutil.copy(os.path.join(t, fn), os.path.join(LIV, q, fn))
+                    rp = sh(sys.executable, os.path.join(HERE, 'repaint.py'), q)
+                    rec(S, '--fix：房子变了，照配方只重铺变了的那几栋', rp.returncode == 0, rp.stdout.strip().replace('\n', '；')[:160], '看 repaint.py：变化不局部就要查配方')
+                    ok = rp.returncode == 0; fr = nf
+                else:
+                    rec(S, '--fix：有变化落在页面年代以内', False, ('公共建筑变了：' + '、'.join(sk)) if sk else '这个街区没有画的配方', '只重画那一块：把那一块裁出来交给 AI 画，记进 scene.json 的 paint（donor），再 repaint.py')
         rec(S, '框内公共建筑与底账一致', nf['structures'] == fr['structures'], f"{len([s for s in nf['structures'] if s['geom']=='polygon'])} 个多边形", '--fix 重长 frame.json，再查 city.json 地标')
         return new, nf, (ok, t) if False else ok
 
@@ -146,6 +157,18 @@ def compare(q, fix):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
         m = re.search(r'vein cards (\d+) bad (\d+)', r.stdout)
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
+    # 心跳的位置从底账算：底账一变，泊位、水路、扛包路线跟着变
+    if sc.get('fleet', {}).get('derived'):
+        hp = os.path.join(HERE, 'heart.py')
+        r = sh(sys.executable, hp, q, '--json')
+        try:
+            now_ = json.loads(r.stdout.strip().splitlines()[-1]); same = all(sc['fleet'].get(k) == v for k, v in now_.items())
+        except Exception:
+            now_, same = None, False
+        if not same and FIX and now_ is not None:
+            sh(sys.executable, hp, q); sc = json.load(open(os.path.join(LIV, q, 'scene.json'))); same = True
+            rec(S, '--fix：心跳位置按最新底账重算', True)
+        rec(S, '心跳的位置是从底账算的（泊位、水路、扛包路线）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
     # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
     if sc.get('fleet'):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
@@ -165,6 +188,15 @@ def picture(q, sc):
             rec(S, f'{Y} 年 水面', s['water'] >= 0.6, str(s['water']), '重画时强调海岸线')
         if 'burn' in s:
             rec(S, f'{Y} 年 火场是黑的', s['burn'] >= 0.5, str(s['burn']), '重画时强调灰烬')
+        # 心跳选址查出来的：60 年两张候选都把狄奥多西港画成了一座大房子。港里必须画的是水
+        aa = np.asarray(Image.open(os.path.join(LIV, q, img)).convert('RGB').resize((PW, PH))).astype(int)
+        for st in fr['structures']:
+            if st['type'] == 'harbor' and st['built'] <= Y and not (st['destroyed'] and st['destroyed'] <= Y):
+                xs_ = [p[0] for p in st['pts']]; ys_ = [p[1] for p in st['pts']]
+                X0, X1, Y0, Y1 = max(0, min(xs_) + 25), min(PW, max(xs_) - 25), max(0, min(ys_) + 25), min(PH, max(ys_) - 25)
+                if X1 - X0 < 20 or Y1 - Y0 < 20: continue
+                c_ = aa[Y0:Y1, X0:X1]; wf = ((c_[..., 2] > c_[..., 0] + 15) & (c_[..., 2] > c_[..., 1] - 10)).mean()
+                rec(S, f"{Y} 年 {st['name']} 里画的是水", wf >= 0.4, f'水 {wf:.0%}', '在 scene.json 的 paint 里给这一年加 donor（借一张港画对了的），再 repaint.py')
         a = np.asarray(Image.open(os.path.join(LIV, q, img)).convert('RGB').resize((PW, PH))).astype(float)
         r, g, b = a[..., 0], a[..., 1], a[..., 2]
         roof = (r - b > 60) & (r > 110) & (g < r * 0.8)

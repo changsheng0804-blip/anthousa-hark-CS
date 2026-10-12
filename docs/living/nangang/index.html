@@ -773,7 +773,10 @@ var FLEET=null;let dayIdx=0;
         out.push({kind:'kid',h,kid,sp:sp(9),home:[h.cx,h.cy],spot:[s[0]+(r()-.5)*14,s[1]+(r()-.5)*6],go:6.6+r()*1.2,back:11+r()*2,ph:r()})}}
     const tav=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach*1.2&&famAt(household(h),Y).trade==='酒馆老板');
     const R={crowd:out,tav,g:granary(Y)};FLEET.cache[Y]=R;return R};
-  function shipPos(s,c){const u=sm((c-s.t0)/C.t_sail);const w=C.mouth;
+  function shipPos(s,c){const u=sm((c-s.t0)/C.t_sail);
+    if(s.path){const[px,py]=along(s.path,u);const[qx,qy]=along(s.path,Math.min(1,u+.01));let ang=u>=.98?s.ang:Math.atan2(qy-py,qx-px)+Math.PI;let x=px,y=py;   /* 水路是 heart.py 从底账算的 */
+      if(s.main&&c>=C.snap&&c<C.hold+.15){const k=c<C.hold?sm((c-C.snap)/(C.hold-C.snap)):1-sm((c-C.hold)/.15);x+=C.drift[0]*k;y+=C.drift[1]*k;ang+=.12*k}return[x,y,ang,u]}
+    const w=C.mouth;
     const a=[C.enter[0]+s.i*22,C.enter[1]+s.i*14];const q1=(1-u)*(1-u),q2=2*(1-u)*u,q3=u*u;
     let x=q1*a[0]+q2*w[0]+q3*s.at[0],y=q1*a[1]+q2*w[1]+q3*s.at[1];
     const du=Math.min(1,u+.02);const x2=(1-du)*(1-du)*a[0]+2*(1-du)*du*w[0]+du*du*s.at[0],y2=(1-du)*(1-du)*a[1]+2*(1-du)*du*w[1]+du*du*s.at[1];
