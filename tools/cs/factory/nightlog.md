@@ -1,0 +1,1 @@
+- 2026-10-12 10:3x PT：合并上游 v17–v19b（xerolophos 两处冲突两边都留，底账未变）；改善 backlog 1「街上的人和摊子不下水」，新检查 check_fleet「walker samples in water」（修前 56/191250，修后 0）；验收 51/51；快照 cs11；待推送

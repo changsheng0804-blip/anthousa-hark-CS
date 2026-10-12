@@ -26,6 +26,11 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
 {const W=F.FLEET.C.walk;const ch=(x,y)=>{const j=Math.floor(y/W.R),i=Math.floor(x/W.R);return j<0||i<0||j>=W.H||i>=W.W?'w':W.quay[j*W.W+i]};
  let n=0,wet=0,eg=null;for(const r of A.city.roads){for(let k=0;k<r.pts.length-1;k++){const a=r.pts[k],b=r.pts[k+1];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let u=0;u<=L;u+=4){const x=a[0]+(b[0]-a[0])*u/L,y=a[1]+(b[1]-a[1])*u/L;n++;const c=ch(x,y);if(c==='w'||c==='x'){wet++;if(!eg)eg=[r.id,x|0,y|0]}}}}
  console.log('street points in water',wet,'/',n,eg?JSON.stringify(eg):'');if(wet||!n)bad++}
+/* cs11 · backlog 1：街上的人（520 个）和摊子（420 个）按全街走一遍，每个位置（含 ±8 像素的偏移）都要在人走的网上，不靠页面「遇水不画」兜底 */
+{const FL=w.__fleet;let n=0,wet=0,eg=null,sn=0,swet=0,seg=null;
+ for(const wk of FL.walkers){const r=FL.roads[wk.r];for(let s=0;s<=r.L;s+=3){const q=FL.walkerXY(wk,s);n++;if(!FL.walk(q[0],q[1])){wet++;if(!eg)eg=[wk.r,s|0,q[0]|0,q[1]|0]}}}
+ for(const st of FL.stalls){sn++;if(!FL.walk(st.x,st.y)){swet++;if(!seg)seg=[st.x|0,st.y|0]}}
+ console.log('walker samples in water',wet,'/',n,eg?JSON.stringify(eg):'','stalls in water',swet,'/',sn,seg?JSON.stringify(seg):'');if(wet||swet||!n)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);
