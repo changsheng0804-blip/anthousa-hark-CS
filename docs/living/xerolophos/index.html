@@ -376,7 +376,7 @@ $('spd').onclick=()=>{speed=speed===1?6:speed===6?0:1;$('spd').textContent=speed
 
 /* ---------- year dial ---------- */
 const POP=HD.pop;function cityPop(Y){const ks=Object.keys(POP).map(Number).sort((a,b)=>a-b);let a=0,pa=POP[0]||23400;for(const k of ks){if(k>=Y){const pb=POP[k];return Math.round(pa*Math.pow(pb/pa,(Y-a)/(k-a||1)))}a=k;pa=POP[k]}return POP[50]}
-function setYear(Y){if(Y===YEAR)return;const pc=prevBase.getContext('2d');pc.clearRect(0,0,W,H);pc.drawImage(base,0,0);fadeT=1;YEAR=Y;buildBase(Y);
+function setYear(Y){if(Y===YEAR)return;setTimeout(announceScenes,60);const pc=prevBase.getContext('2d');pc.clearRect(0,0,W,H);pc.drawImage(base,0,0);fadeT=1;YEAR=Y;buildBase(Y);
   const n=houses.filter(h=>h.built<=Y&&h.destroyed>Y).length;
   $('ylab').textContent=`建城 ${Y} 年 · 公元 ${329+Y} 年`;$('tyear').textContent=`建城 ${Y} 年（公元 ${329+Y} 年）`;
   $('ystat').textContent=`这一角 ${n.toLocaleString()} 栋房子 · 全城约 ${cityPop(Y).toLocaleString()} 人`;renderCard();}
@@ -385,7 +385,8 @@ $('ystat').textContent=`这一角 ${houses.filter(h=>h.built<=50&&h.destroyed>50
 
 /* ---------- ticker ---------- */
 const TK={morning:['米利翁门开始发面包','一艘特罗阿德的粮船进了港','圣伊琳娜的晨钟响了','运水人挑着罐子往山坡上走'],day:['银钱商在柱廊下吵了起来','一个亚历山大里亚来的修士在广场上布道','卸粮工在粮仓前排成了长队','有人在大道上丢了一头驴'],race:['蓝党赢下第三场','绿党的人把帽子扔上了跑道','竞技场的吼声隔着三条街都听得见'],evening:['一支婚礼队伍举着火把走过大道','阿纳斯塔西娅门口又挤满了人','酒馆里有人说皇帝在东方打了败仗'],night:['打更人喊：小心火烛','金角湾上只剩几盏船灯','卫城的守夜兵点起了火盆']};
-let tkT=0;$('ticker').style.cursor='pointer';$('ticker').onclick=()=>{if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock<tkScene.h[1])flyTo(tkScene.at[0],tkScene.at[1]-20,2.2)};function tick(){if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock>=tkScene.h[0]&&clock<tkScene.h[1])return;tkScene=null;const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
+let tkT=0;$('ticker').style.cursor='pointer';$('ticker').onclick=()=>{if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]){if(clock<tkScene.h[0]||clock>=tkScene.h[1]-.3){clock=tkScene.h[0]+.02;lastSceneKey=''}flyTo(tkScene.at[0],tkScene.at[1]-20,2.2)}};
+function announceScenes(){const L=SCENES.filter(S=>YEAR>=S.y[0]&&YEAR<=S.y[1]);if(!L.length)return;const S=L[Math.floor(Math.random()*L.length)];tkScene=S;const hh=Math.floor(S.h[0]);$('tk').textContent='这一年，'+(hh<12?'上午 ':hh<18?'下午 ':'傍晚 ')+(hh>12?hh-12:hh)+' 点，'+S.where+'有人会碰面 · 点这里去看';$('ticker').style.opacity=1;tkT=25}function tick(){if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock>=tkScene.h[0]&&clock<tkScene.h[1])return;if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&Math.random()<.5){announceScenes();return}tkScene=null;const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
 
 /* ---------- sound (synthesized) ---------- */
 let AC=null,master,sea,crowd,crowdF,roar,soundOn=false;
