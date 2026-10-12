@@ -6,12 +6,17 @@ from playwright.sync_api import sync_playwright
 url = sys.argv[1]; shot = sys.argv[2] if len(sys.argv) > 2 else None
 errs = []
 with sync_playwright() as p:
-    b = p.chromium.launch()
+    import os, urllib.parse
+    px = os.environ.get('HTTPS_PROXY') if url.startswith('https') else None
+    kw = {}
+    if px:  # sandbox egress goes through an authenticated proxy; hand it to chromium explicitly
+        u = urllib.parse.urlparse(px); kw['proxy'] = {'server': f'{u.scheme}://{u.hostname}:{u.port}', 'username': urllib.parse.unquote(u.username or ''), 'password': urllib.parse.unquote(u.password or '')}
+    b = p.chromium.launch(**kw)
     pg = b.new_page(viewport={'width': 1280, 'height': 800})
     pg.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.on('response', lambda r: errs.append(f'{r.status} {r.url}') if r.status >= 400 else None)
-    pg.goto(url, wait_until='networkidle'); pg.wait_for_timeout(2500)
+    pg.goto(url, wait_until='commit', timeout=60000); pg.wait_for_function('window.__anth && window.__anth.VOICES', timeout=100000); pg.wait_for_timeout(1500)
     if pg.locator('#skip').is_visible(): pg.click('#skip'); pg.wait_for_timeout(800)
     n = pg.evaluate('Object.keys(window.__anth.VOICES).length')
     ids = pg.evaluate('Object.keys(window.__anth.VOICES)')
