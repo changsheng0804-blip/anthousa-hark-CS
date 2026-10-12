@@ -60,5 +60,6 @@
   "kit": "kits/hill/"
  },
  "streets": "streets.json",
- "junctions": "junctions.json"
+ "junctions": "junctions.json",
+ "streetnames": "streetnames.json"
 }

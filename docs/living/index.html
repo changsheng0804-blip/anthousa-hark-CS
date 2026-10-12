@@ -35,7 +35,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card{position:fixed;right:14px;top:62px;width:330px;max-height:calc(100% - 200px);overflow:auto;padding:14px 16px;display:none}
 #card .x{position:absolute;right:10px;top:8px;background:none;border:none;color:var(--mute);font-size:20px;cursor:pointer}
 #card h2{margin:0 0 2px;font-size:18px;color:var(--gold2);font-weight:600}
-#card .meta{font-size:12px;color:var(--mute)}
+#card .meta{font-size:12px;color:var(--mute)}.addr{font-size:12px;color:#c9a46a;margin:2px 0 4px;letter-spacing:.08em}
 #card .portrait{width:96px;height:96px;border-radius:8px;border:1px solid var(--gold);object-fit:cover;float:right;margin:0 0 6px 10px}
 #card .quote{font-size:14px;font-style:italic;color:var(--ivory);margin:8px 0;border-left:2px solid var(--gold);padding-left:8px}
 #card .now{font-size:13.5px;margin:8px 0;padding:8px;background:rgba(212,168,90,.1);border-radius:6px}
@@ -93,7 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='17';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='18';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -102,6 +102,10 @@ const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.js
 const pplImg=new Image();pplImg.src='people.png';
 const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
+let SN=SCENE.streetnames?await fetch(SCENE.streetnames).then(r=>r.ok?r.json():[]):[];
+function snName(st,Y){for(const r of st.r)if(r[1]<=Y&&Y<r[2])return r;return null}
+function snLabel(st,Y){const r=snName(st,Y);if(!r)return null;const i=st.r.indexOf(r);return (i>0&&Y-r[1]<4)?r[0]+'（原'+st.r[i-1][0]+'）':r[0]}
+function streetAt(x,y,Y,maxd=45){let b=null,bd=maxd*maxd;for(const st of SN){if(!snName(st,Y)||st.y>Y)continue;const p=st.p;for(let i=0;i+1<p.length;i++){const ax=p[i][0],ay=p[i][1],dx=p[i+1][0]-ax,dy=p[i+1][1]-ay;const t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy+1e-9)));const ex=x-ax-t*dx,ey=y-ay-t*dy,d=ex*ex+ey*ey;if(d<bd){bd=d;b=st}}}return b?snLabel(b,Y):null}
 let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(K+f).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(SCENE.junctions).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(SCENE.streets).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
 function geomOf(h){if(h.g)return h.g;const p=h.p;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);y0=Math.min(y0,p[i+1]);y1=Math.max(y1,p[i+1])}
@@ -314,7 +318,7 @@ function openNamed(P){sel={kind:'named',P};renderCard();blip(520,.08)}
 function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
-function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
+function showCard(html){if(SN.length&&sel&&sel.kind==='house'){const h=sel.hh.h;const a=streetAt(h.cx,h.cy,YEAR);if(a&&YEAR>=h.built)html=html.replace('</h2>','</h2><div class="addr">⌂ '+a+'</div>')}$('cardbody').innerHTML=html;$('card').style.display='block'}
 function tiePos(k,Y){if(k==='daph'){const w=DAPH.where(Y);return w}if(k==='theo'){const w=THEO.where(Y);return w}const t=houseById(+k);return t?[t.cx,t.cy,t.id]:null}
 function renderDeep(h,S,Y,per){
   const beats=S.beats.filter(b=>b[0]<=Y);const cur=beats[beats.length-1];
@@ -521,6 +525,16 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   // story lamps
   const LB=[];for(const id in STORIES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR))continue;if(!vis(h.cx,h.cy))continue;const S=STORIES[id];if(S.members.every(m=>m.d<=YEAR))continue;const p=.6+.4*Math.sin(t*1.7+h.id);const rr=10/Math.max(cam.z,.5);const rg=ctx.createRadialGradient(h.cx,h.cy,0,h.cx,h.cy,rr*1.8);rg.addColorStop(0,`rgba(255,200,110,${.55*p})`);rg.addColorStop(1,'rgba(255,170,70,0)');ctx.fillStyle=rg;ctx.beginPath();ctx.arc(h.cx,h.cy,rr*1.8,0,7);ctx.fill();ctx.fillStyle='#ffd88a';ctx.beginPath();ctx.arc(h.cx,h.cy,2.6/Math.max(cam.z,.5),0,7);ctx.fill();
     if(cam.z>=1.1){ctx.font=`${12/cam.z}px serif`;const tw=ctx.measureText(S.title).width;const bx=[h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z];const DP=DAPH.where(YEAR);if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3])||(DP&&dist(h.cx,h.cy,DP[0],DP[1])<22/cam.z))continue;LB.push(bx);ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(S.title,h.cx+8/cam.z,h.cy)}}
+  // street names, written along the street like an old town map
+  if(SN.length&&cam.z>=.6){const lv=cam.z<1.2?'m':cam.z<1.9?'ms':'mscl';
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    for(const st of SN){if(!lv.includes(st.k))continue;const nm=snLabel(st,YEAR);if(!nm)continue;
+      for(const a of st.a){if(a[3]>YEAR||!vis(a[0],a[1]))continue;
+        const fs=(st.k==='m'?15:st.k==='s'?13:11.5)/cam.z;ctx.font=`${st.k==='m'?'bold ':''}${fs}px serif`;const tw=ctx.measureText(nm).width;
+        const c=Math.abs(Math.cos(a[2])),sn=Math.abs(Math.sin(a[2]));const bw=tw*c+fs*sn,bh=tw*sn+fs*c;const bx=[a[0]-bw/2,a[1]-bh/2,bw,bh];
+        if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3]))continue;LB.push(bx);
+        ctx.translate(a[0],a[1]);ctx.rotate(a[2]);ctx.lineJoin='round';ctx.lineWidth=3.2/cam.z;ctx.strokeStyle='rgba(246,236,212,.88)';ctx.strokeText(nm,0,0);ctx.fillStyle=st.k==='m'?'rgba(92,40,22,.95)':'rgba(58,40,26,.92)';ctx.fillText(nm,0,0);ctx.rotate(-a[2]);ctx.translate(-a[0],-a[1])}}
+    ctx.restore()}
   // landmarks
   for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;if(l.until&&YEAR>l.until)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads

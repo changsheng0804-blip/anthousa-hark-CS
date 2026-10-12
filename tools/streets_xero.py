@@ -479,6 +479,7 @@ for q in outS:
         if k.startswith('cistern') and q[5] != 'm' and pip(mx, my, zz['p']):
             if zz['built'] <= q[6]: q[6] = 999
             else: q.append(zz['built'])
+json.dump({'si': [q[7] for q in outS if q[6] < 999], 'streets': [dict(k=st['kind'], w=st['w'], pts=[[round(c, 1) for c in p_] for p_ in st['pts']]) for st in streets]}, open('/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen/_streets_meta.json', 'w'))
 outS = [q[:7] + q[8:] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
 cell = {}
