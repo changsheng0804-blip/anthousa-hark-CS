@@ -28,6 +28,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     if(!/[0-7s]/.test(at(j,i))){let best=null;for(let r=1;r<8&&!best;r++)for(let dj=-r;dj<=r;dj++)for(let di=-r;di<=r;di++)if(!best&&/[0-7s]/.test(at(j+dj,i+di)))best=[j+dj,i+di];if(!best)return null;[j,i]=best}
     const P=FLEET_walkable(x,y)?[[x,y]]:[];let n=0;P.push([(i+.5)*WK.R,(j+.5)*WK.R]);while(at(j,i)!=='s'&&n++<2000){const d=DIR[at(j,i)];j+=d[0];i+=d[1];P.push([(i+.5)*WK.R,(j+.5)*WK.R])}
     P.push([(i+.5)*WK.R,(j+.5)*WK.R]);return P}
+  {const r=rng(hash('smoke16'));for(const s of smokes){let n=0;while(!FLEET_walkable(s.x,s.y)&&n++<600){s.x=r()*W;s.y=r()*H}}}   /* cs16：炊烟不从海里冒 */
   FLEET={C,on:false,slow:false,cache:{},ships,msgs:{},lineCache:{}};
   FLEET.active=Y=>Y>=C.from&&dayIdx%3===0;
   const ok=(h,Y)=>h.built<=Y&&h.destroyed>Y;
@@ -112,3 +113,36 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     const kid=al.find(p=>Y-p.b>=6&&Y-p.b<=13);const burned=F.B>=48&&hh.ev.some(e=>e[0]===F.B&&/火/.test(e[1]));
     if(burned&&d<C.reach&&per==='morning')return '火后';if(kid&&d<C.reach*.7&&(per==='morning'||per==='day'))return '孩子';if(d<C.reach*.6&&L['近处'][per]&&hash('bg'+h.id)%5<2)return '近处';return null};   // 近处人家只有两成被这件事带走，其余照常过日子
 })();
+
+/* cs16 · backlog 3：会动的东西登记册。页面上每一种会动（或冒烟）的东西都要登记在这里，写明它该在哪（land 陆地 / water 水 / off 画外 / absent 此街区不出现 / air 天上），
+   check_fleet.js 逐种、逐年、逐钟点检查；登记册里少一种，或 frame() 里冒出没登记的新循环，都判不过。 */
+/* cs16：队伍、工地的站位算法放在一处，页面画的和检查量的是同一套 */
+function csQueueN(s,Y){const R=VEIN.at(Y);const long=Y===48&&R.steps.some(q=>q.lost&&q.b===s.b)||s.lost;return Math.min(long?34:12,Math.round(s.n/(long?6:14)))}
+function csQueueAng(s,Y,n){const r=rng(hash('q'+s.i+Y));return r()*6.28}
+function csQueuePt(s,ang,k){const d=4+k*3.2,wob=Math.sin(k*1.7)*2.2;return[s.x+Math.cos(ang)*d-Math.sin(ang)*wob,s.y+Math.sin(ang)*d+Math.cos(ang)*wob]}
+function csDryNear(x,y,offs){for(const[dx,dy]of offs)if(FLEET_walkable(x+dx,y+dy))return[x+dx,y+dy];return null}   /* 附近第一个人站得住的点，没有就不画这个人 */
+function csSitePos(h){return csDryNear(h.cx,h.cy,[[6,3],[-6,3],[0,5],[0,0]])}
+function csLateC(L){return L.p.reduce((a,q)=>[a[0]+q[0]/L.p.length,a[1]+q[1]/L.p.length],[0,0])}
+function csLatePos(L,j){const c=csLateC(L);return csDryNear(c[0],c[1],[[-15+j*12,4.5],[-15+j*12,12],[j*12-6,-3],[0,0]])}
+function csBakeries(R){return R.bak.filter(b=>FLEET_walkable(b.x,b.y))}
+function csMovers(Y){const out=[];if(!SCENE.fleet||!FLEET)return out;const add=(kind,domain,pts)=>out.push({kind,domain,pts});
+  const Fl=FLEET,wk=[],st=[],pl=[];
+  for(const w of walkers){const r=roads[w.r];for(let s=0;s<=r.L;s+=12){const q=walkerXY(w,s);wk.push([q[0],q[1]])}}
+  add('街上的人','land',wk);add('摊子','land',stalls.map(s=>[s.x,s.y]));add('烟囱的烟','land',smokes.map(s=>[s.x,s.y]));
+  const sites=buildingNow.map(h=>csSitePos(h)).filter(Boolean);for(const k in late){const L=late[k];if(!(L.built>Y&&L.built<=Y+2))continue;for(let j=0;j<3;j++){const q=csLatePos(L,j);if(q)sites.push(q)}}
+  add('工地上的人','land',sites);
+  if(typeof VEIN!=='undefined'&&VEIN&&VEIN.steps&&VEIN.steps.length&&Y>=33){const R=VEIN.at(Y);
+    add('面包房炉烟','land',csBakeries(R).map(b=>[b.x,b.y]));
+    for(const s of R.steps){const n=csQueueN(s,Y);const ang=csQueueAng(s,Y,n);for(let k=0;k<n;k++)pl.push(csQueuePt(s,ang,k))}
+    add('早市队伍','land',pl)}
+  else{add('面包房炉烟','land',[]);add('早市队伍','land',[])}
+  const cw=[],tv=[],sh=[];const R=Fl.crowd(Y);
+  for(let cl=6;cl<23.5;cl+=.25)for(const m of R.crowd){const q=Fl.pos(m,cl,R.g);if(q)cw.push([q[0],q[1]])}
+  for(const h of R.tav)for(const q of Fl.tavPeople(h))tv.push(q);
+  for(let cl=6;cl<23.5;cl+=.25)for(const s of Fl.ships){if(cl<s.t0)continue;const p=Fl.shipPos(s,cl);sh.push([p[0],p[1]])}
+  add('码头人群','land',cw);add('酒馆门口的人','land',tv);add('大船队','water',sh);
+  const outside=a=>a.map(s=>[s.x,s.y]);
+  add('旧版停泊船','off',ships.map(s=>[s.x,s.y]));add('旧版海上帆影','off',CL);
+  add('旧版进港船','absent',SCENE.intro===false?[]:[[900,190]]);add('赛马','absent',has('hippodrome')?[[0,0]]:[]);
+  add('海鸥','air',gulls.map(g=>[g.cx,g.cy]));
+  return out}

@@ -50,6 +50,20 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
  let ok2=true,info='';for(const Y of [40,50,57,60]){A.setYear(Y);const bs=F.FLEET.crowd(Y).crowd.filter(m=>m.kind==='work').map(m=>m.back).sort((a,b)=>a-b);const gr=[[bs[0]]];for(let i=1;i<bs.length;i++){if(bs[i]-bs[i-1]>=.2)gr.push([]);gr[gr.length-1].push(bs[i])}
   const small=gr.filter(g=>g.length<bs.length*.15).length;if(gr.length!==3||small){ok2=false;info+=' Y'+Y+':'+gr.length+'堆'}}
  console.log('ship peak speed',peak|0,'px/h (<=450); at 70px',s70|0,'at 25px',s25|0,bad2.join(),'| leave waves',ok2?'3 waves':info);if(!ok1||!ok2)bad++}
+/* cs16 · backlog 3：会动的东西登记册（页面里的 csMovers）——每一种都要登记，并在 40/48/50/57/60 年逐种检查：land 的点要在人走的网上，water 的要在水里，off 的要在画外，absent 的不能有点 */
+{const FL=w.__fleet;const REQ=['街上的人','摊子','烟囱的烟','工地上的人','面包房炉烟','早市队伍','码头人群','酒馆门口的人','大船队','旧版停泊船','旧版海上帆影','旧版进港船','赛马','海鸥'];
+ const Wd=FL.FLEET.C.walk;const res={},miss=new Set(REQ);let badk=[];
+ for(const Y of [40,48,50,57,60]){A.setYear(Y);const mv=FL.movers(Y);
+  for(const m of mv){miss.delete(m.kind);const r=res[m.kind]||(res[m.kind]={n:0,bad:0,dom:m.domain,eg:null});
+   for(const [x,y] of m.pts){r.n++;const c=FL.cell(x,y);let ok=true;
+    if(m.domain==='land')ok=FL.walk(x,y);else if(m.domain==='water')ok=c==='w';else if(m.domain==='off')ok=x<0||y<0||x>Wd.W*Wd.R||y>Wd.H*Wd.R;else if(m.domain==='absent')ok=false;
+    if(!ok){r.bad++;if(!r.eg)r.eg=[Y,x|0,y|0]}}}}
+ const src=require('fs').readFileSync(__dirname+'/../../docs/living/nangang/index.html','utf8');
+ const fr=src.slice(src.indexOf('function frame(now)'));const KNOWN=new Set(['NAMED','SCENES','city.landmarks','glows','bubbles','threads','head','buildingNow','chariots','gulls','seaShips','smokes']);
+ const loops=[...new Set([...fr.matchAll(/for\(const\s+\[?[\w,\s]*\]?\s+of\s+([\w.]+)\)/g)].map(m=>m[1]))].filter(n=>!KNOWN.has(n));
+ const tot=Object.values(res).reduce((a,r)=>a+r.bad,0);
+ console.log('movers',Object.keys(res).length,'kinds; missing',[...miss].join(',')||'none','; off-domain',JSON.stringify(Object.fromEntries(Object.entries(res).filter(([k,r])=>r.bad).map(([k,r])=>[k,r.bad+'/'+r.n+' '+JSON.stringify(r.eg)]))),'; unregistered frame loops',loops.join(',')||'none');
+ if(miss.size||tot)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);

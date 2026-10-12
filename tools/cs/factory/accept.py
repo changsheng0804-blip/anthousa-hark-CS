@@ -186,6 +186,10 @@ def compare(q, fix):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
         m = re.search(r'fleet cards (\d+) bad (\d+)', r.stdout); dd = re.search(r'near pairs (\d+) same-line near pairs (\d+)', r.stdout)
         rec(S, '粮船日与底账一致、邻居不重样', bool(m) and m.group(2) == '0', (m.group(0) + (f'；同句近邻 {dd.group(2)}/{dd.group(1)}' if dd else '')) if m else (r.stdout + r.stderr)[-120:], '多写几句（scene.json fleet.lines），或看 WRONGTRADE / BAD')
+        # cs16 · 会动的东西登记册：每一种（街上的人、摊子、炊烟、工地、队伍、炉烟、码头人群、酒馆、船、旧版遗留、海鸥）都有「在水里 / 在陆地」检查，少一种、或有一个点放错地方都不过
+        mv = re.search(r'movers (\d+) kinds; missing (.*?) ; off-domain (\{.*?\}) ;', r.stdout)
+        okv = bool(mv) and int(mv.group(1)) >= 14 and mv.group(2) == 'none' and mv.group(3) == '{}'
+        rec(S, '每种会动的东西都登记并在该在的地方', okv, mv.group(0)[:160] if mv else (r.stdout + r.stderr)[-120:], '新加会动的东西要登记进页面 csMovers（写明 land/water/off），放错地方的改站位算法')
     return sc
 
 
