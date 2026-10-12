@@ -1,5 +1,6 @@
-# 上游候选（待评估，只挑更好的手动 cherry-pick）
-已审阅到：b261272dd46c04959f61528b438a5d030e05e2fa
-- dc41a07 living v13: Xerolophos grows streets first (main roads, streets, cross streets, lanes); houses moved onto street lots, same ids and years; keyframes rendered from the ledger with the hill kit ——Hark
-- 1c78a72 living v13.1: houses turn their doors toward the street; size from footprint area; generator scripts in tools/ ——Hark
-- 53b0c3c living v14: street rules - main roads grow continuous shopfront rows, houses take main roads first then lanes, wells/stalls/ovens at junctions ——Hark
+# 上游候选（已评估，只挑更好的手动 cherry-pick）
+已审阅到：852d5264aeee2733ddb1bd2555a917739a5b148c（2026-10-12）
+- dc41a07 living v13: 先长街道再落房（主路/街/横街/巷），房屋挪到街边地块 —— 不采纳：街道布局是谭线「画」的主攻方向，照搬会让两线趋同；刘线房屋按 id 引用，日后要用可只读其 houses.json。
+- 1c78a72 living v13.1: 门朝街、按占地定大小、生成脚本进 tools/ —— 不采纳：依附 v13 街道布局，同上。
+- 53b0c3c living v14: 主路连排铺面、井/摊/炉在路口 —— 不采纳：同属谭线画面层；路口设施对刘线「街坊闲话」有参考价值，先记下不移植。
+- 852d526 living v14b: 每次构建给数据和图片加 cache-bust —— 采纳（手动移植到 docs/living/xerolophos/index.html，BUILD='liu3b'）：刘线 voices/talk 等 JSON 会频繁更新，老访客被缓存卡在旧闲话里，这是纯技术修正、不碰刘线特色。
