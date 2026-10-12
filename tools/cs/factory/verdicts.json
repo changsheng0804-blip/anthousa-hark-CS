@@ -62,7 +62,8 @@
    "machine": "pass",
    "owner": "再来",
    "issue": "人从海里走过去：码头人群走直线，水和船对人没有约束",
-   "check": "check_fleet.js 人不下水、船不上岸"
+   "check": "check_fleet.js 人不下水、船不上岸",
+   "script": "tools/cs/check_fleet.js"
   },
   {
    "v": "cs8",
