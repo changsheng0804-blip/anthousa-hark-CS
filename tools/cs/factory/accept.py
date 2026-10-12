@@ -228,6 +228,30 @@ def live(q, sc):
             rec(S, f, False, str(e)[:60], '看 Pages 部署')
 
 
+def fsr(q):
+    """五、假成功：机器判过、所有者判「再来」的次数 ÷ 机器判过且所有者已评的次数。
+    每一次假成功都必须长出一条新检查，而且这条检查这一轮要在、要过，否则标红。"""
+    S = '五、假成功'
+    # 从 cs5 的假成功长出来的检查：脉是地下管线，页面上不许有看「脉」的按钮或图层
+    for qq in ('nangang', 'xerolophos'):
+        p = os.path.join(LIV, qq, 'index.html')
+        if os.path.exists(p) and qq == q:
+            html = open(p).read(); body = html.split('<script')[0]
+            shown = re.findall(r'<(?:button|label)[^>]*>[^<]*脉[^<]*<', body) + re.findall(r"id=['\"]vein(?:Btn|Toggle)['\"]", body)
+            rec(S, '脉不露面', not shown, '页面上没有看脉的按钮或图层' if not shown else '、'.join(shown)[:80], '删掉按钮，只让后果（炉烟、队伍、敲门的话）露出来')
+    d = json.load(open(os.path.join(HERE, 'verdicts.json')))['verdicts']
+    names = {x[1] for x in R}
+    judged = [v for v in d if v['machine'] == 'pass' and v['owner'] in ('留', '再来')]
+    false = [v for v in judged if v['owner'] == '再来']
+    rate = len(false) / len(judged) if judged else 0
+    pend = [v['v'] for v in d if v['owner'] == '待评']
+    rec(S, f'假成功率 {len(false)}/{len(judged)} = {rate:.0%}', True, ('待评：' + '、'.join(pend)) if pend else '没有待评的', '')
+    for v in false:
+        c = v.get('check'); here = v.get('q') == q
+        ok = bool(c) and (not here or c in names or (v.get('script') and os.path.exists(os.path.join(ROOT, v['script']))))
+        rec(S, f"{v['v']} 的假成功已补成检查（{v.get('issue', '')[:18]}）", ok, c or '还没补', '把所有者指出的问题写成一条自动检查，再把检查名填进 verdicts.json')
+
+
 def report(q):
     fails = [x for x in R if not x[2]]
     L = [f'# {q} 验收', '', f'通过 {len(R) - len(fails)} / {len(R)}', '']
@@ -248,4 +272,5 @@ if __name__ == '__main__':
     if os.path.exists(os.path.join(LIV, q, 'frame.json')):
         picture(q, sc); sheet(q, sc)
     if '--live' in a: live(q, sc)
+    fsr(q)
     sys.exit(0 if report(q) else 1)

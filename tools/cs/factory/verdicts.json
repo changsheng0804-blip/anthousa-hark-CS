@@ -1,0 +1,9 @@
+{"说明": "所有者的评语账。machine = 交付时机器验收结果；owner = 留 / 再来 / 待评；再来且 machine=pass 就是一次「假成功」，必须写 check：从那次假成功长出来的检查项名字（accept.py 里 rec 的名字，或独立检查脚本）。",
+ "verdicts": [
+  {"v": "cs1", "q": "xerolophos", "date": "2026-10-12", "what": "敲门问话", "machine": "pass", "owner": "留"},
+  {"v": "cs2", "q": "xerolophos", "date": "2026-10-12", "what": "跟一个人过一生、跨户婚姻", "machine": "pass", "owner": "再来", "issue": "想法留，但露得太多", "check": "敲门卡一眼只露一件事", "script": "tools/cs/check_card.js"},
+  {"v": "cs3", "q": "xerolophos", "date": "2026-10-12", "what": "收紧的卡片：一句现在、一个钩子、后来呢", "machine": "pass", "owner": "待评"},
+  {"v": "cs4", "q": "nangang", "date": "2026-10-12", "what": "生产线第一个街区：南港", "machine": "pass", "owner": "留"},
+  {"v": "cs5", "q": "nangang", "date": "2026-10-12", "what": "粮脉（按钮 + 金线流程图）", "machine": "pass", "owner": "再来", "issue": "看不懂要干嘛；脉应该是地下管线，不该浮上来让人看", "check": "脉不露面"},
+  {"v": "cs6", "q": "nangang", "date": "2026-10-12", "what": "粮船日", "machine": "pass", "owner": "待评"}
+ ]}
