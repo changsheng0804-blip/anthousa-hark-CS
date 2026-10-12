@@ -43,6 +43,20 @@ def nobuild(x, y):
     if seg_d(x, y, *AQ) < 16: return True
     return False
 
+# ---------------- settlement age: old quarters wind, new quarters are straight ----------------
+AG = 40; agrid = {}
+for h in houses:
+    pp = h[4]; hx = sum(pp[0::2]) / 4; hy = sum(pp[1::2]) / 4
+    agrid.setdefault((int(hx // AG), int(hy // AG)), []).append(h[2])
+def age(x, y):
+    ys = []
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1): ys += agrid.get((int(x // AG) + i, int(y // AG) + j), [])
+    if len(ys) < 4: return 45
+    ys.sort(); return ys[len(ys) // 5]
+def old(x, y):
+    if pip(x, y, ZONES['fire_ruins']): return 0.0   # burnt ground re-laid as a planned grid after 48
+    return max(0.0, min(1.0, (38 - age(x, y)) / 28))
 # ---------------- streets ----------------
 streets = []  # dict(w, kind, pts)
 for r in city['roads']:
@@ -59,7 +73,11 @@ u = umin + 40; i = 0
 while u < umax:
     w = 8 if i % 2 == 0 else 5
     ph = random.random() * 6.28; amp = random.uniform(3, 9)
-    pts = [P(u + amp * math.sin(v / 210 + ph), v) for v in np.arange(vmin, vmax + 1, 30)]
+    ph2, ph3 = random.random() * 6.28, random.random() * 6.28
+    pts = []
+    for v in np.arange(vmin, vmax + 1, 15):
+        bx, by = P(u + amp * math.sin(v / 210 + ph), v); o = old(bx, by)
+        pts.append(P(u + amp * math.sin(v / 210 + ph) * (1 - 0.8 * (o == 0)) + o * (14 * math.sin(v / 60 + ph2) + 7 * math.sin(v / 23 + ph3)), v))
     longs.append((u, w, pts, ph, amp)); u += random.uniform(64, 82); i += 1
 def ulong(L, v): u, w, pts, ph, amp = L; return u + amp * math.sin(v / 210 + ph)
 # break long lanes randomly (dead ends) - lanes only
@@ -69,7 +87,7 @@ for (u0, w, pts, ph, amp) in longs:
     else:
         cur = []
         for p in pts:
-            if random.random() < 0.05 and len(cur) > 3:
+            if random.random() < 0.025 + 0.09 * old(*p) and len(cur) > 6:
                 streets.append(dict(w=w, kind='lane', pts=cur)); cur = []
                 continue
             cur.append(p)
@@ -82,7 +100,18 @@ while v < vmax:
         if random.random() < 0.72:
             vv = v + tilt * a[0]
             ua, ub = ulong(a, vv), ulong(b, vv + tilt * (b[0] - a[0]))
-            streets.append(dict(w=6, kind='cross', pts=[P(ua, vv), P(ub, vv + tilt * (b[0] - a[0]))]))
+            A_, B_ = P(ua, vv), P(ub, vv + tilt * (b[0] - a[0]))
+            o = old((A_[0] + B_[0]) / 2, (A_[1] + B_[1]) / 2)
+            if o < 0.15:   # planned: square to the long streets
+                vm = vv + tilt * (b[0] - a[0]) / 2; A_, B_ = P(ua, vm), P(ub, vm)
+                streets.append(dict(w=7, kind='cross', pts=[A_, B_]))
+            else:          # old: kinked alley, plus stray short alleys
+                km = random.uniform(-22, 22) * o
+                M_ = P((ua + ub) / 2 + random.uniform(-8, 8) * o, vv + tilt * (b[0] - a[0]) / 2 + km)
+                streets.append(dict(w=6 - 2 * o, kind='cross', pts=[A_, M_, B_]))
+                if random.random() < 0.8 * o:
+                    v2 = vv + random.uniform(40, 100); u2 = ua + random.uniform(10, 25)
+                    streets.append(dict(w=4, kind='lane', pts=[P(ulong(a, v2), v2), P(u2 + random.uniform(15, 30), v2 + random.uniform(-25, 25)), P(u2 + random.uniform(30, 45), v2 + random.uniform(-30, 30))]))
     v += random.uniform(130, 175)
 
 # clip streets to interior
