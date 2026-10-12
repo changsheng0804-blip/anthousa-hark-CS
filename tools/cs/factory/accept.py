@@ -121,7 +121,7 @@ def compare(q, fix):
         rec(S, f'{q} ⇄ {tq} 来回都能走', back, '', f'在 {tq}/scene.json 加 next 指回 {q}')
     # 脉：每条脉都要和敲门卡说同一件事（面包房那栋房子这一年住的就是面包师；断供的年份就是底账里烧掉的那一年）
     if sc.get('vein'):
-        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300)
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
         m = re.search(r'vein cards (\d+) bad (\d+)', r.stdout)
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
     return sc

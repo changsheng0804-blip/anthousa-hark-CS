@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 35 / 36
+通过 36 / 36
 
 
 ## 一、拉取
@@ -28,13 +28,7 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ nangang ⇄ xerolophos 来回都能走
-- ❌ 粮脉与底账、敲门卡一致 —— 1:14) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [ '/workspace/work/ah/tools/cs/check_vein.js' ]
-}
-
-Node.js v22.23.3
-  → 修：看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD
+- ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
 
 ## 三、画面
 - ✅ 40 年 房子对位 —— 0.886（命中 0.869 / 空地干净 0.904）
