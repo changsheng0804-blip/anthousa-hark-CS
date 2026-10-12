@@ -75,7 +75,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <canvas id="c"></canvas>
 
 <div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub"><span id="scn"></span> · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
-<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="next" style="display:none;border-color:#e0b860;color:#ffd98a"></button><button class="btn" id="vein" style="display:none">粮脉</button><button class="btn" id="info">i</button></div>
+<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="next" style="display:none;border-color:#e0b860;color:#ffd98a"></button><button class="btn" id="info">i</button></div>
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
@@ -693,7 +693,7 @@ function veinCard(h){const Y=YEAR;VEIN.sel=h;const per=periodOf(clock);
   else if(v.detour)now=`火场还没清干净，粮车得绕着走，面包常常晚到。`;
   else now=per==='morning'?`${head?head.n:'家里的人'}正排在台阶上等今天的面包。`:per==='night'?`面包房里已经在和明天的面了。`:`今天的面包领回来了。`;
   showCard(`<h2>${nm}的面包</h2><div class="meta">粮脉 · 建城 ${Y} 年</div><div class="now">${now}</div><div class="life">${L.join('')}</div><div class="pin">拨动年代，看这条脉在哪一年断、在哪一年接上</div>`)}
-function veinToggle(on){VEIN.on=on;VEIN.sel=null;closeCard();$('vein').classList.toggle('on',on);
+function veinToggle(on){VEIN.on=on;VEIN.sel=null;closeCard();
   $('ticker').style.opacity=on?0:1;['daph','other','next'].forEach(k=>{const e=$(k);if(e)e.style.visibility=on?'hidden':''});
   if(on){flyTo(W/2,H/2,minZ()*1.05,1200);veinStat()}else{$('ystat').textContent=`这一角 ${houses.filter(h=>h.built<=YEAR&&h.destroyed>YEAR).length.toLocaleString()} 栋房子 · 全城约 ${cityPop(YEAR).toLocaleString()} 人`}}
 function veinStat(){if(!VEIN.on)return;const Y=YEAR;
@@ -728,7 +728,22 @@ function veinDraw(t){if(!VEIN.on)return;const Y=YEAR;
   // 火场：只在火后几年画出轮廓
   if(Y>=48&&Y<55){ctx.fillStyle='rgba(226,82,58,.18)';for(const h of houses)if(h.destroyed===48){ctx.beginPath();ctx.arc(h.cx,h.cy,9,0,7);ctx.fill()}}
 }
-if(SCENE.vein){$('vein').style.display='';$('vein').onclick=()=>veinToggle(!VEIN.on)}
+
+function veinSurface(t,vis,per){if(!VEIN||!VEIN.steps.length||YEAR<33)return;const R=VEIN.at(YEAR);const z=cam.z;
+  // 埋下去的管线，只让结果冒出来：凌晨面包房的炉烟和火光，早上台阶前的队伍
+  const pre=clock>=3&&clock<7;
+  if(pre||per==='night'){for(const b of R.bak){if(!vis(b.x,b.y,120)||inClose(b.x,b.y))continue;const g=pre?1:.35;
+    ctx.fillStyle=`rgba(255,150,60,${(.18+.08*Math.sin(t*3+b.h.id))*g})`;ctx.beginPath();ctx.arc(b.x,b.y,7,0,7);ctx.fill();
+    if(pre)for(let k=0;k<4;k++){const ph=((t*.15+k*.25+b.h.id%5*.1)%1);ctx.fillStyle=`rgba(230,224,212,${.2*(1-ph)})`;ctx.beginPath();ctx.arc(b.x+ph*40+Math.sin(t+k)*3,b.y-ph*70,3+ph*11,0,7);ctx.fill()}}}
+  if(clock>=5&&clock<8.5&&z>=1){for(const s of R.steps){if(!vis(s.x,s.y,80)||inClose(s.x,s.y))continue;
+    const long=YEAR===48&&R.steps.some(q=>q.lost&&q.b===s.b)||s.lost;   // 48 年：断了供的那一片，改去的台阶前排成长龙
+    const n=Math.min(long?34:12,Math.round(s.n/(long?6:14)));const fade=clamp((clock-5)/.5,0,1)*clamp((8.5-clock)/.6,0,1);if(n<1)continue;
+    const r=rng(hash('q'+s.i+YEAR));const ang=r()*6.28;ctx.globalAlpha=fade;
+    for(let k=0;k<n;k++){const d=4+k*3.2,wob=Math.sin(k*1.7)*2.2;const x=s.x+Math.cos(ang)*d-Math.sin(ang)*wob,y=s.y+Math.sin(ang)*d+Math.cos(ang)*wob;
+      if(z>=1.5){const m=PPL[(hash('p'+s.i+k)%PPL.length)];const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,x-ww/2,y-hh,ww,hh)}
+      else{ctx.fillStyle=COLS[k%COLS.length];ctx.fillRect(x-1.2,y-1.2,2.4,2.4)}}
+    ctx.globalAlpha=1}}}
+
 
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   clock=(clock+dt*speed*(sceneSlow?.3:1)*24/DAY)%24;const per=periodOf(clock);race.on=has('hippodrome')&&clock>=13&&clock<17;
@@ -758,6 +773,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
       if(cam.z>=.8){ctx.font=`${12/cam.z}px serif`;const tx='工地：建城 '+L.built+' 年完工';const tw=ctx.measureText(tx).width;ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(c[0]-tw/2-3/cam.z,c[1]-26/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#f3ead8';ctx.fillText(tx,c[0]-tw/2,c[1]-15/cam.z)}}}
   // market stalls along the streets (more as the city fills; folded at night)
   if(cam.z>=1&&(per==='morning'||per==='day')){const nS=Math.floor(stalls.length*density);for(let i=0;i<nS;i++){const st=stalls[i];if(!vis(st.x,st.y)||inClose(st.x,st.y))continue;ctx.fillStyle='rgba(40,25,10,.3)';ctx.fillRect(st.x-5,st.y-1.5,11,6);ctx.fillStyle=st.c;ctx.fillRect(st.x-5.5,st.y-4,11,4.5);ctx.fillStyle='rgba(255,250,235,.9)';for(let k=0;k<4;k++)ctx.fillRect(st.x-5.5+k*2.9,st.y-4,1.4,4.5);ctx.fillStyle=st.g;for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(st.x-3.6+k*2.4,st.y+2,1.1,0,7);ctx.fill()}}}
+  veinSurface(t,vis,per);
   // walkers
   const nightF=per==='night'?.15:per==='evening'?.6:1;const nW=Math.floor(walkers.length*nightF*density);
   const big=cam.z>1.2;
@@ -810,7 +826,6 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     const p=.5+.5*Math.sin(t*3);ctx.strokeStyle=`rgba(255,215,120,${.6+.4*p})`;ctx.lineWidth=2.5/Math.max(cam.z,.6);ctx.beginPath();ctx.arc(w[0],w[1],r+2/cam.z,0,7);ctx.stroke();
     if(cam.z>.8){ctx.font=`${12/cam.z}px serif`;ctx.fillStyle='rgba(20,17,13,.8)';const tw=ctx.measureText(P.name).width;ctx.fillRect(w[0]-tw/2-3/cam.z,w[1]+r+3/cam.z,tw+6/cam.z,16/cam.z);ctx.fillStyle='#f0d79a';ctx.fillText(P.name,w[0]-tw/2,w[1]+r+15/cam.z)}}
   scDraw();
-  veinDraw(t);
   updateSound();
   tkT-=dt;if(tkT<0){tkT=12;tick()}
   if(sel&&Math.floor(now/4000)!==Math.floor((now-dt*1000)/4000)&&sel.kind!=='house')renderCard();
