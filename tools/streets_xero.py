@@ -133,6 +133,51 @@ for s in streets:
         S2 += clip(s)
 streets = S2
 
+# ---- audit fix E: two roads never run side by side a few steps apart; the lesser one gives way
+RANK = {'main': 0, 'street': 1, 'cross': 2, 'lane': 3}
+def resample(pts, step=6):
+    out = [list(pts[0])]
+    for a, b in zip(pts[:-1], pts[1:]):
+        L = math.hypot(b[0] - a[0], b[1] - a[1]); n = max(1, int(L // step))
+        for j in range(1, n + 1): out.append([a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n])
+    return out
+def _sd0(px, py, a, b):
+    ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
+    t = max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy + 1e-9)))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy)
+SG0 = {}
+for si, s_ in enumerate(streets):
+    for a, b in zip(s_['pts'][:-1], s_['pts'][1:]):
+        for gx in range(int(min(a[0], b[0]) // 40) - 1, int(max(a[0], b[0]) // 40) + 2):
+            for gy in range(int(min(a[1], b[1]) // 40) - 1, int(max(a[1], b[1]) // 40) + 2):
+                SG0.setdefault((gx, gy), []).append((si, a, b))
+S3 = []; trimmed = 0
+for si, s_ in enumerate(streets):
+    if s_['kind'] == 'main': S3.append(s_); continue
+    R_ = resample(s_['pts']); keep = []
+    for k_, p_ in enumerate(R_):
+        q0 = R_[max(0, k_ - 1)]; q1 = R_[min(len(R_) - 1, k_ + 1)]
+        ang = math.atan2(q1[1] - q0[1], q1[0] - q0[0])
+        bad = False
+        for sj, a, b in SG0.get((int(p_[0] // 40), int(p_[1] // 40)), []):
+            if sj == si: continue
+            o = streets[sj]
+            if (RANK[o['kind']], sj) > (RANK[s_['kind']], si): continue  # only a greater road pushes this one aside
+            d_ = _sd0(p_[0], p_[1], a, b)
+            if d_ < (o['w'] + s_['w']) / 2 + 9:
+                a2 = math.atan2(b[1] - a[1], b[0] - a[0]); da = abs((ang - a2 + math.pi / 2) % math.pi - math.pi / 2)
+                if da < 0.45: bad = True; break
+        keep.append(not bad)
+    if all(keep): S3.append(s_); continue
+    trimmed += 1; cur = []
+    for k_, p_ in enumerate(R_):
+        if keep[k_]: cur.append(p_)
+        else:
+            if len(cur) > 1 and math.hypot(cur[-1][0] - cur[0][0], cur[-1][1] - cur[0][1]) > 24: S3.append(dict(s_, pts=cur))
+            cur = []
+    if len(cur) > 1 and math.hypot(cur[-1][0] - cur[0][0], cur[-1][1] - cur[0][1]) > 24: S3.append(dict(s_, pts=cur))
+streets = S3
+print('parallel-trimmed streets', trimmed, file=sys.stderr)
 # ---- audit fix A: a lane end that stops just short of another street is joined to it
 def _sd(px, py, a, b):
     ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
@@ -350,6 +395,24 @@ for i in order_:
     a = tgt
     while a != i: a = prev[a]; outS[a][6] = min(outS[a][6], Y); conn[a] = True
     conn[i] = True; spread(i, Y)
+# ---- audit fix F: no short holes inside a street; a gap under ~45 px between two visible stretches is paved with the later of them
+from itertools import groupby
+holes = 0
+for si_k, grp in groupby(range(len(outS)), key=lambda i: outS[i][7]):
+    idx = list(grp)
+    vis_ = [k for k, i in enumerate(idx) if outS[i][6] < 999]
+    for a_, b_ in zip(vis_[:-1], vis_[1:]):
+        if b_ - a_ < 2: continue
+        run = idx[a_ + 1:b_]
+        L = sum(math.hypot(outS[i][2] - outS[i][0], outS[i][3] - outS[i][1]) for i in run)
+        Y0 = max(outS[idx[a_]][6], outS[idx[b_]][6])
+        if L < 45 or all(outS[i][6] <= Y0 for i in run):
+            for i in run: outS[i][6] = min(outS[i][6], Y0)
+            holes += 1
+        else:
+            for i in run:
+                if outS[i][6] > Y0: pass
+print('holes filled', holes, file=sys.stderr)
 # ---- audit fix C2: islands with no way to the network get a short connecting lane, or are dropped
 fixed = 0; dropped_isl = 0
 for i in unreach:
@@ -384,6 +447,31 @@ for i in unreach:
         for a_ in isl: outS[a_][6] = 999
         dropped_isl += 1
 print('islands joined', fixed, 'dropped', dropped_isl, file=sys.stderr)
+# ---- audit fix G: any road end stopping within ~16 px of another road is joined by a short stub
+GG = {}
+for i, q in enumerate(outS):
+    if q[6] >= 999: continue
+    for ix in range(int(min(q[0], q[2]) // 30) - 1, int(max(q[0], q[2]) // 30) + 2):
+        for iy in range(int(min(q[1], q[3]) // 30) - 1, int(max(q[1], q[3]) // 30) + 2):
+            GG.setdefault((ix, iy), []).append(i)
+stubs = []
+for i, q in enumerate(outS):
+    if q[6] >= 999 or q[5] == 'm': continue
+    for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+        cand = GG.get((int(ex // 30), int(ey // 30)), [])
+        if any(j != i and segd(ex, ey, outS[j]) <= max(1.5, outS[j][4] / 2 + 0.5) for j in cand): continue
+        best = None
+        for j in cand:
+            if j == i: continue
+            o = outS[j]
+            if {(o[0], o[1]), (o[2], o[3])} & {(q[0], q[1]), (q[2], q[3])}: continue
+            dd, pp = _sd(ex, ey, (o[0], o[1]), (o[2], o[3]))
+            if dd - o[4] / 2 < 16 and (best is None or dd < best[0]): best = (dd, pp, j)
+        if best and not nobuild(*best[1]):
+            o = outS[best[2]]
+            stubs.append([round(ex, 1), round(ey, 1), round(best[1][0], 1), round(best[1][1], 1), min(q[4], o[4], 5), 'l', max(q[6], o[6]), -2])
+outS += stubs
+print('stubs', len(stubs), file=sys.stderr)
 # ---- audit fix D: roads close when a cistern is dug over them
 for q in outS:
     mx, my = (q[0] + q[2]) / 2, (q[1] + q[3]) / 2
@@ -391,6 +479,126 @@ for q in outS:
         if k.startswith('cistern') and q[5] != 'm' and pip(mx, my, zz['p']):
             if zz['built'] <= q[6]: q[6] = 999
             else: q.append(zz['built'])
+# ---- audit fix H (hard rule): no building, walls or roof, ever stands on a road that exists while it stands
+def endy(q): return q[8] if len(q) > 8 else 99999
+HG = {}
+def hg_add(i, q):
+    for ix in range(int(min(q[0], q[2]) // 20) - 1, int(max(q[0], q[2]) // 20) + 2):
+        for iy in range(int(min(q[1], q[3]) // 20) - 1, int(max(q[1], q[3]) // 20) + 2):
+            HG.setdefault((ix, iy), []).append(i)
+for i, q in enumerate(outS):
+    if q[6] < 999: hg_add(i, q)
+def _segseg(a, b, c, d_):
+    def cr(o, p_, q_): return (p_[0] - o[0]) * (q_[1] - o[1]) - (p_[1] - o[1]) * (q_[0] - o[0])
+    d1, d2, d3, d4 = cr(c, d_, a), cr(c, d_, b), cr(a, b, c), cr(a, b, d_)
+    if ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0)): return 0.0
+    return min(_sd0(a[0], a[1], c, d_), _sd0(b[0], b[1], c, d_), _sd0(c[0], c[1], a, b), _sd0(d_[0], d_[1], a, b))
+def hull(pts):
+    pts = sorted(set(pts))
+    if len(pts) < 3: return pts
+    def cr(o, a, b): return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
+    for p_ in pts:
+        while len(lo) >= 2 and cr(lo[-2], lo[-1], p_) <= 0: lo.pop()
+        lo.append(p_)
+    for p_ in reversed(pts):
+        while len(up) >= 2 and cr(up[-2], up[-1], p_) <= 0: up.pop()
+        up.append(p_)
+    return lo[:-1] + up[:-1]
+def foot(flat):
+    pts = [(flat[i], flat[i + 1]) for i in range(0, 8, 2)]; cx = sum(p_[0] for p_ in pts) / 4; cy = sum(p_[1] for p_ in pts) / 4
+    return [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]
+def volume(fp, hgt): return hull(fp + [(x, y - hgt) for x, y in fp])
+def clashes(vol, b, e, margin=0.8, out=None):
+    vol = list(vol)
+    xs = [p_[0] for p_ in vol]; ys = [p_[1] for p_ in vol]
+    cand = set()
+    for ix in range(int(min(xs) // 20), int(max(xs) // 20) + 1):
+        for iy in range(int(min(ys) // 20), int(max(ys) // 20) + 1): cand.update(HG.get((ix, iy), ()))
+    hit = []
+    for j in cand:
+        q = outS[j]
+        if q[6] >= 999 or q[6] >= e or endy(q) <= b: continue
+        a_, b_ = (q[0], q[1]), (q[2], q[3])
+        inside = pip(q[0], q[1], vol) or pip(q[2], q[3], vol)
+        dmin = 0 if inside else min(_segseg(vol[k], vol[(k + 1) % len(vol)], a_, b_) for k in range(len(vol)))
+        if dmin < q[4] / 2 + margin: hit.append(j)
+    return hit
+def forbidden(vol, b, e):
+    for x, y in vol:
+        if wall_x(y) - 40 < x < wall_x(y) + 8: return True
+        if nobuild(x, y): return True
+        for k, zz in late.items():
+            if k.startswith('cistern') and zz['built'] < e and pip(x, y, zz['p']): return True
+    return False
+HT = {}
+newIdx = {h[0]: i for i, h in enumerate(newH)}
+moved = dropped_seg = lowered = stuck = 0
+def want_h(l): return 7 if (l['t'] and l['kind'] == 'main') else 6 if l['t'] else 5 if l['rank'] == 0 else 4
+for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
+    hb, he = HB[hid][2], HB[hid][3]
+    l = lots[li]; fp = foot([c for p_ in l['p'] for c in p_])
+    if clashes(fp, hb, he) or forbidden(fp, hb, he):
+        # move to the nearest free lot whose footprint is clear for the house's whole life
+        best = None
+        gx, gy = int(l['cx'] // G), int(l['cy'] // G)
+        for ix in range(gx - 3, gx + 4):
+            for iy in range(gy - 3, gy + 4):
+                for lj in grid.get((ix, iy), []):
+                    L2 = lots[lj]
+                    if lj == li or L2['z'] != l['z'] or not free(L2, hb, he): continue
+                    f2 = foot([c for p_ in L2['p'] for c in p_])
+                    if clashes(volume(f2, 2), hb, he) or forbidden(f2, hb, he): continue
+                    dd = math.hypot(L2['cx'] - l['cx'], L2['cy'] - l['cy'])
+                    if best is None or dd < best[0]: best = (dd, lj)
+        if best:
+            l['occ'].remove((hb, he)); li = best[1]; l = lots[li]; l['occ'].append((hb, he)); assigned[hid] = li
+            newH[newIdx[hid]][4] = [round(c, 1) for p_ in l['p'] for c in p_]; newH[newIdx[hid]][5] = l['fx']; newH[newIdx[hid]][6] = l['t']
+            fp = foot([c for p_ in l['p'] for c in p_]); moved += 1
+        else:
+            # the road gives way instead: late connector stubs / lanes open only after the house is gone
+            for j in clashes(fp, hb, he):
+                q = outS[j]
+                if q[5] in ('l', 'c') and he < 999: q[6] = max(q[6], he)
+                elif q[5] in ('l',): q[6] = 999
+                dropped_seg += 1
+            if clashes(fp, hb, he): stuck += 1
+    hgt = want_h(l)
+    while hgt > 0 and clashes(volume(fp, hgt) if hgt > 0 else fp, hb, he, 0.6): hgt -= 0.5
+    if hgt < want_h(l): lowered += 1
+    HT[hid] = hgt
+for h in newH:
+    if h[0] in HT:
+        while len(h) < 7: h.append(0)
+        h[7:] = [HT[h[0]]]
+# houses beyond the wall keep clear of the wall itself
+wall_moved = 0
+for h in newH:
+    if h[0] in HT: continue
+    p_ = h[4]; xs = p_[0::2]; ys = p_[1::2]
+    if any(wall_x(y) - 40 < x < wall_x(y) + 8 for x, y in zip(xs, ys)):
+        sh_ = max(x - (wall_x(y) - 42) for x, y in zip(xs, ys))
+        h[4] = [round(c - sh_, 1) if i % 2 == 0 else c for i, c in enumerate(p_)]; wall_moved += 1
+kept_moved = 0
+for h in newH:
+    if h[0] in HT: continue
+    b_, e_ = h[2], h[3]
+    best = None
+    for r_ in (0, 3, 6, 9, 12, 16):
+        for k_ in range(8 if r_ else 1):
+            dx_, dy_ = r_ * math.cos(k_ * math.pi / 4), r_ * math.sin(k_ * math.pi / 4)
+            fl = [c + (dx_ if i % 2 == 0 else dy_) for i, c in enumerate(h[4])]
+            fp_ = foot(fl)
+            if not clashes(volume(fp_, 4), b_, e_) and not any(wall_x(y) - 40 < x < wall_x(y) + 8 for x, y in fp_): best = fl; break
+        if best: break
+    if best is None: best = h[4]
+    elif best != h[4]: kept_moved += 1
+    h[4] = [round(c, 1) for c in best]
+    while len(h) < 7: h.append(0)
+    h[7:] = [4]
+print('kept outside moved', kept_moved, file=sys.stderr)
+print('fixH moved', moved, 'roads gave way', dropped_seg, 'lowered', lowered, 'stuck', stuck, 'wall', wall_moved, file=sys.stderr)
+json.dump({'si': [q[7] for q in outS if q[6] < 999], 'streets': [dict(k=st['kind'], w=st['w'], pts=[[round(c, 1) for c in p_] for p_ in st['pts']]) for st in streets]}, open('/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen/_streets_meta.json', 'w'))
 outS = [q[:7] + q[8:] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
 cell = {}

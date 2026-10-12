@@ -35,7 +35,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card{position:fixed;right:14px;top:62px;width:330px;max-height:calc(100% - 200px);overflow:auto;padding:14px 16px;display:none}
 #card .x{position:absolute;right:10px;top:8px;background:none;border:none;color:var(--mute);font-size:20px;cursor:pointer}
 #card h2{margin:0 0 2px;font-size:18px;color:var(--gold2);font-weight:600}
-#card .meta{font-size:12px;color:var(--mute)}
+#card .meta{font-size:12px;color:var(--mute)}.addr{font-size:12px;color:#c9a46a;margin:2px 0 4px;letter-spacing:.08em}
 #card .portrait{width:96px;height:96px;border-radius:8px;border:1px solid var(--gold);object-fit:cover;float:right;margin:0 0 6px 10px}
 #card .quote{font-size:14px;font-style:italic;color:var(--ivory);margin:8px 0;border-left:2px solid var(--gold);padding-left:8px}
 #card .now{font-size:13.5px;margin:8px 0;padding:8px;background:rgba(212,168,90,.1);border-radius:6px}
@@ -93,21 +93,41 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='16';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='19b';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
 const W=1820,H=2048;
-const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
+const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(vv(f)).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
-const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
+const SCENES=await fetch(vv('scenes.json')).then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
-let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(K+f).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(SCENE.junctions).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(SCENE.streets).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
+let SN=SCENE.streetnames?await fetch(vv(SCENE.streetnames)).then(r=>r.ok?r.json():[]):[];
+function snName(st,Y){for(const r of st.r)if(r[1]<=Y&&Y<r[2])return r;return null}
+function snLabel(st,Y){const r=snName(st,Y);if(!r)return null;const i=st.r.indexOf(r);return (i>0&&Y-r[1]<4)?r[0]+'（原'+st.r[i-1][0]+'）':r[0]}
+function streetAt(x,y,Y,maxd=45){let b=null,bd=maxd*maxd;for(const st of SN){if(!snName(st,Y)||st.y>Y)continue;const p=st.p;for(let i=0;i+1<p.length;i++){const ax=p[i][0],ay=p[i][1],dx=p[i+1][0]-ax,dy=p[i+1][1]-ay;const t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy+1e-9)));const ex=x-ax-t*dx,ey=y-ay-t*dy,d=ex*ex+ey*ey;if(d<bd){bd=d;b=st}}}return b?snLabel(b,Y):null}
+let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(vv(K+f)).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(vv(SCENE.junctions)).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(vv(SCENE.streets)).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
-function geomOf(h){if(h.g)return h.g;const p=h.p;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);y0=Math.min(y0,p[i+1]);y1=Math.max(y1,p[i+1])}
-  const bw=x1-x0,bh=y1-y0,SH=h.ty&&COMP.sm.length?COMP.sm:COMP.hm,m=SH[Math.floor(hsh(h.id)*SH.length)],w=Math.sqrt(Math.hypot(p[0]-p[2],p[1]-p[3])*Math.hypot(p[2]-p[4],p[3]-p[5]))*(SH===COMP.sm?1.55:1.8),hh=w*m.h/m.w,by=h.cy+bh*.5+hh*.18;
-  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);
-  return h.g={img:SH===COMP.sm?COMP.shops:COMP.houses,m,w,hh,by,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+const HWALL=[[228,212,182],[216,194,156],[238,228,206],[204,176,136],[224,204,172],[210,200,184]],HROOF=[[186,94,60],[172,86,54],[198,112,70],[160,80,52],[180,102,66],[150,96,72]];
+const shd=(c,k)=>`rgb(${Math.min(255,c[0]*k|0)},${Math.min(255,c[1]*k|0)},${Math.min(255,c[2]*k|0)})`;
+function hullJS(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p)}return lo.slice(0,-1).concat(up.slice(0,-1))}
+function geomOf(h){if(h.g)return h.g;const p=h.p,id=h.id;const pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
+  const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const ht=h.ht!=null?h.ht:5;const up=fp.map(q=>[q[0],q[1]-ht]);
+  const wall=HWALL[Math.floor(hsh(id,11)*6)];let roof=HROOF[Math.floor(hsh(id,12)*6)];if(hsh(id,13)<.5){const k=.9+.2*hsh(id,14);roof=roof.map(v=>v*k)}
+  const parts=[];const shadow=hullJS(fp.concat(fp.map(q=>[q[0]+ht*.55+1,q[1]+ht*.3+1])));
+  for(let k=0;k<4;k++){const a=fp[k],b=fp[(k+1)%4];const ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*((a[0]+b[0])/2-cx)+ny*((a[1]+b[1])/2-cy)<0){nx=-nx;ny=-ny}
+    if(ny<=.02||ht<.6)continue;parts.push(['f',[a,b,[b[0],b[1]-ht],[a[0],a[1]-ht]],shd(wall,.80+.18*(.5-.5*nx))]);
+    if((k===0||k===2)&&ny>.55){const t0=.35+.3*hsh(id,15),dw=.16,dh=Math.min(ht*.62,3.2);const d0=[a[0]+ex*t0,a[1]+ey*t0],d1=[a[0]+ex*(t0+dw),a[1]+ey*(t0+dw)];if(ht>2)parts.push(['f',[d0,d1,[d1[0],d1[1]-dh],[d0[0],d0[1]-dh]],'rgb(70,50,36)']);
+      if(h.ty&&ht>3){const aw=hsh(id,16)<.5?'rgb(182,64,48)':'rgb(60,96,120)';const yy=ht*.62;parts.push(['f',[[a[0]+ex*.08,a[1]+ey*.08-yy],[a[0]+ex*.92,a[1]+ey*.92-yy],[a[0]+ex*.92+nx*1.6,a[1]+ey*.92-yy+ny*1.6+.8],[a[0]+ex*.08+nx*1.6,a[1]+ey*.08-yy+ny*1.6+.8]],aw])}}}
+  const ux=up[1][0]-up[0][0],uy=up[1][1]-up[0][1],vx=up[3][0]-up[0][0],vy=up[3][1]-up[0][1],Lu=Math.hypot(ux,uy),Lv=Math.hypot(vx,vy);const tx=(up[0][0]+up[1][0]+up[2][0]+up[3][0])/4,ty=(up[0][1]+up[1][1]+up[2][1]+up[3][1])/4;
+  if(hsh(id,17)<.12&&!h.ty){parts.push(['f',up,shd(wall,1.04)]);parts.push(['e',up,shd(wall,.7)])}
+  else{let ax,ay,r;if(Lu>=Lv){ax=ux/Lu;ay=uy/Lu;r=(Lu-Lv)/2}else{ax=vx/Lv;ay=vy/Lv;r=(Lv-Lu)/2}const lift=Math.min(Lu,Lv)*.28;const r0=[tx-ax*r,ty-ay*r-lift],r1=[tx+ax*r,ty+ay*r-lift];const d2=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2;
+    for(let k=0;k<4;k++){const a=up[k],b=up[(k+1)%4];const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*(mx-tx)+ny*(my-ty)<0){nx=-nx;ny=-ny}
+      const kk=.86-.22*(nx*-.6+ny*-.8);let face;if(r<.3)face=[a,b,r0];else{const pa=d2(a,r0)<=d2(a,r1)?r0:r1,pb=d2(b,r0)<=d2(b,r1)?r0:r1;face=pa===pb?[a,b,pb]:[a,b,pb,pa]}parts.push(['f',face,shd(roof,kk)])}
+    parts.push(['e',up,shd(roof,.62)]);if(r>=.3)parts.push(['r',[r0,r1],shd(roof,.7)])}
+  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);const w=Math.max(Lu,Lv);
+  return h.g={shadow,parts,by:Math.max(fp[0][1],fp[1][1],fp[2][1],fp[3][1]),w,hh:ht,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+function drawHouse(g,A){for(const [k,P,c] of g.parts){ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);if(k==='f'){ctx.closePath();ctx.fillStyle=c;ctx.fill()}else{if(k==='e')ctx.closePath();ctx.strokeStyle=c;ctx.lineWidth=k==='r'?.7:.45;ctx.stroke()}}}
 function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.complete||!COMP.props.complete||(COMP.shops&&!COMP.shops.complete))return;
   if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(42/384))}
   if(COMP.pat){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
@@ -117,13 +137,14 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
   const it=[];for(const h of list){const g=geomOf(h);it.push([g.by,0,h,g]);if(g.pr)it.push([g.by+1.5,1,h,g]);if(g.pp&&per!=='night')it.push([g.by+2.5,2,h,g])}
   for(const j of COMP.ju){if(j[2]>YEAR||j[0]<vx0-15||j[0]>vx1+15||j[1]<vy0-15||j[1]>vy1+15)continue;const L=j[3]==='well'?[[16,0,0,8],[15,6,3,6]]:j[3]==='stall'?[[(j[0]+j[1])%2?12:17,0,0,8]]:[[0,0,0,8]];for(const q of L)it.push([j[1]+q[2]+2,3,j,q])}
   it.sort((a,b)=>a[0]-b[0]);ctx.globalAlpha=A;
-  for(const [by,t,h,g] of it){if(t===0){const m=g.m;ctx.fillStyle='rgba(50,32,14,.22)';ctx.beginPath();ctx.ellipse(h.cx+2,by-g.hh*.22,g.w*.52,g.hh*.3,0,0,7);ctx.fill();if(h.built===YEAR)ctx.globalAlpha=A*.55;if(h.fx){ctx.save();ctx.translate(h.cx,0);ctx.scale(-1,1);ctx.drawImage(g.img,m.x,0,m.w,m.h,-g.w/2,by-g.hh,g.w,g.hh);ctx.restore()}else ctx.drawImage(g.img,m.x,0,m.w,m.h,h.cx-g.w/2,by-g.hh,g.w,g.hh);ctx.globalAlpha=A}
+  ctx.fillStyle='rgba(50,32,14,.27)';ctx.beginPath();for(const [by,t,h,g] of it)if(t===0){const P=g.shadow;ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);ctx.closePath()}ctx.fill();
+  for(const [by,t,h,g] of it){if(t===0){if(h.built===YEAR)ctx.globalAlpha=A*.55;drawHouse(g,A);ctx.globalAlpha=A}
     else if(t===1){const m=g.pr,sc=6/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h.cx+g.prx-m.w*sc/2,by-m.h*sc,m.w*sc,m.h*sc)}
     else if(t===3){const q=g,m=COMP.pm.find(z=>z.k===q[0]);if(m){const sc=q[3]/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h[0]+q[1]-m.w*sc/2,by-2-m.h*sc,m.w*sc,m.h*sc)}}
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
-const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
-const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
+const STORIES=await fetch(vv('stories.json')).then(r=>r.ok?r.json():{}).catch(()=>({}));
+const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f+(f.includes('?')?'':'?v='+BUILD)}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
@@ -152,7 +173,7 @@ for(const h of HD.houses){
   if(destroyed<=1||destroyed<=built+1) continue;
   let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   if(inHarbor(cx,cy)) continue;
-  houses.push({id,d:dist_,built,destroyed,p,cx,cy,fx:h[5]||0,ty:h[6]||0});
+  houses.push({id,d:dist_,built,destroyed,p,cx,cy,fx:h[5]||0,ty:h[6]||0,ht:h.length>7?h[7]:null});
 }
 // spatial grid for click lookup
 const G=60,grid=new Map();
@@ -314,7 +335,7 @@ function openNamed(P){sel={kind:'named',P};renderCard();blip(520,.08)}
 function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
-function showCard(html){$('cardbody').innerHTML=html;$('card').style.display='block'}
+function showCard(html){if(SN.length&&sel&&sel.kind==='house'){const h=sel.hh.h;const a=streetAt(h.cx,h.cy,YEAR);if(a&&YEAR>=h.built)html=html.replace('</h2>','</h2><div class="addr">⌂ '+a+'</div>')}$('cardbody').innerHTML=html;$('card').style.display='block'}
 function tiePos(k,Y){if(k==='daph'){const w=DAPH.where(Y);return w}if(k==='theo'){const w=THEO.where(Y);return w}const t=houseById(+k);return t?[t.cx,t.cy,t.id]:null}
 function renderDeep(h,S,Y,per){
   const beats=S.beats.filter(b=>b[0]<=Y);const cur=beats[beats.length-1];
@@ -521,6 +542,16 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   // story lamps
   const LB=[];for(const id in STORIES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR))continue;if(!vis(h.cx,h.cy))continue;const S=STORIES[id];if(S.members.every(m=>m.d<=YEAR))continue;const p=.6+.4*Math.sin(t*1.7+h.id);const rr=10/Math.max(cam.z,.5);const rg=ctx.createRadialGradient(h.cx,h.cy,0,h.cx,h.cy,rr*1.8);rg.addColorStop(0,`rgba(255,200,110,${.55*p})`);rg.addColorStop(1,'rgba(255,170,70,0)');ctx.fillStyle=rg;ctx.beginPath();ctx.arc(h.cx,h.cy,rr*1.8,0,7);ctx.fill();ctx.fillStyle='#ffd88a';ctx.beginPath();ctx.arc(h.cx,h.cy,2.6/Math.max(cam.z,.5),0,7);ctx.fill();
     if(cam.z>=1.1){ctx.font=`${12/cam.z}px serif`;const tw=ctx.measureText(S.title).width;const bx=[h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z];const DP=DAPH.where(YEAR);if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3])||(DP&&dist(h.cx,h.cy,DP[0],DP[1])<22/cam.z))continue;LB.push(bx);ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(S.title,h.cx+8/cam.z,h.cy)}}
+  // street names, written along the street like an old town map
+  if(SN.length&&cam.z>=.6){const lv=cam.z<1.2?'m':cam.z<1.9?'ms':'mscl';
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    for(const st of SN){if(!lv.includes(st.k))continue;const nm=snLabel(st,YEAR);if(!nm)continue;
+      for(const a of st.a){if(a[3]>YEAR||!vis(a[0],a[1]))continue;
+        const fs=(st.k==='m'?17:st.k==='s'?15:13.5)/cam.z;ctx.font=`${st.k==='m'?'bold ':''}${fs}px serif`;const tw=ctx.measureText(nm).width;
+        const c=Math.abs(Math.cos(a[2])),sn=Math.abs(Math.sin(a[2]));const bw=tw*c+fs*sn,bh=tw*sn+fs*c;const bx=[a[0]-bw/2,a[1]-bh/2,bw,bh];
+        if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3]))continue;LB.push(bx);
+        ctx.translate(a[0],a[1]);ctx.rotate(a[2]);ctx.lineJoin='round';ctx.lineWidth=3.2/cam.z;ctx.strokeStyle='rgba(246,236,212,.88)';ctx.strokeText(nm,0,0);ctx.fillStyle=st.k==='m'?'rgba(92,40,22,.95)':'rgba(58,40,26,.92)';ctx.fillText(nm,0,0);ctx.rotate(-a[2]);ctx.translate(-a[0],-a[1])}}
+    ctx.restore()}
   // landmarks
   for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;if(l.until&&YEAR>l.until)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads

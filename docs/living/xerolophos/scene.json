@@ -64,5 +64,6 @@
  "next": {
   "label": "去南港 →",
   "url": "../nangang/"
- }
+ },
+ "streetnames": "streetnames.json"
 }
