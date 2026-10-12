@@ -58,6 +58,20 @@ def audit(Y, draw=None):
         ex, ey = (s[0], s[1]) if end == 0 else (s[2], s[3])
         best = min((sd(ex, ey, segs[j]) - segs[j][4] / 2 for j in near(g, ex, ey) if j != i and not ({(segs[j][0], segs[j][1]), (segs[j][2], segs[j][3])} & {(s[0], s[1]), (s[2], s[3])})), default=99)
         if 0.5 < best < 14: gaps.append((ex, ey, round(best, 1)))
+    par_close = 0
+    for i, s in enumerate(segs):
+        if s[5] == 'm': continue
+        mx, my = (s[0] + s[2]) / 2, (s[1] + s[3]) / 2; a1 = math.atan2(s[3] - s[1], s[2] - s[0])
+        for j in near(g, mx, my):
+            if j == i: continue
+            o = segs[j]
+            if {(o[0], o[1]), (o[2], o[3])} & {(s[0], s[1]), (s[2], s[3])}: continue
+            a2 = math.atan2(o[3] - o[1], o[2] - o[0]); da = abs((a1 - a2 + math.pi / 2) % math.pi - math.pi / 2)
+            dx, dy = o[2] - o[0], o[3] - o[1]; L2 = dx * dx + dy * dy + 1e-9
+            t = ((mx - o[0]) * dx + (my - o[1]) * dy) / L2
+            if not (0 <= t <= 1): continue
+            perp = abs((mx - o[0]) * dy - (my - o[1]) * dx) / math.sqrt(L2)
+            if da < 0.45 and (s[4] + o[4]) / 2 + 0.5 < perp < (s[4] + o[4]) / 2 + 9: par_close += 1; break
     deadends = sum(1 for (i, end), d in deg.items() if d == 0 and segs[i][5] != 'm')
     # forbidden ground
     bad = []
@@ -81,7 +95,7 @@ def audit(Y, draw=None):
             dmin = min((sd(cx, cy, s) for s in segs if abs(s[0] - cx) < 60 and abs(s[1] - cy) < 60), default=99)
             if dmin > 40 and cx > wall_x(cy): noroad.append((cx, cy))
     R = dict(year=Y, segments=len(segs), isolated_segments=len(iso), isolated_len=round(sum(math.hypot(segs[i][2] - segs[i][0], segs[i][3] - segs[i][1]) for i in iso)),
-             dead_ends=deadends, near_miss_gaps=len(gaps), forbidden=len(bad), forbidden_kinds=sorted({b[2] for b in bad}),
+             dead_ends=deadends, parallel_close=par_close, near_miss_gaps=len(gaps), forbidden=len(bad), forbidden_kinds=sorted({b[2] for b in bad}),
              houses=len(vis), houses_on_road=len(onroad), houses_far_from_road=len(noroad))
     if draw:
         im = Image.open(X + draw).convert('RGB'); d = ImageDraw.Draw(im)

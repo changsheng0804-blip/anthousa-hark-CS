@@ -133,6 +133,51 @@ for s in streets:
         S2 += clip(s)
 streets = S2
 
+# ---- audit fix E: two roads never run side by side a few steps apart; the lesser one gives way
+RANK = {'main': 0, 'street': 1, 'cross': 2, 'lane': 3}
+def resample(pts, step=6):
+    out = [list(pts[0])]
+    for a, b in zip(pts[:-1], pts[1:]):
+        L = math.hypot(b[0] - a[0], b[1] - a[1]); n = max(1, int(L // step))
+        for j in range(1, n + 1): out.append([a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n])
+    return out
+def _sd0(px, py, a, b):
+    ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
+    t = max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy + 1e-9)))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy)
+SG0 = {}
+for si, s_ in enumerate(streets):
+    for a, b in zip(s_['pts'][:-1], s_['pts'][1:]):
+        for gx in range(int(min(a[0], b[0]) // 40) - 1, int(max(a[0], b[0]) // 40) + 2):
+            for gy in range(int(min(a[1], b[1]) // 40) - 1, int(max(a[1], b[1]) // 40) + 2):
+                SG0.setdefault((gx, gy), []).append((si, a, b))
+S3 = []; trimmed = 0
+for si, s_ in enumerate(streets):
+    if s_['kind'] == 'main': S3.append(s_); continue
+    R_ = resample(s_['pts']); keep = []
+    for k_, p_ in enumerate(R_):
+        q0 = R_[max(0, k_ - 1)]; q1 = R_[min(len(R_) - 1, k_ + 1)]
+        ang = math.atan2(q1[1] - q0[1], q1[0] - q0[0])
+        bad = False
+        for sj, a, b in SG0.get((int(p_[0] // 40), int(p_[1] // 40)), []):
+            if sj == si: continue
+            o = streets[sj]
+            if (RANK[o['kind']], sj) > (RANK[s_['kind']], si): continue  # only a greater road pushes this one aside
+            d_ = _sd0(p_[0], p_[1], a, b)
+            if d_ < (o['w'] + s_['w']) / 2 + 9:
+                a2 = math.atan2(b[1] - a[1], b[0] - a[0]); da = abs((ang - a2 + math.pi / 2) % math.pi - math.pi / 2)
+                if da < 0.45: bad = True; break
+        keep.append(not bad)
+    if all(keep): S3.append(s_); continue
+    trimmed += 1; cur = []
+    for k_, p_ in enumerate(R_):
+        if keep[k_]: cur.append(p_)
+        else:
+            if len(cur) > 1 and math.hypot(cur[-1][0] - cur[0][0], cur[-1][1] - cur[0][1]) > 24: S3.append(dict(s_, pts=cur))
+            cur = []
+    if len(cur) > 1 and math.hypot(cur[-1][0] - cur[0][0], cur[-1][1] - cur[0][1]) > 24: S3.append(dict(s_, pts=cur))
+streets = S3
+print('parallel-trimmed streets', trimmed, file=sys.stderr)
 # ---- audit fix A: a lane end that stops just short of another street is joined to it
 def _sd(px, py, a, b):
     ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
@@ -350,6 +395,24 @@ for i in order_:
     a = tgt
     while a != i: a = prev[a]; outS[a][6] = min(outS[a][6], Y); conn[a] = True
     conn[i] = True; spread(i, Y)
+# ---- audit fix F: no short holes inside a street; a gap under ~45 px between two visible stretches is paved with the later of them
+from itertools import groupby
+holes = 0
+for si_k, grp in groupby(range(len(outS)), key=lambda i: outS[i][7]):
+    idx = list(grp)
+    vis_ = [k for k, i in enumerate(idx) if outS[i][6] < 999]
+    for a_, b_ in zip(vis_[:-1], vis_[1:]):
+        if b_ - a_ < 2: continue
+        run = idx[a_ + 1:b_]
+        L = sum(math.hypot(outS[i][2] - outS[i][0], outS[i][3] - outS[i][1]) for i in run)
+        Y0 = max(outS[idx[a_]][6], outS[idx[b_]][6])
+        if L < 45 or all(outS[i][6] <= Y0 for i in run):
+            for i in run: outS[i][6] = min(outS[i][6], Y0)
+            holes += 1
+        else:
+            for i in run:
+                if outS[i][6] > Y0: pass
+print('holes filled', holes, file=sys.stderr)
 # ---- audit fix C2: islands with no way to the network get a short connecting lane, or are dropped
 fixed = 0; dropped_isl = 0
 for i in unreach:
@@ -384,6 +447,31 @@ for i in unreach:
         for a_ in isl: outS[a_][6] = 999
         dropped_isl += 1
 print('islands joined', fixed, 'dropped', dropped_isl, file=sys.stderr)
+# ---- audit fix G: any road end stopping within ~16 px of another road is joined by a short stub
+GG = {}
+for i, q in enumerate(outS):
+    if q[6] >= 999: continue
+    for ix in range(int(min(q[0], q[2]) // 30) - 1, int(max(q[0], q[2]) // 30) + 2):
+        for iy in range(int(min(q[1], q[3]) // 30) - 1, int(max(q[1], q[3]) // 30) + 2):
+            GG.setdefault((ix, iy), []).append(i)
+stubs = []
+for i, q in enumerate(outS):
+    if q[6] >= 999 or q[5] == 'm': continue
+    for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+        cand = GG.get((int(ex // 30), int(ey // 30)), [])
+        if any(j != i and segd(ex, ey, outS[j]) <= max(1.5, outS[j][4] / 2 + 0.5) for j in cand): continue
+        best = None
+        for j in cand:
+            if j == i: continue
+            o = outS[j]
+            if {(o[0], o[1]), (o[2], o[3])} & {(q[0], q[1]), (q[2], q[3])}: continue
+            dd, pp = _sd(ex, ey, (o[0], o[1]), (o[2], o[3]))
+            if dd - o[4] / 2 < 16 and (best is None or dd < best[0]): best = (dd, pp, j)
+        if best and not nobuild(*best[1]):
+            o = outS[best[2]]
+            stubs.append([round(ex, 1), round(ey, 1), round(best[1][0], 1), round(best[1][1], 1), min(q[4], o[4], 5), 'l', max(q[6], o[6]), -2])
+outS += stubs
+print('stubs', len(stubs), file=sys.stderr)
 # ---- audit fix D: roads close when a cistern is dug over them
 for q in outS:
     mx, my = (q[0] + q[2]) / 2, (q[1] + q[3]) / 2
