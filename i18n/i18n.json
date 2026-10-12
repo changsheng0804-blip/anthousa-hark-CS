@@ -6,7 +6,8 @@
   "21": "The Great Church",
   "31": "The Grain Road",
   "41": "Valens' Water",
-  "51": "Worship Outside the Walls"
+  "51": "Worship Outside the Walls",
+  "61": "The Petitions of the Dry Hill"
  },
  "names_zh": {
   "gate_old_thracian": "色雷斯门",
@@ -73,7 +74,13 @@
   "arian_meeting": "阿里乌派城外聚会所",
   "cistern_carriers": "运水人蓄水池",
   "horrea_alexandrina": "亚历山大粮仓",
-  "forum_theodosius": "狄奥多西广场"
+  "forum_theodosius": "狄奥多西广场",
+  "r_exo": "新来人巷",
+  "d_exokionion": "城墙外新区",
+  "r_carriers": "运水人石阶",
+  "cistern_slope": "运水人第二蓄水池",
+  "xenon_xerolophos": "干山孤寡院",
+  "church_arian_brick": "城门外阿里乌派礼拜堂"
  },
  "labels_zh": {
   "fort_acropolis": "卫城",
@@ -119,7 +126,11 @@
   "arian_meeting": "阿里乌派",
   "cistern_carriers": "运水人",
   "horrea_alexandrina": "亚历山大粮仓",
-  "forum_theodosius": "狄奥多西广场"
+  "forum_theodosius": "狄奥多西广场",
+  "d_exokionion": "城墙外新区",
+  "cistern_slope": "运水人二池",
+  "xenon_xerolophos": "孤寡院",
+  "church_arian_brick": "阿里乌派礼拜堂"
  },
  "sea_labels": [
   [
