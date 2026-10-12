@@ -44,14 +44,14 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card .life{font-size:12.5px;line-height:1.7;color:var(--ivory);margin-top:8px;border-top:1px solid rgba(212,168,90,.25);padding-top:8px}
 #card .life .y{color:var(--gold);display:inline-block;min-width:58px}
 #card .life .fut{color:#6f6553}
-#card .story{font-size:14.5px;line-height:1.85;margin:10px 0;color:var(--ivory)}
+#card .story{font-size:14.5px;line-height:1.85;margin:10px 0;color:var(--ivory)}#card .story .by{font-size:12px;color:var(--gold);text-align:right;margin-top:2px}#card .story.fut{color:var(--mute);font-size:13px}
 #card .wf{font-size:13.5px;margin:4px 0}#card .wf b{color:var(--gold2);margin-right:8px;font-weight:normal}
 #card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
 #intro{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
-#intro .bg{position:absolute;inset:-6%;background:url(arrival.jpg) center/cover no-repeat;opacity:0;transition:opacity 3s;animation:kb 60s ease-out forwards}
+#intro .bg{position:absolute;inset:-6%;background:url(../arrival.jpg) center/cover no-repeat;opacity:0;transition:opacity 3s;animation:kb 60s ease-out forwards}
 @keyframes kb{from{transform:scale(1.0) translate(0,0)}to{transform:scale(1.18) translate(-3%,2%)}}
 #intro .veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85),rgba(0,0,0,.1) 55%,rgba(0,0,0,.35))}
 #intro .lines{position:relative;margin-bottom:12vh;text-align:center;padding:0 24px;max-width:760px}
@@ -78,7 +78,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
 <div id="year" class="panel"><div class="row"><span>建城 1 年</span><span class="big" id="ylab">建城 50 年 · 公元 379 年</span><span>60 年</span></div><input id="yr" type="range" min="1" max="60" step="1" value="50"><div class="row"><span id="ystat"></span><span>拖动看城长大，被选中的人会跟着变老</span></div></div>
-<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
+<div id="infobox" class="panel"><b style="color:var(--gold2)">这是怎么做的</b><br>房子、街道、建筑的位置和每栋房子建成的年份，都来自安托萨历史引擎的底账；画面由 AI 依引擎底图绘制：建城 10、30、50 年各一张，中间的年份按每栋房子的建成年份从上一张长到下一张。每栋房子里的一家人由房子的编号推演出来：同一栋房子永远是同一家人，他们会随年代出生、结婚、变老、死去。达芙涅和狄奥多罗斯来自第五卷《瓦伦斯的水》。干山上另有两百多户人家，由隔壁的街坊讲他们的事（刘线）：故事由 AI 从每户推演出的家庭写出，再由脚本逐条对照底账核对年份、人名、建筑和灾害，对不上的重写。声音全部由浏览器现场合成。这是一个街区的试验。<br><br><button class="btn" id="infox">好</button></div>
 
 <div id="intro">
  <div class="bg" id="ibg"></div><div class="veil"></div>
@@ -118,6 +118,7 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
+const VOICES=await fetch('voices.json').then(r=>r.ok?r.json():{}).catch(()=>({}));/* 刘线：数百户由邻居讲的故事，经 tools/check_stories.py 对照底账核对 */
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
 const daphImg=new Image(); daphImg.src='daphne.jpg';
@@ -341,15 +342,25 @@ function renderCard(){
     const males=al.filter(p=>p.s==='m'&&!p.bride&&Y-p.b>=16).sort((a,b)=>a.b-b.b);const head=males[0]||al.slice().sort((a,b)=>a.b-b.b)[0];
     const nm=head?head.n+'家':'这一家';
     const ppl=gone?'<i>这家人已经搬走了。</i>':(al.length?al.slice().sort((a,b)=>a.b-b.b).map(p=>`${p.n}（${relLabel(p,head,al)}，${Y-p.b} 岁）`).join('、'):'<i>屋里没人了，只剩邻居偶尔来看看。</i>');
-    const today=gone?'':pick(rng(hash(h.id+':'+Y+':'+per)),city.today[per==='evening'?'evening':per]);
+    let today=gone?'':pick(rng(hash(h.id+':'+Y+':'+per)),city.today[per==='evening'?'evening':per]);
+    const V=VOICES[h.id],vOn=V&&V.fam===F.B&&!gone&&al.length>0;let vHTML='',objHTML=`<b>${hh.obj}</b>`,narH=null,narN='';
+    if(vOn){if(V.nowY&&Y>=V.nowY[0]&&Y<=V.nowY[1]&&per!=='night')today=V.now;
+      objHTML=`<b>${V.obj[0]}</b>。${V.obj[1]}`;narH=houseById(V.nar.house);
+      const nf=narH?famAt(household(narH),Y):null;narN=V.nar.n;const by=`——${nf?nf.trade+'家的':''}${narN}说`;
+      const beats=V.life.filter(b=>b[0]<=Y),cur=beats[beats.length-1];
+      if(cur)vHTML=`<div class="story">${cur[1]}<div class="by">${by}</div></div>`;else vHTML=`<div class="story fut">${narN}还没搬来，这一家的事，过几年才有人讲。</div>`;
+      vHTML+=`<details><summary>邻居讲的这一家</summary><div class="life">${V.life.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">建城 ${y} 年</span>${y>Y?'……':t}</div>`).join('')}</div></details>`}
     showCard(`<h2>${al.length?nm:'空房子'}</h2><div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'来自'+F.origin} · ${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>`
       +`<div class="ppl">${ppl}</div>`+(today?`<div class="now">此刻：${today}</div>`:'')
-      +`<div class="obj">屋里有：<b>${hh.obj}</b></div>`+lifeHTML(hh.ev,Y)+`<div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
+      +vHTML+`<div class="obj">屋里有：${objHTML}</div>`+(vOn?`<details><summary>这一家的年代（底账）</summary>${lifeHTML(hh.ev,Y)}</details>`:lifeHTML(hh.ev,Y))+`<div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
     if(!gone&&al.length){
       const [wl]=nearestLM(h.cx,h.cy,l=>landType(l.id)===landType(nearestLM(h.cx,h.cy)[0].id)&&!(late[l.id]&&late[l.id].built>Y));if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'在'+wl.name+'一带干活：'+F.trade});
       const ch=F.faith==='阿里乌派'?LM.church_peace:F.faith==='尼西亚派'?(Y>=49?LM.church_anastasia:LM.church_megale):LM.fort_acropolis;
       if(F.faith==='阿里乌派'&&Y>=51){if(has('arian_meeting')&&Y>=52)threads.push({x:LM.arian_meeting.xy[0],y:LM.arian_meeting.xy[1],t:'节日出城祈祷'})}else if(ch!==FAR)threads.push({x:ch.xy[0],y:ch.xy[1],t:F.faith==='还拜旧神'?'偷偷去卫城的旧神庙':'做礼拜'});
       {const wl=has('cistern_founder')?LM.cistern_founder:(has('cistern_modestus')&&Y>=41?LM.cistern_modestus:null);if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'打水'})}
+      if(vOn&&narH&&narH.built<=Y){threads.push({x:narH.cx,y:narH.cy,t:narN+'讲的这一家',go:narH.id})}
+      {let k=0;for(const id in VOICES){const W2=VOICES[id];if(W2.nar.house!==h.id||k>=3)continue;const tg=houseById(+id);if(!tg||!(tg.built<=Y&&tg.destroyed>Y)||!W2.life.some(b=>b[0]<=Y))continue;const sp=al.find(p=>p.n===W2.nar.n);if(!sp)continue;threads.push({x:tg.cx,y:tg.cy,t:sp.n+'常说起这一家',go:tg.id});k++}}
+      if(vOn&&V.ties)for(const [k,t,y0] of V.ties){if(Y<y0)continue;const tg=houseById(+k);if(tg&&tg.built<=Y&&tg.destroyed>Y)threads.push({x:tg.cx,y:tg.cy,t,go:tg.id})}
       for(const p of F.people)if(p.left&&p.left<=Y&&p.d>Y){if(typeof p.to==='number'){const t=houseById(p.to);if(t)threads.push({x:t.cx,y:t.cy,t:p.n+'嫁到了这里（'+(Y-p.b)+' 岁）',go:t.id})}}
       threads.forEach(t=>{t.fx=h.cx;t.fy=h.cy});
     }
@@ -516,6 +527,8 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   // story lamps
   const LB=[];for(const id in STORIES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR))continue;if(!vis(h.cx,h.cy))continue;const S=STORIES[id];if(S.members.every(m=>m.d<=YEAR))continue;const p=.6+.4*Math.sin(t*1.7+h.id);const rr=10/Math.max(cam.z,.5);const rg=ctx.createRadialGradient(h.cx,h.cy,0,h.cx,h.cy,rr*1.8);rg.addColorStop(0,`rgba(255,200,110,${.55*p})`);rg.addColorStop(1,'rgba(255,170,70,0)');ctx.fillStyle=rg;ctx.beginPath();ctx.arc(h.cx,h.cy,rr*1.8,0,7);ctx.fill();ctx.fillStyle='#ffd88a';ctx.beginPath();ctx.arc(h.cx,h.cy,2.6/Math.max(cam.z,.5),0,7);ctx.fill();
     if(cam.z>=1.1){ctx.font=`${12/cam.z}px serif`;const tw=ctx.measureText(S.title).width;const bx=[h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z];const DP=DAPH.where(YEAR);if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3])||(DP&&dist(h.cx,h.cy,DP[0],DP[1])<22/cam.z))continue;LB.push(bx);ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(S.title,h.cx+8/cam.z,h.cy)}}
+  // voiced houses (刘线): small warm dots once you are close enough to read doors
+  if(cam.z>=1.3){ctx.fillStyle='rgba(255,214,140,.55)';const rr=1.8/Math.max(cam.z,.5);for(const id in VOICES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR)||!vis(h.cx,h.cy))continue;ctx.beginPath();ctx.arc(h.cx,h.cy,rr,0,7);ctx.fill()}}
   // landmarks
   for(const l of city.landmarks){const lb=late[l.id];if(lb&&lb.built>YEAR)continue;if(l.until&&YEAR>l.until)continue;const p=.5+.5*Math.sin(t*2.4+l.xy[0]);ctx.strokeStyle=`rgba(240,215,154,${.5+.4*p})`;ctx.lineWidth=2/cam.z;ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],(7+5*p)/cam.z*1.3,0,7);ctx.stroke();ctx.fillStyle='#f0d79a';ctx.beginPath();ctx.arc(l.xy[0],l.xy[1],3/cam.z*1.3,0,7);ctx.fill()}
   // threads
@@ -563,7 +576,7 @@ function drawScenes(t,vis){const bubbles=[];let started=null;sceneSlow=false;
 function qp(th,mx,my,u){const a=(1-u)*(1-u),b=2*u*(1-u),c=u*u;return[a*th.fx+b*mx+c*th.x,a*th.fy+b*my+c*th.y]}
 function drawQ(th,mx,my,k){ctx.beginPath();ctx.moveTo(th.fx,th.fy);const N=24;for(let i=1;i<=N*k;i++){const q=qp(th,mx,my,i/N);ctx.lineTo(q[0],q[1])}ctx.stroke()}
 requestAnimationFrame(frame);
-window.__anth={cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
+window.__anth={VOICES,cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
 })();
 </script>
 </body>
