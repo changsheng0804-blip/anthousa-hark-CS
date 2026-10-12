@@ -100,6 +100,7 @@ const W=1820,H=2048;
 const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
 const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
+const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>closeNow()?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
@@ -258,7 +259,7 @@ fit();
 function s2w(sx,sy){return[(sx-VW/2)/cam.z+cam.x,(sy-VH/2)/cam.z+cam.y]}
 function w2s(x,y){return[(x-cam.x)*cam.z+VW/2,(y-cam.y)*cam.z+VH/2]}
 function flyTo(x,y,z,dur=1600){camT={x0:cam.x,y0:cam.y,z0:cam.z,x,y,z:z||cam.z,t0:performance.now(),dur}}
-function clampCam(){cam.z=clamp(cam.z,minZ(),4);const hx=VW/2/cam.z,hy=VH/2/cam.z;cam.x=W>2*hx?clamp(cam.x,hx,W-hx):W/2;cam.y=H>2*hy?clamp(cam.y,hy,H-hy):H/2}
+function clampCam(){cam.z=clamp(cam.z,minZ(),zMax());const hx=VW/2/cam.z,hy=VH/2/cam.z;cam.x=W>2*hx?clamp(cam.x,hx,W-hx):W/2;cam.y=H>2*hy?clamp(cam.y,hy,H-hy):H/2}
 
 /* ---------- input ---------- */
 const ptrs=new Map();let dragMoved=0,pinch0=null;
@@ -270,7 +271,7 @@ cv.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return
   if(ptrs.size===2&&pinch0){const[a,b]=[...ptrs.values()];cam.z=pinch0.z*dist(a.x,a.y,b.x,b.y)/pinch0.d;clampCam();dragMoved=99}});
 function up(e){const was=ptrs.has(e.pointerId);ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=null;cv.classList.remove('drag');if(was&&dragMoved<6&&ptrs.size===0)tap(e.clientX,e.clientY)}
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId)});
-cv.addEventListener('wheel',e=>{e.preventDefault();const[wx,wy]=s2w(e.clientX,e.clientY);const z0=cam.z;cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0015),minZ(),4);
+cv.addEventListener('wheel',e=>{e.preventDefault();const[wx,wy]=s2w(e.clientX,e.clientY);const z0=cam.z;cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0015),minZ(),zMax());
   cam.x=wx-(e.clientX-VW/2)/cam.z;cam.y=wy-(e.clientY-VH/2)/cam.z;clampCam();camT=null},{passive:false});
 
 /* ---------- selection & threads ---------- */
@@ -455,24 +456,25 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(VW/2-cam.x*cam.z),dpr*(VH/2-cam.y*cam.z));
   ctx.drawImage(base,0,0);
   if(fadeT>0){fadeT=Math.max(0,fadeT-dt*2.5);ctx.globalAlpha=fadeT;ctx.drawImage(prevBase,0,0);ctx.globalAlpha=1}
+  closeC=closeNow();closeA=closeC?clamp((cam.z-2.2)/1.4,0,1):0;if(closeA>0){const r=closeC.r;ctx.globalAlpha=closeA;ctx.drawImage(closeC.im,r[0],r[1],r[2]-r[0],r[3]-r[1]);ctx.globalAlpha=1}
   const [vx0,vy0]=s2w(0,0),[vx1,vy1]=s2w(VW,VH);const vis=(x,y,m=40)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;
   const t=now/1000;const density=clamp(houses.filter(h=>h.built<=YEAR).length/houses.length,.25,1);
   // smoke
   for(const s of smokes){if(!vis(s.x,s.y,120))continue;const str=per==='morning'||per==='evening'?1:.55;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
   // construction: houses going up this year, public works about to open
-  if(cam.z>=.7){ctx.lineWidth=.9;for(const h of buildingNow){if(!vis(h.cx,h.cy))continue;const p=h.p;ctx.strokeStyle='rgba(120,80,40,.85)';ctx.beginPath();for(let i=0;i<p.length;i+=2){const x=h.cx+(p[i]-h.cx)*2.0,y=h.cy+(p[i+1]-h.cy)*2.0;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
+  if(cam.z>=.7){ctx.lineWidth=.9;for(const h of buildingNow){if(!vis(h.cx,h.cy)||inClose(h.cx,h.cy))continue;const p=h.p;ctx.strokeStyle='rgba(120,80,40,.85)';ctx.beginPath();for(let i=0;i<p.length;i+=2){const x=h.cx+(p[i]-h.cx)*2.0,y=h.cy+(p[i+1]-h.cy)*2.0;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
       const r=8;for(let k=-r;k<=r;k+=3){ctx.beginPath();ctx.moveTo(h.cx+k-3,h.cy-r*.6);ctx.lineTo(h.cx+k+3,h.cy+r*.6);ctx.stroke()}
       if(cam.z>=1.5&&per!=='night'){const m=PPL.find(q=>q.k===17);const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+6,h.cy-hh+3,ww,hh)}}
     for(const k in late){const L=late[k];if(!(L.built>YEAR&&L.built<=YEAR+2))continue;const pts=L.p.flat?L.p:L.p;ctx.fillStyle='rgba(140,100,60,.45)';ctx.strokeStyle='rgba(110,70,35,.9)';ctx.beginPath();polyPath(ctx,L.p.flat(),1);ctx.fill();ctx.stroke();
       const c=L.p.reduce((a,q)=>[a[0]+q[0]/L.p.length,a[1]+q[1]/L.p.length],[0,0]);if(per!=='night'&&cam.z>=1.2){for(let j=0;j<3;j++){const m=PPL.find(q=>q.k===(j?17:1));const hh=9.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,c[0]-15+j*12,c[1]-5+Math.sin(t*2+j)*1.5,ww,hh)}}
       if(cam.z>=.8){ctx.font=`${12/cam.z}px serif`;const tx='工地：建城 '+L.built+' 年完工';const tw=ctx.measureText(tx).width;ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(c[0]-tw/2-3/cam.z,c[1]-26/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#f3ead8';ctx.fillText(tx,c[0]-tw/2,c[1]-15/cam.z)}}}
   // market stalls along the streets (more as the city fills; folded at night)
-  if(cam.z>=1&&(per==='morning'||per==='day')){const nS=Math.floor(stalls.length*density);for(let i=0;i<nS;i++){const st=stalls[i];if(!vis(st.x,st.y))continue;ctx.fillStyle='rgba(40,25,10,.3)';ctx.fillRect(st.x-5,st.y-1.5,11,6);ctx.fillStyle=st.c;ctx.fillRect(st.x-5.5,st.y-4,11,4.5);ctx.fillStyle='rgba(255,250,235,.9)';for(let k=0;k<4;k++)ctx.fillRect(st.x-5.5+k*2.9,st.y-4,1.4,4.5);ctx.fillStyle=st.g;for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(st.x-3.6+k*2.4,st.y+2,1.1,0,7);ctx.fill()}}}
+  if(cam.z>=1&&(per==='morning'||per==='day')){const nS=Math.floor(stalls.length*density);for(let i=0;i<nS;i++){const st=stalls[i];if(!vis(st.x,st.y)||inClose(st.x,st.y))continue;ctx.fillStyle='rgba(40,25,10,.3)';ctx.fillRect(st.x-5,st.y-1.5,11,6);ctx.fillStyle=st.c;ctx.fillRect(st.x-5.5,st.y-4,11,4.5);ctx.fillStyle='rgba(255,250,235,.9)';for(let k=0;k<4;k++)ctx.fillRect(st.x-5.5+k*2.9,st.y-4,1.4,4.5);ctx.fillStyle=st.g;for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(st.x-3.6+k*2.4,st.y+2,1.1,0,7);ctx.fill()}}}
   // walkers
   const nightF=per==='night'?.15:per==='evening'?.6:1;const nW=Math.floor(walkers.length*nightF*density);
   const big=cam.z>1.2;
   for(let i=0;i<nW;i++){const w=walkers[i];if(w.pause>0)w.pause-=dt;else{w.s+=w.v*dt*speed*.6+w.v*dt*.4;if(Math.random()<dt*.02)w.pause=1+Math.random()*3}const r=roads[w.r];if(w.s<0){w.s=0;w.v=-w.v}if(w.s>r.L){w.s=r.L;w.v=-w.v}
-    const[x,y,nx,ny]=onRoad(r,w.s);const px=x+nx*w.off,py=y+ny*w.off;if(!vis(px,py))continue;
+    const[x,y,nx,ny]=onRoad(r,w.s);const px=x+nx*w.off,py=y+ny*w.off;if(!vis(px,py)||inClose(px,py))continue;
     if(cam.z>=1.5){const m=w.sp,hh=m.h/72*9.5,ww=m.w/m.h*hh;const bob=w.pause>0?0:Math.abs(Math.sin(t*8+w.k*9))*.5;ctx.fillStyle='rgba(30,20,10,.28)';ctx.beginPath();ctx.ellipse(px,py+.3,ww*.38,1.1,0,0,7);ctx.fill();
       const dx=onRoad(r,Math.min(r.L,w.s+1))[0]-x;const flip=(w.v*(dx||1))<0;ctx.save();ctx.translate(px,py-bob);if(flip)ctx.scale(-1,1);ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,-ww/2,-hh,ww,hh);ctx.restore()}
     else if(big){ctx.fillStyle=w.c;ctx.fillRect(px-1.3,py-1,2.6,3.4);ctx.fillStyle='#3a2a1c';ctx.fillRect(px-1,py-2.6,2,1.8)}else{ctx.fillStyle=w.c;ctx.fillRect(px-1,py-1,2.2,2.2)}}
