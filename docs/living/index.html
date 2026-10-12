@@ -100,7 +100,23 @@ const W=1820,H=2048;
 const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
 const pplImg=new Image();pplImg.src='people.png';
 const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
-const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>closeNow()?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
+const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
+let COMP=null;if(SCENE.compose){const L=src=>{const i=new Image();i.src=src;return i};const [rm,pm]=await Promise.all(['roofs.json','props.json'].map(f=>fetch(f).then(r=>r.json())));COMP={roofs:L('roofs.webp'),props:L('props.webp'),ground:L('ground.webp'),rm,pm,pat:null,RW:[3,3,2,1,3,2,2,2,2]}}
+const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
+function geomOf(h){if(h.g)return h.g;const p=h.p;let e1=Math.hypot(p[2]-p[0],p[3]-p[1]),e2=Math.hypot(p[4]-p[2],p[5]-p[3]),a=Math.atan2(p[3]-p[1],p[2]-p[0]);if(e2>e1){[e1,e2]=[e2,e1];a=Math.atan2(p[5]-p[3],p[4]-p[2])}
+  let u=hsh(h.id)*COMP.RW.reduce((x,y)=>x+y,0),ri=0;for(;ri<COMP.RW.length-1;ri++){u-=COMP.RW[ri];if(u<=0)break}
+  return h.g={e1,e2,a,r:COMP.rm[ri],pr:hsh(h.id,1)<.45?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,pp:hsh(h.id,4)<.4?PPL.filter(m=>m.k!==12&&m.k!==13)[Math.floor(hsh(h.id,5)*17)]:null}}
+function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.roofs.complete||!COMP.props.complete)return;
+  if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(.11))}
+  if(COMP.pat){ctx.globalAlpha=.33*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
+  const list=[];for(let gx=Math.floor((vx0-20)/G);gx<=Math.floor((vx1+20)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+20)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR&&!(h.built===YEAR))list.push(h)}
+  ctx.globalAlpha=A;
+  for(const h of list){const g=geomOf(h);ctx.save();ctx.translate(h.cx+.85,h.cy+1);ctx.rotate(g.a);ctx.fillStyle='rgba(40,25,10,.28)';ctx.fillRect(-g.e1*.56,-g.e2*.56,g.e1*1.12,g.e2*1.12);ctx.restore()}
+  for(const h of list){const g=geomOf(h),r=g.r;ctx.save();ctx.translate(h.cx,h.cy);ctx.rotate(g.a);ctx.drawImage(COMP.roofs,r.x,0,r.w,r.h,-g.e1*.56,-g.e2*.56,g.e1*1.12,g.e2*1.12);ctx.restore()}
+  for(const h of list){const g=geomOf(h);const sn=Math.sin(g.a),cs=Math.cos(g.a);
+    if(g.pr&&!inClose(h.cx,h.cy)){const m=g.pr,sc=Math.min(g.e1,g.e2)*1.12*.75/Math.max(m.w,m.h),gap=g.e2*.56+Math.min(g.e1,g.e2)*.45;const x=h.cx-sn*gap,y=h.cy+cs*gap;ctx.drawImage(COMP.props,m.x,0,m.w,m.h,x-m.w*sc/2,y-m.h*sc/2,m.w*sc,m.h*sc)}
+    if(g.pp&&per!=='night'&&!inClose(h.cx,h.cy)){const m=g.pp,hh=5.7,ww=m.w/m.h*hh,gap=g.e2*.56+2.6;const x=h.cx+sn*gap,y=h.cy-cs*gap;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,x-ww/2,y-hh,ww,hh)}}
+  ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
@@ -456,8 +472,8 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(VW/2-cam.x*cam.z),dpr*(VH/2-cam.y*cam.z));
   ctx.drawImage(base,0,0);
   if(fadeT>0){fadeT=Math.max(0,fadeT-dt*2.5);ctx.globalAlpha=fadeT;ctx.drawImage(prevBase,0,0);ctx.globalAlpha=1}
-  closeC=closeNow();closeA=closeC?clamp((cam.z-2.2)/1.4,0,1):0;if(closeA>0){const r=closeC.r;ctx.globalAlpha=closeA;ctx.drawImage(closeC.im,r[0],r[1],r[2]-r[0],r[3]-r[1]);ctx.globalAlpha=1}
-  const [vx0,vy0]=s2w(0,0),[vx1,vy1]=s2w(VW,VH);const vis=(x,y,m=40)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;
+  closeC=closeNow();closeA=closeC?clamp((cam.z-2.2)/1.4,0,1):0;
+  const [vx0,vy0]=s2w(0,0),[vx1,vy1]=s2w(VW,VH);drawComposed(clamp((cam.z-2.0)/1.2,0,1),vx0,vy0,vx1,vy1,per);if(closeA>0){const r=closeC.r;ctx.globalAlpha=closeA;ctx.drawImage(closeC.im,r[0],r[1],r[2]-r[0],r[3]-r[1]);ctx.globalAlpha=1}const vis=(x,y,m=40)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;
   const t=now/1000;const density=clamp(houses.filter(h=>h.built<=YEAR).length/houses.length,.25,1);
   // smoke
   for(const s of smokes){if(!vis(s.x,s.y,120))continue;const str=per==='morning'||per==='evening'?1:.55;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
