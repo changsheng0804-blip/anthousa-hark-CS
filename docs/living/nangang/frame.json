@@ -2128,6 +2128,88 @@
      "text": "29 houses were pulled down to make room."
     }
    ]
+  },
+  {
+   "id": "cistern_slope",
+   "type": "cistern",
+   "name": "Second Cistern of the Water-Carriers",
+   "built": 62,
+   "destroyed": null,
+   "xy": [
+    -71,
+    100
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     -114,
+     64
+    ],
+    [
+     -28,
+     64
+    ],
+    [
+     -28,
+     135
+    ],
+    [
+     -114,
+     135
+    ]
+   ],
+   "history": [
+    {
+     "year": 62,
+     "text": "The water-carriers' first cistern (AF 54) sits at the foot of the hill and the queue there runs till dark; the families of the upper slope pool their coppers again for a second cistern at the head of the new steps."
+    },
+    {
+     "year": 62,
+     "text": "15 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "xenon_xerolophos",
+   "type": "monastery",
+   "name": "House of the Widows and Orphans",
+   "built": 65,
+   "destroyed": null,
+   "xy": [
+    -14,
+    498
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     -50,
+     469
+    ],
+    [
+     21,
+     469
+    ],
+    [
+     21,
+     526
+    ],
+    [
+     -50,
+     526
+    ]
+   ],
+   "history": [
+    {
+     "year": 65,
+     "text": "On the hill one household in seven has no grown man left and small children at home. Neighbours and the monks who took in their sons build a house where widows bake for the street and orphans learn a trade."
+    },
+    {
+     "year": 65,
+     "text": "13 houses were pulled down to make room."
+    }
+   ]
   }
  ]
 }

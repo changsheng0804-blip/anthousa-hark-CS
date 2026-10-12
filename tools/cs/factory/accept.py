@@ -23,6 +23,9 @@ import critic
 R = []  # (段, 项, 通过?, 说明, 怎么修)
 
 
+FIX = '--fix' in sys.argv
+
+
 def rec(sec, name, ok, info='', fix=''):
     R.append((sec, name, bool(ok), info, fix))
 
@@ -66,6 +69,18 @@ def pull(q, do_pull):
         rec(S, '街区数据与最新底账逐栋一致', ok, f'{len(B)} 栋；新增 {len(add)}、消失 {len(gone)}、变了 {len(chg)}',
             '--fix 重长数据；有房子变了的年份要重画（paint → critic → reroof）')
         nf = json.load(open(os.path.join(t, 'frame.json')))
+        if FIX and not (ok and nf['structures'] == fr['structures']):
+            # 能自动修的情形：变化全在页面年代之后（新增房子、新的拆毁都晚于最后一个关键年），画面不用重画，只换数据
+            last = max(keys)
+            late_only = all(B[i][2] > last for i in add) and not gone and all(A[i][:3] == B[i][:3] and min(A[i][3], B[i][3]) > last for i in chg)
+            if late_only:
+                import shutil
+                for fn in ('houses.json', 'frame.json'):
+                    shutil.copy(os.path.join(t, fn), os.path.join(LIV, q, fn))
+                rec(S, '--fix：变化都在建城 %d 年以后，已换上新数据，画面不用重画' % last, True)
+                ok = True; fr = nf
+            else:
+                rec(S, '--fix：有变化落在页面年代以内', False, '', '要重画：paint → critic → reroof')
         rec(S, '框内公共建筑与底账一致', nf['structures'] == fr['structures'], f"{len([s for s in nf['structures'] if s['geom']=='polygon'])} 个多边形", '--fix 重长 frame.json，再查 city.json 地标')
         return new, nf, (ok, t) if False else ok
 
@@ -85,7 +100,8 @@ def compare(q, fix):
     text = json.dumps(sc, ensure_ascii=False) + json.dumps(city, ensure_ascii=False)
     for m in set(re.findall(r'(\d{1,3}(?:,\d{3})+) 栋', text)):
         n = int(m.replace(',', ''))
-        rec(S, f'「{m} 栋」', n == len(hs), f'底账框内 {len(hs)} 栋', '改 scene.json 里的数字')
+        upto = [h for h in hs if h[2] <= max(k[0] for k in sc['keys'])]   # 页面只讲到最后一个关键年
+        rec(S, f'「{m} 栋」', n == len(upto), f'底账框内到建城 {max(k[0] for k in sc["keys"])} 年为止 {len(upto)} 栋', '改 scene.json 里的数字')
     burned = sum(1 for h in w['houses'] if h['destroyed'] == 48)
     for m in set(re.findall(r'烧毁 (\d+) 座', text)):
         rec(S, f'「烧毁 {m} 座」', int(m) == burned, f'底账 48 年毁掉 {burned} 栋', '改 city.json')
@@ -216,7 +232,8 @@ def report(q):
 if __name__ == '__main__':
     q = sys.argv[1]; a = sys.argv[2:]
     pull(q, '--pull' in a)
-    sc = compare(q, '--fix' in a)
+
+    sc = compare(q, FIX)
     if os.path.exists(os.path.join(LIV, q, 'frame.json')):
         picture(q, sc); sheet(q, sc)
     if '--live' in a: live(q, sc)
