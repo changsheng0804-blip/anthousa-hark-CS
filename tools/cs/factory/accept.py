@@ -8,7 +8,13 @@
 用法: python tools/cs/factory/accept.py <quarter_id> [--pull] [--fix] [--live]
 退出码 0 = 全部通过"""
 import hashlib, json, os, re, subprocess, sys, tempfile, urllib.request
-import numpy as np
+try:
+    import numpy as np
+except ImportError:   # 沙箱有时会丢掉装好的包
+    import subprocess as _sp, sys as _sys
+    _sp.run([_sys.executable, '-m', 'pip', 'install', '-q', 'numpy', 'scipy', 'shapely', 'pillow'])
+    import site, importlib; importlib.invalidate_caches(); _sys.path.append(site.getusersitepackages())
+    import numpy as np
 from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -140,6 +146,11 @@ def compare(q, fix):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
         m = re.search(r'vein cards (\d+) bad (\d+)', r.stdout)
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
+    # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
+    if sc.get('fleet'):
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
+        m = re.search(r'fleet cards (\d+) bad (\d+)', r.stdout); dd = re.search(r'near pairs (\d+) same-line near pairs (\d+)', r.stdout)
+        rec(S, '粮船日与底账一致、邻居不重样', bool(m) and m.group(2) == '0', (m.group(0) + (f'；同句近邻 {dd.group(2)}/{dd.group(1)}' if dd else '')) if m else (r.stdout + r.stderr)[-120:], '多写几句（scene.json fleet.lines），或看 WRONGTRADE / BAD')
     return sc
 
 
