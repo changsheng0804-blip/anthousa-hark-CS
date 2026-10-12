@@ -212,7 +212,7 @@ if __name__ == '__main__':
     q = sys.argv[1]; a = sys.argv[2:]
     pull(q, '--pull' in a)
     sc = compare(q, '--fix' in a)
-    picture(q, sc)
-    sheet(q, sc)
+    if os.path.exists(os.path.join(LIV, q, 'frame.json')):
+        picture(q, sc); sheet(q, sc)
     if '--live' in a: live(q, sc)
     sys.exit(0 if report(q) else 1)
