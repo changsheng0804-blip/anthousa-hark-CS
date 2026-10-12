@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>活着的安托萨 · 城东尖角</title>
+<title>活着的安托萨 · 南港</title>
 <style>
 :root{--ink:#14110d;--ink2:rgba(20,17,13,.88);--gold:#d4a85a;--gold2:#f0d79a;--ivory:#f3ead8;--mute:#b9ab90}
 *{box-sizing:border-box}
@@ -269,12 +269,12 @@ const QUAY=[880,330];const SHACK=SCENE.shack||[0,0];const ARIAN=SCENE.arian||[0,
 const DAPH={key:'daph',name:'达芙涅',img:daphImg,src:'daphne.jpg',b:29,meta:'运水人的女儿 · 色雷斯人 · 尼西亚派',
  quote:'水来了，可水不会自己走上山坡。',
  life:[[1,'还没出生。她父亲还在色雷斯的村子里种地'],[29,'生在色雷斯的一个村子'],[35,'跟着父亲进城。父亲当了运水人，一家在城西的干山上搭了个棚子'],[41,'十二岁。站在莫德斯图斯蓄水池边，看着水第一次涨满'],[42,'一家搬进克塞罗洛福斯区的第一批房子'],[48,'南港大火那夜，父亲给水桶链挑了一整夜的水'],[49,'在金角湾码头卖水，一个铜子一碗'],[52,'尼西亚派的人回到了城里的教堂。她第一次走进大教堂，仰着头看了半天'],[54,'干山上的运水人凑铜板，在半山腰修了一座蓄水池。父亲是领头的，她把攒了一年的铜板全交了。可池子的地方，正压在她最好的朋友安娜家的房子上'],[58,'嫁给了码头上的搬运工约翰。还在码头卖水']],
- where:Y=>SCENE.id==='xero'?(Y<35?null:Y<42?SHACK:DHOME):(Y<35?null:(Y>=49?QUAY:null)),
+ where:Y=>SCENE.nodaph?null:SCENE.id==='xero'?(Y<35?null:Y<42?SHACK:DHOME):(Y<35?null:(Y>=49?QUAY:null)),
  threads:Y=>{const t=[];if(SCENE.id==='xero'){if(Y>=41)t.push([LM.cistern_modestus.xy[0],LM.cistern_modestus.xy[1],Y>=41?'十二岁那年，看着它第一次注满':'']);t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'父亲挑水走的城门']);if(Y>=48)t.push([LM.fire_ruins.xy[0],LM.fire_ruins.xy[1],'大火那夜，父亲在这里挑了一整夜水']);if(Y>=49)t.push([1815,700,'白天去金角湾码头卖水 →','east']);return t}if(Y>=49){t.push([313,171,'狄奥多罗斯每天早上买她的水给搬运工']);t.push([LM.milion.xy[0],LM.milion.xy[1],'早上去这儿领面包']);t.push([4,880,'← 家：克塞罗洛福斯区，往西 3 公里','xero']);if(Y>=49)t.push([LM.church_anastasia.xy[0],LM.church_anastasia.xy[1],'晚上偷偷去听格里高利讲道'])}return t}};
 const THEO={key:'theo',name:'特罗阿德的狄奥多罗斯',img:theoImg,src:'theodoros.jpg',b:-5,meta:'粮商 · 特罗阿德的亚历山大港人 · 阿里乌派',
  quote:'在安托萨，人们信的是量器，不是商人。',
  life:[[1,'在特罗阿德跑粮船，还没见过这座城'],[31,'粮道修通，他开始常年在特罗阿德和安托萨之间往返'],[38,'在南港边上买了一栋房子'],[46,'押上全家的钱，在金角湾边建起特罗阿德粮仓'],[48,'南港大火烧了他的房子，粮仓躲过一劫。他搬进粮仓的阁楼'],[49,'把粮仓的地板租给烧了家的人，每一袋粮都用城里的铜斗量'],[51,'新皇帝的诏书下来，阿里乌派被请出了城里所有的教堂，包括他做了二十年礼拜的圣伊琳娜'],[52,'每逢节日，他走出奠基者城门，到城墙外的一个院子里祈祷'],[55,'和几个粮商买下大火烧过的地，盖起亚历山大粮仓，专收埃及的粮船'],[60,'六十五岁。每天早上还是自己量粮']],
- where:Y=>SCENE.id==='xero'?(Y>=52?ARIAN:null):(Y>=46?[313,171]:null),
+ where:Y=>SCENE.nodaph?null:SCENE.id==='xero'?(Y>=52?ARIAN:null):(Y>=46?[313,171]:null),
  threads:Y=>{const t=[];if(SCENE.id==='xero'){t.push([LM.gate_founder.xy[0],LM.gate_founder.xy[1],'节日从这道门出城']);t.push([1815,500,'他的粮仓在金角湾 →','east']);return t}if(Y>=46){t.push([QUAY[0],QUAY[1],Y>=49?'从达芙涅那儿买水':'他的船在这里卸粮']);t.push([LM.milion.xy[0],LM.milion.xy[1],'给面包配给供粮']);if(Y<51)t.push([LM.church_peace.xy[0],LM.church_peace.xy[1],'在圣伊琳娜做礼拜']);else t.push([4,1300,'← 节日出城，去城墙外祈祷','xero']);if(Y>=48)t.push([700,2040,'↓ 南港：他被烧掉的家'])}return t}};
 const NAMED=[DAPH,THEO];
 function lifeAt(P,Y){let cur=null;for(const l of P.life)if(l[0]<=Y)cur=l;return cur}
@@ -624,7 +624,7 @@ function startIntro(){const ib=$('ibg');requestAnimationFrame(()=>ib.style.opaci
 function enter(withSound){if(withSound)initSound();const it=$('intro');it.style.transition='opacity 1.6s';it.style.opacity=0;setTimeout(()=>it.remove(),1700);
   cam.z=minZ();cam.x=W/2;cam.y=H/2;arriving.t=0;flyTo(880,260,1.3,5200);setTimeout(()=>{if(AC)bell(.18,330);greet()},5600)}
 $('go').onclick=()=>enter(true);$('skip').onclick=()=>enter(false);
-if(SCENE.intro)startIntro();else{$('intro').remove();cam.z=minZ();clampCam();setTimeout(()=>{flyTo(DHOME[0],DHOME[1],1.2,2500);setTimeout(()=>{openNamed(DAPH);hush();say(DAPH,SCENE.greet,[['拨动年代',()=>{hush();glowYear()}],['回城东尖角',()=>location.href='../']])},2700)},400)}
+if(SCENE.nodaph){$('daph').style.display='none';$('intro').remove();cam.z=minZ();clampCam();setTimeout(()=>flyTo(DHOME[0],DHOME[1],1.0,2500),400)}else if(SCENE.intro)startIntro();else{$('intro').remove();cam.z=minZ();clampCam();setTimeout(()=>{flyTo(DHOME[0],DHOME[1],1.2,2500);setTimeout(()=>{openNamed(DAPH);hush();say(DAPH,SCENE.greet,[['拨动年代',()=>{hush();glowYear()}],['回城东尖角',()=>location.href='../']])},2700)},400)}
 
 /* ---------- render ---------- */
 let last=performance.now(),gullT=0,bellHour=-1;
