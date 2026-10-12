@@ -61,5 +61,7 @@
  },
  "streets": "streets.json",
  "junctions": "junctions.json",
- "streetnames": "streetnames.json"
+ "streetnames": "streetnames.json",
+ "ground": "ground.json",
+ "groundImg": "xero_ground.jpg"
 }

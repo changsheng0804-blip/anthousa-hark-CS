@@ -61,7 +61,7 @@ def streets_layer(Y):
     for pas in (0, 1):
         for q in S:
             x1, y1, x2, y2, w, k, y = q[:7]
-            if y > Y or (len(q) > 7 and q[7] <= Y): continue
+            if y > Y or (len(q) > 7 and q[7] and q[7] <= Y): continue
             col = STY[k][pas]
             if col is None: continue
             ww = w + 2 if pas == 0 else w
@@ -213,5 +213,22 @@ def render(Y, crop=None):
 if __name__ == '__main__' and len(sys.argv) > 1 and sys.argv[1] == 'test':
     o = render(50, crop=True); o.crop((380, 950, 780, 1300)).resize((1200, 1050), Image.LANCZOS).save('/tmp/h_close.jpg', quality=90)
     o.crop((450, 150, 1250, 750)).save('/tmp/h_far.jpg', quality=88); sys.exit()
+# ---- ground + timed overlays: the page draws streets and houses itself for every single year
+def overlay(name, src, poly, grow, feather, y0, y1):
+    mm = Image.new('L', (W, H), 0); ImageDraw.Draw(mm).polygon([tuple(p) for p in poly], fill=255)
+    mm = mm.filter(ImageFilter.MaxFilter(grow * 2 + 1)).filter(ImageFilter.GaussianBlur(feather))
+    bb = mm.getbbox(); rg = src.convert('RGBA'); rg.putalpha(mm)
+    rg.crop(bb).save(X + name, quality=82)
+    return dict(f=name, x=bb[0], y=bb[1], a=y0, b=y1)
+def ground_files():
+    terrain.save(X + 'xero_ground.jpg', quality=86)
+    OV = [overlay('ov_cistern_modestus.webp', orig[50], late['cistern_modestus']['p'], 14, 6, 41, 999)]
+    for i, (sx, sy) in enumerate(SHACKS):
+        OV.append(overlay('ov_shack%d.webp' % i, g, [(sx-95,sy-75),(sx+95,sy-75),(sx+95,sy+75),(sx-95,sy+75)], 4, 12, 42, 999))
+    OV.append(overlay('ov_fire.webp', burnt, late['fire_ruins']['p'], 6, 14, 48, 54))
+    OV.append(overlay('ov_arian.webp', orig[60], late['arian_meeting']['p'], 16, 6, 52, 999))
+    OV.append(overlay('ov_cistern_carriers.webp', orig[60], late['cistern_carriers']['p'], 10, 6, 54, 999))
+    json.dump(OV, open(X + 'ground.json', 'w'))
+ground_files()
 for Y in (40, 50, 60):
     print(Y, render(Y))
