@@ -3,7 +3,7 @@ const D=require('path').join(__dirname,'../../docs/living/xerolophos/');
 const html=fs.readFileSync(D+'index.html','utf8');
 const vc=new VirtualConsole();vc.on('jsdomError',e=>console.log('JSERR',e.message,(e.detail&&e.detail.stack||'').slice(0,300)));vc.on('error',e=>console.log('ERR',e));vc.on('log',(...a)=>console.log('LOG',...a));
 const dom=new JSDOM(html.replace(/<script>/,'<script>window.__boot=(async()=>{').replace(/<\/script>(?![\s\S]*<\/script>)/,'})().catch(e=>console.log("BOOTERR",e.stack));</script>'),{runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,url:'http://x/',beforeParse(w){
- w.fetch=async f=>{const p=path.join(D,f);if(!fs.existsSync(p))return{ok:false,json:async()=>({})};const b=fs.readFileSync(p);return{ok:true,json:async()=>JSON.parse(b),text:async()=>b.toString()}};
+ w.fetch=async f=>{f=String(f).split("?")[0];const p=path.join(D,f);if(!fs.existsSync(p))return{ok:false,json:async()=>({})};const b=fs.readFileSync(p);return{ok:true,json:async()=>JSON.parse(b),text:async()=>b.toString()}};
  const noop=new Proxy(function(){},{get:(t,k)=>k==='measureText'?()=>({width:10}):k==='createLinearGradient'||k==='createRadialGradient'||k==='createPattern'?()=>({addColorStop(){}}):k==='getImageData'?()=>({data:new Uint8ClampedArray(4)}):noop,apply:()=>noop,set:()=>true});
  w.HTMLCanvasElement.prototype.getContext=()=>noop;w.HTMLCanvasElement.prototype.toDataURL=()=>'';
  w.Image=class{constructor(){this.complete=true;this.width=10;this.height=10;this.naturalWidth=10}decode(){return Promise.resolve()}};
