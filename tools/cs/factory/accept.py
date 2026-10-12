@@ -175,6 +175,12 @@ def compare(q, fix):
         mp = re.search(r'piers walkable (\d+) / (\d+)', r.stdout)
         okp = bool(mp) and int(mp.group(2)) > 0 and int(mp.group(1)) >= 0.95 * int(mp.group(2))
         rec(S, '画上的栈桥人走得上去', okp, mp.group(0) if mp else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（栈桥并进 walk 网）')
+    # cs14 · 港口的口子按画：画上围墙的缺口 = 口子；算出来的口子要落在缺口上，至少一艘船停在港里、水路穿过缺口
+    if sc.get('fleet', {}).get('derived'):
+        r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--mouth')
+        mm = re.search(r'gates on mouth (\d+) / (\d+), ships inside (\d+), ships entering via mouth (\d+)', r.stdout)
+        okm = bool(mm) and mm.group(1) == mm.group(2) and int(mm.group(2)) > 0 and int(mm.group(3)) >= 1 and int(mm.group(4)) >= 1
+        rec(S, '港口的口子对上画、船进得了港', okm, mm.group(0) if mm else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（口子按画上的缺口定）；画上没有缺口就局部补画')
     # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
     if sc.get('fleet'):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})

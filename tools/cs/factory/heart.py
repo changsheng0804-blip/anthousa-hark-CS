@@ -103,7 +103,7 @@ def main():
     for s in fr['structures']:
         if s['type'] == 'harbor' and standing(s, Y):
             P = s['pts'] + [s['pts'][0]]; dwm.line([(x / R, y / R) for x, y in P], fill=255, width=3)
-            cx, cy = np.mean(s['pts'], 0); best_g = None
+            cx, cy = np.mean(s['pts'], 0); best_g = None; cands = []
             for p, q2 in zip(P, P[1:]):
                 for t in np.linspace(0.08, 0.92, 24):
                     x, y = p[0] + (q2[0] - p[0]) * t, p[1] + (q2[1] - p[1]) * t
@@ -111,7 +111,11 @@ def main():
                     oj, oi = int(oy / R), int(ox / R)
                     if 0 <= oj < GH and 0 <= oi < GW and water[oj, oi] and not harb[oj, oi] and clear[oj, oi] >= 20:
                         dg = np.hypot(x - gc0[0], y - gc0[1])
-                        if best_g is None or dg < best_g[0]: best_g = (dg, x, y)
+                        # cs14：口子按画来定——画上围墙在这一点是水（缺口）才算；整座港都没有缺口时才退回只看底账
+                        pj_, pi_ = min(max(int(y / R), 0), GH - 1), min(max(int(x / R), 0), GW - 1)
+                        cands.append((0 if pall[pj_, pi_] else 1, dg, x, y))
+            if cands:
+                bb = min(cands); best_g = (bb[1], bb[2], bb[3])
             if best_g: gates.append(best_g[1:]); dwm.ellipse([best_g[1] / R - 6, best_g[2] / R - 6, best_g[1] / R + 6, best_g[2] / R + 6], fill=0)
     wallA = np.asarray(wallm) > 0
     wc = np.where(wallA, np.inf, wc)
@@ -149,6 +153,27 @@ def main():
     for k, a in enumerate(anchors[:4] + [main_at] + anchors[4:7]):
         ism = a is main_at
         ships.append({'at': a, 'ang': ang if ism else round(((k * 0.37) % 0.8) - 0.4, 2), **({'main': True} if ism else {}), 'path': wpath(a)})
+    # cs14 · backlog 1：港口的口子按画来定。画上围墙的缺口（三张画在墙线上都是水的那几段）= 口子；口子要和算出来的口子对上，至少一艘船停在港里，水路穿过口子
+    if '--mouth' in sys.argv:
+        from shapely.geometry import Polygon, Point
+        mp_, ins, thru = [], 0, 0
+        for s in fr['structures']:
+            if s['type'] == 'harbor' and standing(s, Y):
+                P = s['pts'] + [s['pts'][0]]
+                for p, q2 in zip(P, P[1:]):
+                    n = max(1, int(math.hypot(q2[0] - p[0], q2[1] - p[1]) / 4))
+                    for t in range(n + 1):
+                        x, y = p[0] + (q2[0] - p[0]) * t / n, p[1] + (q2[1] - p[1]) * t / n
+                        if 0 <= x < PW - 120 and 0 <= y < PH and pall[int(y / R), int(x / R)] and not band[int(y / R), int(x / R)]: mp_.append((x, y))
+                poly = Polygon(s['pts'])
+                if math.hypot(poly.centroid.x - bol[0], poly.centroid.y - bol[1]) > 600: continue   # 只看泊位旁边的那座港
+                for sh_ in ships:
+                    if poly.contains(Point(sh_['at'])):
+                        ins += 1
+                        pp = sh_['path']; segs = pp + [[(pp[k][0] + pp[k + 1][0]) // 2, (pp[k][1] + pp[k + 1][1]) // 2] for k in range(len(pp) - 1)]
+                        if mp_ and any(min(math.hypot(a[0] - m[0], a[1] - m[1]) for m in mp_) < 40 for a in segs): thru += 1
+        gok = sum(1 for g in gates if mp_ and min(math.hypot(g[0] - m[0], g[1] - m[1]) for m in mp_) <= 30)
+        print(f'harbor mouth painted {len(mp_)} pts, gates on mouth {gok} / {len(gates)}, ships inside {ins}, ships entering via mouth {thru}'); return
     # 8. 码头上站人的地方：泊位两边沿岸 ≤140 像素、不压房子，彼此 ≥24
     spots = []
     sp = sorted([(math.hypot(i * R - bol[0], j * R - bol[1]), j, i) for j, i in zip(*np.nonzero(landm & (shore_d <= 14) & ~house))])
