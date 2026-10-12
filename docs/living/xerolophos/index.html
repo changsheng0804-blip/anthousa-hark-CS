@@ -50,7 +50,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
 #card .cstalk{margin:10px 0;padding:8px 10px;border:1px solid rgba(212,168,90,.35);border-radius:6px}#card .cswho{font-size:12.5px;color:var(--mute);margin-bottom:6px}#card .cssp,#card .csgo{color:var(--gold2);cursor:pointer;border-bottom:1px dotted var(--gold)}#card .cssp.on{color:var(--ivory);border-bottom:1px solid var(--ivory)}#card .csqs{display:flex;flex-wrap:wrap;gap:5px}#card .csq{font-size:12px;padding:3px 8px;border:1px solid rgba(212,168,90,.4);border-radius:12px;cursor:pointer;color:var(--ivory)}#card .csq.on{background:rgba(212,168,90,.25)}#card .csans{font-size:14px;line-height:1.8;margin-top:8px;color:var(--ivory)}#card .csans b{color:var(--gold2);font-weight:normal}
-#card .cson{background:rgba(212,168,90,.18);border-radius:4px}#card .csstep{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:12px;color:var(--mute)}
+#card .cshook{margin:8px 0;font-size:14px;line-height:1.6}#card .csmore summary{font-size:12px;color:var(--mute);cursor:pointer;margin-top:8px}#card .cson{background:rgba(212,168,90,.18);border-radius:4px}#card .csstep{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:12px;color:var(--mute)}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
 #intro{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
 #intro .bg{position:absolute;inset:-6%;background:url(../arrival.jpg) center/cover no-repeat;opacity:0;transition:opacity 3s;animation:kb 60s ease-out forwards}
@@ -365,9 +365,11 @@ function renderCard(){
       const beats=V.life.filter(b=>b[0]<=Y),cur=beats[beats.length-1];
       if(cur)vHTML=`<div class="story">${cur[1]}<div class="by">${by}</div></div>`;else vHTML=`<div class="story fut">${narN}还没搬来，这一家的事，过几年才有人讲。</div>`;
       vHTML+=`<details><summary>邻居讲的这一家</summary><div class="life">${V.life.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">建城 ${y} 年</span>${y>Y?'……':t}</div>`).join('')}</div></details>`}
-    showCard(`<h2>${al.length?nm:'空房子'}</h2><div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'来自'+F.origin} · ${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>`
-      +`<div class="ppl">${ppl}</div>`+(today?`<div class="now">此刻：${today}</div>`:'')+csTalkHTML(hh,Y)
-      +vHTML+`<div class="obj">屋里有：${objHTML}</div>`+(vOn?`<details><summary>这一家的年代（底账）</summary>${lifeHTML(hh.ev,Y)}</details>`:lifeHTML(hh.ev,Y))+`<div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
+    const hk=gone||!al.length?'':csHook(hh,Y,al,head);
+    const brief=gone?'这家人已经搬走了。':(al.length?`${al.length+csInHere(h,Y).length} 口人`:'屋里没人了。');
+    showCard(`<h2>${al.length?nm:'空房子'}</h2><div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'从'+F.origin+'来'}</div>`
+      +(vOn&&vHTML?vHTML.split('<details>')[0]:(today?`<div class="now">${today}</div>`:''))+(hk?`<div class="cshook">${hk}</div>`:'')+csTalkHTML(hh,Y)
+      +`<details class="csmore"><summary>${brief} · 屋里有${vOn?V.obj[0]:hh.obj}</summary><div class="ppl">${ppl}</div><div class="meta">${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>${lifeHTML(hh.ev,Y)}</details>`);
     if(!gone&&al.length){
       const [wl]=nearestLM(h.cx,h.cy,l=>landType(l.id)===landType(nearestLM(h.cx,h.cy)[0].id)&&!(late[l.id]&&late[l.id].built>Y));if(wl)threads.push({x:wl.xy[0],y:wl.xy[1],t:'在'+wl.name+'一带干活：'+F.trade});
       const ch=F.faith==='阿里乌派'?LM.church_peace:F.faith==='尼西亚派'?(Y>=49?LM.church_anastasia:LM.church_megale):LM.fort_acropolis;
@@ -377,6 +379,7 @@ function renderCard(){
       {let k=0;for(const id in VOICES){const W2=VOICES[id];if(W2.nar.house!==h.id||k>=3)continue;const tg=houseById(+id);if(!tg||!(tg.built<=Y&&tg.destroyed>Y)||!W2.life.some(b=>b[0]<=Y))continue;const sp=al.find(p=>p.n===W2.nar.n);if(!sp)continue;threads.push({x:tg.cx,y:tg.cy,t:sp.n+'常说起这一家',go:tg.id});k++}}
       if(vOn&&V.ties)for(const [k,t,y0] of V.ties){if(Y<y0)continue;const tg=houseById(+k);if(tg&&tg.built<=Y&&tg.destroyed>Y)threads.push({x:tg.cx,y:tg.cy,t,go:tg.id})}
       for(const p of F.people)if(p.left&&p.left<=Y&&p.d>Y){if(typeof p.to==='number'){const t=houseById(p.to);if(t)threads.push({x:t.cx,y:t.cy,t:p.n+'嫁到了这里（'+(Y-p.b)+' 岁）',go:t.id})}}
+      threads.sort((a,b)=>(b.go?1:0)-(a.go?1:0));threads=threads.slice(0,3);
       threads.forEach(t=>{t.fx=h.cx;t.fy=h.cy});
     }
   }else if(sel.kind==='named'){
@@ -457,15 +460,23 @@ function csAnswer(hh,Y,q,sp){
     return '这一片人少，没人说闲话。'}
   }
   return ''}
+const CSORD=['talk','house','nb','from','work','family','city','faith'];
 function csTalkHTML(hh,Y){
   const al=aliveAt(hh,Y);if(!al.length||Y>=hh.h.destroyed)return '';
   const sps=csSpeakers(al,Y);if(!sps.length)return '';
-  if(!sel.cs||sel.cs.id!==hh.h.id)sel.cs={id:hh.h.id,sp:0,q:null};
-  const st=sel.cs;st.sp=Math.min(st.sp,sps.length-1);const sp=sps[st.sp];
-  const who=sps.map((p,i)=>`<a class="cssp${i===st.sp?' on':''}" data-sp="${i}">${p.n}</a>`).join(' ');
-  const qs=CSQ.map(([k,t])=>`<a class="csq${st.q===k?' on':''}" data-q="${k}">${t}</a>`).join('');
-  const ans=st.q?`<div class="csans"><b>${sp.n}（${Y-sp.b} 岁）：</b>${csAnswer(hh,Y,st.q,sp)}</div>`:'';
-  return `<div class="cstalk"><div class="cswho">敲门，问 ${who}</div><div class="csqs">${qs}</div>${ans}</div>`}
+  if(!sel.cs||sel.cs.id!==hh.h.id)sel.cs={id:hh.h.id,n:-1};
+  const st=sel.cs;if(st.n<0)return `<div class="cstalk"><a class="csq" data-q="next">敲门</a></div>`;
+  const off=hh.h.id%CSORD.length,q=CSORD[(off+st.n)%CSORD.length],sp=sps[(hh.h.id+st.n)%sps.length];
+  return `<div class="cstalk"><div class="csans"><b>${sp.n}（${Y-sp.b} 岁）：</b>${csAnswer(hh,Y,q,sp)}</div><a class="csq" data-q="next">再问一句</a></div>`}
+function csHook(hh,Y,al,head){
+  const L=csInHere(hh.h,Y).sort((a,b)=>b.p.left-a.p.left);
+  if(L.length&&Y-L[0].p.left<=8){const {x,p:q,hh:o}=L[0];const fh=csHeadOf(o,q.left);const d=Y-q.left;return `<a class="csgo" data-pf="${x.from}:${x.pi}">${q.n}</a>是${d===0?'今年':d+' 年前'}从${fh?fh.n+'家':'别家'}嫁过来的。`}
+  const ev=hh.ev.filter(e=>e[0]<=Y&&e[0]>=Y-3).pop();
+  if(ev){const p=hh.people.find(p=>ev[1].includes(p.n));const t=ev[1];return (Y-ev[0]===0?'今年，':(Y-ev[0])+' 年前，')+(p?t.replace(p.n,`<a class="csgo" data-p="${hh.people.indexOf(p)}">${p.n}</a>`):t)+'。'}
+  const out=hh.people.find(p=>p.s==='f'&&p.left&&p.left<=Y&&p.d>Y&&typeof p.to==='number'&&(csIncoming(),csSpouse(p)));
+  if(out){const sp=csSpouse(out);return `这家的女儿<a class="csgo" data-p="${hh.people.indexOf(out)}">${out.n}</a>嫁给了${csGo(sp.hid,famAt(sp.hh,Y).trade+'家')}的${sp.hus.n}。`}
+  const old=al.slice().sort((a,b)=>a.b-b.b)[0];const since=Math.max(old.b,old.fam.B,old.married||-99,hh.h.built);
+  return `<a class="csgo" data-p="${hh.people.indexOf(old)}">${old.n}</a>${Y-old.b>=50?'已经 '+(Y-old.b)+' 岁了，':''}在这屋里住了 ${Math.max(1,Y-since)} 年。`}
 window.__cs={csAnswer,csTalkHTML,CSQ,csSpeakers,openHouse};
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('#card [data-q],#card [data-sp],#card [data-go],#card [data-p],#card [data-pf],#card [data-step]');if(!t||!sel)return;e.preventDefault();
   if(t.dataset.p!==undefined&&sel.kind==='house'){sel={kind:'person',hid:sel.hh.h.id,pi:+t.dataset.p,step:-1};renderCard();blip(560,.06);return}
@@ -474,13 +485,13 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
   if(t.dataset.go&&sel.kind!=='house'){const id=+t.dataset.go;const tg=houseById(id);if(tg){openHouse(id);flyTo(tg.cx,tg.cy,Math.max(cam.z,1.6),1100)}return}
   if(sel.kind!=='house')return;
   if(t.dataset.go){const id=+t.dataset.go;const tg=houseById(id);if(tg){openHouse(id);flyTo(tg.cx,tg.cy,Math.max(cam.z,1.6),1100)}return}
-  if(t.dataset.sp!==undefined){sel.cs.sp=+t.dataset.sp}if(t.dataset.q)sel.cs.q=t.dataset.q;renderCard();blip(720,.05)});
+  if(t.dataset.q==='next'&&sel.cs){sel.cs.n++}renderCard();blip(720,.05)});
 
 /* ---------- CS 线 · cs2：跟着一个人走完一生（嫁到哪家，就跟到哪家；那一家的门里也能看见她） ---------- */
 let CSIN=null;const CSHUS=new Map();const CSSP=new Map();
 function csSpouse(p){if(CSSP.has(p))return CSSP.get(p);let res=null;const wy=p.left,ag=wy-p.b;const taken=csTaken();
   const tg=houseById(p.to);if(tg){const cands=[tg].concat(csNear(tg).filter(o=>o!==tg&&o.built<=wy&&o.destroyed>wy).sort((a,b)=>dist(a.cx,a.cy,tg.cx,tg.cy)-dist(b.cx,b.cy,tg.cx,tg.cy)).slice(0,8));
-    for(const o of cands){if(o.built>wy||o.destroyed<=wy)continue;const hh=household(o);const m=hh.people.find(q=>q.s==='m'&&!q.bride&&q.g>0&&q.b<=wy-ag&&wy-q.b<=ag+15&&wy-q.b>=17&&q.d>wy+1&&!(q.left&&q.left<=wy)&&!csGrooms(hh).has(q.n)&&!taken.has(q));if(m){taken.add(m);res={hid:o.id,hus:m,hh};break}}}
+    for(const o of cands){if(o.built>wy||o.destroyed<=wy)continue;const hh=household(o);const m=hh.people.find(q=>q.s==='m'&&!q.bride&&q.g>0&&q.b<=wy-ag&&wy-q.b<=ag+15&&wy-q.b>=17&&q.d>wy+1&&!(q.left&&q.left<=wy)&&!csGrooms(hh).has(q.n)&&!hh.people.some(x=>x.n===p.n)&&!taken.has(q));if(m){taken.add(m);res={hid:o.id,hus:m,hh};break}}}
   CSSP.set(p,res);return res}
 let CSG=null;function csNear(tg){if(!CSG){CSG=new Map();for(const o of houses){const k=Math.floor(o.cx/70)+','+Math.floor(o.cy/70);if(!CSG.has(k))CSG.set(k,[]);CSG.get(k).push(o)}}const gx=Math.floor(tg.cx/70),gy=Math.floor(tg.cy/70),r=[];for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const L=CSG.get((gx+i)+','+(gy+j));if(L)r.push(...L)}return r}
 const CSGR=new WeakMap();function csGrooms(hh){let g=CSGR.get(hh);if(!g){g=new Set();for(const e of hh.ev){const i=e[1].indexOf('娶了');if(i>0)g.add(e[1].slice(0,i))}CSGR.set(hh,g)}return g}
@@ -517,12 +528,11 @@ function csPersonCard(Y){
   if(st.step<0){let k=0;B.forEach((b,i)=>{if(b[0]<=Y)k=i});st.step=k}
   const cur=B[st.step];const age=Y-p.b;
   const status=Y<p.b?'还没出生':Y>=p.d?`已经不在了（${p.d-p.b} 岁去世）`:`${age} 岁`+(p.left&&p.left<=Y?(typeof p.to==='number'?'，嫁出去了':p.to==='外城'?'，在城外':'，不在家'):'');
-  const line=B.map((b,i)=>`<div class="${i===st.step?'cson':b[0]>Y?'fut':''}" data-step="${i}" style="cursor:pointer"><span class="y">建城 ${b[0]} 年</span>${b[0]>Y&&i!==st.step?'……':b[1]}</div>`).join('');
   const hd=csHeadOf(hh,Math.min(Y,p.d-1));
-  showCard(`<h2>${p.n}</h2><div class="meta">${p.s==='m'?'男':'女'} · 生于${p.b<1?'建城以前':'建城 '+p.b+' 年'} · ${csGo(h.id,(hd?hd.n:'')+'家')}的人 · 建城 ${Y} 年：${status}</div>`
+  showCard(`<h2>${p.n}</h2><div class="meta">${csGo(h.id,(hd?hd.n:'')+'家')}的人 · ${status}</div>`
    +`<div class="story">${cur[1]}</div>`
-   +`<div class="csstep"><a class="csq" data-step="${Math.max(0,st.step-1)}">‹ 上一步</a><span>${st.step+1} / ${B.length}</span><a class="csq" data-step="${Math.min(B.length-1,st.step+1)}">下一步 ›</a></div>`
-   +`<div class="life">${line}</div><div class="pin">◆ 跟着${p.s==='m'?'他':'她'}走：点「下一步」，年代和镜头一起跟过去</div>`);
+   +`<div class="csstep">${st.step>0?`<a class="csq" data-step="${st.step-1}">‹ 之前</a>`:'<span></span>'}${st.step<B.length-1?`<a class="csq" data-step="${st.step+1}">后来呢 ›</a>`:'<span></span>'}</div>`
+   );
   const pl=csPlace(cur[2]);if(pl&&cur[2]!==h.id){threads.push({fx:h.cx,fy:h.cy,x:pl[0],y:pl[1],t:p.n+(typeof cur[2]==='number'?'嫁到了这里':'去了这里'),go:typeof cur[2]==='number'?cur[2]:undefined})}
 }
 function csGoStep(i){const B=sel.beats;i=Math.max(0,Math.min(B.length-1,i));sel.step=i;const b=B[i];const pl=csPlace(b[2]);if(b[0]!==YEAR){$('yr').value=b[0];setYear(b[0])}else renderCard();if(pl)flyTo(pl[0],pl[1],Math.max(cam.z,1.5),1200);blip(600+i*20,.05)}
