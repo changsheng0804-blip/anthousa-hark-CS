@@ -55,8 +55,9 @@ STY = {'m': ((118, 104, 86, 190), (174, 163, 144, 255)), 's': ((140, 118, 88, 11
 def streets_layer(Y):
     L = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(L)
     for pas in (0, 1):
-        for x1, y1, x2, y2, w, k, y in S:
-            if y > Y: continue
+        for q in S:
+            x1, y1, x2, y2, w, k, y = q[:7]
+            if y > Y or (len(q) > 7 and q[7] <= Y): continue
             col = STY[k][pas]
             if col is None: continue
             ww = w + 2 if pas == 0 else w
