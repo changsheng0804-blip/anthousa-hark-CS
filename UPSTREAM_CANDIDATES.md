@@ -1,21 +1,14 @@
-# 上游候选（已评估，只挑更好的手动 cherry-pick）
-已审阅到：3cd473c8139d6f5afeb530d9c65cfba0e884c560（2026-10-13）
-- dc41a07 living v13: 先长街道再落房（主路/街/横街/巷），房屋挪到街边地块 —— 不采纳：街道布局是谭线「画」的主攻方向，照搬会让两线趋同；刘线房屋按 id 引用，日后要用可只读其 houses.json。
-- 1c78a72 living v13.1: 门朝街、按占地定大小、生成脚本进 tools/ —— 不采纳：依附 v13 街道布局，同上。
-- 53b0c3c living v14: 主路连排铺面、井/摊/炉在路口 —— 不采纳：同属谭线画面层；路口设施对刘线「街坊闲话」有参考价值，先记下不移植。
-- 852d526 living v14b: 每次构建给数据和图片加 cache-bust —— 采纳（手动移植到 docs/living/xerolophos/index.html，BUILD='liu3b'）：刘线 voices/talk 等 JSON 会频繁更新，老访客被缓存卡在旧闲话里，这是纯技术修正、不碰刘线特色。
-
-## v15–v23（审阅于 liu4，2026-10-12）· 原则：对方的「事实」只读引用，对方的「画法」不搬
-事实快照：`docs/living/xerolophos/facts_upstream/`（取自 3cd473c，见其中 SOURCE.md）；上游 4831 栋房子与刘线 houses.json 逐栋同 id、同建成/拆毁年，voices.json 385 户全部对得上（不匹配 0）。
-- 09f4f04 living v15: 老街区弯巷、新街区和火后直网格 —— 不采纳：街道形态是谭线的画面；其结果已体现在 3cd473c 的 streetnames/houses 位置里，刘线只取结果。
-- 070b71a living v16: 路网审计第 1 轮、房子按建成年取街 —— 采纳为事实（间接）：「房子按建成年取街」的结果进了 3cd473c 的 houses.json，刘线门牌按年取街沿用同一规则；audit_streets.py 不搬。
-- 1676d01 living v17: 路网审计第 2 轮、相遇点挪回街上 —— 不采纳：路网几何和相遇点位置属画面；刘线相遇只按人家地址标街名，不挪点。
-- d62ed99 living v18: 街名（住户、地标、井炉、旧俗名 vs 规划行名、48 年火后编号、54 年运水人巷改名）+ 卡片地址 —— 采纳为事实：streetnames.json 原样只读引用；卡片门牌、「街坊在说什么」、相遇标街名由刘线自己写（加了门牌号，样式不同），沿街画街名不搬。
-- 49ef4ef living v18d: 街名标签加大 —— 不采纳：纯画法，刘线不画街名。
-- 3fde591 living v19: 房身不压路、浴场大道成真路、按占地画房子 —— 不采纳：画法；「浴场大道」这条街名随 streetnames 作为事实进来。
-- e6c8d24 living v19b: 按 BUILD 给所有图片/JSON 加版本号 —— 不采纳：刘线 v14b 移植时已用 fetch/img 全局拦截加 b=BUILD，效果相同；liu4 的 BUILD='liu4'。
-- 73cd258 living v20: 页面每年自画地面+街+房、路先于街出现 —— 不采纳：渲染管线是谭线主攻，刘线保持关键帧底图 + 拼贴的面貌。
-- 259ea7a living v21: 街围成街区，blocks_xero 推每年街区功能（市集、铺面、汲水坊、兵营坊、作坊、体面人家、新街坊、菜园、民居）；街区开关叠层 —— 采纳为事实：blocks.json 的功能表（fn）只读引用，卡片门牌后标街区功能；叠层和按功能画房子不搬。
-- dc9d2d7 v21: 工具栏按钮点亮 —— 不采纳：谭线工具栏样式。
-- e2e16ca v22: 去掉街区按钮、远看像旧地图标街区名、?debug=blocks —— 不采纳：画法/工具栏。
-- 3cd473c living v23: district_rules 按街区切地块，房子取所在地块的街区；fix K 连路岛 —— 采纳为事实：houses.json 第 9 栏（人家所在街区）作为门牌后的街区功能；切地块的画法不搬。
+# 上游候选（待评估，只挑更好的手动 cherry-pick）
+已审阅到：3cd473c8139d6f5afeb530d9c65cfba0e884c560
+- aafed1c living v24: house system P1 — house_types.py is the one geometry source (row/domus/insula/yard/casa/std/hut/hall/flat), exported to houses_geom.json for the page; rows share one ridge and colour per street side; lots south of a street set back; audit now counts roof rise ——Hark
+  → 不采纳：房屋几何/柱廊/房屋年龄外观，属谭线画面层，刘线户籍系统不依赖
+- 3e1951b living v25: house system P2 — porticos with columns along row fronts (stalls under market ones), kitchen gardens behind homes, domus garden walls, flat terrace roofs with parapet; audit covers porticos (fixpo) ——Hark
+  → 不采纳：房屋几何/柱廊/房屋年龄外观，属谭线画面层，刘线户籍系统不依赖
+- d130869 living v26: house system P3 — houses live through years: timber frame the year after foundations, re-laid tiles and moss as roofs age, lean-to added in kitchen gardens, roof falls in the last 2 years before demolition (not for fire); geometry stage table + center-relative coords ——Hark
+  → 不采纳：房屋几何/柱廊/房屋年龄外观，属谭线画面层，刘线户籍系统不依赖
+- 279b940 living v27: open landmark typology — specs gen/landmarks/*.json + shape vocabulary landmark_shapes.py (basilica, steps), placed by landmarks.py with strict road audit; first: 2 bread steps on the market street, a church growing oratory -> hall+atrium -> basilica with apse; house card shows the landmark's name by stage ——Hark
+  → 不采纳：地标类型与选址属画面层；其合并地块/拆房的空间事实若需要可日后经 facts_from_upstream 只读取用
+- 911cee8 living v28: medium landmarks merge the neighbouring lot (parish buys the plot next door; that house comes down when the church starts); 3 churches now (7764, 5999+6240, 4651+5079); story/scene households protected; softer landmark shadow ——Hark
+  → 不采纳：地标类型与选址属画面层；其合并地块/拆房的空间事实若需要可日后经 facts_from_upstream 只读取用
+- e5e49be living v29: landmark siting fully spec-driven (fn/typ/front_on/prefer); new types fountain (nymphaeum exedra + basin), horrea (buttressed granary, lengthened after 12 yrs), inn (rooms round a yard + stable); 12 landmarks in Xerolophos, strict audit 0 ——Hark
+  → 不采纳：地标类型与选址属画面层；其合并地块/拆房的空间事实若需要可日后经 facts_from_upstream 只读取用
