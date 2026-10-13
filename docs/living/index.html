@@ -93,7 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='26';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='27';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -362,7 +362,7 @@ function openNamed(P){sel={kind:'named',P};renderCard();blip(520,.08)}
 function openLM(l){hush();sel={kind:'lm',l};renderCard();blip(440,.08)}
 function closeCard(){$('card').style.display='none';sel=null;threads=[]}
 $('cardx').onclick=closeCard;
-function showCard(html){if(SN.length&&sel&&sel.kind==='house'){const h=sel.hh.h;const a=streetAt(h.cx,h.cy,YEAR);if(a&&YEAR>=h.built)html=html.replace('</h2>','</h2><div class="addr">⌂ '+a+'</div>')}$('cardbody').innerHTML=html;$('card').style.display='block'}
+function showCard(html){if(SN.length&&sel&&sel.kind==='house'){const h=sel.hh.h;const a=streetAt(h.cx,h.cy,YEAR);if(a&&YEAR>=h.built)html=html.replace('</h2>','</h2><div class="addr">⌂ '+a+'</div>');const L=HG&&HG.L&&HG.L[h.id];if(L&&YEAR>=h.built){let n=L[0][1];for(const q of L)if(YEAR>=q[0])n=q[1];html=html.replace('</h2>','</h2><div class="addr">✦ '+(YEAR<h.built+2?n+'（在建）':n)+'</div>')}}$('cardbody').innerHTML=html;$('card').style.display='block'}
 function tiePos(k,Y){if(k==='daph'){const w=DAPH.where(Y);return w}if(k==='theo'){const w=THEO.where(Y);return w}const t=houseById(+k);return t?[t.cx,t.cy,t.id]:null}
 function renderDeep(h,S,Y,per){
   const beats=S.beats.filter(b=>b[0]<=Y);const cur=beats[beats.length-1];

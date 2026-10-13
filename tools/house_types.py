@@ -206,6 +206,11 @@ def _geom_full(h):
     elif hsh(hid, 13) < 0.5: roof = shade(roof, 0.92 + 0.16 * hsh(hid, 14))
     cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
     lot = [(cx + (x - cx) * 0.96, cy + (y - cy) * 0.96) for x, y in pts]
+    if isinstance(typ, str) and typ.startswith('lm:'):   # landmark: open typology, see landmark_shapes / gen/landmarks/*.json
+        import landmark_shapes as LS
+        P = LS.geom(h, h[2], life_end(h))
+        sh = lot + [(x + ht * 0.55 + 1, y + ht * 0.3 + 1) for x, y in lot]
+        return max(q[1] for q in pts), P, sh
     parts = []
     # the building's own footprint inside the lot
     back = (front + 2) % 4   # edge opposite the street
@@ -323,7 +328,15 @@ def export(HS, path):
             if rng != dflt: T.append([i] + (list(rng) if rng else [0, FOREVER]))
         # stage table: default life for walls [y0, wall end) and roofs [y0, roof end), then the exceptions
         out[h[0]] = [r1(by - cy), [r1(v - (cx if j % 2 == 0 else cy)) for q in sh for j, v in enumerate(q)], P, [D[0], D[1], D[2], T]]
-    json.dump(dict(pal=['rgb(%s)' % k for k in pal], H=out), open(path, 'w'), separators=(',', ':'))
+    L = {}
+    for h in HS:   # landmark names by stage, for the house card
+        if len(h) > 9 and str(h[9]).startswith('lm:'):
+            import landmark_shapes as LS
+            sp = LS.spec_of(h); nm = sp['name_zh']; seq = []
+            for st in sp['stages']:
+                seq.append([h[2] + (2 + st['from'] if st['from'] else 0), st.get('name_zh', nm)])
+            L[h[0]] = seq
+    json.dump(dict(pal=['rgb(%s)' % k for k in pal], H=out, L=L), open(path, 'w'), separators=(',', ':'))
 
 
 # ---------------- P3: a house's life (stages by year) ----------------
@@ -358,7 +371,7 @@ def geom(h):
     out = []
     for q in parts:
         kind, lay, poly, col = q[:4]
-        if lay == 'g': out.append(q); continue
+        if lay == 'g' or len(q) > 4: out.append(q); continue
         rng = (up0, E if lay == 'r' else (e if e < 900 else FOREVER))
         out.append((kind, lay, poly, col, rng))
     fp = footprint(h); ht = h[7] if len(h) > 7 else 5
@@ -378,7 +391,8 @@ def geom(h):
                 out.append(('fill', 'w', [a, c, (c[0], c[1] - hh), (a[0], a[1] - hh)], (198, 186, 162), R))
         out.append(('edge', 'w', [(x, y - ht) for x, y in fp], (110, 78, 48), R))
     # weathering: after ~20 years a few re-laid tiles, after ~35 moss
-    if E - b > 22 and roofs:
+    lm = isinstance(h[9] if len(h) > 9 else '', str) and str(h[9]).startswith('lm:')
+    if E - b > 22 and roofs and not lm:
         for j, q in enumerate(roofs[:2]):
             poly = q[2]; px = sum(v[0] for v in poly) / len(poly); py = sum(v[1] for v in poly) / len(poly)
             t = 0.22 + 0.12 * hsh(hid, 100 + j)
