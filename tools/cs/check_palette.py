@@ -15,7 +15,9 @@ def stats(q):
     if not sc.get('street_layout'): return None
     WK = (sc.get('fleet') or {}).get('walk') or sc['walk']; wat = np.array([c == 'w' for c in WK['quay']]).reshape(WK['H'], WK['W'])
     wI = Image.fromarray(wat.astype(np.uint8) * 255).resize((1820, 2048), Image.NEAREST)
-    wc = np.asarray(wI.filter(ImageFilter.MinFilter(15))) > 0; lc = np.asarray(wI.filter(ImageFilter.MaxFilter(15))) == 0
+    lc = np.asarray(wI.filter(ImageFilter.MaxFilter(15))) == 0
+    # cs35：水面按离岸远近生成（深浅是规则的一部分），所以各街区只比同一段离岸距离（30–110 像素）的水，不拿港池的浅水比外海
+    dist = cv2.distanceTransform((np.asarray(wI) > 0).astype(np.uint8), cv2.DIST_L2, 5); wc = (dist >= 30) & (dist <= 110)
     out = {}
     for K in [0] + [k[0] for k in sc['keys']]:
         a = np.asarray(Image.open(os.path.join(Q, f'ground_{K}.jpg')).convert('RGB')).astype(float)

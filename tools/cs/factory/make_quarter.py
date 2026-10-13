@@ -4,7 +4,8 @@
 段（按顺序；--from 从某段接着跑）：
   grow    底账 → houses.json / frame.json / 每个关键年的草图 base_Y.png、蒙版 mask_Y.png
   scene   配方 → scene.json / city.json；拷公用页面和素材（所有街区共用一份 index.html）；和链接的街区互相指
-  paint   每个关键年要一张 AI 画：tools/cs/factory/raw/<q>/<pre>Y_ai_*.png。缺的话写出草图和提示词、退出码 3，
+  paint   （cs35 起新街区）AI 只画地标：缺的列进 raw/landmarks/PROMPTS.txt、退出码 3；齐了 landmarks.py 用草图 + 地标图合成每个关键年的画。
+          （老街区）每个关键年要一张 AI 画：tools/cs/factory/raw/<q>/<pre>Y_ai_*.png。缺的话写出草图和提示词、退出码 3，
           由 Hark 调 generate_image（只给草图 + east_af30.jpg 风格，不给旧画）存进去再接着跑。
           有了就按「底账陆地画成水最少」挑一张，记进 scene.paint，repaint.py 一栋一栋重铺屋顶、蒙版合成补岸。
   land    land.py：走得上的网（底账 ∧ 每张画都是陆地）、城里的街
@@ -61,6 +62,11 @@ def main():
             run(py('land.py'), q, '--masks-only')
             os.makedirs(raw, exist_ok=True); need = []
             sc = json.load(open(os.path.join(Q, 'scene.json'))); P = sc.setdefault('paint', {})
+            # cs35：新街区不再要 AI 整张画。只要地标图（raw/landmarks/<id>.webp，全城共用）；缺的先列出来让 Hark 画，齐了就由 landmarks.py 合成每个关键年的「画」
+            if not any(f.endswith('.png') and '_ai_' in f for f in os.listdir(raw)) or any('_ai_c' in f for f in os.listdir(raw)):
+                r = run(py('landmarks.py'), q, 'drafts'); 
+                if '缺 0' not in r.stdout: print('缺地标图：照 raw/landmarks/PROMPTS.txt 调 generate_image（只给 style_crop.jpg 做风格参考），存成 <id>.webp 后 --from paint'); sys.exit(3)
+                run(py('landmarks.py'), q, 'compose')
             for Y in R['keys']:
                 cands = sorted(f for f in os.listdir(raw) if f.startswith(f'{pre}{Y}_ai_') and f.endswith('.png'))
                 if not cands:

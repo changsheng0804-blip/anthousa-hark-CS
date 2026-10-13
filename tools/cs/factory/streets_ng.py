@@ -17,6 +17,11 @@ random.seed(7)
 W, H = 1820, 2048
 D = json.load(open(SRC))
 houses = [h for h in D['houses']]; late = D['late']
+# cs35：底账上早就站着的地标（竞技场、皇宫……）和后建的一样当地皮——不盖房、压在上面的街从它建成那年收掉（以前只认后建的）
+_LMT = {'fort', 'forum', 'monument', 'palace', 'hippodrome', 'church', 'granary', 'cistern', 'warehouse', 'gate', 'baths', 'column', 'theatre', 'temple', 'market'}
+for _s in json.load(open(X + 'frame.json'))['structures']:
+    if _s['type'] in _LMT and _s.get('geom') == 'polygon' and _s['id'] not in late and _s.get('destroyed') in (None, 'None') and len(_s.get('pts') or []) >= 3:
+        late[_s['id']] = {'p': _s['pts'], 'built': int(_s['built'])}
 city = json.load(open(X + 'city.json'))
 LM = {l['id']: l for l in city['landmarks']}
 SCN = json.load(open(X + 'scene.json'))
@@ -295,7 +300,8 @@ def try_lot(poly, rank, kind, si):
     x0, y0, m = rm; h_, w_ = m.shape
     if (road[y0:y0 + h_, x0:x0 + w_] & m).any() or (lotmap[y0:y0 + h_, x0:x0 + w_] & m).any(): return None
     lotmap[y0:y0 + h_, x0:x0 + w_] |= m
-    return dict(p=poly, cx=cx, cy=cy, rank=rank, kind=kind, si=si, z=zone_of(cx, cy), occ=[])
+    _mx = sum(p_[0] for p_ in poly) / len(poly); _my = sum(p_[1] for p_ in poly) / len(poly)
+    return dict(p=poly, cx=cx, cy=cy, rank=rank, kind=kind, si=si, z=zone_of(cx, cy), z2=[k for k, p_ in ZONES.items() if pip(_mx, _my, p_)], occ=[])
 
 lots = []
 order = sorted(range(len(streets)), key=lambda i: {'main': 0, 'street': 1, 'cross': 2, 'lane': 3}[streets[i]['kind']])
@@ -358,9 +364,10 @@ hs = sorted(houses, key=lambda h: (h[2], h[0]))
 for h in hs:
     hid, dd, b, e, poly = h
     ox = sum(poly[0::2]) / 4; oy = sum(poly[1::2]) / 4
-    if not interior(ox, oy, 0):
-        kept += 1; continue
     z = zone_of(ox, oy)
+    if not interior(ox, oy, 0) and not (z and e > late[z]['built']):
+        kept += 1; continue
+    if z and e > late[z]['built']: z = None   # cs35：底账说它在地标盖起来以后还住着，就搬到地标外面最近的地块（地标地皮只留给在那年以前搬走的人家）
     gx, gy = int(ox // G), int(oy // G); best = None
     for rr in range(0, 14):
         cand = []
@@ -370,6 +377,7 @@ for h in hs:
                 for li in grid.get((ix, iy), []):
                     l = lots[li]
                     if l['z'] != z or not free(l, b, e): continue
+                    if any(k != z and e > late[k]['built'] for k in l['z2']): continue   # cs35：地块中心压在别的地标上（地标地皮可能互相叠着）、人家又活过它建成那年，不落
                     nb = sum(1 for j in l['nb'] if not free(lots[j], b, b + 1))
                     dist = 0.6 * math.hypot(l['cx'] - ox, l['cy'] - oy) + l['rank'] * 18 + KP[l['kind']] - 22 * min(nb, 2)
                     cand.append((dist, li))
@@ -677,6 +685,7 @@ for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
                 for lj in grid.get((ix, iy), []):
                     L2 = lots[lj]
                     if lj == li or L2['z'] != l['z'] or not free(L2, hb, he): continue
+                    if any(k != l['z'] and he > late[k]['built'] for k in L2['z2']): continue
                     f2 = foot([c for p_ in L2['p'] for c in p_])
                     if clashes(volume(f2, 2), hb, he) or forbidden(f2, hb, he): continue
                     dd = math.hypot(L2['cx'] - l['cx'], L2['cy'] - l['cy'])

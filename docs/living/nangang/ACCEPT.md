@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 88 / 88
+通过 72 / 72
 
 
 ## 一、拉取
@@ -28,7 +28,7 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ nangang ⇄ xerolophos 来回都能走
-- ✅ nangang ⇄ jinjiao 来回都能走
+- ✅ nangang ⇄ gucheng 来回都能走
 - ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page nangang years 40:3226/3226 50:4201/4201 60:4679/4679 errors 0
 - ✅ 心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街） —— heart.py 从底账算（建城 60 年的陆地、港口、粮仓 horrea_theodosius、路、房子）
@@ -38,9 +38,9 @@
 - ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
 - ✅ 同分布：框里街的疏密和全城一样（随密度，不随街区） —— 框里 0.238 / 全城 0.230 = 1.03
 - ✅ 接缝：全城网出框的地方，街区的街接得上 —— 53/55 没接上 [(1820, 293), (1351, 0)]
-- ✅ 地面颜色在全城色板上 —— 沙地最大 ΔE 0.4（≤4），水面最大 ΔE 3.1（≤6）
+- ✅ 地面颜色在全城色板上 —— 沙地最大 ΔE 0.4（≤4），水面最大 ΔE 4.5（≤6）
 - ✅ 换年代地面不跳色 —— 相邻年份最大 ΔE 0.4（≤5）
-- ✅ 和别的街区是同一座城的颜色 —— 对 ['jinjiao'] 最大 ΔE 4.8（≤6）
+- ✅ 和别的街区是同一座城的颜色 —— 对 ['gucheng', 'jinjiao'] 最大 ΔE 0.4（≤6）
 - ✅ 没建成的栈桥都盖住了（连同靠在边上的画上的船） —— dock patches 8 / 8, uncovered cells 0
 - ✅ 画上的栈桥人走得上去 —— piers walkable 1065 / 1072
 - ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 8, on pier 8, trails ending on a pier 1567 / 2683
@@ -75,24 +75,6 @@
 - ✅ 60 年 Horrea Alexandrina 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.94，全街区 0.88
 - ✅ 60 年 Forum of Theodosius 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.85，全街区 0.88
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nangang_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ ng_af40.jpg —— 一致
-- ✅ ng_af50.jpg —— 一致
-- ✅ ng_af60.jpg —— 一致
-- ✅ houses_street.json —— 一致
-- ✅ streets.json —— 一致
-- ✅ junctions.json —— 一致
-- ✅ houses_geom.json —— 一致
-- ✅ ground_0.jpg —— 一致
-- ✅ ground_40.jpg —— 一致
-- ✅ ground_50.jpg —— 一致
-- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 脉不露面 —— 页面上没有看脉的按钮或图层

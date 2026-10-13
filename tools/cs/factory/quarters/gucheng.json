@@ -1,0 +1,72 @@
+{
+ "说明": "第三块地（cs35）：老拜占庭城心。配方只写名字、框、关键年、地标中文名和一句话、街头气氛；街网、色板、水面全从全城规则来。",
+ "id": "gucheng",
+ "title": "古城",
+ "box": [
+  573,
+  370
+ ],
+ "keys": [
+  40,
+  50,
+  60
+ ],
+ "link": "jinjiao",
+ "names": {
+  "fort_acropolis": "拜占斯卫城",
+  "agora_tetrastoon": "四柱廊集市",
+  "forum_founder": "建城者广场",
+  "col_founder": "建城者纪念柱",
+  "milion": "里程碑门",
+  "palace_great": "大皇宫",
+  "hippodrome": "竞技场",
+  "church_peace": "圣和平教堂",
+  "granary_founder": "建城者粮仓",
+  "cistern_founder": "建城者蓄水池",
+  "nymphaeum_great": "大水神殿",
+  "church_megale": "大教堂",
+  "horrea_troadensia": "特罗阿德粮仓",
+  "church_anastasia": "圣安娜斯塔西娅教堂",
+  "wall_byzas": "拜占斯老城墙"
+ },
+ "stories": {
+  "hippodrome": "建城那年动工的赛车场，四万人坐得下，蓝绿两党的吼声隔着海都听得见。",
+  "palace_great": "从竞技场一路铺到海边的宫殿群，皇帝在包厢里露面，就从宫里那条暗廊走过去。",
+  "church_megale": "建城 30 年落成的大教堂，城里人只叫它“大的那座”。",
+  "milion": "城里所有路程都从这道四面拱门量起。"
+ },
+ "now": {
+  "hippodrome": {
+   "morning": "马夫牵着马绕跑道遛弯",
+   "day": "看台上蓝党和绿党隔着跑道对骂",
+   "night": "看门人锁上铁栅门"
+  },
+  "church_megale": {
+   "morning": "晨祷的钟声",
+   "day": "求告的人在前廊排队",
+   "night": "穹顶下只剩几盏油灯"
+  }
+ },
+ "ticker": {
+  "morning": [
+   "运水人从蓄水池挑水上坡",
+   "宫里的面包车从粮仓出来",
+   "马夫在竞技场门口刷马"
+  ],
+  "day": [
+   "四柱廊下有人在讨价还价",
+   "从里程碑门出发的信差上了马",
+   "两党的人在广场上吵起来"
+  ],
+  "evening": [
+   "竞技场散场的人潮涌进小巷",
+   "宫墙上点起了火把"
+  ],
+  "night": [
+   "禁卫军沿着宫墙巡逻",
+   "卫城上只剩风声"
+  ]
+ },
+ "teaser": "第三个街区 · 城心",
+ "hook": "散场了。四万人从竞技场涌进小巷。"
+}

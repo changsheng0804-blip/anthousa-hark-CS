@@ -3,6 +3,12 @@
  "tile_px": 455,
  "scale": 14.21875,
  "quarters": {
+  "gucheng": [
+   2232,
+   2531,
+   1820,
+   2048
+  ],
   "jinjiao": [
    341,
    256,
@@ -24,116 +30,116 @@
  "levels": {
   "0": {
    "40": {
-    "tiles": 55,
-    "bytes": 976546,
-    "max_tile": 44936,
+    "tiles": 80,
+    "bytes": 1764132,
+    "max_tile": 51320,
     "grid": [
-     5,
+     9,
      12
     ]
    },
    "50": {
-    "tiles": 55,
-    "bytes": 1153650,
-    "max_tile": 49746,
+    "tiles": 80,
+    "bytes": 2001762,
+    "max_tile": 52376,
     "grid": [
-     5,
+     9,
      12
     ]
    },
    "60": {
-    "tiles": 55,
-    "bytes": 1182946,
-    "max_tile": 52732,
+    "tiles": 80,
+    "bytes": 2048602,
+    "max_tile": 53302,
     "grid": [
-     5,
+     9,
      12
     ]
    }
   },
   "1": {
    "40": {
-    "tiles": 18,
-    "bytes": 306608,
-    "max_tile": 55298,
+    "tiles": 26,
+    "bytes": 547406,
+    "max_tile": 55962,
     "grid": [
-     3,
+     5,
      6
     ]
    },
    "50": {
-    "tiles": 18,
-    "bytes": 369252,
-    "max_tile": 58936,
+    "tiles": 26,
+    "bytes": 631948,
+    "max_tile": 60410,
     "grid": [
-     3,
+     5,
      6
     ]
    },
    "60": {
-    "tiles": 18,
-    "bytes": 376702,
-    "max_tile": 59368,
+    "tiles": 26,
+    "bytes": 645964,
+    "max_tile": 60900,
     "grid": [
-     3,
+     5,
      6
     ]
    }
   },
   "2": {
    "40": {
-    "tiles": 6,
-    "bytes": 90278,
-    "max_tile": 31478,
+    "tiles": 8,
+    "bytes": 156420,
+    "max_tile": 35012,
     "grid": [
-     2,
+     3,
      3
     ]
    },
    "50": {
-    "tiles": 6,
-    "bytes": 111900,
-    "max_tile": 39174,
+    "tiles": 8,
+    "bytes": 183686,
+    "max_tile": 39232,
     "grid": [
-     2,
+     3,
      3
     ]
    },
    "60": {
-    "tiles": 6,
-    "bytes": 114770,
-    "max_tile": 39938,
+    "tiles": 8,
+    "bytes": 188248,
+    "max_tile": 39940,
     "grid": [
-     2,
+     3,
      3
     ]
    }
   },
   "3": {
    "40": {
-    "tiles": 2,
-    "bytes": 26952,
-    "max_tile": 15134,
+    "tiles": 4,
+    "bytes": 46910,
+    "max_tile": 23426,
     "grid": [
-     1,
+     2,
      2
     ]
    },
    "50": {
-    "tiles": 2,
-    "bytes": 32424,
-    "max_tile": 18436,
+    "tiles": 4,
+    "bytes": 54170,
+    "max_tile": 27074,
     "grid": [
-     1,
+     2,
      2
     ]
    },
    "60": {
-    "tiles": 2,
-    "bytes": 33154,
-    "max_tile": 19182,
+    "tiles": 4,
+    "bytes": 55020,
+    "max_tile": 27858,
     "grid": [
-     1,
+     2,
      2
     ]
    }
@@ -141,8 +147,8 @@
   "4": {
    "40": {
     "tiles": 1,
-    "bytes": 8296,
-    "max_tile": 8296,
+    "bytes": 12620,
+    "max_tile": 12620,
     "grid": [
      1,
      1
@@ -150,8 +156,8 @@
    },
    "50": {
     "tiles": 1,
-    "bytes": 9490,
-    "max_tile": 9490,
+    "bytes": 13930,
+    "max_tile": 13930,
     "grid": [
      1,
      1
@@ -159,8 +165,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 9520,
-    "max_tile": 9520,
+    "bytes": 14020,
+    "max_tile": 14020,
     "grid": [
      1,
      1
@@ -173,33 +179,36 @@
   192
  ],
  "grid": [
-  5,
+  9,
   12
  ],
  "time": {
   "40": {
-   "render_s": 1.5,
-   "tiles_s": 2.2
+   "render_s": 2.8,
+   "tiles_s": 3.5
   },
   "50": {
-   "render_s": 1.7,
-   "tiles_s": 2.2
+   "render_s": 2.5,
+   "tiles_s": 3.4
   },
   "60": {
-   "render_s": 1.7,
-   "tiles_s": 2.2
+   "render_s": 2.6,
+   "tiles_s": 3.5
   }
  },
  "psnr": {
   "40": {
+   "gucheng": 35.4,
    "jinjiao": 37.8,
-   "nangang": 36.2
+   "nangang": 36.3
   },
   "50": {
+   "gucheng": 35.1,
    "jinjiao": 37.1,
    "nangang": 35.8
   },
   "60": {
+   "gucheng": 35.0,
    "jinjiao": 36.9,
    "nangang": 35.7
   }
@@ -213,16 +222,16 @@
    60
   ],
   "ground_bytes": {
-   "40": 689204,
-   "50": 713568,
-   "60": 684524
+   "40": 1225810,
+   "50": 1253364,
+   "60": 1227496
   },
-  "vec_tiles": 48,
-  "vec_bytes": 6542586,
-  "vec_gzip": 1293772,
+  "vec_tiles": 73,
+  "vec_bytes": 10971808,
+  "vec_gzip": 2193131,
   "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 6.6
+  "seconds": 10.2
  },
- "total_s": 19.0
+ "total_s": 29.7
 }

@@ -11,11 +11,18 @@ sc = json.load(open(Q + 'scene.json')); OLD = json.load(open(Q + 'houses.json'))
 late = OLD['late']
 WK = (sc.get('fleet') or {}).get('walk') or sc['walk']; wat = np.array([c == 'w' for c in WK['quay']]).reshape(WK['H'], WK['W'])
 watI = Image.fromarray(wat.astype(np.uint8) * 255).resize((W, H), Image.NEAREST).filter(ImageFilter.MaxFilter(9))
+LMT = {'fort', 'forum', 'monument', 'palace', 'hippodrome', 'church', 'granary', 'cistern', 'warehouse', 'gate', 'baths', 'column', 'theatre', 'temple', 'market'}
 def keep_at(K):   # 水、这一年已经盖起来的地标不抹（还没盖的地标地皮上画的是旧房子，照样抹）
     lmI = Image.new('L', (W, H), 0); dl = ImageDraw.Draw(lmI)
     for k, v in late.items():
         if v['built'] > K: continue
         p = v['p']; cx = sum(x for x, _ in p) / len(p); cy = sum(y for _, y in p) / len(p); dl.polygon([(cx + (x - cx) * 1.08, cy + (y - cy) * 1.08) for x, y in p], fill=255)
+    # cs35：底账上早就站着的地标（竞技场、皇宫……）也留着——以前只留「后建」的，早建的会被当成旧房子抹掉
+    for s_ in json.load(open(Q + 'frame.json'))['structures']:
+        if s_['type'] not in LMT or s_.get('geom') != 'polygon': continue
+        b_, d_ = int(s_['built']), s_.get('destroyed')
+        if b_ > K or (d_ not in (None, 'None') and int(d_) <= K): continue
+        p = s_['pts']; cx = sum(x for x, _ in p) / len(p); cy = sum(y for _, y in p) / len(p); dl.polygon([(cx + (x - cx) * 1.08, cy + (y - cy) * 1.08) for x, y in p], fill=255)
     return np.maximum(np.asarray(watI), np.asarray(lmI)) > 0
 keep = keep_at(0)
 PAL = json.load(open(os.path.join(HERE, 'city', 'palette.json')))
