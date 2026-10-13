@@ -1,0 +1,3192 @@
+{
+ "base": {
+  "years_money": {
+   "水": 62,
+   "挤": 62,
+   "信仰": 64,
+   "孤寡": 71
+  },
+  "years_queue": {
+   "水": 62,
+   "挤": 63,
+   "信仰": 64,
+   "孤寡": 71
+  },
+  "widow_monks": 65,
+  "bottleneck": {
+   "水": "层层转呈（层级）",
+   "挤": "层层转呈（层级）",
+   "信仰": "阿里乌派主教（钱）",
+   "孤寡": "干山区长（钱：区一级最薄）"
+  },
+  "C1": true,
+  "C2": true,
+  "fav_ratio": 0.048,
+  "fav_top1": "欧瑟比乌斯 13288:41",
+  "fav_top8": [
+   "13288:41",
+   "6979:29",
+   "5114:11",
+   "3342:8",
+   "13068:41",
+   "8063:39",
+   "7822:27",
+   "5285:15"
+  ],
+  "C3": true,
+  "crisis_last_day": 18.0,
+  "crisis_covered": 1.0,
+  "C4": true
+ },
+ "summary": {
+  "runs": 88,
+  "C1_holds": 72,
+  "C2_holds": 86,
+  "C3_holds": 38,
+  "C3_tested": 38,
+  "C4_holds": 88,
+  "C1_breaks": [
+   [
+    "tau",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 80
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 80
+    },
+    66
+   ],
+   [
+    "omega",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 67,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 67,
+     "孤寡": 71
+    },
+    68
+   ],
+   [
+    "omega",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    64
+   ],
+   [
+    "beta",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 80
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 80
+    },
+    66
+   ],
+   [
+    "kappa",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    66
+   ],
+   [
+    "kappa",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    65
+   ],
+   [
+    "alms",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    66
+   ],
+   [
+    "remit",
+    1.5,
+    {
+     "水": 63,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    {
+     "水": 63,
+     "挤": 64,
+     "信仰": 64,
+     "孤寡": 71
+    },
+    65
+   ],
+   [
+    "V_h",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 63,
+     "孤寡": 66
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 63,
+     "孤寡": 66
+    },
+    63
+   ],
+   [
+    "V_h",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 65,
+     "孤寡": 76
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 65,
+     "孤寡": 76
+    },
+    67
+   ],
+   [
+    "造价系数.brick_domestic",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 66
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 66
+    },
+    63
+   ],
+   [
+    "造价系数.brick_domestic",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 64,
+     "孤寡": 76
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 76
+    },
+    67
+   ],
+   [
+    "造价系数.brick_civic",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 63,
+     "孤寡": 71
+    },
+    65
+   ],
+   [
+    "造价系数.brick_civic",
+    1.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 65,
+     "孤寡": 71
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 65,
+     "孤寡": 71
+    },
+    65
+   ],
+   [
+    "请愿.t_hop",
+    0.5,
+    {
+     "水": 62,
+     "挤": 62,
+     "信仰": 63,
+     "孤寡": 70
+    },
+    {
+     "水": 62,
+     "挤": 63,
+     "信仰": 63,
+     "孤寡": 70
+    },
+    65
+   ],
+   [
+    "请愿.t_hop",
+    1.5,
+    {
+     "水": 63,
+     "挤": 63,
+     "信仰": 64,
+     "孤寡": 72
+    },
+    {
+     "水": 63,
+     "挤": 64,
+     "信仰": 64,
+     "孤寡": 72
+    },
+    66
+   ]
+  ],
+  "C2_breaks": [
+   [
+    "remit",
+    1.5,
+    {
+     "水": "城市长官（钱）",
+     "挤": "层层转呈（层级）",
+     "信仰": "阿里乌派主教（钱）",
+     "孤寡": "干山区长（钱：区一级最薄）"
+    }
+   ],
+   [
+    "请愿.t_hop",
+    0.5,
+    {
+     "水": "城市长官（钱）",
+     "挤": "层层转呈（层级）",
+     "信仰": "阿里乌派主教（钱）",
+     "孤寡": "干山区长（钱：区一级最薄）"
+    }
+   ]
+  ],
+  "C3_breaks": [],
+  "C4_breaks": [],
+  "top1_changes": []
+ },
+ "rows": [
+  {
+   "param": "tau",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 80
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 80
+   },
+   "widow_monks": 66,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.041,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "tau",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 68
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 68
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.041,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "rho",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "rho",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "delta",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "delta",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "omega",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 67,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 67,
+    "孤寡": 71
+   },
+   "widow_monks": 68,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.039,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 5,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "omega",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "widow_monks": 64,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "alpha",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "alpha",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 72
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 72
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "beta",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 80
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 80
+   },
+   "widow_monks": 66,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "beta",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 68
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 68
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "gamma",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "gamma",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "eps",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "eps",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.049,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "kappa",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 66,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "kappa",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.047,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 6,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "alms",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "alms",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 66,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.045,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 6,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "sigma",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "sigma",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "remit",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "remit",
+   "mult": 1.5,
+   "C1": false,
+   "C2": false,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 63,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 63,
+    "挤": 64,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "城市长官（钱）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "V_h",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 63,
+    "孤寡": 66
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 63,
+    "孤寡": 66
+   },
+   "widow_monks": 63,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.049,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "V_h",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 65,
+    "孤寡": 76
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 65,
+    "孤寡": 76
+   },
+   "widow_monks": 67,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "comp",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.049,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "comp",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "reloc",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "reloc",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "levy",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.049,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "levy",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "day",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.042,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "day",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.04,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "lam",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.035,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 6,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "lam",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.045,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "skim",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.049,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 7,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "skim",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": true,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": 0.048,
+   "fav_top1": "欧瑟比乌斯 13288:41",
+   "fav_top8_overlap": 8,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.timber",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.timber",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.brick_domestic",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 66
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 66
+   },
+   "widow_monks": 63,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.brick_domestic",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 76
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 76
+   },
+   "widow_monks": 67,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.brick_civic",
+   "mult": 0.5,
+   "C1": false,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 63,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.brick_civic",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 65,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 65,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.cistern",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.cistern",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.marble",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.marble",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.road",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "造价系数.road",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "请愿.t_hop",
+   "mult": 0.5,
+   "C1": false,
+   "C2": false,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 63,
+    "孤寡": 70
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 63,
+    "孤寡": 70
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "城市长官（钱）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "请愿.t_hop",
+   "mult": 1.5,
+   "C1": false,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 63,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 72
+   },
+   "years_queue": {
+    "水": 63,
+    "挤": 64,
+    "信仰": 64,
+    "孤寡": 72
+   },
+   "widow_monks": 66,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "请愿.build",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "请愿.build",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.tenant_to_owner",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.tenant_to_owner",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.to_fang",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.to_fang",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.fang_up",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 17.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.fang_up",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.district_up",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 17.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.district_up",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.prefect_decide",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 15.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.prefect_decide",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 21.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.prefect_down",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 17.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.prefect_down",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.district_down",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 17.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.district_down",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 19.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.fang_cap",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 21.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.fang_cap",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 17.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.to_elder",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.to_elder",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.elder_up",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.elder_up",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.bishop_decide",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.bishop_decide",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.bishop_down",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.bishop_down",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.elder_cap",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.elder_cap",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.relief_per_person",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.relief_per_person",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.next_collection",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.next_collection",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.clear_days_per_house",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.clear_days_per_house",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.men_per_unaffected",
+   "mult": 0.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "大火.men_per_unaffected",
+   "mult": 1.5,
+   "C1": true,
+   "C2": true,
+   "C3": null,
+   "C4": true,
+   "years_money": {
+    "水": 62,
+    "挤": 62,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "years_queue": {
+    "水": 62,
+    "挤": 63,
+    "信仰": 64,
+    "孤寡": 71
+   },
+   "widow_monks": 65,
+   "bottleneck": {
+    "水": "层层转呈（层级）",
+    "挤": "层层转呈（层级）",
+    "信仰": "阿里乌派主教（钱）",
+    "孤寡": "干山区长（钱：区一级最薄）"
+   },
+   "fav_ratio": null,
+   "fav_top1": null,
+   "fav_top8_overlap": null,
+   "crisis_last_day": 18.0,
+   "crisis_covered": 1.0
+  },
+  {
+   "param": "极端：remit=1.0（城库不留钱）",
+   "mult": null,
+   "prefect_reserve_AF47": -2243.0,
+   "need": 626.5,
+   "need_page": 122.5,
+   "need_outside": 504.0,
+   "covered_now": -3.58,
+   "bishop_reserve": [
+    1849.1,
+    1611.4
+   ],
+   "relief": {
+    "civil": {
+     "first": 106.0,
+     "median": 118.0,
+     "last": 120.0
+    },
+    "first_any": {
+     "first": 7.0,
+     "median": 8.0,
+     "last": 120.0
+    }
+   }
+  }
+ ],
+ "seconds": 29.6
+}

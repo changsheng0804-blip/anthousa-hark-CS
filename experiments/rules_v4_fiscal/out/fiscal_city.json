@@ -1,0 +1,3271 @@
+{
+ "scope": "city",
+ "params": {
+  "tau": 0.5,
+  "rho": 1.0,
+  "delta": 0.3,
+  "omega": 0.3,
+  "alpha": 0.1,
+  "beta": 0.1,
+  "gamma": 0.1,
+  "eps": 0.05,
+  "kappa": 0.4,
+  "alms": 1.0,
+  "sigma": 1.0,
+  "remit": 0.5,
+  "V_h": 30.0,
+  "comp": 0.5,
+  "reloc": 1.0,
+  "levy": 1.0,
+  "corvee_days": 30,
+  "day": 0.015,
+  "lam": 0.0,
+  "skim": 0.5
+ },
+ "build_cost": {
+  "timber": 0.5,
+  "brick_domestic": 1.0,
+  "brick_civic": 1.5,
+  "cistern": 2.0,
+  "marble": 4.0,
+  "road": 0.3
+ },
+ "works": [
+  {
+   "id": "cistern_modestus",
+   "type": "cistern",
+   "year": 41,
+   "faction": "emperor",
+   "area": 63.0,
+   "k": 2.0,
+   "cost": 3780.0,
+   "payer": "emperor"
+  },
+  {
+   "id": "nymphaeum_maius",
+   "type": "monument",
+   "year": 44,
+   "faction": "emperor",
+   "area": 14.7,
+   "k": 4.0,
+   "cost": 1759.2,
+   "payer": "emperor"
+  },
+  {
+   "id": "horrea_troadensia",
+   "type": "granary",
+   "year": 46,
+   "faction": "merchants",
+   "area": 36.3,
+   "k": 1.5,
+   "cost": 1634.4,
+   "payer": "merchants"
+  },
+  {
+   "id": "church_anastasia",
+   "type": "church",
+   "year": 49,
+   "faction": "church",
+   "area": 12.0,
+   "k": 1.0,
+   "cost": 360.0,
+   "payer": "church_private"
+  },
+  {
+   "id": "arian_meeting",
+   "type": "church",
+   "year": 52,
+   "faction": "people",
+   "area": 12.0,
+   "k": 0.5,
+   "cost": 180.0,
+   "payer": "bishop_arian"
+  },
+  {
+   "id": "cistern_carriers",
+   "type": "cistern",
+   "year": 54,
+   "faction": "people",
+   "area": 35.0,
+   "k": 2.0,
+   "cost": 2100.0,
+   "payer": "prefect+levy"
+  },
+  {
+   "id": "horrea_alexandrina",
+   "type": "granary",
+   "year": 55,
+   "faction": "merchants",
+   "area": 36.0,
+   "k": 1.5,
+   "cost": 1620.0,
+   "payer": "merchants"
+  },
+  {
+   "id": "forum_theodosius",
+   "type": "forum",
+   "year": 57,
+   "faction": "emperor",
+   "area": 80.0,
+   "k": 4.0,
+   "cost": 9600.0,
+   "payer": "emperor"
+  },
+  {
+   "id": "r_exo",
+   "type": "road",
+   "year": 63,
+   "faction": "people",
+   "area": 53.6,
+   "k": 0.3,
+   "cost": 482.2,
+   "payer": "prefect"
+  },
+  {
+   "id": "r_carriers",
+   "type": "road",
+   "year": 62,
+   "faction": "people",
+   "area": 42.0,
+   "k": 0.3,
+   "cost": 378.0,
+   "payer": "prefect"
+  },
+  {
+   "id": "cistern_slope",
+   "type": "cistern",
+   "year": 62,
+   "faction": "people",
+   "area": 30.0,
+   "k": 2.0,
+   "cost": 1800.0,
+   "payer": "prefect+levy"
+  },
+  {
+   "id": "xenon_xerolophos",
+   "type": "monastery",
+   "year": 65,
+   "faction": "people",
+   "area": 20.0,
+   "k": 1.0,
+   "cost": 600.0,
+   "payer": "district_xero+bishop_nicene"
+  },
+  {
+   "id": "church_arian_brick",
+   "type": "church",
+   "year": 64,
+   "faction": "people",
+   "area": 24.0,
+   "k": 1.5,
+   "cost": 1080.0,
+   "payer": "bishop_arian"
+  }
+ ],
+ "seconds": {
+  "import_": 0.277,
+  "registry_build_31y": 0.176,
+  "fiscal_30y": 0.161,
+  "fiscal_21y_AF51_70": 0.109,
+  "fiscal_per_year_ms": 5.2,
+  "total_in_process": 1.441
+ },
+ "peak_rss_mb_after_fiscal": 238.1,
+ "rss_after_registry": 113.4,
+ "conservation_max_abs_err": 6.252776074688882e-13,
+ "levels": {
+  "51": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 173202.0,
+    "self_funded": 173202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 173202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 1673.94,
+    "self_funded": 0.0,
+    "kept": 1673.94,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 171528.06,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 171528.06
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15268,
+    "income": 171528.06,
+    "self_funded": 0.0,
+    "kept": 88903.8,
+    "up": 0.0,
+    "down": 82624.26
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15268,
+    "income": 7634.0,
+    "self_funded": 7634.0,
+    "kept": 0.0,
+    "up": 7634.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7634.0,
+    "self_funded": 0.0,
+    "kept": 763.4,
+    "up": 6870.6,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 74.5,
+    "self_funded": 0.0,
+    "kept": 7.45,
+    "up": 67.05,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 6937.65,
+    "self_funded": 0.0,
+    "kept": 693.76,
+    "up": 6243.89,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4580.4,
+    "self_funded": 0.0,
+    "kept": 458.04,
+    "up": 4122.36,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 44.7,
+    "self_funded": 0.0,
+    "kept": 4.47,
+    "up": 40.23,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4122.36,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4122.36,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2288.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2288.0
+   },
+   "教会/教区长老": {
+    "nodes": 167,
+    "income": 1695.8,
+    "self_funded": 0.0,
+    "kept": 57.84,
+    "up": 1098.96,
+    "down": 539.0
+   },
+   "教会/教区": {
+    "nodes": 1,
+    "income": 1637.96,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 1098.96,
+    "down": 539.0
+   },
+   "教会/主教": {
+    "nodes": 1,
+    "income": 1098.96,
+    "self_funded": 0.0,
+    "kept": 559.96,
+    "up": 0.0,
+    "down": 539.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10406.48,
+    "self_funded": 0.0,
+    "kept": 2915.24,
+    "up": 5203.24,
+    "down": 2288.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "52": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 173202.0,
+    "self_funded": 173202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 173202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 1690.97,
+    "self_funded": 0.0,
+    "kept": 1690.97,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 171511.03,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 171511.03
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15417,
+    "income": 171511.03,
+    "self_funded": 0.0,
+    "kept": 87879.99,
+    "up": 0.0,
+    "down": 83631.04
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15417,
+    "income": 7708.5,
+    "self_funded": 7708.5,
+    "kept": 0.0,
+    "up": 7708.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7708.5,
+    "self_funded": 0.0,
+    "kept": 770.85,
+    "up": 6937.65,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 76.0,
+    "self_funded": 0.0,
+    "kept": 7.6,
+    "up": 68.4,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7006.05,
+    "self_funded": 0.0,
+    "kept": 700.61,
+    "up": 6305.45,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4625.1,
+    "self_funded": 0.0,
+    "kept": 462.51,
+    "up": 4162.59,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 45.6,
+    "self_funded": 0.0,
+    "kept": 4.56,
+    "up": 41.04,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4162.59,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4162.59,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2366.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2366.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4261.8,
+    "self_funded": 0.0,
+    "kept": 185.19,
+    "up": 3518.61,
+    "down": 558.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4076.61,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3518.61,
+    "down": 558.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3518.61,
+    "self_funded": 0.0,
+    "kept": 2780.61,
+    "up": 0.0,
+    "down": 738.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10509.08,
+    "self_funded": 0.0,
+    "kept": 2888.54,
+    "up": 5254.54,
+    "down": 2366.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 180.0,
+    "self_funded": 0.0,
+    "kept": 180.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "53": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 173202.0,
+    "self_funded": 173202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 173202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 1631.9,
+    "self_funded": 0.0,
+    "kept": 1631.9,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 171570.1,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 171570.1
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15560,
+    "income": 171570.1,
+    "self_funded": 0.0,
+    "kept": 86982.58,
+    "up": 0.0,
+    "down": 84587.52
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15560,
+    "income": 7780.0,
+    "self_funded": 7780.0,
+    "kept": 0.0,
+    "up": 7780.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7780.0,
+    "self_funded": 0.0,
+    "kept": 778.0,
+    "up": 7002.0,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 74.0,
+    "self_funded": 0.0,
+    "kept": 7.4,
+    "up": 66.6,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7068.6,
+    "self_funded": 0.0,
+    "kept": 706.86,
+    "up": 6361.74,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4668.0,
+    "self_funded": 0.0,
+    "kept": 466.8,
+    "up": 4201.2,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 44.4,
+    "self_funded": 0.0,
+    "kept": 4.44,
+    "up": 39.96,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4201.2,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4201.2,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2452.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2452.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4282.1,
+    "self_funded": 0.0,
+    "kept": 186.86,
+    "up": 3550.25,
+    "down": 545.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4095.25,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3550.25,
+    "down": 545.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3550.25,
+    "self_funded": 0.0,
+    "kept": 3005.25,
+    "up": 0.0,
+    "down": 545.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10602.9,
+    "self_funded": 0.0,
+    "kept": 2849.45,
+    "up": 5301.45,
+    "down": 2452.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "54": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 173202.0,
+    "self_funded": 173202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 173202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 1597.24,
+    "self_funded": 0.0,
+    "kept": 1597.24,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 171604.76,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 171604.76
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15686,
+    "income": 171604.76,
+    "self_funded": 0.0,
+    "kept": 86130.07,
+    "up": 0.0,
+    "down": 85474.7
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15686,
+    "income": 7843.0,
+    "self_funded": 7843.0,
+    "kept": 0.0,
+    "up": 7843.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8098.0,
+    "self_funded": 0.0,
+    "kept": 784.3,
+    "up": 7058.7,
+    "down": 255.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 73.0,
+    "self_funded": 0.0,
+    "kept": 7.3,
+    "up": 65.7,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7379.4,
+    "self_funded": 0.0,
+    "kept": 712.44,
+    "up": 6411.96,
+    "down": 255.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4705.8,
+    "self_funded": 0.0,
+    "kept": 470.58,
+    "up": 4235.22,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 43.8,
+    "self_funded": 0.0,
+    "kept": 4.38,
+    "up": 39.42,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4235.22,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4235.22,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2538.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2538.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4312.8,
+    "self_funded": 0.0,
+    "kept": 188.19,
+    "up": 3575.61,
+    "down": 549.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4124.61,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3575.61,
+    "down": 549.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3575.61,
+    "self_funded": 0.0,
+    "kept": 3026.61,
+    "up": 0.0,
+    "down": 549.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10686.6,
+    "self_funded": 0.0,
+    "kept": 450.3,
+    "up": 5343.3,
+    "down": 4893.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 2100.0,
+    "self_funded": 0.0,
+    "kept": 2100.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "55": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 1962.3,
+    "self_funded": 0.0,
+    "kept": 1962.3,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 191239.7,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 191239.7
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15788,
+    "income": 191239.7,
+    "self_funded": 0.0,
+    "kept": 104533.46,
+    "up": 0.0,
+    "down": 86706.24
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15788,
+    "income": 7894.0,
+    "self_funded": 7894.0,
+    "kept": 0.0,
+    "up": 7894.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7894.0,
+    "self_funded": 0.0,
+    "kept": 789.4,
+    "up": 7104.6,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 156.0,
+    "self_funded": 0.0,
+    "kept": 8.1,
+    "up": 72.9,
+    "down": 75.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7252.5,
+    "self_funded": 0.0,
+    "kept": 717.75,
+    "up": 6459.75,
+    "down": 75.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4736.4,
+    "self_funded": 0.0,
+    "kept": 473.64,
+    "up": 4262.76,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 48.6,
+    "self_funded": 0.0,
+    "kept": 4.86,
+    "up": 43.74,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4262.76,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4262.76,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2657.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2657.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4338.4,
+    "self_funded": 0.0,
+    "kept": 189.57,
+    "up": 3601.83,
+    "down": 547.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4148.83,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3601.83,
+    "down": 547.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3601.83,
+    "self_funded": 0.0,
+    "kept": 3054.83,
+    "up": 0.0,
+    "down": 547.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10766.25,
+    "self_funded": 0.0,
+    "kept": 2651.13,
+    "up": 5383.13,
+    "down": 2732.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 1620.0,
+    "self_funded": 1620.0,
+    "kept": 1620.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "56": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 2184.43,
+    "self_funded": 0.0,
+    "kept": 2184.43,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 191017.57,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 191017.57
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15915,
+    "income": 191017.57,
+    "self_funded": 0.0,
+    "kept": 103544.14,
+    "up": 0.0,
+    "down": 87473.43
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15915,
+    "income": 7957.5,
+    "self_funded": 7957.5,
+    "kept": 0.0,
+    "up": 7957.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7957.5,
+    "self_funded": 0.0,
+    "kept": 795.75,
+    "up": 7161.75,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 91.0,
+    "self_funded": 0.0,
+    "kept": 9.1,
+    "up": 81.9,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7243.65,
+    "self_funded": 0.0,
+    "kept": 724.37,
+    "up": 6519.28,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4774.5,
+    "self_funded": 0.0,
+    "kept": 477.45,
+    "up": 4297.05,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 54.6,
+    "self_funded": 0.0,
+    "kept": 5.46,
+    "up": 49.14,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4297.05,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4297.05,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2790.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2790.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4357.7,
+    "self_funded": 0.0,
+    "kept": 191.09,
+    "up": 3630.62,
+    "down": 536.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4166.62,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3630.62,
+    "down": 536.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3630.62,
+    "self_funded": 0.0,
+    "kept": 3094.62,
+    "up": 0.0,
+    "down": 536.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10865.48,
+    "self_funded": 0.0,
+    "kept": 2642.74,
+    "up": 5432.74,
+    "down": 2790.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "57": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 2575.07,
+    "self_funded": 0.0,
+    "kept": 2575.07,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 190626.93,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 190626.93
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15990,
+    "income": 190626.93,
+    "self_funded": 0.0,
+    "kept": 102694.74,
+    "up": 0.0,
+    "down": 87932.18
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15990,
+    "income": 7995.0,
+    "self_funded": 7995.0,
+    "kept": 0.0,
+    "up": 7995.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8415.0,
+    "self_funded": 0.0,
+    "kept": 799.5,
+    "up": 7195.5,
+    "down": 420.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 123.0,
+    "self_funded": 0.0,
+    "kept": 10.8,
+    "up": 97.2,
+    "down": 15.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7727.7,
+    "self_funded": 0.0,
+    "kept": 729.27,
+    "up": 6563.43,
+    "down": 435.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4797.0,
+    "self_funded": 0.0,
+    "kept": 479.7,
+    "up": 4317.3,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 64.8,
+    "self_funded": 0.0,
+    "kept": 6.48,
+    "up": 58.32,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4317.3,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4317.3,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 2905.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 2905.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4363.9,
+    "self_funded": 0.0,
+    "kept": 191.9,
+    "up": 3646.01,
+    "down": 526.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4172.01,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3646.01,
+    "down": 526.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3646.01,
+    "self_funded": 0.0,
+    "kept": 3120.01,
+    "up": 0.0,
+    "down": 526.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 10939.05,
+    "self_funded": 0.0,
+    "kept": 2129.53,
+    "up": 5469.53,
+    "down": 3340.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 9600.0,
+    "self_funded": 9600.0,
+    "kept": 9600.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "58": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 2933.94,
+    "self_funded": 0.0,
+    "kept": 2933.94,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 190268.06,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 190268.06
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16083,
+    "income": 190268.06,
+    "self_funded": 0.0,
+    "kept": 102039.51,
+    "up": 0.0,
+    "down": 88228.56
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16083,
+    "income": 8041.5,
+    "self_funded": 8041.5,
+    "kept": 0.0,
+    "up": 8041.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8041.5,
+    "self_funded": 0.0,
+    "kept": 804.15,
+    "up": 7237.35,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 124.0,
+    "self_funded": 0.0,
+    "kept": 12.4,
+    "up": 111.6,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7348.95,
+    "self_funded": 0.0,
+    "kept": 734.89,
+    "up": 6614.06,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4824.9,
+    "self_funded": 0.0,
+    "kept": 482.49,
+    "up": 4342.41,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 74.4,
+    "self_funded": 0.0,
+    "kept": 7.44,
+    "up": 66.96,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4342.41,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4342.41,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3079.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3079.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4386.6,
+    "self_funded": 0.0,
+    "kept": 193.08,
+    "up": 3668.52,
+    "down": 525.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4193.52,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3668.52,
+    "down": 525.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3668.52,
+    "self_funded": 0.0,
+    "kept": 3143.52,
+    "up": 0.0,
+    "down": 525.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11023.43,
+    "self_funded": 0.0,
+    "kept": 2432.71,
+    "up": 5511.71,
+    "down": 3079.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "59": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 3311.23,
+    "self_funded": 0.0,
+    "kept": 3311.23,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 189890.77,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 189890.77
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16172,
+    "income": 189890.77,
+    "self_funded": 0.0,
+    "kept": 101268.31,
+    "up": 0.0,
+    "down": 88622.46
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16172,
+    "income": 8086.0,
+    "self_funded": 8086.0,
+    "kept": 0.0,
+    "up": 8086.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8086.0,
+    "self_funded": 0.0,
+    "kept": 808.6,
+    "up": 7277.4,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 141.0,
+    "self_funded": 0.0,
+    "kept": 14.1,
+    "up": 126.9,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7404.3,
+    "self_funded": 0.0,
+    "kept": 740.43,
+    "up": 6663.87,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4851.6,
+    "self_funded": 0.0,
+    "kept": 485.16,
+    "up": 4366.44,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 84.6,
+    "self_funded": 0.0,
+    "kept": 8.46,
+    "up": 76.14,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4366.44,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4366.44,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3215.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3215.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4392.3,
+    "self_funded": 0.0,
+    "kept": 194.12,
+    "up": 3688.19,
+    "down": 510.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4198.19,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3688.19,
+    "down": 510.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3688.19,
+    "self_funded": 0.0,
+    "kept": 3178.19,
+    "up": 0.0,
+    "down": 510.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11106.45,
+    "self_funded": 0.0,
+    "kept": 2338.23,
+    "up": 5553.23,
+    "down": 3215.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "60": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 4,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 4,
+    "income": 3449.83,
+    "self_funded": 0.0,
+    "kept": 3449.83,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 189752.17,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 189752.17
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16281,
+    "income": 189752.17,
+    "self_funded": 0.0,
+    "kept": 101151.92,
+    "up": 0.0,
+    "down": 88600.25
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16281,
+    "income": 8140.5,
+    "self_funded": 8140.5,
+    "kept": 0.0,
+    "up": 8140.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8140.5,
+    "self_funded": 0.0,
+    "kept": 814.05,
+    "up": 7326.45,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 4,
+    "income": 148.0,
+    "self_funded": 0.0,
+    "kept": 14.8,
+    "up": 133.2,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 4,
+    "income": 7459.65,
+    "self_funded": 0.0,
+    "kept": 745.97,
+    "up": 6713.69,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4884.3,
+    "self_funded": 0.0,
+    "kept": 488.43,
+    "up": 4395.87,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 4,
+    "income": 88.8,
+    "self_funded": 0.0,
+    "kept": 8.88,
+    "up": 79.92,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4395.87,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4395.87,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3386.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3386.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4424.9,
+    "self_funded": 0.0,
+    "kept": 195.5,
+    "up": 3714.41,
+    "down": 515.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4229.41,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3714.41,
+    "down": 515.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3714.41,
+    "self_funded": 0.0,
+    "kept": 3199.41,
+    "up": 0.0,
+    "down": 515.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11189.48,
+    "self_funded": 0.0,
+    "kept": 2208.74,
+    "up": 5594.74,
+    "down": 3386.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "61": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 5702.48,
+    "self_funded": 0.0,
+    "kept": 5702.48,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 187499.52,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 187499.52
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16210,
+    "income": 187499.52,
+    "self_funded": 0.0,
+    "kept": 101008.26,
+    "up": 0.0,
+    "down": 86491.26
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16210,
+    "income": 8105.0,
+    "self_funded": 8105.0,
+    "kept": 0.0,
+    "up": 8105.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8105.0,
+    "self_funded": 0.0,
+    "kept": 810.5,
+    "up": 7294.5,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 246.5,
+    "self_funded": 0.0,
+    "kept": 24.65,
+    "up": 221.85,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7516.35,
+    "self_funded": 0.0,
+    "kept": 751.64,
+    "up": 6764.72,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4863.0,
+    "self_funded": 0.0,
+    "kept": 486.3,
+    "up": 4376.7,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 147.9,
+    "self_funded": 0.0,
+    "kept": 14.79,
+    "up": 133.11,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4376.7,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4376.7,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3370.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3370.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4377.0,
+    "self_funded": 0.0,
+    "kept": 194.55,
+    "up": 3696.45,
+    "down": 486.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4182.45,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3696.45,
+    "down": 486.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3696.45,
+    "self_funded": 0.0,
+    "kept": 3210.45,
+    "up": 0.0,
+    "down": 486.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11274.53,
+    "self_funded": 0.0,
+    "kept": 2267.26,
+    "up": 5637.26,
+    "down": 3370.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "62": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 7746.99,
+    "self_funded": 0.0,
+    "kept": 7746.99,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 185455.01,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 185455.01
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16087,
+    "income": 185455.01,
+    "self_funded": 0.0,
+    "kept": 100887.94,
+    "up": 0.0,
+    "down": 84567.08
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16087,
+    "income": 8043.5,
+    "self_funded": 8043.5,
+    "kept": 0.0,
+    "up": 8043.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8868.5,
+    "self_funded": 0.0,
+    "kept": 804.35,
+    "up": 7239.15,
+    "down": 825.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 336.0,
+    "self_funded": 0.0,
+    "kept": 33.6,
+    "up": 302.4,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 8366.55,
+    "self_funded": 0.0,
+    "kept": 754.15,
+    "up": 6787.4,
+    "down": 825.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4826.1,
+    "self_funded": 0.0,
+    "kept": 482.61,
+    "up": 4343.49,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 201.6,
+    "self_funded": 0.0,
+    "kept": 20.16,
+    "up": 181.44,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4343.49,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4343.49,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3361.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3361.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4283.4,
+    "self_funded": 0.0,
+    "kept": 193.17,
+    "up": 3670.23,
+    "down": 420.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4090.23,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3670.23,
+    "down": 420.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3670.23,
+    "self_funded": 0.0,
+    "kept": 3250.23,
+    "up": 0.0,
+    "down": 420.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11312.33,
+    "self_funded": 0.0,
+    "kept": -707.84,
+    "up": 5656.16,
+    "down": 6364.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 2178.0,
+    "self_funded": 0.0,
+    "kept": 2178.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "63": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 9597.68,
+    "self_funded": 0.0,
+    "kept": 9597.68,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 183604.32,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 183604.32
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 16031,
+    "income": 183604.32,
+    "self_funded": 0.0,
+    "kept": 100455.04,
+    "up": 0.0,
+    "down": 83149.28
+   },
+   "民政/房主（房屋）": {
+    "nodes": 16031,
+    "income": 8015.5,
+    "self_funded": 8015.5,
+    "kept": 0.0,
+    "up": 8015.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8015.5,
+    "self_funded": 0.0,
+    "kept": 801.55,
+    "up": 7213.95,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 419.0,
+    "self_funded": 0.0,
+    "kept": 41.9,
+    "up": 377.1,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7591.05,
+    "self_funded": 0.0,
+    "kept": 759.11,
+    "up": 6831.95,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4809.3,
+    "self_funded": 0.0,
+    "kept": 480.93,
+    "up": 4328.37,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 251.4,
+    "self_funded": 0.0,
+    "kept": 25.14,
+    "up": 226.26,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4328.37,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4328.37,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3351.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3351.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4229.0,
+    "self_funded": 0.0,
+    "kept": 192.45,
+    "up": 3656.55,
+    "down": 380.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4036.55,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3656.55,
+    "down": 380.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3656.55,
+    "self_funded": 0.0,
+    "kept": 3276.55,
+    "up": 0.0,
+    "down": 380.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11386.58,
+    "self_funded": 0.0,
+    "kept": 1860.09,
+    "up": 5693.29,
+    "down": 3833.2
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 482.2,
+    "self_funded": 0.0,
+    "kept": 482.2,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "64": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 11817.09,
+    "self_funded": 0.0,
+    "kept": 11817.09,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 181384.91,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 181384.91
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15948,
+    "income": 181384.91,
+    "self_funded": 0.0,
+    "kept": 99620.93,
+    "up": 0.0,
+    "down": 81763.98
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15948,
+    "income": 7974.0,
+    "self_funded": 7974.0,
+    "kept": 0.0,
+    "up": 7974.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7974.0,
+    "self_funded": 0.0,
+    "kept": 797.4,
+    "up": 7176.6,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 519.5,
+    "self_funded": 0.0,
+    "kept": 51.95,
+    "up": 467.55,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7644.15,
+    "self_funded": 0.0,
+    "kept": 764.41,
+    "up": 6879.74,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4784.4,
+    "self_funded": 0.0,
+    "kept": 478.44,
+    "up": 4305.96,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 311.7,
+    "self_funded": 0.0,
+    "kept": 31.17,
+    "up": 280.53,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4305.96,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4305.96,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3336.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3336.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 4973.8,
+    "self_funded": 0.0,
+    "kept": 191.49,
+    "up": 3638.31,
+    "down": 1144.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 4782.31,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3638.31,
+    "down": 1144.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3638.31,
+    "self_funded": 0.0,
+    "kept": 1414.31,
+    "up": 0.0,
+    "down": 2224.0
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11466.23,
+    "self_funded": 0.0,
+    "kept": 2397.11,
+    "up": 5733.11,
+    "down": 3336.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 1080.0,
+    "self_funded": 0.0,
+    "kept": 1080.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "65": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 13727.39,
+    "self_funded": 0.0,
+    "kept": 13727.39,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 179474.61,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 179474.61
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15859,
+    "income": 179474.61,
+    "self_funded": 0.0,
+    "kept": 98908.24,
+    "up": 0.0,
+    "down": 80566.37
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15859,
+    "income": 7929.5,
+    "self_funded": 7929.5,
+    "kept": 0.0,
+    "up": 7929.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 8124.5,
+    "self_funded": 0.0,
+    "kept": 792.95,
+    "up": 7136.55,
+    "down": 195.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 606.5,
+    "self_funded": 0.0,
+    "kept": 60.65,
+    "up": 545.85,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7877.4,
+    "self_funded": 0.0,
+    "kept": 468.24,
+    "up": 6914.16,
+    "down": 495.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4757.7,
+    "self_funded": 0.0,
+    "kept": 475.77,
+    "up": 4281.93,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 363.9,
+    "self_funded": 0.0,
+    "kept": 36.39,
+    "up": 327.51,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4281.93,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4281.93,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3321.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3321.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3807.9,
+    "self_funded": 0.0,
+    "kept": 190.4,
+    "up": 3617.51,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3617.51,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3617.51,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3617.51,
+    "self_funded": 0.0,
+    "kept": 1147.0,
+    "up": 0.0,
+    "down": 2470.5
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2170.5,
+    "self_funded": 0.0,
+    "kept": 817.5,
+    "up": 0.0,
+    "down": 1353.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11523.6,
+    "self_funded": 0.0,
+    "kept": 2245.8,
+    "up": 5761.8,
+    "down": 3516.0
+   },
+   "工程": {
+    "nodes": 1,
+    "income": 600.0,
+    "self_funded": 0.0,
+    "kept": 600.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "66": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 15714.24,
+    "self_funded": 0.0,
+    "kept": 15714.24,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 177487.76,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 177487.76
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15790,
+    "income": 177487.76,
+    "self_funded": 0.0,
+    "kept": 98119.29,
+    "up": 0.0,
+    "down": 79368.47
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15790,
+    "income": 7895.0,
+    "self_funded": 7895.0,
+    "kept": 0.0,
+    "up": 7895.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7895.0,
+    "self_funded": 0.0,
+    "kept": 789.5,
+    "up": 7105.5,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 699.0,
+    "self_funded": 0.0,
+    "kept": 69.9,
+    "up": 629.1,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7734.6,
+    "self_funded": 0.0,
+    "kept": 773.46,
+    "up": 6961.14,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4737.0,
+    "self_funded": 0.0,
+    "kept": 473.7,
+    "up": 4263.3,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 419.4,
+    "self_funded": 0.0,
+    "kept": 41.94,
+    "up": 377.46,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4263.3,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4263.3,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3308.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3308.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3789.6,
+    "self_funded": 0.0,
+    "kept": 189.48,
+    "up": 3600.12,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3600.12,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3600.12,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3600.12,
+    "self_funded": 0.0,
+    "kept": 1440.05,
+    "up": 0.0,
+    "down": 2160.07
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2160.07,
+    "self_funded": 0.0,
+    "kept": 972.07,
+    "up": 0.0,
+    "down": 1188.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11601.9,
+    "self_funded": 0.0,
+    "kept": 2492.95,
+    "up": 5800.95,
+    "down": 3308.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "67": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 17785.22,
+    "self_funded": 0.0,
+    "kept": 17785.22,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 175416.78,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 175416.78
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15702,
+    "income": 175416.78,
+    "self_funded": 0.0,
+    "kept": 97210.31,
+    "up": 0.0,
+    "down": 78206.47
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15702,
+    "income": 7851.0,
+    "self_funded": 7851.0,
+    "kept": 0.0,
+    "up": 7851.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7851.0,
+    "self_funded": 0.0,
+    "kept": 785.1,
+    "up": 7065.9,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 796.0,
+    "self_funded": 0.0,
+    "kept": 79.6,
+    "up": 716.4,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7782.3,
+    "self_funded": 0.0,
+    "kept": 778.23,
+    "up": 7004.07,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4710.6,
+    "self_funded": 0.0,
+    "kept": 471.06,
+    "up": 4239.54,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 477.6,
+    "self_funded": 0.0,
+    "kept": 47.76,
+    "up": 429.84,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4239.54,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4239.54,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3295.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3295.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3767.7,
+    "self_funded": 0.0,
+    "kept": 188.39,
+    "up": 3579.32,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3579.32,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3579.32,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3579.32,
+    "self_funded": 0.0,
+    "kept": 1431.73,
+    "up": 0.0,
+    "down": 2147.59
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2147.59,
+    "self_funded": 0.0,
+    "kept": 1084.59,
+    "up": 0.0,
+    "down": 1063.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11673.45,
+    "self_funded": 0.0,
+    "kept": 2541.73,
+    "up": 5836.73,
+    "down": 3295.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "68": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 19733.06,
+    "self_funded": 0.0,
+    "kept": 19733.06,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 173468.94,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 173468.94
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15630,
+    "income": 173468.94,
+    "self_funded": 0.0,
+    "kept": 96414.9,
+    "up": 0.0,
+    "down": 77054.03
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15630,
+    "income": 7815.0,
+    "self_funded": 7815.0,
+    "kept": 0.0,
+    "up": 7815.0,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7815.0,
+    "self_funded": 0.0,
+    "kept": 781.5,
+    "up": 7033.5,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 889.0,
+    "self_funded": 0.0,
+    "kept": 88.9,
+    "up": 800.1,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7833.6,
+    "self_funded": 0.0,
+    "kept": 783.36,
+    "up": 7050.24,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4689.0,
+    "self_funded": 0.0,
+    "kept": 468.9,
+    "up": 4220.1,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 533.4,
+    "self_funded": 0.0,
+    "kept": 53.34,
+    "up": 480.06,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4220.1,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4220.1,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3285.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3285.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3749.1,
+    "self_funded": 0.0,
+    "kept": 187.46,
+    "up": 3561.65,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3561.65,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3561.65,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3561.65,
+    "self_funded": 0.0,
+    "kept": 1424.66,
+    "up": 0.0,
+    "down": 2136.99
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2136.99,
+    "self_funded": 0.0,
+    "kept": 1217.99,
+    "up": 0.0,
+    "down": 919.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11750.4,
+    "self_funded": 0.0,
+    "kept": 2590.2,
+    "up": 5875.2,
+    "down": 3285.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "69": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 21536.69,
+    "self_funded": 0.0,
+    "kept": 21536.69,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 171665.31,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 171665.31
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15575,
+    "income": 171665.31,
+    "self_funded": 0.0,
+    "kept": 95728.94,
+    "up": 0.0,
+    "down": 75936.36
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15575,
+    "income": 7787.5,
+    "self_funded": 7787.5,
+    "kept": 0.0,
+    "up": 7787.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7787.5,
+    "self_funded": 0.0,
+    "kept": 778.75,
+    "up": 7008.75,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 977.0,
+    "self_funded": 0.0,
+    "kept": 97.7,
+    "up": 879.3,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7888.05,
+    "self_funded": 0.0,
+    "kept": 788.81,
+    "up": 7099.24,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4672.5,
+    "self_funded": 0.0,
+    "kept": 467.25,
+    "up": 4205.25,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 586.2,
+    "self_funded": 0.0,
+    "kept": 58.62,
+    "up": 527.58,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4205.25,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4205.25,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3274.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3274.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3736.8,
+    "self_funded": 0.0,
+    "kept": 186.84,
+    "up": 3549.96,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3549.96,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3549.96,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3549.96,
+    "self_funded": 0.0,
+    "kept": 1419.98,
+    "up": 0.0,
+    "down": 2129.98
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2129.98,
+    "self_funded": 0.0,
+    "kept": 1313.98,
+    "up": 0.0,
+    "down": 816.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11832.08,
+    "self_funded": 0.0,
+    "kept": 2642.04,
+    "up": 5916.04,
+    "down": 3274.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  },
+  "70": {
+   "粮/城市长官": {
+    "nodes": 1,
+    "income": 193202.0,
+    "self_funded": 193202.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/区": {
+    "nodes": 5,
+    "income": 193202.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 193202.0
+   },
+   "粮/页面外账本房屋": {
+    "nodes": 5,
+    "income": 23425.73,
+    "self_funded": 0.0,
+    "kept": 23425.73,
+    "up": 0.0,
+    "down": 0.0
+   },
+   "粮/坊": {
+    "nodes": 168,
+    "income": 169776.27,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 169776.27
+   },
+   "粮/面包簿（房主）": {
+    "nodes": 15495,
+    "income": 169776.27,
+    "self_funded": 0.0,
+    "kept": 94958.51,
+    "up": 0.0,
+    "down": 74817.77
+   },
+   "民政/房主（房屋）": {
+    "nodes": 15495,
+    "income": 7747.5,
+    "self_funded": 7747.5,
+    "kept": 0.0,
+    "up": 7747.5,
+    "down": 0.0
+   },
+   "民政/坊长": {
+    "nodes": 168,
+    "income": 7747.5,
+    "self_funded": 0.0,
+    "kept": 774.75,
+    "up": 6972.75,
+    "down": 0.0
+   },
+   "民政/页面外各坊（合计）": {
+    "nodes": 5,
+    "income": 1069.0,
+    "self_funded": 0.0,
+    "kept": 106.9,
+    "up": 962.1,
+    "down": 0.0
+   },
+   "民政/区长": {
+    "nodes": 5,
+    "income": 7934.85,
+    "self_funded": 0.0,
+    "kept": 793.49,
+    "up": 7141.36,
+    "down": 0.0
+   },
+   "行会/行会头": {
+    "nodes": 65,
+    "income": 4648.5,
+    "self_funded": 0.0,
+    "kept": 464.85,
+    "up": 4183.65,
+    "down": 0.0
+   },
+   "行会/页面外（合计）": {
+    "nodes": 5,
+    "income": 641.4,
+    "self_funded": 0.0,
+    "kept": 64.14,
+    "up": 577.26,
+    "down": 0.0
+   },
+   "行会/行会": {
+    "nodes": 23,
+    "income": 4183.65,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 4183.65,
+    "down": 0.0
+   },
+   "兵营/城门兵营": {
+    "nodes": 1,
+    "income": 3262.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 3262.0
+   },
+   "教会/教区长老": {
+    "nodes": 335,
+    "income": 3716.4,
+    "self_funded": 0.0,
+    "kept": 185.82,
+    "up": 3530.58,
+    "down": 0.0
+   },
+   "教会/教区": {
+    "nodes": 2,
+    "income": 3530.58,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 3530.58,
+    "down": 0.0
+   },
+   "教会/主教": {
+    "nodes": 2,
+    "income": 3530.58,
+    "self_funded": 0.0,
+    "kept": 1412.23,
+    "up": 0.0,
+    "down": 2118.35
+   },
+   "教会/寡妇孤儿之家": {
+    "nodes": 1,
+    "income": 2118.35,
+    "self_funded": 0.0,
+    "kept": 1439.35,
+    "up": 0.0,
+    "down": 679.0
+   },
+   "民政/城市长官": {
+    "nodes": 1,
+    "income": 11902.28,
+    "self_funded": 0.0,
+    "kept": 2689.14,
+    "up": 5951.14,
+    "down": 3262.0
+   },
+   "工程": {
+    "nodes": 0,
+    "income": 0.0,
+    "self_funded": 0.0,
+    "kept": 0.0,
+    "up": 0.0,
+    "down": 0.0
+   }
+  }
+ },
+ "bytes_query": {
+  "families": 17332,
+  "node_table_raw": 324800,
+  "corvee_bits": 2506,
+  "gzip": 63792,
+  "per_family_raw": 18.88,
+  "per_family_gzip": 3.68,
+  "query_index_s": 0.089,
+  "query_rec_us": 1.57,
+  "verify_checked": 3000,
+  "verify_mismatch": 0
+ },
+ "peak_rss_mb": 391.4
+}
