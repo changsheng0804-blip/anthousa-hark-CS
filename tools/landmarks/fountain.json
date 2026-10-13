@@ -1,0 +1,72 @@
+{
+ "id": "fountain",
+ "name_zh": "水神泉",
+ "name_la": "nymphaeum",
+ "category": "water",
+ "era": [
+  12,
+  9999
+ ],
+ "historic": false,
+ "note": "public fountain fed from the aqueduct (Valens aqueduct finished c. 373)",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   3
+  ]
+ },
+ "siting": {
+  "fn": [
+   "water",
+   "shops",
+   "market",
+   "homes"
+  ],
+  "typ": [
+   "casa",
+   "flat",
+   "row",
+   "std"
+  ],
+  "front_on": "ms",
+  "front_dist": 7,
+  "prefer_fn": [
+   "water"
+  ],
+  "lot": [
+   50,
+   240
+  ],
+  "built_by": 45,
+  "gap": 260
+ },
+ "footprint": {
+  "shape": "fountain"
+ },
+ "palette": {
+  "wall": [
+   238,
+   234,
+   224
+  ],
+  "roof": [
+   176,
+   96,
+   62
+  ],
+  "accent": [
+   96,
+   150,
+   176
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "full"
+  }
+ ],
+ "function": "water",
+ "size": "small"
+}

@@ -28,7 +28,22 @@
    100,
    260
   ],
-  "face": "street"
+  "face": "street",
+  "fn": [
+   "market",
+   "shops"
+  ],
+  "typ": [
+   "row",
+   "flat",
+   "casa"
+  ],
+  "front_on": "m",
+  "front_dist": 6,
+  "prefer_fn": [
+   "market"
+  ],
+  "built_by": 40
  },
  "footprint": {
   "shape": "steps",

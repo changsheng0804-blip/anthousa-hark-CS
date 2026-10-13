@@ -27,7 +27,25 @@
    360,
    1400
   ],
-  "face": "east"
+  "face": "east",
+  "fn": [
+   "homes",
+   "fine",
+   "water",
+   "garden",
+   "planned",
+   "shops"
+  ],
+  "typ": [
+   "casa",
+   "domus",
+   "yard",
+   "std",
+   "hall",
+   "insula"
+  ],
+  "prefer": "large",
+  "built_by": 30
  },
  "footprint": {
   "shape": "basilica",

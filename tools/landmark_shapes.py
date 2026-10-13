@@ -91,9 +91,67 @@ def build_steps(h, sp, b, E):
     gable(P, [(x, y - 4.4) for x, y in store], roof, wall, 1.8)
     out.extend(tag(P, R))
     return out
-BUILD = {'basilica': build_church, 'steps': build_steps}
+def build_fountain(h, sp, b, E):
+    """nymphaeum: a curved back wall (exedra) with niches, a long basin in front, water spouts"""
+    hid = h[0]; p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]; front = h[10] if len(h) > 10 else 2
+    pal = sp['palette']; wall = tuple(pal['wall']); acc = tuple(pal['accent']); R = (b + 2, E); out = []
+    pave = split(pts, front, 0.0, 1.0, 0.92); out.append(('fill', 'g', pave, (208, 200, 186)))
+    basin = split(pts, front, 0.18, 0.5, 0.78)
+    out.append(('fill', 'w', [basin[0], basin[1], (basin[1][0], basin[1][1] - .8), (basin[0][0], basin[0][1] - .8)], shade(wall, .8)))
+    out.append(('fill', 'w', [(x, y - .8) for x, y in basin], acc)); out.append(('edge', 'w', [(x, y - .8) for x, y in basin], shade(wall, .95)))
+    back = split(pts, front, 0.55, 0.95, 0.86)
+    a, c = back[3], back[2]; m = _lerp(back[0], back[1], .5); mid = _lerp(a, c, .5)
+    dx, dy = m[0] - mid[0], m[1] - mid[1]
+    arc = [_lerp(a, c, i / 8) for i in range(9)]
+    arc = [(x + dx * 0.5 * math.sin(math.pi * i / 8), y + dy * 0.5 * math.sin(math.pi * i / 8)) for i, (x, y) in enumerate(arc)]
+    ht = 4.6
+    for i in range(8):   # exedra wall, inner face toward the street
+        q0, q1 = arc[i], arc[i + 1]
+        out.append(('fill', 'w', [q0, q1, (q1[0], q1[1] - ht), (q0[0], q0[1] - ht)], shade(wall, 0.84 + 0.12 * math.sin(math.pi * (i + .5) / 8))))
+        if i % 2 == 1:
+            n0 = _lerp(q0, q1, .3); n1 = _lerp(q0, q1, .7)
+            out.append(('fill', 'w', [(n0[0], n0[1] - 1.6), (n1[0], n1[1] - 1.6), (n1[0], n1[1] - 3.6), (n0[0], n0[1] - 3.6)], shade(wall, 0.62)))
+    out.append(('line', 'w', [(x, y - ht) for x, y in arc], shade(wall, 0.6)))
+    for j in range(3):   # spouts
+        q = arc[2 + 2 * j]; t = _lerp(q, _lerp(basin[2], basin[3], .2 + .3 * j), .5)
+        out.append(('line', 'w', [(q[0], q[1] - 2.2), (t[0], t[1] - .9)], (150, 196, 214)))
+    return [o if len(o) > 4 else o + (R,) for o in out]
+def build_granary(h, sp, b, E):
+    """horrea: long low hall, buttresses along the walls, small high vents; first half, then lengthened"""
+    hid = h[0]; M, _ = frame_of(h); pal = sp['palette']; wall = tuple(pal['wall']); roof = tuple(pal['roof']); acc = tuple(pal['accent'])
+    y1 = b + 2 + sp['stages'][1]['from']; out = []
+    def gran(s1, R):
+        P, _ = hall(M, .04, s1, .14, .86, 4.2, wall, roof, hid, 1.6)
+        fp = box(M, .04, s1, .14, .86); bays = sp['footprint'].get('bays', 6)
+        for k in (0, 2):
+            a, c = fp[k], fp[(k + 1) % 4]; nx, ny = _ny(a, c, _lerp(fp[0], fp[2], .5))
+            if ny <= .02: continue
+            for j in range(1, bays):
+                x, y = _lerp(a, c, j / bays)
+                P.append(('fill', 'w', [(x - .35, y + ny * .8), (x + .35, y + ny * .8), (x + .35, y - 3.6), (x - .35, y - 3.6)], shade(wall, .7)))
+                v = _lerp(a, c, (j - .5) / bays); P.append(('fill', 'w', [(v[0] - .5, v[1] - 3.4), (v[0] + .5, v[1] - 3.4), (v[0] + .5, v[1] - 2.8), (v[0] - .5, v[1] - 2.8)], (70, 54, 40)))
+        out.extend(tag(P, R))
+    if y1 < E: gran(.55, (b + 2, y1)); gran(.96, (y1, E))
+    else: gran(.55, (b + 2, E))
+    return out
+def build_inn(h, sp, b, E):
+    """pandocheion: rooms around a yard, a stable lean-to along one side, a gate to the street"""
+    hid = h[0]; M, _ = frame_of(h); pal = sp['palette']; wall = tuple(pal['wall']); roof = tuple(pal['roof']); R = (b + 2, E)
+    comps = [((([('fill', 'g', box(M, .06, .94, .08, .92), (178, 156, 118))]), 0))]
+    comps.append(hall(M, .06, .94, .08, .3, 4.8, wall, roof, hid, 1.8))         # rooms on one side
+    comps.append(hall(M, .06, .94, .7, .92, 4.8, wall, roof, hid, 1.8))         # rooms on the other
+    comps.append(hall(M, .06, .26, .3, .7, 4.8, wall, roof, hid, 1.8))          # hall at the west end
+    comps.append(lean(M, .74, .94, .3, .7, 2.8, shade(wall, .9), shade(roof, .85), hid))   # stable
+    out = []
+    g = comps.pop(0)[0]; out.extend(tag(g, R))
+    for P, key in sorted(comps, key=lambda c: c[1]): out.extend(tag(P, R))
+    for j in range(3):   # a cart and bales in the yard
+        x, y = M(.4 + .12 * j, .5 + .08 * (j - 1))
+        out.append(('fill', 'g', [(x - .9, y - .3), (x + .9, y - .3), (x + .9, y + .5), (x - .9, y + .5)], (190, 160, 90) if j else (120, 84, 56), R))
+    return out
+BUILD = {'basilica': build_church, 'steps': build_steps, 'fountain': build_fountain, 'granary': build_granary, 'inn': build_inn}
 def spec_of(h): return SPECS[h[9][3:]]
 def geom(h, b, E):
     sp = spec_of(h)
     return BUILD[sp['footprint']['shape']](h, sp, b, E)
-def height(sp): return {'basilica': 8.4, 'steps': 6.4}[sp['footprint']['shape']]
+def height(sp): return {'basilica': 8.4, 'steps': 6.4, 'fountain': 5.0, 'granary': 6.0, 'inn': 6.8}[sp['footprint']['shape']]

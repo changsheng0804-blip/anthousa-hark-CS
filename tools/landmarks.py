@@ -60,18 +60,18 @@ def merge_options(h):
 placed = {}
 for sid, sp in LS.SPECS.items():
     si = sp['siting']; lo, hi = si['lot']; e0 = sp['era'][0]; nmax = sp['instances']['count'][1]
-    gap = 300 if sp['size'] == 'small' else 420
+    gap = si.get('gap', 300 if sp['size'] == 'small' else 420)
     C = []
     for h in HS:
-        if len(h) < 13 or h[3] < 900 or h[2] < e0 or h[2] > (40 if sp['size'] == 'small' else 30) or not ((lo if sp['size'] == 'small' else lo * 0.45) <= area(h) <= hi) or h[12] & 1 or h[0] in PROTECT: continue
-        if sid == 'bread_steps':
-            if h[8] not in ('market', 'shops') or h[9] not in ('row', 'flat', 'casa'): continue
+        if len(h) < 13 or h[3] < 900 or h[2] < e0 or not ((lo if sp['size'] == 'small' else lo * 0.45) <= area(h) <= hi) or h[12] & 1 or h[0] in PROTECT: continue
+        # generic siting from the spec: block function, lot type, street kind in front, latest build year
+        if h[8] not in si['fn'] or h[9] not in si['typ'] or h[2] > si.get('built_by', 40): continue
+        if si.get('front_on'):
             fx, fy = front_mid(h)
-            if street_kind_at(fx, fy, 'm', h[2] + 2) > 6: continue
-            score = (0 if h[8] == 'market' else 1, HT.hsh(h[0], 300))
-        else:
-            if h[8] not in ('homes', 'fine', 'water', 'garden', 'planned', 'shops') or h[9] not in ('casa', 'domus', 'yard', 'std', 'hall', 'insula'): continue
-            score = (-area(h) * (0.6 + 0.4 * HT.hsh(h[0], 301)), 0)
+            if street_kind_at(fx, fy, si['front_on'], h[2] + 2) > si.get('front_dist', 6): continue
+        pf = si.get('prefer_fn', [])
+        rank = pf.index(h[8]) if h[8] in pf else len(pf)
+        score = (rank, -area(h) * (0.6 + 0.4 * HT.hsh(h[0], 301)) if si.get('prefer') == 'large' else HT.hsh(h[0], 300))
         C.append((score, h))
     C.sort(key=lambda c: c[0]); got = []
     for _, h in C:

@@ -1,0 +1,75 @@
+{
+ "id": "inn",
+ "name_zh": "客栈",
+ "name_la": "pandocheion",
+ "category": "trade",
+ "era": [
+  3,
+  9999
+ ],
+ "historic": false,
+ "note": "travellers' inn with stable yard, on the through-road",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   2
+  ]
+ },
+ "siting": {
+  "fn": [
+   "workshop",
+   "shops",
+   "market",
+   "homes"
+  ],
+  "typ": [
+   "casa",
+   "yard",
+   "domus",
+   "std",
+   "flat"
+  ],
+  "front_on": "m",
+  "front_dist": 7,
+  "prefer_fn": [
+   "workshop",
+   "shops"
+  ],
+  "prefer": "large",
+  "lot": [
+   260,
+   1400
+  ],
+  "built_by": 35,
+  "gap": 500
+ },
+ "footprint": {
+  "shape": "inn"
+ },
+ "palette": {
+  "wall": [
+   226,
+   208,
+   176
+  ],
+  "roof": [
+   176,
+   94,
+   60
+  ],
+  "accent": [
+   120,
+   84,
+   52
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "full"
+  }
+ ],
+ "function": "shops",
+ "size": "medium"
+}

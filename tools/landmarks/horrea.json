@@ -1,0 +1,77 @@
+{
+ "id": "horrea",
+ "name_zh": "粮仓",
+ "name_la": "horrea",
+ "category": "food",
+ "era": [
+  5,
+  9999
+ ],
+ "historic": false,
+ "note": "grain stores for the bread dole",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   2
+  ]
+ },
+ "siting": {
+  "fn": [
+   "workshop",
+   "water",
+   "shops"
+  ],
+  "typ": [
+   "yard",
+   "casa",
+   "std",
+   "hall",
+   "flat"
+  ],
+  "prefer_fn": [
+   "workshop"
+  ],
+  "prefer": "large",
+  "lot": [
+   300,
+   1600
+  ],
+  "built_by": 35,
+  "gap": 500
+ },
+ "footprint": {
+  "shape": "granary",
+  "bays": 6
+ },
+ "palette": {
+  "wall": [
+   214,
+   190,
+   152
+  ],
+  "roof": [
+   158,
+   88,
+   58
+  ],
+  "accent": [
+   120,
+   90,
+   64
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "half",
+   "name_zh": "粮仓"
+  },
+  {
+   "from": 12,
+   "shape": "full"
+  }
+ ],
+ "function": "workshop",
+ "size": "medium"
+}
