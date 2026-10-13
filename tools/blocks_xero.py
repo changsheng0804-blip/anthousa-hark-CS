@@ -47,29 +47,16 @@ FIRE = late['fire_ruins']['p']
 CIST = {k: v for k, v in late.items() if k.startswith('cistern')}
 def cen(p): return (sum(q[0] for q in p) / len(p), sum(q[1] for q in p) / len(p))
 
-FN = {  # code: (label, overlay colour)
-    'market': ('市集', (214, 120, 40)), 'shops': ('铺面', (226, 170, 60)), 'water': ('汲水坊', (70, 140, 200)),
-    'garrison': ('兵营坊', (120, 120, 130)), 'workshop': ('作坊', (150, 96, 60)), 'fine': ('体面人家', (170, 90, 160)),
-    'planned': ('新街坊', (90, 150, 110)), 'garden': ('菜园', (110, 160, 70)), 'homes': ('民居', (200, 180, 140))}
-
-def function(Y, comp, ring, mainm, cx, cy, area, nh):
+import sys; sys.path.insert(0, '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen')
+import district_rules as DR
+FN = DR.FN
+def function(Y, comp, ring, mainm, cx, cy, area, nh, hs):
+    fs = [h[8] for h in hs if len(h) > 8]
+    if len(fs) >= 3:   # a block is what its houses are
+        from collections import Counter
+        return Counter(fs).most_common(1)[0][0]
     front = (ring & mainm).sum() / max(1, ring.sum())
-    for k, z in CIST.items():
-        if z['built'] <= Y:
-            zx, zy = cen(z['p'])
-            if math.hypot(cx - zx, cy - zy) < 130: return 'water'
-    if Y >= 48 and pip(cx, cy, FIRE): return 'planned'
-    if front >= 0.22:
-        if front >= 0.3 and any(math.hypot(cx - x, cy - y) < 170 for x, y in MJ): return 'market'
-        return 'shops'
-    bx, by = LM['barracks_gate']['xy']
-    if math.hypot(cx - bx, cy - by) < 300: return 'garrison'
-    gx, gy = LM['gate_founder']['xy']
-    if math.hypot(cx - gx, cy - gy) < 280 or cx - wall_x(cy) < 75 or segd(cx, cy, *AQ) < 55: return 'workshop'
-    bx, by = LM['baths_constantius']['xy']
-    if math.hypot(cx - bx, cy - by) < 330: return 'fine'
-    if area > 5000 and nh * 2600 < area: return 'garden'
-    return 'homes'
+    return DR.classify(cx, cy, area, front, nh / area, Y)
 
 base = np.zeros((h_, w_), np.uint8)
 ys = np.arange(h_)[:, None] / SC; xs = np.arange(w_)[None, :] / SC
@@ -116,29 +103,18 @@ for Y in range(1, 61):
             bi = live[key]; blocks[bi]['b'] = Y + 1
         else:
             ring = cv2.dilate(comp.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & ~comp
-            f = function(Y, comp, ring, mainm[y0:y1, x0:x1].astype(bool), cx, cy, area, nh)
+            f = function(Y, comp, ring, mainm[y0:y1, x0:x1].astype(bool), cx, cy, area, nh, hl.get(L, []))
             cs, _ = cv2.findContours(comp.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             c = max(cs, key=cv2.contourArea); c = cv2.approxPolyDP(c, 0.8, True)
             poly = [round(float(v), 1) for pt in c[:, 0, :] for v in ((pt[0] + x0 + .5) / SC, (pt[1] + y0 + .5) / SC)]
             blocks.append(dict(p=poly, a=Y, b=Y + 1, f=f, c=[round(cx), round(cy)], A=round(area)))
             live[key] = len(blocks) - 1
-        for h in hl.get(L, []):
-            if h[0] not in house_fn: house_fn[h[0]] = blocks[live[key]]['f']
     for k_ in [k_ for k_ in live if k_ not in seen]: del live[k_]
 for b in blocks:
     if b['b'] > 60: b['b'] = 999
-# houses never enclosed take the function of the nearest block that ever forms around them later, else homes
-for h, cx, cy in HC:
-    while len(h) < 8: h.append(4)
-    f = house_fn.get(h[0])
-    if f is None:
-        for b in blocks:
-            if b['a'] >= h[2] and pip(cx, cy, [(b['p'][i], b['p'][i + 1]) for i in range(0, len(b['p']), 2)]): f = b['f']; break
-    h[8:] = [f or 'homes']
-json.dump(HD, open(X + 'houses.json', 'w'), separators=(',', ':'))
 json.dump(dict(fn={k: [v[0], v[1]] for k, v in FN.items()}, blocks=blocks), open(X + 'blocks.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 from collections import Counter
 for Y in (30, 40, 50, 60):
     act = [b for b in blocks if b['a'] <= Y < b['b']]
     print(Y, 'blocks', len(act), Counter(b['f'] for b in act).most_common())
-print('records', len(blocks), 'houses by fn', Counter(h[8] for h in HS).most_common())
+print('records', len(blocks))
