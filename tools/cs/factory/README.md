@@ -104,3 +104,8 @@
 - streets_ng.py 不再自己长街，只把全城网裁到框里；配方里不许写街网参数。
 - 改街网只能改 city_streets.py 的参数表 P（全城一张），不许为某个街区加例外。
 - cs32：地面颜色只从 city/palette.json 来（沙、水），ground_ng.py 统一，check_palette.py 在 accept 里查。
+
+## 第十三段：瓦片实验（cs33，推演中）
+- `python tile_bake.py [年…]`：把所有 street_layout 街区按世界坐标烤成瓦片金字塔 docs/living/tiles/<年>/<级>/<x>_<y>.webp（级 0 = 32×32 单位 = 455 px），写 meta.json（时间、每级块数与字节、拼回 PSNR）。
+- docs/living/tiles/index.html：只拼瓦片的全城页；`node tools/cs/check_tiles.js` 量各级一屏画几块、下多少字节。
+- 还没做：街巷级（放大 >1.5 倍）换成矢量房子和人；地标 AI 单画；程序水面。

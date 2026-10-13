@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>安托萨 · 全城瓦片实验（CS 线 cs33）</title>
+<style>html,body{margin:0;height:100%;background:#1a140c;color:#efe4cc;font-family:"Songti SC","Noto Serif SC",serif;overflow:hidden}
+canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.b{background:rgba(26,20,12,.85);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}.b.on{background:rgba(212,168,90,.3)}
+#st{position:fixed;left:12px;bottom:10px;font-size:12px;color:#c9b48c;background:rgba(26,20,12,.7);padding:4px 8px;border-radius:6px}</style></head>
+<body><canvas id="c"></canvas><div id="ui"></div><div id="st"></div>
+<script>
+/* CS 线 · cs33 瓦片实验：浏览器只拼离线烤好的瓦片（tile_bake.py），按缩放挑级，只取视口里的瓦片。——Hark（CS线） */
+(async()=>{
+const M=await fetch('meta.json').then(r=>r.json());const TP=M.tile_px,NL=Object.keys(M.levels).length;
+const NAMES={nangang:'南港',jinjiao:'金角岸'};
+const c=document.getElementById('c'),ctx=c.getContext('2d');let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
+function rs(){W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';dirty=true}
+let dirty=true;addEventListener('resize',rs);
+const WW=M.grid[0]*TP,WH=M.grid[1]*TP;   /* 级 0 像素坐标 */
+const cam={x:WW/2,y:WH/2,z:Math.min(innerWidth/WW,innerHeight/WH)*0.95};
+let YEAR=M.years[M.years.length-1],prevYear=null,fade=0;
+const cache=new Map();let loads=0,bytesSeen=0;
+function tile(Y,l,tx,ty){const k=Y+'/'+l+'/'+tx+'_'+ty;let t=cache.get(k);if(t)return t;const lv=M.levels[l][Y];if(tx<0||ty<0||tx>=lv.grid[0]||ty>=lv.grid[1]){cache.set(k,null);return null}
+  const im=new Image();t={im,ok:false,miss:false};im.onload=()=>{t.ok=true;dirty=true};im.onerror=()=>{t.miss=true};im.src=k+'.webp';loads++;cache.set(k,t);
+  if(cache.size>220){for(const [kk,v] of cache){if(cache.size<=160)break;if(!v||v.ok||v.miss)cache.delete(kk)}}return t}
+function level(){/* 屏幕上一块瓦片不小于它本身像素的一半就用更细的级 */let l=Math.floor(Math.log2(1/(cam.z*dpr)));return Math.max(0,Math.min(NL-1,l))}
+let drawn=0;
+function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块瓦片在级 0 像素里的边长 */
+  const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
+  ctx.globalAlpha=alpha;
+  for(let ty=Math.floor(y0/ts);ty<=Math.floor(y1/ts);ty++)for(let tx=Math.floor(x0/ts);tx<=Math.floor(x1/ts);tx++){
+    let t=tile(Y,l,tx,ty);
+    if(t&&t.ok){ctx.drawImage(t.im,tx*ts,ty*ts,ts+0.5,ts+0.5);drawn++;continue}
+    /* 还没到：先用粗一级的瓦片顶着（不出现空洞） */
+    for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const s=TP*2**up,sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
+  ctx.globalAlpha=1}
+function frame(){if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
+  if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
+    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
+    if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);
+    ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
+    for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
+    ctx.setTransform(1,0,0,1,0,0);
+    document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}
+  requestAnimationFrame(frame)}
+const ui=document.getElementById('ui');
+for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.textContent=Y+' 年';b.onclick=()=>{if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;[...ui.children].forEach(x=>x.classList.toggle('on',x===b))};ui.appendChild(b)}
+/* 拖、滚轮、双指 */
+let drag=null,pts=new Map();
+c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
+c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
+  if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
+  else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
+  pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
+c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
+function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(3,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
+c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015))},{passive:false});
+rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
+})();
+</script></body></html>
