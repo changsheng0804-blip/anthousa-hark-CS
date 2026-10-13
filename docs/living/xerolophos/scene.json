@@ -64,5 +64,6 @@
  "streetnames": "streetnames.json",
  "ground": "ground.json",
  "groundImg": "xero_ground.jpg",
- "blocks": "blocks.json"
+ "blocks": "blocks.json",
+ "hgeom": "houses_geom.json"
 }

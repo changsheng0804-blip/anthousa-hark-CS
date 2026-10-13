@@ -93,7 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='23';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='24';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -112,7 +112,13 @@ const HWALL=[[228,212,182],[216,194,156],[238,228,206],[204,176,136],[224,204,17
 const HSTYLE={market:{wall:[[236,222,192],[228,206,166]],roof:[[198,104,58],[206,118,64],[188,96,56]],awn:1,flat:.05},shops:{wall:[[234,220,190],[224,204,168]],roof:[[192,100,60],[180,92,56]],awn:.5,flat:.06},fine:{wall:[[244,238,226],[238,230,214]],roof:[[200,112,66],[190,104,62]],court:1,flat:0},workshop:{wall:[[196,162,116],[184,150,106],[204,172,128]],roof:[[142,86,58],[128,90,66],[150,100,70]],flat:.45,kiln:.35},water:{wall:[[216,222,220],[226,228,222]],roof:[[176,98,66],[166,92,64]],flat:.12},garrison:{wall:[[198,196,188],[186,184,178]],roof:[[150,92,72],[140,96,80]],flat:.15},planned:{wall:[[228,214,188]],roof:[[184,94,58]],flat:0},garden:{wall:[[206,182,140],[196,172,132]],roof:[[166,100,66]],flat:.5}};
 const shd=(c,k)=>`rgb(${Math.min(255,c[0]*k|0)},${Math.min(255,c[1]*k|0)},${Math.min(255,c[2]*k|0)})`;
 function hullJS(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p)}return lo.slice(0,-1).concat(up.slice(0,-1))}
-function geomOf(h){if(h.g)return h.g;const p=h.p,id=h.id;const pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
+function geomOf(h){if(h.g)return h.g;if(HG&&HG.H[h.id])return geomHG(h);return geomOld(h)}
+function geomHG(h){const R=HG.H[h.id],p=h.p,id=h.id,pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
+  const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const sp=[];for(let i=0;i<R[1].length;i+=2)sp.push([R[1][i],R[1][i+1]]);
+  const parts=R[2].map(q=>{const P=[];for(let i=3;i<q.length;i+=2)P.push([q[i],q[i+1]]);return [q[0]===0?'f':q[0]===1?'e':'r',P,HG.pal[q[2]],q[1]===0?'g':q[1]===1?'w':'r']});
+  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);const w=Math.max(Math.hypot(p[2]-p[0],p[3]-p[1]),Math.hypot(p[6]-p[0],p[7]-p[1]));
+  return h.g={shadow:hullJS(sp),parts,fp,by:R[0],w,hh:h.ht!=null?h.ht:5,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+function geomOld(h){const p=h.p,id=h.id;const pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
   const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const ht=h.ht!=null?h.ht:5;const up=fp.map(q=>[q[0],q[1]-ht]);
   const stl=HSTYLE[h.fn]||{},WL=stl.wall||HWALL,RF=stl.roof||HROOF;const wall=WL[Math.floor(hsh(id,11)*WL.length)];let roof=RF[Math.floor(hsh(id,12)*RF.length)];if(hsh(id,13)<.5){const k=.9+.2*hsh(id,14);roof=roof.map(v=>v*k)}
   const parts=[];const shadow=hullJS(fp.concat(fp.map(q=>[q[0]+ht*.55+1,q[1]+ht*.3+1])));
@@ -199,6 +205,7 @@ const KEYS=SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
+const HG=SCENE.hgeom?await fetch(vv(SCENE.hgeom)).then(r=>r.json()).catch(()=>null):null;
 const BLK=SCENE.blocks?await fetch(vv(SCENE.blocks)).then(r=>r.json()).catch(()=>null):null;let showBlk=false;
 const GROUND=SCENE.ground?await fetch(vv(SCENE.ground)).then(r=>r.json()).catch(()=>null):null;
 let GI=null;if(GROUND){GI=loadIm(SCENE.groundImg);for(const o of GROUND)o.im=loadIm(o.f);await Promise.all([GI,...GROUND.map(o=>o.im)].map(i=>i.decode().catch(()=>{})));if(COMP)await Promise.all([COMP.props].map(i=>i.decode().catch(()=>{})))}

@@ -2,6 +2,7 @@
 """Render Xerolophos keyframe base images from the street ledger + hill kit sprites,
 so the far view and the deep-zoom composed layer are the same drawing."""
 import json, math, sys
+sys.path.insert(0, '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen')
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
@@ -96,79 +97,14 @@ WALL = [(228, 212, 182), (216, 194, 156), (238, 228, 206), (204, 176, 136), (224
 ROOF = [(186, 94, 60), (172, 86, 54), (198, 112, 70), (160, 80, 52), (180, 102, 66), (150, 96, 72)]
 LX, LY = -0.6, -0.8   # light from the north-west
 def shade(c, k): return tuple(max(0, min(255, int(v * k))) for v in c)
+import house_types as HT_
 def house_parts(h):
-    hid = h[0]; p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
-    cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
-    fp = [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]
-    ht = h[7] if len(h) > 7 else 5; ty = h[6] if len(h) > 6 else 0
-    up = [(x, y - ht) for x, y in fp]
-    fn = h[8] if len(h) > 8 else 'homes'; stl = STYLE.get(fn, {})
-    WL = stl.get('wall', WALL); RF = stl.get('roof', ROOF)
-    wall = WL[int(hsh(hid, 11) * len(WL))]; roof = RF[int(hsh(hid, 12) * len(RF))]
-    if hsh(hid, 13) < 0.5: roof = shade(roof, 0.9 + 0.2 * hsh(hid, 14))
-    parts = []
-    # shadow toward the south-east
-    sh = [(x + ht * 0.55 + 1, y + ht * 0.3 + 1) for x, y in fp]
-    parts.append(('shadow', fp + sh))
-    # walls facing the viewer
-    for k in range(4):
-        a, b = fp[k], fp[(k + 1) % 4]
-        ex, ey = b[0] - a[0], b[1] - a[1]; L = math.hypot(ex, ey) or 1
-        nx, ny = ey / L, -ex / L
-        if (a[0] + b[0]) / 2 + nx - cx < 0 and nx * ((a[0] + b[0]) / 2 - cx) + ny * ((a[1] + b[1]) / 2 - cy) < 0: nx, ny = -nx, -ny
-        if nx * ((a[0] + b[0]) / 2 - cx) + ny * ((a[1] + b[1]) / 2 - cy) < 0: nx, ny = -nx, -ny
-        if ny <= 0.02 or ht < 0.6: continue
-        kk = 0.80 + 0.18 * (-nx * LX * -1 if False else (0.5 - 0.5 * nx))
-        parts.append(('wall', [a, b, (b[0], b[1] - ht), (a[0], a[1] - ht)], shade(wall, kk)))
-        if (k == 0 or k == 2) and ny > 0.55:   # a front face toward the viewer gets a door (and a shop its awning)
-            t0 = 0.35 + 0.3 * hsh(hid, 15); dw = 0.16
-            d0 = (a[0] + ex * t0, a[1] + ey * t0); d1 = (a[0] + ex * (t0 + dw), a[1] + ey * (t0 + dw))
-            dh = min(ht * 0.62, 3.2)
-            if ht > 2 and False: pass
-            if ht > 2: parts.append(('door', [d0, d1, (d1[0], d1[1] - dh), (d0[0], d0[1] - dh)], (70, 50, 36)))
-            if (ty or hsh(hid, 18) < stl.get('awn', 0)) and ht > 3:
-                aw = (182, 64, 48) if hsh(hid, 16) < .5 else (60, 96, 120)
-                parts.append(('door', [(a[0] + ex * .08, a[1] + ey * .08 - ht * .62), (a[0] + ex * .92, a[1] + ey * .92 - ht * .62),
-                                       (a[0] + ex * .92 + nx * 1.6, a[1] + ey * .92 - ht * .62 + ny * 1.6 + .8), (a[0] + ex * .08 + nx * 1.6, a[1] + ey * .08 - ht * .62 + ny * 1.6 + .8)], aw))
-    # hip roof on the lifted footprint
-    ux, uy = up[1][0] - up[0][0], up[1][1] - up[0][1]; vx, vy = up[3][0] - up[0][0], up[3][1] - up[0][1]
-    Lu, Lv = math.hypot(ux, uy), math.hypot(vx, vy)
-    tx, ty_ = sum(q[0] for q in up) / 4, sum(q[1] for q in up) / 4
-    flat = hsh(hid, 17) < stl.get('flat', 0.12) and not ty
-    if flat:
-        parts.append(('roof', up, shade(wall, 1.04)))
-        parts.append(('edge', up, shade(wall, 0.7)))
-    else:
-        if Lu >= Lv: a_ = (ux / Lu, uy / Lu); r = (Lu - Lv) / 2
-        else: a_ = (vx / Lv, vy / Lv); r = (Lv - Lu) / 2
-        lift = min(Lu, Lv) * 0.28
-        r0 = (tx - a_[0] * r, ty_ - a_[1] * r - lift); r1 = (tx + a_[0] * r, ty_ + a_[1] * r - lift)
-        for k in range(4):
-            a, b = up[k], up[(k + 1) % 4]
-            mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
-            da = (mx - r0[0]) ** 2 + (my - r0[1]) ** 2; db = (mx - r1[0]) ** 2 + (my - r1[1]) ** 2
-            ex, ey = b[0] - a[0], b[1] - a[1]; L = math.hypot(ex, ey) or 1
-            nx, ny = ey / L, -ex / L
-            if nx * (mx - tx) + ny * (my - ty_) < 0: nx, ny = -nx, -ny
-            kk = 0.82 + 0.28 * max(-1, min(1, -(nx * LX + ny * LY))) * -1 + 0.0
-            kk = 0.86 - 0.22 * (nx * LX + ny * LY)
-            # which ridge points does this eave see?
-            ends = (a, b)
-            if r < 0.3: face = [a, b, r0]
-            else:
-                pa = r0 if ((a[0] - r0[0]) ** 2 + (a[1] - r0[1]) ** 2) <= ((a[0] - r1[0]) ** 2 + (a[1] - r1[1]) ** 2) else r1
-                pb = r0 if ((b[0] - r0[0]) ** 2 + (b[1] - r0[1]) ** 2) <= ((b[0] - r1[0]) ** 2 + (b[1] - r1[1]) ** 2) else r1
-                face = [a, b, pb] if pa == pb else [a, b, pb, pa]
-            parts.append(('roof', face, shade(roof, kk)))
-        parts.append(('edge', up, shade(roof, 0.62)))
-        if r >= 0.3: parts.append(('ridge', [r0, r1], shade(roof, 0.7)))
-    if stl.get('court') and Lu * Lv > 120:   # courtyard house: an open court in the middle of the roof
-        cq = [(tx + (x - tx) * 0.38, ty_ + (y - ty_) * 0.38 + 0.6) for x, y in up]
-        parts.append(('roof', cq, (214, 198, 162))); parts.append(('edge', cq, (120, 84, 56)))
-    if hsh(hid, 19) < stl.get('kiln', 0):         # workshop kiln / furnace chimney
-        kx, ky = up[2][0] * 0.7 + tx * 0.3, up[2][1] * 0.7 + ty_ * 0.3
-        parts.append(('roof', [(kx - 1, ky), (kx + 1, ky), (kx + 1, ky - 2.6), (kx - 1, ky - 2.6)], (70, 56, 48)))
-    return max(q[1] for q in fp), parts
+    by, P, sh = HT_.geom(h)
+    M = {'fill': None, 'edge': 'edge', 'line': 'ridge'}
+    out = [('shadow', sh)]
+    for kind, lay, poly, col in P:
+        out.append((M[kind] or ('wall' if lay == 'w' else 'roof'), poly, col))
+    return by, out
 def draw_parts(d, sd_, parts, a_mul=1.0):
     S_ = lambda poly: [(x * SS, y * SS) for x, y in poly]
     for kind, poly, *c in parts:
@@ -249,5 +185,6 @@ def ground_files():
     OV.append(overlay('ov_cistern_carriers.webp', orig[60], late['cistern_carriers']['p'], 10, 6, 54, 999))
     json.dump(OV, open(X + 'ground.json', 'w'))
 ground_files()
+HT_.export(HS, X + 'houses_geom.json'); print('houses_geom.json written')
 for Y in (40, 50, 60):
     print(Y, render(Y))

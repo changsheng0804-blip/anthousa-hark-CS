@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys; sys.path.insert(0, '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen'); import house_types as HT_
 """Road-network audit for a quarter: per year, checks that visible roads connect to the main roads,
 finds dead ends that nearly touch another road, roads through cisterns/landmarks/outside the wall,
 houses sitting on roads, and houses with no road near them. Writes audit.json + audit_YY.jpg overlays."""
@@ -30,7 +31,7 @@ def near(g, x, y): return set(g.get((int(x // G), int(y // G)), []))
 NB = [(LM[k]['xy'], r, k) for k, r in [('baths_constantius', 55), ('barracks_gate', 60), ('aqb_valley', 30)] if k in LM]
 def body(h):
     p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]; cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
-    fp = [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]; ht = h[7] if len(h) > 7 else 5
+    fp = HT_.footprint(h) if len(h) > 9 else [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]; ht = (h[7] if len(h) > 7 else 5) + (HT_.roof_extra(h) if len(h) > 9 else 0)
     return fp + [(x, y - ht) for x, y in fp]
 def _ss(a, b, c, d):
     def cr(o, p, q): return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])

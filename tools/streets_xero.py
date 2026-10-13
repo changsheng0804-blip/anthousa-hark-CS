@@ -294,6 +294,8 @@ for si in order:
                     if shop: wid = random.uniform(10.5, 13); dep = random.uniform(13, 16)
                     else: wid = random.uniform(11, 17); dep = random.uniform(9, 14)
                 off = s['w'] / 2 + 3 + dep / 2
+                _py = ux * side   # >0: the lot lies south of (below) its street, so its roof would lean over it
+                if _py > 0.2: off += _py * {'market': 10, 'shops': 9, 'fine': 7}.get(dfn, 5)
                 cx = ax + ux * (t + wid / 2) - uy * off * side; cy = ay + uy * (t + wid / 2) + ux * off * side
                 lot = try_lot(rect(cx, cy, ux, uy, wid / 2, dep / 2), 0, s['kind'], si)
                 if lot: lot['t'] = 1 if shop else 0; lot['door'] = side; lot['fx'] = 1 if (uy * side) < -0.15 else 0; lot['f'] = dfn; lots.append(lot)
@@ -614,7 +616,28 @@ def forbidden(vol, b, e):
 HT = {}
 newIdx = {h[0]: i for i, h in enumerate(newH)}
 moved = dropped_seg = lowered = stuck = 0
-def want_h(l): return 7 if (l['t'] and l['kind'] == 'main') else 6 if l['t'] else 5 if l['rank'] == 0 else 4
+import house_types as HT_
+def front_edge(l):
+    P = l['p']; best = (99, 2)
+    for e in (0, 2):
+        a, b = P[e], P[(e + 1) % 4]; mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        cx_, cy_ = l['cx'], l['cy']; dx, dy = mx - cx_, my - cy_; L = math.hypot(dx, dy) or 1
+        for k in range(1, 22):
+            x_, y_ = int(mx + dx / L * k), int(my + dy / L * k)
+            if 0 <= x_ < W and 0 <= y_ < H and road[y_, x_]:
+                if k < best[0]: best = (k, e)
+                break
+    return best[1]
+HTYP = {}
+def lot_type(l, hid):
+    f = l.get('f', 'homes')
+    if f == 'planned' and HB[hid][2] < 48: f = 'homes'
+    P = l['p']; area = math.hypot(P[1][0] - P[0][0], P[1][1] - P[0][1]) * math.hypot(P[3][0] - P[0][0], P[3][1] - P[0][1])
+    typ = HT_.pick_type(f, l['rank'], area, l['kind'] == 'main', hid)
+    if 'front' not in l: l['front'] = front_edge(l)
+    HTYP[hid] = (f, typ, l['front'], l['si'])
+    return HT_.type_height(typ, f, l['rank'])
+def want_h(l, hid=None): return lot_type(l, hid)
 for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
     hb, he = HB[hid][2], HB[hid][3]
     l = lots[li]; fp = foot([c for p_ in l['p'] for c in p_])
@@ -643,9 +666,21 @@ for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
                 elif q[5] in ('l',): q[6] = 999
                 dropped_seg += 1
             if clashes(fp, hb, he): stuck += 1
-    hgt = want_h(l)
-    while hgt > 0 and clashes(volume(fp, hgt) if hgt > 0 else fp, hb, he, 0.6): hgt -= 0.5
-    if hgt < want_h(l): lowered += 1
+    hgt = want_h(l, hid)
+    def _row(hg_):
+        f_, t_, fr_, si_ = HTYP[hid]
+        return [hid, 0, 0, 0, [c for p_ in l['p'] for c in p_], 0, 0, hg_, f_, t_, fr_, si_]
+    def _ex(hg_): return HT_.roof_extra(_row(hg_))
+    fpd = HT_.footprint(_row(hgt))
+    if HTYP[hid][1] == 'row' and (clashes(fpd, hb, he, 0.6) or forbidden(fpd, hb, he)):   # no room to run wall to wall here
+        f_, t_, fr_, si_ = HTYP[hid]; HTYP[hid] = (f_, 'casa', fr_, si_); hgt = HT_.type_height('casa', f_, l['rank']); fpd = HT_.footprint(_row(hgt))
+    while hgt > 0 and clashes(volume(fpd, hgt + _ex(hgt)), hb, he, 0.6): hgt -= 0.5
+    if hgt <= 1.5 and HTYP[hid][1] not in ('flat', 'yard'):   # no room for a pitched roof here: a low flat-roofed house instead
+        f_, t_, fr_, si_ = HTYP[hid]; HTYP[hid] = (f_, 'flat', fr_, si_); hgt = 4
+        fpd = HT_.footprint(_row(hgt))
+        while hgt > 0 and clashes(volume(fpd, hgt), hb, he, 0.6): hgt -= 0.5
+    if hgt < HT_.type_height(HTYP[hid][1], HTYP[hid][0], l['rank']): lowered += 1
+    hgt = max(0, hgt)
     HT[hid] = hgt
 for h in newH:
     if h[0] in HT:
@@ -791,10 +826,10 @@ print('junctions', len(JU), file=sys.stderr)
 # each house takes the character of the district its lot was cut for (the new quarter only after the fire)
 for h in newH:
     while len(h) < 8: h.append(4)
-    f = lots[assigned[h[0]]].get('f', 'homes') if h[0] in assigned else 'homes'
-    if f == 'planned' and h[2] < 48: f = 'homes'
-    h[8:] = [f]
+    f, typ, fr, si_ = HTYP.get(h[0], ('homes', 'casa', 2, -1))
+    h[8:] = [f, typ, fr, si_]
 print('houses by district', _C(h[8] for h in newH).most_common(), file=sys.stderr)
+print('houses by type', _C(h[9] for h in newH).most_common(), file=sys.stderr)
 D2 = dict(D); D2['houses'] = newH
 json.dump(D2, open(X + 'houses.json', 'w'), separators=(',', ':'))
 json.dump(outS, open(X + 'streets.json', 'w'), separators=(',', ':'))
