@@ -5,3 +5,4 @@ docs/*.png
 docs/terrain.svg
 data/osm_coastline.json
 __pycache__/
+tools/cs/factory/out/zoom/*.jpg
