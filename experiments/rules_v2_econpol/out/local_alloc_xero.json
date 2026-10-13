@@ -1,0 +1,18 @@
+{
+ "scope": "xero",
+ "v1_tenant_years": 38286,
+ "same": 29656,
+ "street_part_v1": 33447,
+ "street_part_same": 29015,
+ "new_tenant_years": 38419,
+ "max_tenants_new": 19,
+ "pat_landlord_faith_v1": 5662,
+ "pat_landlord_faith_same": 4446,
+ "same_share": 0.775,
+ "street_part_same_share": 0.867,
+ "street_compute_ms": {
+  "mean": 0.039,
+  "p95": 0.1583,
+  "max": 0.455
+ }
+}

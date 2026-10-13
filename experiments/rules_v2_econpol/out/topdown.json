@@ -1,0 +1,1062 @@
+{
+ "assumptions": {
+  "T1 人口按房屋分": "城→街区按账本房屋数等分人口（账本没有分街区人口）",
+  "T2 配给按房屋": "君士坦丁的房屋面包：每栋账本房屋一本配给簿，口粮 = 粮食上限 ÷ 账本房屋数（账本没有配给量，粮食只有上限）",
+  "T2b 簿给谁": "一条街上的配给簿给这条街住得最久的人家（与规则 A「有房 = 41 年前的首户」同精神，但数目由账本房屋数定）",
+  "T3 蓄水池容量": "每座蓄水池容量 = 它让水的上限增加的 15,000 人（账本差分）；井的容量账本没有",
+  "T4 施舍": "账本没有施舍量；只按教派与年份（49/51/64/65）分有无",
+  "T5 征工": "57 年征工总数账本没有：用自下而上的总数，只比较按街分配的方式（每街 2 户 vs 按街户数比例）",
+  "T6 修水凑铜板": "凑铜板的金额账本没有；只比较出钱户数",
+  "T7 兵营": "账本没有兵员数；不做自上而下",
+  "T8 年内插值": "账本只有每十年末的总量，十年内按线性插值（只用于人口）"
+ },
+ "ledger": {
+  "40": {
+   "pop": 96417,
+   "food": 153202,
+   "water": 158000,
+   "houses": 10713
+  },
+  "50": {
+   "pop": 137664,
+   "food": 173202,
+   "water": 173000,
+   "houses": 15296
+  },
+  "60": {
+   "pop": 149193,
+   "food": 193202,
+   "water": 188000,
+   "houses": 16577
+  },
+  "70": {
+   "pop": 158697,
+   "food": 193202,
+   "water": 203000,
+   "houses": 17633
+  }
+ },
+ "city": {
+  "50": {
+   "pop_ledger": 137664,
+   "pop_bu": 82180,
+   "houses_ledger": 15296,
+   "houses_bu": 15296,
+   "households_bu": 15157,
+   "ration_books_td": 15296,
+   "owner_households_bu": 9390,
+   "food_cap": 173202,
+   "water_cap": 173000,
+   "food_per_head_ledger": 1.258,
+   "by_district": {
+    "d_byzas": {
+     "houses_ledger": 2712,
+     "pop_td": 24408,
+     "pop_bu": 15655,
+     "households_bu": 2677,
+     "diff": -8753,
+     "ratio": 0.641
+    },
+    "d_forum": {
+     "houses_ledger": 8122,
+     "pop_td": 73098,
+     "pop_bu": 43571,
+     "households_bu": 8042,
+     "diff": -29527,
+     "ratio": 0.596
+    },
+    "d_harbor": {
+     "houses_ledger": 3787,
+     "pop_td": 34083,
+     "pop_bu": 19773,
+     "households_bu": 3765,
+     "diff": -14310,
+     "ratio": 0.58
+    },
+    "d_xerolophos": {
+     "houses_ledger": 675,
+     "pop_td": 6075,
+     "pop_bu": 3181,
+     "households_bu": 673,
+     "diff": -2894,
+     "ratio": 0.524
+    }
+   }
+  },
+  "55": {
+   "pop_ledger": 143428,
+   "pop_bu": 86969,
+   "houses_ledger": 15950,
+   "houses_bu": 15950,
+   "households_bu": 15788,
+   "ration_books_td": 15950,
+   "owner_households_bu": 9072,
+   "food_cap": 193202,
+   "water_cap": 188000,
+   "food_per_head_ledger": 1.347,
+   "by_district": {
+    "d_byzas": {
+     "houses_ledger": 2767,
+     "pop_td": 24882,
+     "pop_bu": 15867,
+     "households_bu": 2741,
+     "diff": -9015,
+     "ratio": 0.638
+    },
+    "d_forum": {
+     "houses_ledger": 8420,
+     "pop_td": 75716,
+     "pop_bu": 45983,
+     "households_bu": 8328,
+     "diff": -29733,
+     "ratio": 0.607
+    },
+    "d_harbor": {
+     "houses_ledger": 4060,
+     "pop_td": 36509,
+     "pop_bu": 21585,
+     "households_bu": 4022,
+     "diff": -14924,
+     "ratio": 0.591
+    },
+    "d_xerolophos": {
+     "houses_ledger": 703,
+     "pop_td": 6322,
+     "pop_bu": 3534,
+     "households_bu": 697,
+     "diff": -2788,
+     "ratio": 0.559
+    }
+   }
+  },
+  "60": {
+   "pop_ledger": 149193,
+   "pop_bu": 89052,
+   "houses_ledger": 16577,
+   "houses_bu": 16577,
+   "households_bu": 16281,
+   "ration_books_td": 16577,
+   "owner_households_bu": 8557,
+   "food_cap": 193202,
+   "water_cap": 188000,
+   "food_per_head_ledger": 1.295,
+   "by_district": {
+    "d_byzas": {
+     "houses_ledger": 2821,
+     "pop_td": 25389,
+     "pop_bu": 15715,
+     "households_bu": 2766,
+     "diff": -9674,
+     "ratio": 0.619
+    },
+    "d_forum": {
+     "houses_ledger": 8673,
+     "pop_td": 78057,
+     "pop_bu": 46765,
+     "households_bu": 8521,
+     "diff": -31292,
+     "ratio": 0.599
+    },
+    "d_harbor": {
+     "houses_ledger": 4337,
+     "pop_td": 39033,
+     "pop_bu": 22862,
+     "households_bu": 4258,
+     "diff": -16171,
+     "ratio": 0.586
+    },
+    "d_xerolophos": {
+     "houses_ledger": 746,
+     "pop_td": 6714,
+     "pop_bu": 3710,
+     "households_bu": 736,
+     "diff": -3004,
+     "ratio": 0.553
+    }
+   }
+  },
+  "65": {
+   "pop_ledger": 153945,
+   "pop_bu": 80879,
+   "houses_ledger": 17072,
+   "houses_bu": 16509,
+   "households_bu": 15859,
+   "ration_books_td": 17072,
+   "owner_households_bu": 8305,
+   "food_cap": 193202,
+   "water_cap": 203000,
+   "food_per_head_ledger": 1.255,
+   "by_district": {
+    "d_byzas": {
+     "houses_ledger": 2856,
+     "pop_td": 25754,
+     "pop_bu": 14231,
+     "households_bu": 2687,
+     "diff": -11523,
+     "ratio": 0.553
+    },
+    "d_exokionion": {
+     "houses_ledger": 253,
+     "pop_td": 2281,
+     "pop_bu": 0,
+     "households_bu": 0,
+     "diff": -2281,
+     "ratio": 0.0
+    },
+    "d_forum": {
+     "houses_ledger": 8815,
+     "pop_td": 79488,
+     "pop_bu": 42637,
+     "households_bu": 8338,
+     "diff": -36851,
+     "ratio": 0.536
+    },
+    "d_harbor": {
+     "houses_ledger": 4447,
+     "pop_td": 40100,
+     "pop_bu": 20840,
+     "households_bu": 4168,
+     "diff": -19260,
+     "ratio": 0.52
+    },
+    "d_xerolophos": {
+     "houses_ledger": 701,
+     "pop_td": 6321,
+     "pop_bu": 3171,
+     "households_bu": 666,
+     "diff": -3150,
+     "ratio": 0.502
+    }
+   }
+  },
+  "70": {
+   "pop_ledger": 158697,
+   "pop_bu": 75054,
+   "houses_ledger": 17633,
+   "houses_bu": 16509,
+   "households_bu": 15495,
+   "ration_books_td": 17633,
+   "owner_households_bu": 8060,
+   "food_cap": 193202,
+   "water_cap": 203000,
+   "food_per_head_ledger": 1.217,
+   "by_district": {
+    "d_byzas": {
+     "houses_ledger": 2890,
+     "pop_td": 26010,
+     "pop_bu": 13140,
+     "households_bu": 2626,
+     "diff": -12870,
+     "ratio": 0.505
+    },
+    "d_exokionion": {
+     "houses_ledger": 531,
+     "pop_td": 4779,
+     "pop_bu": 0,
+     "households_bu": 0,
+     "diff": -4779,
+     "ratio": 0.0
+    },
+    "d_forum": {
+     "houses_ledger": 8958,
+     "pop_td": 80622,
+     "pop_bu": 39483,
+     "households_bu": 8126,
+     "diff": -41139,
+     "ratio": 0.49
+    },
+    "d_harbor": {
+     "houses_ledger": 4530,
+     "pop_td": 40770,
+     "pop_bu": 19429,
+     "households_bu": 4084,
+     "diff": -21341,
+     "ratio": 0.477
+    },
+    "d_xerolophos": {
+     "houses_ledger": 724,
+     "pop_td": 6516,
+     "pop_bu": 3002,
+     "households_bu": 659,
+     "diff": -3514,
+     "ratio": 0.461
+    }
+   }
+  }
+ },
+ "city_demolitions": {
+  "ledger": {
+   "44": 6,
+   "46": 16,
+   "48": 287,
+   "49": 8,
+   "54": 17,
+   "55": 5,
+   "57": 29,
+   "62": 55,
+   "65": 13
+  },
+  "synthetic": {
+   "44": 6,
+   "46": 16,
+   "48": 247,
+   "49": 8,
+   "54": 17,
+   "55": 5,
+   "57": 29,
+   "62": 55,
+   "65": 13
+  }
+ },
+ "xero": {
+  "af60_check": {
+   "households": [
+    4383,
+    4383
+   ],
+   "people": [
+    23912,
+    23912
+   ],
+   "crowded_10plus": [
+    469,
+    469
+   ],
+   "needy_under14": [
+    615,
+    615
+   ],
+   "needy_under12_rule": [
+    null,
+    532
+   ],
+   "carrier_households": [
+    742,
+    742
+   ],
+   "sons_turning_18_in_61_70": [
+    3373,
+    4597
+   ],
+   "houses": [
+    746,
+    4465
+   ]
+  },
+  "demolitions": {
+   "ledger": {
+    "54": 17,
+    "62": 55,
+    "65": 13
+   },
+   "page": {
+    "48": 91,
+    "54": 17
+   }
+  },
+  "map_check": {
+   "page_house_to_nearest_ledger_house_px": {
+    "p50": 530.5,
+    "p90": 1017.0
+   },
+   "ledger_x_range": [
+    282,
+    707
+   ],
+   "page_x_range": [
+    338,
+    1817
+   ]
+  },
+  "years": {
+   "50": {
+    "houses_ledger_xero": 675,
+    "houses_ledger_city": 15296,
+    "households_bu": 4045,
+    "pop_td": 6075,
+    "pop_bu": 21839,
+    "pop_ratio": 3.59,
+    "ration_per_ledger_house": 11.32,
+    "rations_td": 7643,
+    "fed_people_bu": 13804,
+    "people_without_house_bread_bu": 8035,
+    "ration_books_td": 675,
+    "owner_households_bu": 2423,
+    "per_household_bread": {
+     "both": 617,
+     "td_only": 58,
+     "bu_only": 1806,
+     "neither": 1564
+    },
+    "streets_worst": [
+     {
+      "street": "瞎子巷",
+      "households": 248,
+      "books_td": 41,
+      "books_bu": 200,
+      "diff": 159
+     },
+     {
+      "street": "双井巷",
+      "households": 251,
+      "books_td": 42,
+      "books_bu": 183,
+      "diff": 141
+     },
+     {
+      "street": "集市巷",
+      "households": 235,
+      "books_td": 39,
+      "books_bu": 165,
+      "diff": 126
+     },
+     {
+      "street": "黑狗巷",
+      "households": 179,
+      "books_td": 30,
+      "books_bu": 155,
+      "diff": 125
+     },
+     {
+      "street": "驴子巷",
+      "households": 213,
+      "books_td": 36,
+      "books_bu": 152,
+      "diff": 116
+     },
+     {
+      "street": "烤炉巷",
+      "households": 171,
+      "books_td": 29,
+      "books_bu": 131,
+      "diff": 102
+     },
+     {
+      "street": "北梅塞路",
+      "households": 125,
+      "books_td": 21,
+      "books_bu": 109,
+      "diff": 88
+     },
+     {
+      "street": "水渠大街",
+      "households": 170,
+      "books_td": 28,
+      "books_bu": 116,
+      "diff": 88
+     }
+    ],
+    "streets_count": 80,
+    "streets_exact": 1,
+    "cisterns": {
+     "莫德斯图斯蓄水池": {
+      "built": 41,
+      "households_bu": 18,
+      "people_bu": 115,
+      "capacity_td": 15000
+     }
+    },
+    "people_on_wells_bu": 18632,
+    "people_without_water_source_bu": 3092,
+    "alms": {
+     "阿里乌派": {
+      "needy": 294,
+      "with_alms": 294
+     },
+     "尼西亚派": {
+      "needy": 137,
+      "with_alms": 137
+     },
+     "还拜旧神": {
+      "needy": 93,
+      "with_alms": 0
+     }
+    },
+    "landlords_td": 675,
+    "landlords_bu": 305,
+    "tenants_bu": 1622,
+    "tenants_without_landlord_bu": 121,
+    "tenants_per_landlord_td": 2.4,
+    "tenants_per_landlord_bu": 4.92
+   },
+   "55": {
+    "houses_ledger_xero": 703,
+    "houses_ledger_city": 15950,
+    "households_bu": 4228,
+    "pop_td": 6322,
+    "pop_bu": 23315,
+    "pop_ratio": 3.69,
+    "ration_per_ledger_house": 12.11,
+    "rations_td": 8515,
+    "fed_people_bu": 13545,
+    "people_without_house_bread_bu": 9770,
+    "ration_books_td": 703,
+    "owner_households_bu": 2350,
+    "per_household_bread": {
+     "both": 638,
+     "td_only": 65,
+     "bu_only": 1712,
+     "neither": 1813
+    },
+    "streets_worst": [
+     {
+      "street": "瞎子巷",
+      "households": 256,
+      "books_td": 43,
+      "books_bu": 197,
+      "diff": 154
+     },
+     {
+      "street": "双井巷",
+      "households": 255,
+      "books_td": 42,
+      "books_bu": 178,
+      "diff": 136
+     },
+     {
+      "street": "集市巷",
+      "households": 254,
+      "books_td": 42,
+      "books_bu": 160,
+      "diff": 118
+     },
+     {
+      "street": "黑狗巷",
+      "households": 191,
+      "books_td": 32,
+      "books_bu": 147,
+      "diff": 115
+     },
+     {
+      "street": "驴子巷",
+      "households": 223,
+      "books_td": 37,
+      "books_bu": 149,
+      "diff": 112
+     },
+     {
+      "street": "烤炉巷",
+      "households": 175,
+      "books_td": 29,
+      "books_bu": 128,
+      "diff": 99
+     },
+     {
+      "street": "北梅塞路",
+      "households": 127,
+      "books_td": 21,
+      "books_bu": 106,
+      "diff": 85
+     },
+     {
+      "street": "水渠大街",
+      "households": 171,
+      "books_td": 28,
+      "books_bu": 111,
+      "diff": 83
+     }
+    ],
+    "streets_count": 80,
+    "streets_exact": 1,
+    "cisterns": {
+     "莫德斯图斯蓄水池": {
+      "built": 41,
+      "households_bu": 19,
+      "people_bu": 136,
+      "capacity_td": 15000
+     },
+     "运水人蓄水池": {
+      "built": 54,
+      "households_bu": 13,
+      "people_bu": 81,
+      "capacity_td": 15000
+     }
+    },
+    "people_on_wells_bu": 19905,
+    "people_without_water_source_bu": 3193,
+    "alms": {
+     "阿里乌派": {
+      "needy": 331,
+      "with_alms": 0
+     },
+     "尼西亚派": {
+      "needy": 154,
+      "with_alms": 154
+     },
+     "还拜旧神": {
+      "needy": 112,
+      "with_alms": 0
+     }
+    },
+    "landlords_td": 703,
+    "landlords_bu": 345,
+    "tenants_bu": 1878,
+    "tenants_without_landlord_bu": 144,
+    "tenants_per_landlord_td": 2.67,
+    "tenants_per_landlord_bu": 5.03
+   },
+   "60": {
+    "houses_ledger_xero": 746,
+    "houses_ledger_city": 16577,
+    "households_bu": 4383,
+    "pop_td": 6714,
+    "pop_bu": 23912,
+    "pop_ratio": 3.56,
+    "ration_per_ledger_house": 11.65,
+    "rations_td": 8694,
+    "fed_people_bu": 12912,
+    "people_without_house_bread_bu": 11000,
+    "ration_books_td": 746,
+    "owner_households_bu": 2240,
+    "per_household_bread": {
+     "both": 668,
+     "td_only": 78,
+     "bu_only": 1572,
+     "neither": 2065
+    },
+    "streets_worst": [
+     {
+      "street": "瞎子巷",
+      "households": 266,
+      "books_td": 45,
+      "books_bu": 187,
+      "diff": 142
+     },
+     {
+      "street": "双井巷",
+      "households": 258,
+      "books_td": 44,
+      "books_bu": 173,
+      "diff": 129
+     },
+     {
+      "street": "集市巷",
+      "households": 264,
+      "books_td": 45,
+      "books_bu": 156,
+      "diff": 111
+     },
+     {
+      "street": "黑狗巷",
+      "households": 200,
+      "books_td": 34,
+      "books_bu": 143,
+      "diff": 109
+     },
+     {
+      "street": "驴子巷",
+      "households": 232,
+      "books_td": 40,
+      "books_bu": 148,
+      "diff": 108
+     },
+     {
+      "street": "烤炉巷",
+      "households": 176,
+      "books_td": 30,
+      "books_bu": 120,
+      "diff": 90
+     },
+     {
+      "street": "炉子巷",
+      "households": 130,
+      "books_td": 22,
+      "books_bu": 100,
+      "diff": 78
+     },
+     {
+      "street": "北梅塞路",
+      "households": 119,
+      "books_td": 20,
+      "books_bu": 93,
+      "diff": 73
+     }
+    ],
+    "streets_count": 81,
+    "streets_exact": 0,
+    "cisterns": {
+     "莫德斯图斯蓄水池": {
+      "built": 41,
+      "households_bu": 19,
+      "people_bu": 135,
+      "capacity_td": 15000
+     },
+     "运水人蓄水池": {
+      "built": 54,
+      "households_bu": 13,
+      "people_bu": 75,
+      "capacity_td": 15000
+     }
+    },
+    "people_on_wells_bu": 20295,
+    "people_without_water_source_bu": 3407,
+    "alms": {
+     "阿里乌派": {
+      "needy": 290,
+      "with_alms": 0
+     },
+     "尼西亚派": {
+      "needy": 139,
+      "with_alms": 139
+     },
+     "还拜旧神": {
+      "needy": 103,
+      "with_alms": 0
+     }
+    },
+    "landlords_td": 746,
+    "landlords_bu": 380,
+    "tenants_bu": 2143,
+    "tenants_without_landlord_bu": 176,
+    "tenants_per_landlord_td": 2.87,
+    "tenants_per_landlord_bu": 5.18
+   },
+   "65": {
+    "houses_ledger_xero": 701,
+    "houses_ledger_city": 17072,
+    "households_bu": 4277,
+    "pop_td": 6321,
+    "pop_bu": 21815,
+    "pop_ratio": 3.45,
+    "ration_per_ledger_house": 11.32,
+    "rations_td": 7933,
+    "fed_people_bu": 11665,
+    "people_without_house_bread_bu": 10150,
+    "ration_books_td": 701,
+    "owner_households_bu": 2171,
+    "per_household_bread": {
+     "both": 625,
+     "td_only": 76,
+     "bu_only": 1546,
+     "neither": 2030
+    },
+    "streets_worst": [
+     {
+      "street": "瞎子巷",
+      "households": 261,
+      "books_td": 43,
+      "books_bu": 183,
+      "diff": 140
+     },
+     {
+      "street": "双井巷",
+      "households": 254,
+      "books_td": 42,
+      "books_bu": 169,
+      "diff": 127
+     },
+     {
+      "street": "黑狗巷",
+      "households": 199,
+      "books_td": 33,
+      "books_bu": 143,
+      "diff": 110
+     },
+     {
+      "street": "集市巷",
+      "households": 255,
+      "books_td": 42,
+      "books_bu": 151,
+      "diff": 109
+     },
+     {
+      "street": "驴子巷",
+      "households": 224,
+      "books_td": 37,
+      "books_bu": 141,
+      "diff": 104
+     },
+     {
+      "street": "烤炉巷",
+      "households": 172,
+      "books_td": 28,
+      "books_bu": 117,
+      "diff": 89
+     },
+     {
+      "street": "炉子巷",
+      "households": 128,
+      "books_td": 21,
+      "books_bu": 98,
+      "diff": 77
+     },
+     {
+      "street": "水渠大街",
+      "households": 165,
+      "books_td": 27,
+      "books_bu": 100,
+      "diff": 73
+     }
+    ],
+    "streets_count": 81,
+    "streets_exact": 2,
+    "cisterns": {
+     "莫德斯图斯蓄水池": {
+      "built": 41,
+      "households_bu": 19,
+      "people_bu": 120,
+      "capacity_td": 15000
+     },
+     "运水人蓄水池": {
+      "built": 54,
+      "households_bu": 11,
+      "people_bu": 62,
+      "capacity_td": 15000
+     },
+     "第二座运水人蓄水池": {
+      "built": 62,
+      "households_bu": 53,
+      "people_bu": 244,
+      "capacity_td": 15000
+     }
+    },
+    "people_on_wells_bu": 18530,
+    "people_without_water_source_bu": 2859,
+    "alms": {
+     "阿里乌派": {
+      "needy": 165,
+      "with_alms": 165
+     },
+     "尼西亚派": {
+      "needy": 84,
+      "with_alms": 84
+     },
+     "还拜旧神": {
+      "needy": 76,
+      "with_alms": 76
+     }
+    },
+    "landlords_td": 701,
+    "landlords_bu": 370,
+    "tenants_bu": 2106,
+    "tenants_without_landlord_bu": 190,
+    "tenants_per_landlord_td": 3.0,
+    "tenants_per_landlord_bu": 5.18
+   },
+   "70": {
+    "houses_ledger_xero": 724,
+    "houses_ledger_city": 17633,
+    "households_bu": 4183,
+    "pop_td": 6516,
+    "pop_bu": 20312,
+    "pop_ratio": 3.12,
+    "ration_per_ledger_house": 10.96,
+    "rations_td": 7933,
+    "fed_people_bu": 10764,
+    "people_without_house_bread_bu": 9548,
+    "ration_books_td": 724,
+    "owner_households_bu": 2113,
+    "per_household_bread": {
+     "both": 641,
+     "td_only": 83,
+     "bu_only": 1472,
+     "neither": 1987
+    },
+    "streets_worst": [
+     {
+      "street": "瞎子巷",
+      "households": 254,
+      "books_td": 44,
+      "books_bu": 178,
+      "diff": 134
+     },
+     {
+      "street": "双井巷",
+      "households": 245,
+      "books_td": 42,
+      "books_bu": 163,
+      "diff": 121
+     },
+     {
+      "street": "黑狗巷",
+      "households": 197,
+      "books_td": 34,
+      "books_bu": 141,
+      "diff": 107
+     },
+     {
+      "street": "集市巷",
+      "households": 252,
+      "books_td": 44,
+      "books_bu": 148,
+      "diff": 104
+     },
+     {
+      "street": "驴子巷",
+      "households": 218,
+      "books_td": 38,
+      "books_bu": 137,
+      "diff": 99
+     },
+     {
+      "street": "烤炉巷",
+      "households": 170,
+      "books_td": 29,
+      "books_bu": 115,
+      "diff": 86
+     },
+     {
+      "street": "炉子巷",
+      "households": 125,
+      "books_td": 22,
+      "books_bu": 95,
+      "diff": 73
+     },
+     {
+      "street": "北梅塞路",
+      "households": 114,
+      "books_td": 20,
+      "books_bu": 89,
+      "diff": 69
+     }
+    ],
+    "streets_count": 81,
+    "streets_exact": 1,
+    "cisterns": {
+     "莫德斯图斯蓄水池": {
+      "built": 41,
+      "households_bu": 19,
+      "people_bu": 108,
+      "capacity_td": 15000
+     },
+     "运水人蓄水池": {
+      "built": 54,
+      "households_bu": 10,
+      "people_bu": 57,
+      "capacity_td": 15000
+     },
+     "第二座运水人蓄水池": {
+      "built": 62,
+      "households_bu": 52,
+      "people_bu": 228,
+      "capacity_td": 15000
+     }
+    },
+    "people_on_wells_bu": 17247,
+    "people_without_water_source_bu": 2672,
+    "alms": {
+     "阿里乌派": {
+      "needy": 53,
+      "with_alms": 53
+     },
+     "尼西亚派": {
+      "needy": 22,
+      "with_alms": 22
+     },
+     "还拜旧神": {
+      "needy": 35,
+      "with_alms": 35
+     }
+    },
+    "landlords_td": 724,
+    "landlords_bu": 360,
+    "tenants_bu": 2070,
+    "tenants_without_landlord_bu": 188,
+    "tenants_per_landlord_td": 2.86,
+    "tenants_per_landlord_bu": 5.23
+   }
+  },
+  "corvee_57": {
+   "total": 140,
+   "streets": 80,
+   "streets_with_eligible": 75,
+   "most_under_drafted": [
+    {
+     "street": "集市巷",
+     "households": 260,
+     "eligible": 77,
+     "corvee_bu": 2,
+     "corvee_td": 8.67,
+     "diff": -6.67
+    },
+    {
+     "street": "瞎子巷",
+     "households": 259,
+     "eligible": 53,
+     "corvee_bu": 2,
+     "corvee_td": 8.64,
+     "diff": -6.64
+    },
+    {
+     "street": "双井巷",
+     "households": 258,
+     "eligible": 65,
+     "corvee_bu": 2,
+     "corvee_td": 8.6,
+     "diff": -6.6
+    },
+    {
+     "street": "驴子巷",
+     "households": 225,
+     "eligible": 55,
+     "corvee_bu": 2,
+     "corvee_td": 7.5,
+     "diff": -5.5
+    },
+    {
+     "street": "三棵松巷",
+     "households": 211,
+     "eligible": 90,
+     "corvee_bu": 2,
+     "corvee_td": 7.04,
+     "diff": -5.04
+    }
+   ],
+   "most_over_drafted": [
+    {
+     "street": "兵营街",
+     "households": 7,
+     "eligible": 7,
+     "corvee_bu": 2,
+     "corvee_td": 0.23,
+     "diff": 1.77
+    },
+    {
+     "street": "黑狗二巷",
+     "households": 6,
+     "eligible": 2,
+     "corvee_bu": 2,
+     "corvee_td": 0.2,
+     "diff": 1.8
+    },
+    {
+     "street": "铜匠街",
+     "households": 6,
+     "eligible": 5,
+     "corvee_bu": 2,
+     "corvee_td": 0.2,
+     "diff": 1.8
+    },
+    {
+     "street": "风口三巷",
+     "households": 5,
+     "eligible": 2,
+     "corvee_bu": 2,
+     "corvee_td": 0.17,
+     "diff": 1.83
+    },
+    {
+     "street": "新井巷",
+     "households": 4,
+     "eligible": 2,
+     "corvee_bu": 2,
+     "corvee_td": 0.13,
+     "diff": 1.87
+    }
+   ],
+   "big_streets_bu_share": 0.386,
+   "big_streets_household_share": 0.819
+  },
+  "levy": {
+   "54": {
+    "contributors_bu": 70,
+    "carriers_present_bu": 712
+   },
+   "62": {
+    "contributors_bu": 380,
+    "carriers_present_bu": 735
+   }
+  }
+ },
+ "seconds": 0.58
+}
