@@ -1,0 +1,60 @@
+{
+ "id": "meeting_yard",
+ "name_zh": "城外聚会所",
+ "name_la": "conventiculum",
+ "category": "religious",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": true,
+ "render": "overlay",
+ "note": "Arians expelled from the city churches (Theodosius, 380/381) met outside the walls",
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "arian_meeting",
+    "quarter": "xerolophos",
+    "xy": [
+     78,
+     1694
+    ],
+    "name_zh": "阿里乌派城外聚会所",
+    "story": "建城 51 年，阿里乌派被请出城里所有的教堂。他们每逢节日走出奠基者城门，在城墙外这个院子里祈祷。",
+    "now": {
+     "morning": "节日的清晨，人们排着队出城",
+     "day": "院子里有人在唱哥特语的赞美诗",
+     "night": "院门锁着"
+    },
+    "poly": [
+     [
+      14,
+      1685
+     ],
+     [
+      71,
+      1685
+     ],
+     [
+      71,
+      1728
+     ],
+     [
+      14,
+      1728
+     ]
+    ],
+    "built": 52,
+    "overlay": {
+     "f": "ov_arian.webp",
+     "x": 0,
+     "y": 1654,
+     "a": 52,
+     "b": 999
+    }
+   }
+  ]
+ },
+ "size": "medium"
+}

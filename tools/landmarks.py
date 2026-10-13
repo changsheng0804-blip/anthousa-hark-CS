@@ -59,6 +59,7 @@ def merge_options(h):
     return out
 placed = {}
 for sid, sp in LS.SPECS.items():
+    if sp.get('instances', {}).get('rule') == 'fixed' or 'siting' not in sp: continue   # historic fixed landmarks: landmark_registry
     si = sp['siting']; lo, hi = si['lot']; e0 = sp['era'][0]; nmax = sp['instances']['count'][1]
     gap = si.get('gap', 300 if sp['size'] == 'small' else 420)
     C = []

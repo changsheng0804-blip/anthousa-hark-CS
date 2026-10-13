@@ -32,7 +32,8 @@ def zone_of(x, y):
     return None
 
 # no-build zones (static landmarks, aqueduct)
-NB = [(LM[k]['xy'], r) for k, r in [('baths_constantius', 62), ('barracks_gate', 70), ('gate_founder', 55), ('aqb_valley', 40)] if k in LM]
+import landmark_registry as LR_   # landmarks come from gen/landmarks/*.json
+NB = LR_.no_build(); NB_INT = LR_.no_build_interior()
 AQ = [(760, 0), (1820, 515)]
 def seg_d(px, py, a, b):
     ax, ay = a; bx, by = b; dx, dy = bx - ax, by - ay
@@ -118,7 +119,7 @@ while v < vmax:
 def clip(st):
     out = []; cur = []
     for p in st['pts']:
-        if interior(p[0], p[1], 12) and not any(math.hypot(p[0] - c[0], p[1] - c[1]) < r - 15 for c, r in NB[:2]):
+        if interior(p[0], p[1], 12) and not any(math.hypot(p[0] - c[0], p[1] - c[1]) < r - 15 for c, r in NB_INT):
             cur.append(p)
         else:
             if len(cur) > 1: out.append(dict(st, pts=cur))
@@ -220,7 +221,7 @@ dm = np.zeros((hd_, wd_), np.uint8); mainm = np.zeros_like(dm)
 _ys = np.arange(hd_)[:, None] / SCD; _xs = np.arange(wd_)[None, :] / SCD
 dm[_xs < wall_x(_ys) + 6] = 1
 cv2.line(dm, (int(DR.AQ[0][0] * SCD), int(DR.AQ[0][1] * SCD)), (int(DR.AQ[1][0] * SCD), int(DR.AQ[1][1] * SCD)), 1, 6)
-_bx, _by = LM['baths_constantius']['xy']; cv2.circle(dm, (int(_bx * SCD), int(_by * SCD)), int(46 * SCD), 1, -1)
+for (_bx, _by), _r in LR_.clear_masks(): cv2.circle(dm, (int(_bx * SCD), int(_by * SCD)), int(_r * SCD), 1, -1)
 for _z in DR.CIST.values(): cv2.fillPoly(dm, [np.int32([[q[0] * SCD, q[1] * SCD] for q in _z['p']])], 1)
 for s in streets:
     _p = np.int32([[q[0] * SCD, q[1] * SCD] for q in s['pts']])

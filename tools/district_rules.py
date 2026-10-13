@@ -34,6 +34,8 @@ for i in range(len(R)):
                 if q and 0 < q[0] < W and 0 < q[1] < H: MJ.append(q)
 FIRE = _late['fire_ruins']['p']
 CIST = {k: v for k, v in _late.items() if k.startswith('cistern')}
+import landmark_registry as LR_
+INF = LR_.influences()
 def cen(p): return (sum(q[0] for q in p) / len(p), sum(q[1] for q in p) / len(p))
 
 FN = {  # code: (label, overlay colour)
@@ -52,12 +54,16 @@ def classify(cx, cy, area, front, density, Y=None):
     if front >= 0.22:
         if front >= 0.3 and any(math.hypot(cx - x, cy - y) < 170 for x, y in MJ): return 'market'
         return 'shops'
-    bx, by = LM['barracks_gate']['xy']
-    if math.hypot(cx - bx, cy - by) < 300: return 'garrison'
-    gx, gy = LM['gate_founder']['xy']
-    if math.hypot(cx - gx, cy - gy) < 280 or cx - wall_x(cy) < 75 or segd(cx, cy, *AQ) < 55: return 'workshop'
-    bx, by = LM['baths_constantius']['xy']
-    if math.hypot(cx - bx, cy - by) < 330: return 'fine'
+    wall_done = False
+    for q in INF:   # landmark pulls from the registry (barracks -> garrison, gate/aqueduct -> workshop, baths -> fine)
+        o, fn, kind, g, r = q[:5]
+        if o == 0: continue
+        if o >= 2 and not wall_done:
+            wall_done = True
+            if cx - wall_x(cy) < 75: return 'workshop'
+        if kind == 'pt' and math.hypot(cx - g[0], cy - g[1]) < r: return fn
+        if kind == 'line' and segd(cx, cy, *g) < r: return fn
+    if not wall_done and cx - wall_x(cy) < 75: return 'workshop'
     if density is not None and area > 5000 and density * 2600 < 1: return 'garden'
     return 'homes'
 
