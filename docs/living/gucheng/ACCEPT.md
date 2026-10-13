@@ -1,6 +1,6 @@
 # gucheng 验收
 
-通过 119 / 120
+通过 136 / 136
 
 
 ## 一、拉取
@@ -43,7 +43,7 @@
 - ✅ 地标 建城者蓄水池 在本街区框内
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
-- ❌ gucheng ⇄ jinjiao 来回都能走  → 修：在 jinjiao/scene.json 加 next 指回 gucheng
+- ✅ gucheng ⇄ jinjiao 来回都能走
 - ✅ gucheng ⇄ dongjia 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page gucheng years 40:4008/4008 50:4796/4796 60:5057/5057 errors 0
@@ -124,6 +124,24 @@
 - ✅ 60 年 Horrea Troadensia 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.81，全街区 0.81
 - ✅ 60 年 Anastasia 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.74，全街区 0.81
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/gucheng_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
+
+## 四、线上
+- ✅ index.html —— 一致
+- ✅ scene.json —— 一致
+- ✅ city.json —— 一致
+- ✅ houses.json —— 一致
+- ✅ bare.jpg —— 一致
+- ✅ gu_af40.jpg —— 一致
+- ✅ gu_af50.jpg —— 一致
+- ✅ gu_af60.jpg —— 一致
+- ✅ houses_street.json —— 一致
+- ✅ streets.json —— 一致
+- ✅ junctions.json —— 一致
+- ✅ houses_geom.json —— 一致
+- ✅ ground_0.jpg —— 一致
+- ✅ ground_40.jpg —— 一致
+- ✅ ground_50.jpg —— 一致
+- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29

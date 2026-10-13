@@ -1,6 +1,6 @@
 # jinjiao 验收
 
-通过 47 / 48
+通过 64 / 64
 
 
 ## 一、拉取
@@ -18,7 +18,7 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ jinjiao ⇄ nangang 来回都能走
-- ❌ jinjiao ⇄ jiaowan 来回都能走  → 修：在 jiaowan/scene.json 加 next 指回 jinjiao
+- ✅ jinjiao ⇄ gucheng 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page jinjiao years 40:1309/1309 50:2582/2582 60:2837/2837 errors 0
 - ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 3179 unplaced 0 streets 2882 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 4 ok
@@ -52,6 +52,24 @@
 - ✅ 60 年 Church of the Holy Apostles 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.81，全街区 0.83
 - ✅ 60 年 Market of the Embers 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.83，全街区 0.83
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/jinjiao_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
+
+## 四、线上
+- ✅ index.html —— 一致
+- ✅ scene.json —— 一致
+- ✅ city.json —— 一致
+- ✅ houses.json —— 一致
+- ✅ bare.jpg —— 一致
+- ✅ ji_af40.jpg —— 一致
+- ✅ ji_af50.jpg —— 一致
+- ✅ ji_af60.jpg —— 一致
+- ✅ houses_street.json —— 一致
+- ✅ streets.json —— 一致
+- ✅ junctions.json —— 一致
+- ✅ houses_geom.json —— 一致
+- ✅ ground_0.jpg —— 一致
+- ✅ ground_40.jpg —— 一致
+- ✅ ground_50.jpg —— 一致
+- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29
