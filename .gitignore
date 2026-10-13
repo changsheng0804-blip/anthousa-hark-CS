@@ -4,4 +4,6 @@ docs/data.json
 docs/*.png
 docs/terrain.svg
 data/osm_coastline.json
+docs/anthousa_world3d.json
+docs/baked_hillshade.png
 __pycache__/
