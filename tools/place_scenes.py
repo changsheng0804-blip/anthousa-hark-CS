@@ -20,7 +20,7 @@ for e in L:
     if w in MAP:
         h = H[MAP[w]]; p = h[4]; cx = sum(p[0::2]) / 4; cy = sum(p[1::2]) / 4; best = None
         for q in SEG:
-            if q[6] > Y or (len(q) > 7 and q[7] <= Y) or q[5] == 'm': continue
+            if q[6] > Y or (len(q) > 7 and q[7] and q[7] <= Y) or q[5] == 'm': continue
             ax, ay, bx, by = q[:4]; dx, dy = bx - ax, by - ay; t = max(0, min(1, ((cx - ax) * dx + (cy - ay) * dy) / (dx * dx + dy * dy + 1e-9)))
             px, py = ax + t * dx, ay + t * dy; d = math.hypot(cx - px, cy - py)
             if best is None or d < best[0]: best = (d, px, py)

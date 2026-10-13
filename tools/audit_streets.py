@@ -62,11 +62,11 @@ def strict_all():
         cand = set()
         for dx in (-G, 0, G):
             for dy in (-G, 0, G): cand |= near(g, cx + dx, cy + dy)
-        sub = [S[j] for j in cand if S[j][6] < e and not (len(S[j]) > 7 and S[j][7] <= b)]
+        sub = [S[j] for j in cand if (S[j][8] if len(S[j]) > 8 else S[j][6]) < e and not (len(S[j]) > 7 and S[j][7] and S[j][7] <= b)]
         if sub and bodyhit(h, sub, grid_of(sub)): bad.append(h[0])
     return bad
 def audit(Y, draw=None):
-    segs = [s for s in S if s[6] <= Y and not (len(s) > 7 and s[7] <= Y)]; g = grid_of(segs)
+    segs = [s for s in S if s[6] <= Y and not (len(s) > 7 and s[7] and s[7] <= Y)]; g = grid_of(segs)
     # union-find connectivity: endpoints touching another segment's band
     par = list(range(len(segs)))
     def f(a):

@@ -61,9 +61,7 @@
  },
  "streets": "streets.json",
  "junctions": "junctions.json",
- "next": {
-  "label": "去南港 →",
-  "url": "../nangang/"
- },
- "streetnames": "streetnames.json"
+ "streetnames": "streetnames.json",
+ "ground": "ground.json",
+ "groundImg": "xero_ground.jpg"
 }

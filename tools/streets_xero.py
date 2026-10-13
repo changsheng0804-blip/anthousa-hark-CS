@@ -598,8 +598,48 @@ for h in newH:
     h[7:] = [4]
 print('kept outside moved', kept_moved, file=sys.stderr)
 print('fixH moved', moved, 'roads gave way', dropped_seg, 'lowered', lowered, 'stuck', stuck, 'wall', wall_moved, file=sys.stderr)
+# ---- roads grow: a trodden track is walked in a few years before a street is laid (streets 3, lanes 2),
+# only where no standing house is in the way, and never earlier than the track it branches from.
+LEAD = {'s': 3, 'c': 2, 'l': 2}
+HOUSEG = {}
+for h in newH:
+    p_ = h[4]; cx_ = sum(p_[0::2]) / 4; cy_ = sum(p_[1::2]) / 4
+    HOUSEG.setdefault((int(cx_ // 20), int(cy_ // 20)), []).append(h)
+def track_ok(q, a, b):
+    """True if no house body standing at any time in [a,b) touches segment q"""
+    mx, my = (q[0] + q[2]) / 2, (q[1] + q[3]) / 2
+    for ix in range(int(mx // 20) - 2, int(mx // 20) + 3):
+        for iy in range(int(my // 20) - 2, int(my // 20) + 3):
+            for h in HOUSEG.get((ix, iy), []):
+                if h[3] <= a or h[2] >= b: continue
+                fp_ = foot(h[4]); ht_ = h[7] if len(h) > 7 else 4
+                vol = volume(fp_, ht_)
+                if pip(q[0], q[1], vol) or pip(q[2], q[3], vol): return h
+                if min(_segseg(vol[k], vol[(k + 1) % len(vol)], (q[0], q[1]), (q[2], q[3])) for k in range(len(vol))) < q[4] / 2 + 0.8: return h
+    return None
+ntr = 0
+for q in outS:
+    while len(q) < 10: q.append(0)
+    if q[6] >= 999 or q[5] == 'm': q[9] = q[6]; continue
+    ts = max(1, q[6] - LEAD[q[5]])
+    while ts < q[6]:
+        h = track_ok(q, ts, q[6])
+        if h is None: break
+        ts = min(q[6], h[3])
+    q[9] = ts
+    if ts < q[6]: ntr += 1
+# a track never shows before the way it hangs from: relax over neighbours
+for _ in range(6):
+    ch = 0
+    for i, q in enumerate(outS):
+        if q[6] >= 999 or q[5] == 'm' or q[9] >= q[6]: continue
+        # earliest any connected neighbour is walkable
+        nb_ = [outS[j][9] for j in nbr[i] if j < len(outS) and outS[j][6] < 999] if i < len(nbr) else []
+        if nb_ and min(nb_) > q[9]: q[9] = min(q[6], min(nb_)); ch += 1
+    if not ch: break
+print('tracks leading their street', ntr, file=sys.stderr)
 json.dump({'si': [q[7] for q in outS if q[6] < 999], 'streets': [dict(k=st['kind'], w=st['w'], pts=[[round(c, 1) for c in p_] for p_ in st['pts']]) for st in streets]}, open('/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen/_streets_meta.json', 'w'))
-outS = [q[:7] + q[8:] for q in outS if q[6] < 999]
+outS = [q[:7] + [q[8], q[9]] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
 cell = {}
 for si_, s_ in enumerate(streets):
