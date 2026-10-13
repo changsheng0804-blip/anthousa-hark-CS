@@ -23,3 +23,6 @@
 15. 页面：人家卡片标「⌂ 街名 门牌 · 街区功能」（改名后 4 年内写「（原某某巷）」），「街坊在说什么」每户、每句标街名，相遇（scenes）的地点后标街名。BUILD='liu4'。
 16. 40 户闲话按真实街名/街区功能改写一句：`tools/batches/liu4_streets.json` → `python3 tools/apply_streets.py`（核对改写里提到这户那年真正所在的街）。`check_stories.py` 新增：提到的街名必须在上游底账里、且那年已经叫这个名字；像街名却不在底账里的「某某巷/街/大道」报错；街名里的「运水人/埃及/哥特」不算行当/籍贯。
 17. 自查：`python3 tools/smoke_liu4.py http://localhost:8765/docs/living/xerolophos/ ../shots`。
+
+## 规则预演 v0（2026-10-12）· 实验，不上线
+18. `experiments/rules_v0/`：13 条「城自己的制度」（同一口水、面包跟着房子走、信仰分线、同乡带同乡、同行聚街；房东、债、学徒、同行竞争；恩主、教会施舍、官府、军营）逐年现算弱关系，只把规则互相冲突的交叉点存成强关系、写成故事。说明、数字和结论见 `experiments/rules_v0/REPORT.md`；故事核对 `python3 experiments/rules_v0/check_stories.py`。页面不读这里的任何文件。
