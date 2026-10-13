@@ -1,0 +1,57 @@
+{
+ "bench": {
+  "scope": "xero",
+  "year": 55,
+  "year_switch_ms": 5.0,
+  "households_in_year": 4228,
+  "n": 1000,
+  "full_ego_ms": {
+   "mean": 1.53,
+   "p50": 1.61,
+   "p95": 2.49,
+   "max": 3.07
+  },
+  "relations_per_household": {
+   "mean": 21.9,
+   "max": 42
+  },
+  "top4_ego_ms": {
+   "mean": 0.413,
+   "p95": 1.527
+  }
+ },
+ "bytes": {
+  "scope": "xero",
+  "houses": 4793,
+  "families": 5294,
+  "raw_bytes": {
+   "houses": 52723,
+   "streets": 35135,
+   "families": 37058,
+   "state_by_year": 164114,
+   "crossings": 82368,
+   "assignments": 77665,
+   "kin": 68976
+  },
+  "gzip_bytes": {
+   "houses": 38718,
+   "streets": 18819,
+   "families": 22842,
+   "state_by_year": 46776,
+   "crossings": 45043,
+   "assignments": 44769,
+   "kin": 49106
+  },
+  "total_raw": 518039,
+  "total_gzip": 266073,
+  "bytes_per_house_raw": 108.1,
+  "bytes_per_house_gzip": 55.5,
+  "note": "同乡候选表、喝哪口水、哪座炉都可在浏览器里从坐标现算，不必下发；街名字符串表另计（干山 87 条）"
+ },
+ "verify_v0": {
+  "year": 55,
+  "checked": 400,
+  "mismatched_by_type": {},
+  "examples": []
+ }
+}
