@@ -1,6 +1,6 @@
 """CS 线 · /goal 2 项 3：飞行落点表。python3 places.py → docs/living/tiles/places.json
 地标 = 九块 city.json 里的 landmarks（同 id 取第一块，各块给的世界坐标应一致，差 >3 px 就报错）；
-事件 = 编年史里的大事（48 年南港大火 → 看 50 年那张画）；九块中心 = tile_bake 的框中心。
+事件 = 编年史里的大事（48 年南港大火 → 看 50 年那张画）；九块中心 = 这一块「归它的」60 年房子的中位点，再吸到最近的一栋房子上（框中心在角湾、墙外这种块上是空海，飞过去落在水里；框重叠带归 tile_bake ORDER 里靠前的那块）。
 坐标都是瓦片页的 0 级像素（和 meta.json 的 quarters 同一套）。只读，不碰底账。——Hark（CS线）"""
 import json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
@@ -18,8 +18,19 @@ for q in M['owner_order']:
             if abs(lm[l['id']]['x'] - x) > 3 or abs(lm[l['id']]['y'] - y) > 3: bad.append((l['id'], q))
             continue
         lm[l['id']] = dict(id=l['id'], name=NZ.get(l['id']) or FALLBACK.get(l['id']) or l['name'], x=round(x), y=round(y), q=q)
+def heart_of(q):
+    import statistics
+    order = M['owner_order']; bx, by, bw, bh = M['quarters'][q]
+    HJ = json.load(open(os.path.join(L, q, 'houses_street.json')))['houses']; pts = []
+    for r in HJ:
+        if r[1] > 60 or r[3] <= 60: continue
+        p = r[4]; x = bx + sum(p[0::2]) / 4; y = by + sum(p[1::2]) / 4
+        if any(M['quarters'][e][0] < x < M['quarters'][e][0] + M['quarters'][e][2] and M['quarters'][e][1] < y < M['quarters'][e][1] + M['quarters'][e][3] for e in order[:order.index(q)]): continue
+        pts.append((x, y))
+    mx, my = statistics.median(a for a, _ in pts), statistics.median(b for _, b in pts)
+    x, y = min(pts, key=lambda t: (t[0] - mx) ** 2 + (t[1] - my) ** 2); return round(x), round(y)
 out = dict(landmarks=list(lm.values()),
-           quarters=[dict(q=q, name=QN[q], x=round(M['quarters'][q][0] + M['quarters'][q][2] / 2), y=round(M['quarters'][q][1] + M['quarters'][q][3] / 2)) for q in M['owner_order']],
+           quarters=[dict(q=q, name=QN[q], x=heart_of(q)[0], y=heart_of(q)[1]) for q in M['owner_order']],
            events=[dict(id='fire48', name='48 年南港大火', year=48, show_year=50, x=lm['fire_ruins']['x'], y=lm['fire_ruins']['y'], z=1.6)])
 json.dump(out, open(os.path.join(L, 'tiles', 'places.json'), 'w'), ensure_ascii=False, indent=0)
 print(len(out['landmarks']), '座地标', len(out['quarters']), '块中心', len(out['events']), '件事', '坐标不一致:', bad)

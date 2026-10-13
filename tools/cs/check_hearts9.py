@@ -3,7 +3,7 @@
   ① 进框放大到街巷级，心跳自己载入（__TILES.heart.ready(q)），载入没报错；
   ② 炊烟：这一年站着的房子每十栋一缕，数量 >0，清晨比白天浓，不冒在水里；
   ③ 家户推演：随手点（c.open）8 栋房子，卡上有名字、没有 undefined/NaN/null；
-  ④ 真点：在屏幕上点一栋房子，卡片弹出的就是这一块（c.q==该块）；
+  ④ 真点：在屏幕上点一栋房子，卡片弹出，且归「先到的那块」（框重叠带归 tile_bake ORDER 里靠前的）；
   ⑤ 重叠带不重复：炊烟点按「先到先得」只画一次（同一世界点不在两块的炊烟里同时出现）；
   ⑥ 退出街巷级（z=0.5）：该块 drawn=0；
   ⑦ 页面无报错。人不出街/船不出水：有粮船日的块（南港）由 check_heart.py 管；没有粮船日的块 entities 恒空，由瓦片页自带的 LIFE 走网（check_tiles）。
@@ -21,6 +21,7 @@ if not A.url:
 else: url = A.url
 TD = os.path.join(ROOT, 'docs/living/tiles'); M = json.load(open(os.path.join(TD, 'meta.json'))); TP = M['tile_px']; WC = M['water_cell']; N = M['water_cells_n']
 PL = {t['q']: t for t in json.load(open(os.path.join(TD, 'places.json')))['quarters']}
+QS_ALL = ['nangang','jinjiao','gucheng','siqiu','dongjia','xipo','qiangwai','jiaowan','nanan']
 QS = [q for q in PL if not A.only or q in A.only.split(',')]
 _vc = {}
 def wcell(x, y, K):
@@ -45,7 +46,7 @@ with sync_playwright() as p:
         print(f'— {q}')
         c = PL[q]
         pg.evaluate(f'(()=>{{const T=__TILES;T.cancelFly();T.setYear(60);T.cam.x={c["x"]};T.cam.y={c["y"]};T.cam.z=1.6}})()'); time.sleep(0.6)
-        try: pg.wait_for_function(f'(__TILES.heart.mod("{q}")&&__TILES.heart.ready2("{q}"))', timeout=40000); ok = True
+        try: pg.wait_for_function(f'!!__TILES.heart.mod("{q}")', timeout=40000); ok = True
         except Exception as e: ok = False
         ck(f'{q} ① 心跳在街巷级里自己载好', ok)
         if not ok: continue
@@ -66,16 +67,20 @@ with sync_playwright() as p:
             if not (60 < sx < 1040 and 40 < sy < 660): continue
             pg.mouse.click(sx, sy); time.sleep(0.2)
             if pg.evaluate('__TILES.heart.card.shown'): got = (hid, pg.evaluate('__TILES.heart.card.q')); break
-        ck(f'{q} ④ 真点房子：卡片弹出、归这一块', bool(got) and got[1] == q, got)
+        own = None
+        if got:
+            hx, hy = [(x, y) for hid, x, y in hs if hid == got[0]][0]
+            own = next(e for e in QS_ALL if M['quarters'][e][0] < hx < M['quarters'][e][0] + M['quarters'][e][2] and M['quarters'][e][1] < hy < M['quarters'][e][1] + M['quarters'][e][3])
+        ck(f'{q} ④ 真点房子：卡片弹出、归先到那块（框重叠带归先到的）', bool(got) and got[1] == own, (got, own))
         if got: pg.screenshot(path=os.path.join(A.out, f'{q}.jpg'), type='jpeg', quality=78)
         pg.evaluate('__TILES.heart.card.close()')
         pg.evaluate(f'(()=>{{const T=__TILES;T.cam.z=0.5}})()'); time.sleep(0.7)
         ck(f'{q} ⑥ 退出街巷级：心跳不画', pg.evaluate('__TILES.heart.drawn') == 0)
-    # ⑤ 重叠带炊烟不重复：同一世界点（取整到 8 px）只在一块里出现
+    # ⑤ 重叠带炊烟不重复：同一世界点（精确到 0.1 px，邻栋不算）只在一块里出现
     seen = {}; dup = []
     for q in QS:
         for x, y in smk.get(q, []):
-            k = (round(x / 8), round(y / 8))
+            k = (round(x, 1), round(y, 1))
             if k in seen and seen[k] != q: dup.append((seen[k], q, k))
             seen.setdefault(k, q)
     ck('⑤ 重叠带炊烟只画一次', not dup, dup[:3])

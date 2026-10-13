@@ -3,44 +3,260 @@
 "name": "南港门口",
 "dur": 1.76,
 "hold": 0.12,
-"frames": 8,
+"frames": 9,
 "zmin": 0.089,
 "land_blank": 0,
 "errs": []
 },
 {
+"name": "金角岸门口",
+"dur": 2.13,
+"hold": 0.1,
+"frames": 10,
+"zmin": 0.423,
+"land_blank": 0,
+"errs": []
+},
+{
 "name": "古城门口",
-"dur": 2.04,
+"dur": 2.22,
+"hold": 0.1,
+"frames": 10,
+"zmin": 0.364,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "第四丘门口",
+"dur": 1.98,
 "hold": 0.12,
 "frames": 10,
-"zmin": 0.47,
+"zmin": 0.524,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "东岬门口",
-"dur": 1.99,
+"dur": 2.32,
+"hold": 0.12,
+"frames": 11,
+"zmin": 0.319,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "西坡门口",
+"dur": 2.53,
 "hold": 0.1,
+"frames": 13,
+"zmin": 0.243,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "墙外门口",
+"dur": 1.93,
+"hold": 0.12,
+"frames": 10,
+"zmin": 0.563,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "角湾门口",
+"dur": 2.41,
+"hold": 0.12,
 "frames": 12,
-"zmin": 0.511,
+"zmin": 0.29,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "南岸门口",
-"dur": 2.15,
+"dur": 2.14,
+"hold": 0.12,
+"frames": 11,
+"zmin": 0.407,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "狄奥多西港",
+"dur": 2.07,
+"hold": 0.12,
+"frames": 11,
+"zmin": 0.457,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "狄奥多西粮仓",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.458,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "亚历山大粮仓",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.508,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "大喷泉",
+"dur": 1.84,
+"hold": 0.12,
+"frames": 9,
+"zmin": 0.609,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "狄奥多西广场",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.531,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "尤利安港",
+"dur": 1.71,
+"hold": 0.12,
+"frames": 9,
+"zmin": 0.73,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "南港火场",
+"dur": 1.84,
+"hold": 0.12,
+"frames": 10,
+"zmin": 0.616,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "圣使徒教堂",
+"dur": 2.12,
+"hold": 0.12,
+"frames": 11,
+"zmin": 0.419,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "余烬市",
+"dur": 1.78,
+"hold": 0.12,
+"frames": 9,
+"zmin": 0.658,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "大水神殿",
+"dur": 1.66,
+"hold": 0.12,
+"frames": 8,
+"zmin": 0.773,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "金角仓库",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.096,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "金角塔",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 9,
+"zmin": 1.419,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "大教堂",
+"dur": 1.78,
 "hold": 0.1,
-"frames": 15,
-"zmin": 0.399,
+"frames": 9,
+"zmin": 0.677,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "特罗阿德粮仓",
+"dur": 1.73,
+"hold": 0.12,
+"frames": 9,
+"zmin": 0.707,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "圣安娜斯塔西娅教堂",
+"dur": 1.65,
+"hold": 0.12,
+"frames": 8,
+"zmin": 0.811,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "拜占斯卫城",
+"dur": 1.86,
+"hold": 0.1,
+"frames": 9,
+"zmin": 0.599,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "四柱廊集市",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.149,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "建城者广场",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 7,
+"zmin": 0.971,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "里程碑门",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.123,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "大皇宫",
-"dur": 1.57,
+"dur": 1.5,
 "hold": 0.12,
-"frames": 10,
-"zmin": 0.859,
+"frames": 8,
+"zmin": 1.21,
 "land_blank": 0,
 "errs": []
 },
@@ -49,43 +265,106 @@
 "dur": 1.5,
 "hold": 0.12,
 "frames": 8,
-"zmin": 1.218,
+"zmin": 1.207,
 "land_blank": 0,
 "errs": []
 },
 {
-"name": "拜占斯卫城",
-"dur": 1.66,
-"hold": 0.1,
+"name": "圣和平教堂",
+"dur": 1.5,
+"hold": 0.12,
 "frames": 8,
-"zmin": 0.776,
+"zmin": 1.079,
 "land_blank": 0,
 "errs": []
 },
 {
-"name": "金角塔",
-"dur": 1.73,
+"name": "建城者粮仓",
+"dur": 1.87,
 "hold": 0.12,
 "frames": 9,
-"zmin": 0.702,
+"zmin": 0.588,
 "land_blank": 0,
 "errs": []
 },
 {
-"name": "狄奥多西粮仓",
-"dur": 2.31,
+"name": "建城者蓄水池",
+"dur": 1.5,
 "hold": 0.12,
-"frames": 12,
-"zmin": 0.322,
+"frames": 8,
+"zmin": 1.071,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "大水道桥",
+"dur": 2.05,
+"hold": 0.17,
+"frames": 10,
+"zmin": 0.471,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "君士坦提乌斯浴场",
+"dur": 1.56,
+"hold": 0.12,
+"frames": 8,
+"zmin": 0.882,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "莫德斯图斯蓄水池",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 9,
+"zmin": 1.506,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "运水人第二蓄水池",
+"dur": 1.54,
+"hold": 0.12,
+"frames": 8,
+"zmin": 0.909,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "孤寡院",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.333,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "城门兵营",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 9,
+"zmin": 1.28,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "运水人蓄水池",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 9,
+"zmin": 1.314,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "48 年南港大火",
-"dur": 1.5,
+"dur": 1.57,
 "hold": 0.12,
-"frames": 8,
-"zmin": 1.571,
+"frames": 7,
+"zmin": 0.864,
 "land_blank": 0,
 "errs": []
 }

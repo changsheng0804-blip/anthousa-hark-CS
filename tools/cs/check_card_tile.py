@@ -40,13 +40,13 @@ with sync_playwright() as p:
     has = pg.evaluate('!!(window.__TILES&&window.__TILES.heart&&window.__TILES.heart.card)')
     ck('① __TILES.heart.card 存在', has)
     if has:
-        try: pg.wait_for_function('__TILES.heart.ready', timeout=40000)
+        try: pg.wait_for_function(f'!!__TILES.heart.mod("{A.q}")', timeout=40000)
         except Exception as e: ck('① 心跳载好', False, str(e)[:80]); has = False
     if has:
         C = lambda js: pg.evaluate('(()=>{const c=__TILES.heart.card;' + js + '})()')
         body = lambda: pg.inner_html('#cardbody')
         # ② 真点
-        hs = C('return c.houses()'); hs.sort(key=lambda t: (t[1] - quay[0]) ** 2 + (t[2] - quay[1]) ** 2)
+        hs = C(f'return c.houses("{A.q}")'); hs.sort(key=lambda t: (t[1] - quay[0]) ** 2 + (t[2] - quay[1]) ** 2)
         got = None
         for hid, x, y in hs[:12]:
             sx, sy = C(f'return c.screen({x},{y})')
@@ -59,7 +59,8 @@ with sync_playwright() as p:
             time.sleep(0.4); pg.screenshot(path=os.path.join(A.out, 'tap.jpg'), type='jpeg', quality=80)
             pg.click('#cardx'); time.sleep(0.2); ck('② 点 × 关掉', not C('return c.shown'))
             pg.mouse.click(got[3], got[4]); time.sleep(0.25); ck('② 再点开', C('return c.shown'))
-            scr = [C(f'return c.screen({x},{y})') for _, x, y in hs]
+            allh = hs + [t for e in ('nangang','jinjiao','gucheng','siqiu','dongjia','xipo','qiangwai','jiaowan','nanan') if e != A.q for t in C(f'return c.houses("{e}")')]   # 邻块的房子也算（点到邻块的房子会弹邻块的卡）
+            scr = [C(f'return c.screen({x},{y})') for _, x, y in allh]
             empty = None
             for sx in range(80, 1020, 40):
                 for sy in range(60, 650, 40):
@@ -71,7 +72,7 @@ with sync_playwright() as p:
         # ③ 三年抽样
         for Y in M['years']:
             pg.evaluate(f'__TILES.setYear({Y})'); time.sleep(0.8)
-            hs = C('return c.houses()'); step = max(1, len(hs) // A.n); samp = hs[::step][:A.n]
+            hs = C(f'return c.houses("{A.q}")'); step = max(1, len(hs) // A.n); samp = hs[::step][:A.n]
             bad = []; lens = []; nonow = 0; noans = 0; same = 0; chain_err = 0; steps_ok = 0; n = 0
             for hid, x, y in samp:
                 C(f'c.open({hid},"{A.q}")'); h = body(); n += 1
@@ -88,12 +89,17 @@ with sync_playwright() as p:
                     if len(set(ans)) < 3: same += 1
                 if pg.query_selector('#cardbody .cshook [data-p]') and n % 3 == 0:
                     try:
-                        pg.click('#cardbody .cshook [data-p]'); time.sleep(0.05)
+                        for _try in range(3):   # 换时段会重画卡片，点的那一下可能正撞上 DOM 重建，重试
+                            try: pg.click('#cardbody .cshook [data-p]', timeout=3000); break
+                            except Exception: time.sleep(0.15)
+                        time.sleep(0.05)
                         ok = bool(pg.query_selector('#cardbody .csstep'))
                         for k in range(3):
                             nx = pg.query_selector('#cardbody [data-step]:has-text("后来呢")')
                             if not nx: break
-                            nx.click(); time.sleep(0.08)
+                            try: nx.click(timeout=3000)
+                            except Exception: time.sleep(0.15)
+                            time.sleep(0.08)
                         if ok and C('return c.shown') and not clean(body()): steps_ok += 1
                         else: chain_err += 1; print('   链错', hid, ok, C('return c.shown'), body()[:300])
                     except Exception as e: chain_err += 1; print('   链错', hid, str(e)[:100])
@@ -107,7 +113,7 @@ with sync_playwright() as p:
             if Y == M['years'][-1]: pg.screenshot(path=os.path.join(A.out, f'card{Y}.jpg'), type='jpeg', quality=80)
         # ⑤ 切年份 / 退出
         pg.evaluate('__TILES.cancelFly();__TILES.setYear(60)'); time.sleep(0.6)
-        hs = C('return c.houses()'); C(f'c.open({hs[len(hs)//2][0]},"{A.q}")'); t60 = pg.inner_text('#cardbody')
+        hs = C(f'return c.houses("{A.q}")'); C(f'c.open({hs[len(hs)//2][0]},"{A.q}")'); t60 = pg.inner_text('#cardbody')
         pg.evaluate('__TILES.setYear(40)'); time.sleep(0.5)
         ck('⑤ 切年份：卡还在、跟着重算', C('return c.shown'), '')
         pg.evaluate(f'(()=>{{const T=__TILES;T.cam.z=0.5}})()'); time.sleep(0.8)
@@ -115,7 +121,7 @@ with sync_playwright() as p:
         # ④ 和街区页同一份推演
         pg.evaluate(f'(()=>{{const T=__TILES;T.setYear(60);T.cam.x={quay[0]};T.cam.y={quay[1]};T.cam.z=1.6}})()'); time.sleep(0.8)
         pg.evaluate('__TILES.heart.setClock(10.0,0)')
-        hs = C('return c.houses()'); step = max(1, len(hs) // 18); ids = [h[0] for h in hs[::step][:18]]
+        hs = C(f'return c.houses("{A.q}")'); step = max(1, len(hs) // 18); ids = [h[0] for h in hs[::step][:18]]
         T = {}
         for i in ids:
             C(f'c.open({i},"{A.q}")'); T[i] = {k: (pg.inner_html('#cardbody ' + k) if pg.query_selector('#cardbody ' + k) else '') for k in ('h2', '.meta', '.cshook', '.csmore')}
