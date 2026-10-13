@@ -37,6 +37,57 @@ def water_to_palette(img):
     out = cv2.cvtColor(np.clip(N, 0, 255).astype(np.uint8), cv2.COLOR_LAB2RGB).astype(float)
     m = np.asarray(Image.fromarray(blu.astype(np.uint8) * 255).filter(ImageFilter.GaussianBlur(1.5))).astype(float)[..., None] / 255
     return Image.fromarray(np.clip(out * m + f * (1 - m), 0, 255).astype(np.uint8))
+# ── cs34 程序水面：水不再取自画，按全城一个规则生成。深浅看离底账岸线多远，起伏和波纹按世界坐标取（跨街区、跨瓦片连得上），
+# 岸线一种描边。画上落在水区里、又不是水色的东西（栈桥、港墙、停着的船）算地标，原样留着。
+FRm = json.load(open(Q + 'frame.json'))['frame']; PXU = W / FRm[2]
+WX0, WY0 = FRm[0] * PXU, FRm[1] * PXU            # 本街区左上角的世界像素坐标
+def _hash(ix, iy, s=0):
+    h = (ix * 374761393 + iy * 668265263 + s * 2147483647) & 0xffffffff
+    h = ((h ^ (h >> 13)) * 1274126177) & 0xffffffff
+    return ((h ^ (h >> 16)) & 0xffff) / 65535.0
+def vnoise(cell, s):
+    ys, xs = np.mgrid[0:H, 0:W].astype(float); gx = (xs + WX0) / cell; gy = (ys + WY0) / cell
+    ix = np.floor(gx).astype(np.int64); iy = np.floor(gy).astype(np.int64); fx = gx - ix; fy = gy - iy
+    fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy)
+    h = lambda a, b: _hash(a, b, s)
+    return (h(ix, iy) * (1 - fx) + h(ix + 1, iy) * fx) * (1 - fy) + (h(ix, iy + 1) * (1 - fx) + h(ix + 1, iy + 1) * fx) * fy
+_land = ~wat
+_landI = Image.fromarray(_land.astype(np.uint8) * 255).resize((W, H), Image.NEAREST).filter(ImageFilter.GaussianBlur(3))
+_landM = np.asarray(_landI) > 127
+_dist = cv2.distanceTransform((~_landM).astype(np.uint8), cv2.DIST_L2, 5)      # 离岸像素数
+_N1 = vnoise(260, 1) * 0.65 + vnoise(90, 2) * 0.35
+WAT = PAL.get('water', {'shallow_lab': [150, 108, 124], 'deep_lab': [104, 114, 126], 'depth_px': 220, 'ripple_cell': 70, 'ripple_p': 0.33})
+def proc_water():
+    t = np.clip(_dist / WAT['depth_px'], 0, 1) ** 0.7
+    t = np.clip(t + (_N1 - 0.5) * 0.35, 0, 1)[..., None]
+    lab = np.array(WAT['shallow_lab'], float) * (1 - t) + np.array(WAT['deep_lab'], float) * t
+    lab[..., 0] += (vnoise(28, 3) - 0.5) * 6
+    rgb = cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2RGB)
+    im = Image.fromarray(rgb); ov = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov)
+    C = WAT['ripple_cell']
+    for gy in range(int(WY0 // C) - 1, int((WY0 + H) // C) + 2):
+        for gx in range(int(WX0 // C) - 1, int((WX0 + W) // C) + 2):
+            if _hash(gx, gy, 7) > WAT['ripple_p']: continue
+            cx = gx * C + _hash(gx, gy, 8) * C - WX0; cy = gy * C + _hash(gx, gy, 9) * C - WY0
+            if not (0 <= cx < W and 0 <= cy < H) or _dist[int(cy), int(cx)] < 40: continue
+            L_ = 14 + _hash(gx, gy, 10) * 18; a = -0.25 + (_hash(gx, gy, 11) - 0.5) * 0.3
+            pts = [(cx + math.cos(a) * L_ * (u - 0.5), cy + math.sin(a) * L_ * (u - 0.5) + math.sin(u * math.pi * 2) * 1.6) for u in [i / 8 for i in range(9)]]
+            d.line(pts, fill=(236, 244, 240, 70), width=2)
+    im = im.convert('RGBA'); im.alpha_composite(ov.filter(ImageFilter.GaussianBlur(0.6)))
+    return np.asarray(im.convert('RGB')).astype(float)
+import math
+_PW = proc_water()
+def water_proc(img):
+    a = np.asarray(img).astype(float)
+    blu = (a[..., 1] > a[..., 0] + 12) & (a[..., 2] > a[..., 0] + 6) & _wzone          # 画上是水色
+    sea = blu & ~_landM                                                                  # 只在底账也是水的地方换
+    m = np.asarray(Image.fromarray(sea.astype(np.uint8) * 255).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(1.2))).astype(float)[..., None] / 255
+    out = _PW * m + a * (1 - m)
+    # 岸线：底账陆地边上、画上也是水的地方描一道（全城同粗同色）
+    edge = (cv2.dilate(_landM.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0) & ~_landM & blu
+    e = np.asarray(Image.fromarray(edge.astype(np.uint8) * 255).filter(ImageFilter.GaussianBlur(0.8))).astype(float)[..., None] / 255 * 0.75
+    out = out * (1 - e) + np.array([62, 72, 58], float) * e
+    return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
 gt = Image.open(Q + 'kits/hill/ground.webp').convert('RGB').resize((48, 48), Image.LANCZOS)
 # 三张画的地面颜色不一样（50 年那张偏暗），统一用一种沙色、一张纹理，免得换年代时地面跳色
 SAND = None
@@ -65,5 +116,5 @@ for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:  
     rs = np.random.RandomState(5); noise = np.asarray(Image.fromarray((rs.rand(H // 64, W // 64) * 255).astype(np.uint8)).resize((W, H), Image.BICUBIC)).astype(float)[..., None]
     ga = ga * 0.5 + sand * 0.5 + (noise - 128) * 0.08
     G = Image.composite(Image.fromarray(np.clip(ga, 0, 255).astype(np.uint8)), A, m)
-    G = water_to_palette(G)
+    G = water_proc(G)
     G.save(Q + f'ground_{K}.jpg', quality=88); print('ground', K, 'sand', sand.round())

@@ -1,7 +1,40 @@
 {
  "说明": "全城一张色板（cs32，CITY_RULES L7）。每个街区、每个年份的地面都往这里靠；不许为某个街区另调。Lab 用 OpenCV 8 位刻度。",
- "sand_rgb": [206, 183, 142],
- "water_lab_mean": [119, 112, 125],
- "water_lab_std": [16, 3, 3],
- "tol": {"sand_dE": 4, "water_dE": 6, "year_dE": 5, "quarter_dE": 6}
+ "sand_rgb": [
+  206,
+  183,
+  142
+ ],
+ "water_lab_mean": [
+  119,
+  112,
+  125
+ ],
+ "water_lab_std": [
+  16,
+  3,
+  3
+ ],
+ "tol": {
+  "sand_dE": 4,
+  "water_dE": 6,
+  "year_dE": 5,
+  "quarter_dE": 6
+ },
+ "water": {
+  "说明": "cs34 程序水面：全城一套参数，深浅按离底账岸线的像素距离，起伏和波纹按世界坐标取",
+  "shallow_lab": [
+   150,
+   108,
+   124
+  ],
+  "deep_lab": [
+   104,
+   114,
+   126
+  ],
+  "depth_px": 220,
+  "ripple_cell": 70,
+  "ripple_p": 0.33
+ }
 }

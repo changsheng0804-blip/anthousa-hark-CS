@@ -25,7 +25,7 @@
   "0": {
    "40": {
     "tiles": 55,
-    "bytes": 1016902,
+    "bytes": 976546,
     "max_tile": 44936,
     "grid": [
      5,
@@ -34,7 +34,7 @@
    },
    "50": {
     "tiles": 55,
-    "bytes": 1182726,
+    "bytes": 1153650,
     "max_tile": 49746,
     "grid": [
      5,
@@ -43,7 +43,7 @@
    },
    "60": {
     "tiles": 55,
-    "bytes": 1227726,
+    "bytes": 1182946,
     "max_tile": 52732,
     "grid": [
      5,
@@ -54,7 +54,7 @@
   "1": {
    "40": {
     "tiles": 18,
-    "bytes": 321360,
+    "bytes": 306608,
     "max_tile": 55298,
     "grid": [
      3,
@@ -63,8 +63,8 @@
    },
    "50": {
     "tiles": 18,
-    "bytes": 377954,
-    "max_tile": 58942,
+    "bytes": 369252,
+    "max_tile": 58936,
     "grid": [
      3,
      6
@@ -72,8 +72,8 @@
    },
    "60": {
     "tiles": 18,
-    "bytes": 393396,
-    "max_tile": 59370,
+    "bytes": 376702,
+    "max_tile": 59368,
     "grid": [
      3,
      6
@@ -83,8 +83,8 @@
   "2": {
    "40": {
     "tiles": 6,
-    "bytes": 95786,
-    "max_tile": 32916,
+    "bytes": 90278,
+    "max_tile": 31478,
     "grid": [
      2,
      3
@@ -92,8 +92,8 @@
    },
    "50": {
     "tiles": 6,
-    "bytes": 114576,
-    "max_tile": 40772,
+    "bytes": 111900,
+    "max_tile": 39174,
     "grid": [
      2,
      3
@@ -101,8 +101,8 @@
    },
    "60": {
     "tiles": 6,
-    "bytes": 119802,
-    "max_tile": 41226,
+    "bytes": 114770,
+    "max_tile": 39938,
     "grid": [
      2,
      3
@@ -112,8 +112,8 @@
   "3": {
    "40": {
     "tiles": 2,
-    "bytes": 28388,
-    "max_tile": 16062,
+    "bytes": 26952,
+    "max_tile": 15134,
     "grid": [
      1,
      2
@@ -121,8 +121,8 @@
    },
    "50": {
     "tiles": 2,
-    "bytes": 33198,
-    "max_tile": 18732,
+    "bytes": 32424,
+    "max_tile": 18436,
     "grid": [
      1,
      2
@@ -130,8 +130,8 @@
    },
    "60": {
     "tiles": 2,
-    "bytes": 33878,
-    "max_tile": 19484,
+    "bytes": 33154,
+    "max_tile": 19182,
     "grid": [
      1,
      2
@@ -141,8 +141,8 @@
   "4": {
    "40": {
     "tiles": 1,
-    "bytes": 8694,
-    "max_tile": 8694,
+    "bytes": 8296,
+    "max_tile": 8296,
     "grid": [
      1,
      1
@@ -150,8 +150,8 @@
    },
    "50": {
     "tiles": 1,
-    "bytes": 9850,
-    "max_tile": 9850,
+    "bytes": 9490,
+    "max_tile": 9490,
     "grid": [
      1,
      1
@@ -159,8 +159,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 9870,
-    "max_tile": 9870,
+    "bytes": 9520,
+    "max_tile": 9520,
     "grid": [
      1,
      1
@@ -178,30 +178,30 @@
  ],
  "time": {
   "40": {
-   "render_s": 1.7,
-   "tiles_s": 2.4
+   "render_s": 1.5,
+   "tiles_s": 2.2
   },
   "50": {
-   "render_s": 1.9,
+   "render_s": 1.7,
    "tiles_s": 2.2
   },
   "60": {
    "render_s": 1.7,
-   "tiles_s": 2.3
+   "tiles_s": 2.2
   }
  },
  "psnr": {
   "40": {
-   "jinjiao": 37.6,
+   "jinjiao": 37.8,
    "nangang": 36.2
   },
   "50": {
-   "jinjiao": 36.9,
-   "nangang": 35.7
+   "jinjiao": 37.1,
+   "nangang": 35.8
   },
   "60": {
-   "jinjiao": 36.7,
-   "nangang": 35.6
+   "jinjiao": 36.9,
+   "nangang": 35.7
   }
  },
  "water_cell": 8,
@@ -213,16 +213,16 @@
    60
   ],
   "ground_bytes": {
-   "40": 736218,
-   "50": 745890,
-   "60": 736882
+   "40": 689204,
+   "50": 713568,
+   "60": 684524
   },
   "vec_tiles": 48,
   "vec_bytes": 6542586,
-  "vec_gzip": 1293774,
+  "vec_gzip": 1293772,
   "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 6.7
+  "seconds": 6.6
  },
- "total_s": 20.2
+ "total_s": 19.0
 }
