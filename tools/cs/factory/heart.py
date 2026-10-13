@@ -363,7 +363,20 @@ def main():
         print(f'pier spots {len(pier_spots)}, on pier {onp}, trails ending on a pier {hit} / {tot}'); return
     I = lambda v: [I(x) for x in v] if isinstance(v, (list, tuple)) else int(v)
     ships = [{**s, 'at': I(s['at']), 'path': I(s['path'])} for s in ships]; spots, wall, route, bol = I(spots), I(wall), I(route), I(bol)
-    out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'pier_spots': I(pier_spots), 'pier_from': pier_from, 'docks': docks, 'harbor_from': hb_from, 'wall': wall, 'route': route,
+    # cs25 · 船多少跟着码头长：能靠的岸线 = 港墙内侧那段 + 每座建成栈桥两边；船按领头大船在先的顺序，岸线够几条就来几条（建城 60 年满额）
+    def _berth(Y):
+        L = math.hypot(wall[1][0] - wall[0][0], wall[1][1] - wall[0][1]) if Y >= hb_from else 0
+        for d_ in docks:
+            if d_['from'] <= Y: L += 2 * (max(r_[1] + r_[3] for r_ in d_['rects']) - min(r_[1] for r_ in d_['rects']))
+        return L
+    _full = _berth(60) or 1; _ord = sorted(range(len(ships)), key=lambda i: -int(bool(ships[i].get('main'))))
+    ship_from = [None] * len(ships)
+    for Y in range(hb_from, 61):
+        n_ = max(1, min(len(ships), round(len(ships) * _berth(Y) / _full)))
+        for i in _ord[:n_]:
+            if ship_from[i] is None: ship_from[i] = Y
+    ship_from = [v if v is not None else 60 for v in ship_from]
+    out = {'ship_from': ship_from, 'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'pier_spots': I(pier_spots), 'pier_from': pier_from, 'docks': docks, 'harbor_from': hb_from, 'wall': wall, 'route': route,
            'drift': [int(nx * 20), int(ny * 20)], 'walk': walk, 'derived': f'heart.py 从底账算（建城 {Y} 年的陆地、港口、粮仓 {g0["id"]}、路、房子）'}
     out.pop('enter', None)
     # 目检图

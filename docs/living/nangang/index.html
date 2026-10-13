@@ -794,7 +794,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   FLEET.crowd=function(Y){if(FLEET.cache[Y])return FLEET.cache[Y];const r=rng(hash('fleet'+Y));const out=[];
     const hs=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach).sort((a,b)=>dQ(a.cx,a.cy)-dQ(b.cx,b.cy));
     for(const h of hs){const hh=household(h);const F=famAt(hh,Y);const al=aliveAt(hh,Y);if(!al.length)continue;
-      if(SPR[F.trade]&&out.filter(c=>c.kind==='work').length<C.max){const P=trail(WK.quay,h.cx,h.cy);if(P){const e=P[P.length-1];
+      if(SPR[F.trade]&&out.filter(c=>c.kind==='work').length<Math.round(C.max*FLEET.shipN(Y)/ships.length)){const P=trail(WK.quay,h.cx,h.cy);if(P){const e=P[P.length-1];
         out.push({kind:'work',trade:F.trade,h,sp:sp(SPR[F.trade]),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*6,e[1]+(r()-.5)*4],go:7.4+r()*1.8,back:[16.8,17.3,17.8][out.filter(c=>c.kind==='work').length%3]+r()*.2,ph:r()})}}
       const kid=al.find(p=>Y-p.b>=6&&Y-p.b<=13);
       if(kid&&dQ(h.cx,h.cy)<C.reach*.7&&out.filter(c=>c.kind==='kid').length<C.kids){const P=trail(WK.wall,h.cx,h.cy);if(P){const e=P[P.length-1];
@@ -839,6 +839,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     let p=m.spot.slice();if(climax&&m.kind==='work'){const k=sm((c-C.snap)*4)*(1-sm((c-C.hold-.3)*3));const p2=lerp(p,C.bollard,.35*k);if(FLEET_walkable(p2[0],p2[1]))p=p2}
     if(!FLEET_walkable(p[0],p[1]))p=m.path[m.path.length-1].slice();return[p[0],p[1],false,false]};
   FLEET.shipPos=(s,c)=>shipPos(s,c);
+  FLEET.shipOn=(s,Y)=>!C.ship_from||C.ship_from[s.i]<=Y;FLEET.shipN=Y=>ships.filter(s=>FLEET.shipOn(s,Y)).length;   /* cs25 */
   FLEET.tavPeople=h=>{const r2=rng(hash('tv'+h.id));const o=[];for(let k=0;k<7;k++){const a=r2()*6.28,d=9+r2()*9;const x=h.cx+Math.cos(a)*d,y=h.cy+Math.sin(a)*d*.6+4;if(FLEET_walkable(x,y))o.push([x,y])}return o};   /* 酒馆门口挤的人也不下水 */
   function drawBig(x,y,a,s,furl){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.fillStyle='rgba(20,30,40,.25)';ctx.beginPath();ctx.ellipse(1.5*s,2.5*s,15*s,5.5*s,0,0,7);ctx.fill();
     ctx.fillStyle='#4e321d';ctx.beginPath();ctx.ellipse(0,0,15*s,5.2*s,0,0,7);ctx.fill();ctx.fillStyle='#7a5434';ctx.beginPath();ctx.ellipse(0,-.6*s,12.5*s,3.4*s,0,0,7);ctx.fill();
@@ -867,7 +868,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   FLEET.draw=function(t,vis){FLEET.dockDraw(t);FLEET.on=FLEET.active(YEAR);FLEET.slow=false;if(!FLEET.on)return;const c=clock,Y=YEAR,R=FLEET.crowd(Y);
     FLEET.slow=c>=C.snap-.35&&c<C.hold+.3;
     // 船
-    for(const s of ships){if(c<s.t0)continue;const[x,y,a,u]=shipPos(s,c);if(!vis(x,y,80))continue;drawBig(x,y,a,s.main?1.9:1.45,u>=.98&&c>C.hold+.3);
+    for(const s of ships){if(c<s.t0||!FLEET.shipOn(s,Y))continue;const[x,y,a,u]=shipPos(s,c);   /* cs25：岸线够几条船才来几条 */if(!vis(x,y,80))continue;drawBig(x,y,a,s.main?1.9:1.45,u>=.98&&c>C.hold+.3);
       if(s.main&&u>=.98){const b=C.bollard;const sx=x+Math.cos(s.ang)*-22,sy=y+Math.sin(s.ang)*-22;
         if(c<C.snap||c>=C.hold){ctx.strokeStyle='#d9c08a';ctx.lineWidth=1.6/cam.z;ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo((sx+b[0])/2,(sy+b[1])/2+6,b[0],b[1]);ctx.stroke()}
         else{ctx.strokeStyle='#d9c08a';ctx.lineWidth=1.6/cam.z;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+8,sy+10);ctx.moveTo(b[0],b[1]);ctx.lineTo(b[0]+6,b[1]+9);ctx.stroke()}}}
@@ -925,7 +926,7 @@ function csMovers(Y){const out=[];if(!SCENE.fleet||!FLEET)return out;const add=(
   const cw=[],tv=[],sh=[];const R=Fl.crowd(Y);
   for(let cl=6;cl<23.5;cl+=.25)for(const m of R.crowd){const q=Fl.pos(m,cl,R.g);if(q)cw.push([q[0],q[1]])}
   for(const h of R.tav)for(const q of Fl.tavPeople(h))tv.push(q);
-  for(let cl=6;cl<23.5;cl+=.25)for(const s of Fl.ships){if(cl<s.t0)continue;const p=Fl.shipPos(s,cl);sh.push([p[0],p[1]])}
+  for(let cl=6;cl<23.5;cl+=.25)for(const s of Fl.ships){if(cl<s.t0||!Fl.shipOn(s,Y))continue;const p=Fl.shipPos(s,cl);sh.push([p[0],p[1]])}
   add('码头人群','land',cw);add('酒馆门口的人','land',tv);add('大船队','water',sh);
   const outside=a=>a.map(s=>[s.x,s.y]);
   add('旧版停泊船','off',ships.map(s=>[s.x,s.y]));add('旧版海上帆影','off',CL);

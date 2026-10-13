@@ -78,7 +78,9 @@ const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7
  for(const Y of [36,40,45,50,57,60]){const R=FS.crowd(Y);const dead=D.filter(d=>d.from>Y);
   for(const m of R.crowd){if(dead.some(d=>inD(m.spot[0],m.spot[1],d)||m.path.some(p=>inD(p[0],p[1],d)))){on++;if(on<3)console.log('ON UNBUILT DOCK',Y,m.h.id)}}}
  const work=[40,45,50,57].map(Y=>D.filter(d=>d.from>Y&&d.from-2<=Y).length);
- console.log('docks',D.length,'built years',[...yrs].sort().join(','),'people on unbuilt docks',on,'docks under construction (40/45/50/57)',work.join(','),bad3.join(' '));
+ {const Fl=w.__fleet.FLEET;if(Fl&&Fl.shipN){const ys=[34,40,45,48,57,60],ns=ys.map(Y=>Fl.shipN(Y)),pr=ys.map(Y=>Fl.crowd(Y).crowd.filter(c=>c.kind==='work').length);let mono=true;for(let k=1;k<ns.length;k++)if(ns[k]<ns[k-1]||pr[k]<pr[k-1]*0.8)mono=false;
+  console.log('ships by year',ys.map((Y,k)=>Y+':'+ns[k]+'/'+pr[k]).join(' '),mono&&ns[0]<ns[ns.length-1]?'ok':'BAD ships do not grow with docks')}}
+console.log('docks',D.length,'built years',[...yrs].sort().join(','),'people on unbuilt docks',on,'docks under construction (40/45/50/57)',work.join(','),bad3.join(' '));
  if(bad3.length||on)bad++}
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);
