@@ -1,0 +1,288 @@
+{
+"landmarks": [
+{
+"id": "harbor_theodosius",
+"name": "狄奥多西港",
+"x": 910,
+"y": 4720,
+"q": "nangang"
+},
+{
+"id": "horrea_theodosius",
+"name": "狄奥多西粮仓",
+"x": 881,
+"y": 4450,
+"q": "nangang"
+},
+{
+"id": "horrea_alexandrina",
+"name": "亚历山大粮仓",
+"x": 1080,
+"y": 4535,
+"q": "nangang"
+},
+{
+"id": "nymphaeum_maius",
+"name": "大喷泉",
+"x": 1990,
+"y": 3412,
+"q": "nangang"
+},
+{
+"id": "forum_theodosius",
+"name": "狄奥多西广场",
+"x": 1848,
+"y": 3526,
+"q": "nangang"
+},
+{
+"id": "harbor_julian",
+"name": "尤利安港",
+"x": 2182,
+"y": 4656,
+"q": "nangang"
+},
+{
+"id": "fire_ruins",
+"name": "南港火场",
+"x": 763,
+"y": 4459,
+"q": "nangang"
+},
+{
+"id": "church_apostles",
+"name": "圣使徒教堂",
+"x": 624,
+"y": 2258,
+"q": "jinjiao"
+},
+{
+"id": "market_embers",
+"name": "余烬市",
+"x": 1933,
+"y": 2076,
+"q": "jinjiao"
+},
+{
+"id": "nymphaeum_great",
+"name": "大水神殿",
+"x": 2317,
+"y": 3086,
+"q": "gucheng"
+},
+{
+"id": "warehouse_horn",
+"name": "金角仓库",
+"x": 2787,
+"y": 2631,
+"q": "gucheng"
+},
+{
+"id": "tower_horn",
+"name": "金角塔",
+"x": 3099,
+"y": 2574,
+"q": "gucheng"
+},
+{
+"id": "church_megale",
+"name": "大教堂",
+"x": 3654,
+"y": 3768,
+"q": "gucheng"
+},
+{
+"id": "horrea_troadensia",
+"name": "特罗阿德粮仓",
+"x": 2872,
+"y": 2844,
+"q": "gucheng"
+},
+{
+"id": "church_anastasia",
+"name": "圣安娜斯塔西娅教堂",
+"x": 2659,
+"y": 3896,
+"q": "gucheng"
+},
+{
+"id": "fort_acropolis",
+"name": "拜占斯卫城",
+"x": 4035,
+"y": 3356,
+"q": "gucheng"
+},
+{
+"id": "agora_tetrastoon",
+"name": "四柱廊集市",
+"x": 3554,
+"y": 3697,
+"q": "gucheng"
+},
+{
+"id": "forum_founder",
+"name": "建城者广场",
+"x": 2772,
+"y": 3725,
+"q": "gucheng"
+},
+{
+"id": "milion",
+"name": "里程碑门",
+"x": 3384,
+"y": 3804,
+"q": "gucheng"
+},
+{
+"id": "palace_great",
+"name": "大皇宫",
+"x": 3696,
+"y": 4218,
+"q": "gucheng"
+},
+{
+"id": "hippodrome",
+"name": "竞技场",
+"x": 3199,
+"y": 4060,
+"q": "gucheng"
+},
+{
+"id": "church_peace",
+"name": "圣和平教堂",
+"x": 3768,
+"y": 3683,
+"q": "gucheng"
+},
+{
+"id": "granary_founder",
+"name": "建城者粮仓",
+"x": 2403,
+"y": 4323,
+"q": "gucheng"
+},
+{
+"id": "cistern_founder",
+"name": "建城者蓄水池",
+"x": 2957,
+"y": 3924,
+"q": "gucheng"
+},
+{
+"id": "aqb_valley",
+"name": "大水道桥",
+"x": 1368,
+"y": 2741,
+"q": "siqiu"
+},
+{
+"id": "baths_constantius",
+"name": "君士坦提乌斯浴场",
+"x": 455,
+"y": 2645,
+"q": "siqiu"
+},
+{
+"id": "cistern_modestus",
+"name": "莫德斯图斯蓄水池",
+"x": 440,
+"y": 2432,
+"q": "siqiu"
+},
+{
+"id": "cistern_slope",
+"name": "运水人第二蓄水池",
+"x": 341,
+"y": 3313,
+"q": "siqiu"
+},
+{
+"id": "xenon_xerolophos",
+"name": "孤寡院",
+"x": 398,
+"y": 3711,
+"q": "siqiu"
+},
+{
+"id": "barracks_gate",
+"name": "城门兵营",
+"x": 170,
+"y": 4109,
+"q": "xipo"
+},
+{
+"id": "cistern_carriers",
+"name": "运水人蓄水池",
+"x": 227,
+"y": 3697,
+"q": "xipo"
+}
+],
+"quarters": [
+{
+"q": "nangang",
+"name": "南港",
+"x": 1322,
+"y": 4237
+},
+{
+"q": "jinjiao",
+"name": "金角岸",
+"x": 1251,
+"y": 1280
+},
+{
+"q": "gucheng",
+"name": "古城",
+"x": 3142,
+"y": 3555
+},
+{
+"q": "siqiu",
+"name": "第四丘",
+"x": 1322,
+"y": 3214
+},
+{
+"q": "dongjia",
+"name": "东岬",
+"x": 4962,
+"y": 3555
+},
+{
+"q": "xipo",
+"name": "西坡",
+"x": 924,
+"y": 3299
+},
+{
+"q": "qiangwai",
+"name": "墙外",
+"x": 924,
+"y": 5346
+},
+{
+"q": "jiaowan",
+"name": "角湾",
+"x": 3071,
+"y": 1507
+},
+{
+"q": "nanan",
+"name": "南岸",
+"x": 3142,
+"y": 4977
+}
+],
+"events": [
+{
+"id": "fire48",
+"name": "48 年南港大火",
+"year": 48,
+"show_year": 50,
+"x": 763,
+"y": 4459,
+"z": 1.6
+}
+]
+}

@@ -69,7 +69,7 @@ function lifeDraw(){for(const L of LIFE.tiles.values()){
       ctx.fillStyle=w.col;ctx.beginPath();ctx.arc(px,py,1.1,0,6.283);ctx.fill();ctx.fillStyle='#e8c9a0';ctx.beginPath();ctx.arc(px,py-0.9,0.6,0,6.283);ctx.fill()}}}
 const STREET_Z=1.15,SZ0=0.95,SZ1=1.45,vcache=new Map();let vloads=0;
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
-  fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}}).catch(()=>{});
+  fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}else t.miss=true}).catch(()=>{t.miss=true});
   if(vcache.size>60){for(const [kk,v] of vcache){if(vcache.size<=40)break;if(v.ok)vcache.delete(kk)}}return t}
 function gkey(Y){const ks=M.street.ground_keys;return ks.find(k=>Y<=k)??ks[ks.length-1]}
 const SSTY={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.84)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
@@ -91,12 +91,13 @@ function layer(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;let L=
   L={cv,MG,sz,n:0};if(kind==='s'){g.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);paintStreets(g,v.d,Y)}else L.n=paintHouses(g,v.d,Y);
   LAY.set(k,L);while(LAY.size>90)LAY.delete(LAY.keys().next().value);return L}
 function prepStreet(Y,zm,pk){zm=zm||1;pk=pk||PCK;const x0=cam.x-W*pk/2/cam.z,y0=cam.y-H*pk/2/cam.z,x1=cam.x+W*pk/2/cam.z,y1=cam.y+H*pk/2/cam.z,K=gkey(Y);
-  const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr*zm,STREET_Z)/STREET_Z)));
+  const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr*zm,STREET_Z)/STREET_Z)));let wait=false;
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
-    const g=tile('g/'+K,0,tx,ty,true);let gim=null;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im}
-    const v=vtile(tx,ty);if(!gim||!v.ok)continue;
+    const g=tile('g/'+K,0,tx,ty,true);let gim=null,wt=false;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im;else wt=(g&&!g.miss)||(t&&!t.miss)}
+    if(!gim){if(wt)wait=true;continue}/* 这块的地面还在路上（换年份时尤其）：等，别把空地画进离屏层 */
+    const v=vtile(tx,ty);if(!v.ok)continue;
     for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+Y+'_'+zr)){layBudget=1;layer(kd,tx,ty,Y,v,zr,gim);return true}}
-  return false}
+  return wait}
 function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x+W*PCK/2/cam.z,y1=pc.y+H*PCK/2/cam.z;const K=gkey(Y),vs=[];
   layBudget=0;const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr,STREET_Z)/STREET_Z)));
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
@@ -133,7 +134,7 @@ let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡
 function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
 function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
   if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
-function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
+function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;flyStep(now);zoomStep(dt);const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
   let redraw=false,wasDirty=dirty;
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
     const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;else if(prepStreet(YEAR,1.3))dirty=true;
@@ -157,21 +158,73 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     hdrawn=0;if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);
     ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
     for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
-    ctx.setTransform(1,0,0,1,0,0);
+    drawMarks();ctx.setTransform(1,0,0,1,0,0);
     document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}}
   ctx=ctx0;requestAnimationFrame(frame)}
 const ui=document.getElementById('ui');
-for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.textContent=Y+' 年';b.onclick=()=>{if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;[...ui.children].forEach(x=>x.classList.toggle('on',x===b))};ui.appendChild(b)}
+for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.dataset.y=Y;b.textContent=Y+' 年';b.onclick=()=>setYear(Y);ui.appendChild(b)}
 /* 拖、滚轮、双指 */
 let drag=null,pts=new Map();
-c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
+c.addEventListener('pointerdown',e=>{cancelFly();ZT=null;c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
 c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
   if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
   else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
-c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
+c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;if(markHit(e.clientX,e.clientY)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
-c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015))},{passive:false});
-rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
+c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
+/* ── 相机动画器 + 弧线飞行（/goal 2 项 3）：flyTo 走 van Wijk & Nuij 的「先拉高再俯冲」曲线（w=视野宽，ρ=1.42）；
+   飞的路上提前（0.14 的进度）取前方的瓦片、矢量街和层，落地那一帧再等一等本级瓦片/矢量层全到（至多 1 秒）。滚轮缩放走同一个动画器，带缓动。 */
+let FLY=null,ZT=null;const RHO=1.42;
+let PLACES={landmarks:[],quarters:[],events:[]};
+function vwPath(x0,y0,z0,x1,y1,z1){const w0=W/z0,w1=W/z1,dx=x1-x0,dy=y1-y0,d=Math.hypot(dx,dy),r2=RHO*RHO;
+  if(d<w0*1e-4||d<0.5){const sg=w1<w0?-1:1,S=Math.abs(Math.log(w1/w0))/RHO;return {S,at:s=>({x:x1,y:y1,z:W/(w0*Math.exp(sg*RHO*Math.min(s,S)))})}}
+  const b0=(w1*w1-w0*w0+r2*r2*d*d)/(2*w0*r2*d),b1=(w1*w1-w0*w0-r2*r2*d*d)/(2*w1*r2*d),q0=-Math.asinh(b0),q1=-Math.asinh(b1),S=(q1-q0)/RHO;
+  return {S,at:s=>{const u=(w0/r2)*(Math.cosh(q0)*Math.tanh(RHO*s+q0)-Math.sinh(q0)),w=w0*Math.cosh(q0)/Math.cosh(RHO*s+q0),f=u/d;return {x:x0+dx*f,y:y0+dy*f,z:W/w}}}}
+/* 弧线拉得最高也不超过「全城刚好装下」再退 25%：不飞出世界去看空白 */
+function zLow(){return Math.min(W/WW,H/WH)*0.95*0.75}
+function setYear(Y){if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)})}
+function cancelFly(){if(FLY){const F=FLY;FLY=null;F.res({cancelled:true,dur:F.dur,hold:0})}}
+function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z));
+  return new Promise(res=>{if(o.year)setYear(o.year);
+    const p=vwPath(cam.x,cam.y,cam.z,x,y,z);if(p.S<0.02){cam.x=x;cam.y=y;cam.z=z;dirty=true;res({dur:0,hold:0});return}
+    const dur=o.dur||Math.max(1.5,Math.min(3.2,0.7+0.5*p.S));FLY={p,dur,x1:x,y1:y,z1:z,t0:null,res,tEnd:null};prefetchCam(x,y,z,true)})}
+function prefetchCam(x,y,z,st){const sv=[cam.x,cam.y,cam.z];cam.x=x;cam.y=y;cam.z=z;
+  try{const l=Math.max(0,Math.min(NL-1,Math.floor(Math.log2(1/(z*dpr)))));if(vpTiles(l)<=120)prefetchLevel(YEAR,l);
+    if(l>0&&vpTiles(l-1)<=FINE_MAX)prefetchLevel(YEAR,l-1);
+    for(let up=l+1;up<=Math.min(NL-1,l+2);up++)if(vpTiles(up)<=40)prefetchLevel(YEAR,up);/* 粗两级垫底：细的没到，也有粗的顶着 */
+    if(st&&z*dpr>=SZ0*0.8){const x0=x-W*PCK/2/z,y0=y-H*PCK/2/z,x1=x+W*PCK/2/z,y1=y+H*PCK/2/z,K=gkey(YEAR);
+      for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){tile('g/'+K,0,tx,ty,true);vtile(tx,ty)}
+      if(z*dpr>=SZ0)prepStreet(YEAR,1,1.3)}}
+  finally{cam.x=sv[0];cam.y=sv[1];cam.z=sv[2]}}
+/* 视口里还没到手的东西：本级瓦片、街巷级的地面/矢量/层、离屏画布、年份淡入 */
+function pending(){let n=0;const l=level(),ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
+  for(let ty=Math.floor(y0/ts);ty<=Math.floor(y1/ts);ty++)for(let tx=Math.floor(x0/ts);tx<=Math.floor(x1/ts);tx++){const t=tile(YEAR,l,tx,ty);if(t&&!t.ok&&!t.miss)n++}
+  if(cam.z*dpr>=SZ0){const K=gkey(YEAR),zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr,STREET_Z)/STREET_Z)));
+    for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){const v=vtile(tx,ty),g=tile('g/'+K,0,tx,ty,true),t0=tile(YEAR,0,tx,ty);
+      if(!(g&&g.ok)&&!(t0&&t0.ok)){if((g&&!g.miss)||(t0&&!t0.miss))n++;continue}/* 没有地面的格子（世界边上）不会长层，不算在等 */
+      if(!v.ok){if(!v.miss)n++;continue}
+      for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+YEAR+'_'+zr))n++}
+    if(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver)n++}
+  if(fade>0)n++;return n}
+function flyStep(now){const F=FLY;if(!F)return;if(F.t0==null)F.t0=now;const e=u=>u*u*(3-2*u);
+  const t=Math.min(1,(now-F.t0)/1000/F.dur),c=F.p.at(F.p.S*e(t));dirty=true;
+  if(t<1){cam.x=c.x;cam.y=c.y;cam.z=Math.max(zLow(),Math.min(6,c.z));const ta=Math.min(1,t+0.14),ca=F.p.at(F.p.S*e(ta));prefetchCam(ca.x,ca.y,Math.max(zLow(),Math.min(6,ca.z)),t>0.3);return}
+  cam.x=F.x1;cam.y=F.y1;cam.z=F.z1;if(F.tEnd==null)F.tEnd=now;const hold=(now-F.tEnd)/1000;
+  if(hold>0.1&&pending()===0||hold>=1){FLY=null;F.res({dur:F.dur,hold:Math.round(hold*100)/100,pending:pending()})}}
+function zoomStep(dt){if(!ZT)return;const r=Math.log(ZT.z/cam.z);if(Math.abs(r)<0.002){zoomAt(ZT.sx,ZT.sy,ZT.z/cam.z);ZT=null;return}zoomAt(ZT.sx,ZT.sy,Math.exp(r*(1-Math.exp(-dt*12))))}
+/* 落点：九块中心、地标、事件 → 下拉菜单 + 地图上的点（点一下飞过去） */
+function markList(){return [...PLACES.landmarks.map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l'})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e'}))]}
+function drawMarks(){const r=4/cam.z;ctx.lineWidth=1.5/cam.z;ctx.font=(13/cam.z)+'px serif';
+  for(const m of markList()){ctx.fillStyle=m.k==='e'?'#c0392b':'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,r,0,6.283);ctx.fill();ctx.stroke();
+    if(cam.z>=0.3){ctx.fillStyle='#2a1c0c';ctx.fillText(m.name,m.x+r*1.8,m.y+r*0.6)}}}
+function markHit(sx,sy){if(cam.z*dpr>=SZ0)return false;let best=null,bd=14*14;for(const m of markList()){const dx=(m.x-cam.x)*cam.z+W/2-sx,dy=(m.y-cam.y)*cam.z+H/2-sy,d=dx*dx+dy*dy;if(d<bd){bd=d;best=m}}
+  if(best){flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
+fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q of j.quarters)NAMES[q.q]=q.name;const sel=document.createElement('select');sel.className='b';
+  sel.innerHTML='<option value="">飞去…</option>';const grp=(t,items)=>{const g=document.createElement('optgroup');g.label=t;for(const [v,n] of items){const o=document.createElement('option');o.value=v;o.textContent=n;g.appendChild(o)}sel.appendChild(g)};
+  grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件',j.events.map((v,i)=>['e'+i,v.name]));
+  sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else flyTo(j.events[i].x,j.events[i].y,j.events[i].z,{year:j.events[i].show_year})};
+  document.getElementById('ui').appendChild(sel)}).catch(()=>{});
+rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>

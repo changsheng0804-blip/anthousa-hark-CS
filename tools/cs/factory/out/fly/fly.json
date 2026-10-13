@@ -1,0 +1,92 @@
+[
+{
+"name": "南港门口",
+"dur": 1.76,
+"hold": 0.12,
+"frames": 8,
+"zmin": 0.089,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "古城门口",
+"dur": 2.04,
+"hold": 0.12,
+"frames": 10,
+"zmin": 0.47,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "东岬门口",
+"dur": 1.99,
+"hold": 0.1,
+"frames": 12,
+"zmin": 0.511,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "南岸门口",
+"dur": 2.15,
+"hold": 0.1,
+"frames": 15,
+"zmin": 0.399,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "大皇宫",
+"dur": 1.57,
+"hold": 0.12,
+"frames": 10,
+"zmin": 0.859,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "竞技场",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.218,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "拜占斯卫城",
+"dur": 1.66,
+"hold": 0.1,
+"frames": 8,
+"zmin": 0.776,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "金角塔",
+"dur": 1.73,
+"hold": 0.12,
+"frames": 9,
+"zmin": 0.702,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "狄奥多西粮仓",
+"dur": 2.31,
+"hold": 0.12,
+"frames": 12,
+"zmin": 0.322,
+"land_blank": 0,
+"errs": []
+},
+{
+"name": "48 年南港大火",
+"dur": 1.5,
+"hold": 0.12,
+"frames": 8,
+"zmin": 1.571,
+"land_blank": 0,
+"errs": []
+}
+]
