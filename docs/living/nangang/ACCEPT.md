@@ -34,7 +34,7 @@
 - ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 8, on pier 8, trails ending on a pier 1567 / 2683
 - ✅ 港口的口子对上画、船进得了港 —— gates on mouth 2 / 2, ships inside 2, ships entering via mouth 2
 - ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1479 bad 0；同句近邻 574/85544
-- ✅ 每种会动的东西都登记并在该在的地方 —— movers 14 kinds; missing none ; off-domain {} ;
+- ✅ 每种会动的东西都登记并在该在的地方 —— movers 15 kinds; missing none ; off-domain {} ;
 
 ## 定律
 - ✅ 定律三 · 推得出：重跑 heart.py，位置与街和线上一致
@@ -66,7 +66,7 @@
 
 ## 五、假成功
 - ✅ 脉不露面 —— 页面上没有看脉的按钮或图层
-- ✅ 假成功率 5/18 = 28% —— 待评：cs3、cs6、cs21
+- ✅ 假成功率 5/18 = 28% —— 待评：cs3、cs6、cs21、cs22
 - ✅ cs2 的假成功已补成检查（想法留，但露得太多） —— 敲门卡一眼只露一件事
 - ✅ cs5 的假成功已补成检查（看不懂要干嘛；脉应该是地下管线，不该） —— 脉不露面
 - ✅ cs7 的假成功已补成检查（人从海里走过去：码头人群走直线，水和） —— check_fleet.js 人不下水、船不上岸

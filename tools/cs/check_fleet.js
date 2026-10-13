@@ -69,6 +69,17 @@ const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7
  console.log('people standing on piers per year',cnt.join(','),'pier spots',ps.length);/* cs19 暂时放宽：原来要 ≥4 个站位、每年 ≥8 人，其中 3 个站位其实站在船上（查收图抓到）。backlog 1「真栈桥认不全」修好后改回 */ /* cs20：蒙版生成的 60 年画让真栈桥出到 5 个，恢复严格 */ if(ps.length<4||cnt.some(v=>v<8))bad++;
  const lo=[];for(const Y of [50,57,60]){const Rr=FS.crowd(Y);const per=ps.map(s=>Rr.crowd.filter(m=>Math.hypot(m.spot[0]-s[0],m.spot[1]-s[1])<16).length);lo.push(per.join('/'));if(per.some(v=>v<2))bad++}
  console.log('people per pier spot (year 50/57/60, each >=2)',lo.join(' | '))}
+/* cs22 · 码头逐年长（所有者 2026-10-12 提）：栈桥按底账一座座建成。港挖成以前没有；最后一座不晚于最后一个关键年；至少分三个年份建成；
+   每年的人只站在当年已建成的栈桥上，没建成的栈桥上没人、没有站位；建前两年是工地 */
+{const FS=w.__fleet.FLEET,C=FS.C,D=C.docks||[];const yrs=new Set(D.map(d=>d.from));const hb=C.harbor_from||C.from;const last=Math.max(...(w.__anth.keys||[60]));
+ let bad3=[];if(D.length<3)bad3.push('栈桥 '+D.length+' 座');if(yrs.size<3)bad3.push('只在 '+yrs.size+' 个年份建成');
+ if(D.some(d=>d.from<=hb))bad3.push('港挖成那年就有栈桥');if(D.some(d=>d.from>60))bad3.push('60 年还没建完');
+ const inD=(x,y,d)=>d.rects.some(r=>x>=r[0]-2&&x<=r[0]+r[2]+2&&y>=r[1]-2&&y<=r[1]+r[3]+2);let on=0;
+ for(const Y of [36,40,45,50,57,60]){const R=FS.crowd(Y);const dead=D.filter(d=>d.from>Y);
+  for(const m of R.crowd){if(dead.some(d=>inD(m.spot[0],m.spot[1],d)||m.path.some(p=>inD(p[0],p[1],d)))){on++;if(on<3)console.log('ON UNBUILT DOCK',Y,m.h.id)}}}
+ const work=[40,45,50,57].map(Y=>D.filter(d=>d.from>Y&&d.from-2<=Y).length);
+ console.log('docks',D.length,'built years',[...yrs].sort().join(','),'people on unbuilt docks',on,'docks under construction (40/45/50/57)',work.join(','),bad3.join(' '));
+ if(bad3.length||on)bad++}
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
 A.setYear(50);A.clock=12;const m=F.FLEET.crowd(50).crowd.find(m=>m.trade==='搬运工');w.__cs.openHouse(m.h.id);console.log(c.querySelector('h2').textContent,'|',c.querySelector('.now').textContent);
 }catch(e){console.log('ERR',e.stack)}process.exit()},6000);`)

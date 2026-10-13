@@ -244,6 +244,53 @@ def main():
             for want in (cl.max(), cl.max() * 0.5):
                 t_ = int(np.argmin(np.abs(cl - want))); p = [int(ii[t_] * R), int(jj[t_] * R)]
                 if all(math.hypot(p[0] - s_[0], p[1] - s_[1]) >= 24 for s_ in spots + pier_spots): pier_spots.append(p)
+    # cs22 · 码头逐年长（所有者 2026-10-12）：栈桥不是一次建好的。港（底账里离泊位最近的那座）挖成以后，
+    # 栈桥按离泊位从近到远排队，港边 600 像素内住户随年份增长到哪一步，就建成到第几座；建成前两年是工地。
+    harbs = [s_ for s_ in fr['structures'] if s_['type'] == 'harbor' and s_['geom'] == 'polygon']
+    hb = min(harbs, key=lambda s_: math.hypot(*(np.mean(s_['pts'], 0) - np.array(bol)))) if harbs else None
+    hb_from = int(hb['built']) if hb else int(sc['fleet'].get('from', 0))
+    dock_c = []; wall_near = ndi.binary_dilation(wallA, iterations=3)
+    lab_d, n_d = ndi.label(pier_px)
+    for k_ in range(1, n_d + 1):
+        jj, ii = np.nonzero(lab_d == k_)
+        if len(jj) < 30 or math.hypot(ii.mean() * R - bol[0], jj.mean() * R - bol[1]) > 900: continue
+        if wall_near[jj, ii].mean() > 0.3: continue      # 港墙顶（和港一起挖成），不是后来加的栈桥
+        m8 = np.zeros((H8, W8), bool); m8[np.minimum(jj * R // R8, H8 - 1), np.minimum(ii * R // R8, W8 - 1)] = True
+        rects = []
+        for j8 in range(H8):
+            row = m8[j8]
+            if not row.any(): continue
+            on_ = np.flatnonzero(np.diff(np.r_[0, row.astype(int), 0]))
+            for a_, b_ in zip(on_[::2], on_[1::2]): rects.append([int(a_ * R8), int(j8 * R8), int((b_ - a_) * R8), R8])
+        sh_ = shore_d  # 根：栈桥上离底账陆地最近的一点
+        dl = ndi.distance_transform_edt(~landm)[jj, ii]; t0 = int(np.argmin(dl))
+        dock_c.append({'k': k_, 'd': math.hypot(ii.mean() * R - bol[0], jj.mean() * R - bol[1]), 'rects': rects, 'root': [int(ii[t0] * R), int(jj[t0] * R)]})
+    dock_c.sort(key=lambda d: d['d'])
+    lastY = max(k[0] for k in sc['keys'])
+    def demand(y_): return sum(1 for h in hs if h[2] <= y_ < h[3] and math.hypot(np.mean(h[4][0::2]) - bol[0], np.mean(h[4][1::2]) - bol[1]) < 600)
+    dem = {y_: demand(y_) for y_ in range(hb_from, lastY + 1)}
+    lo_, hi_ = dem[hb_from], max(dem[lastY], dem[hb_from] + 1)
+    for n_i, d in enumerate(dock_c):
+        need = lo_ + (n_i + 1) / len(dock_c) * (hi_ - lo_)
+        d['from'] = next((y_ for y_ in range(hb_from + 2, lastY + 1) if dem[y_] >= need), lastY)
+    # 每张关键年画上这座栈桥四周的水色（建成前用它把画上的栈桥盖掉）
+    cols = {}
+    for kk_ in sc['keys']:
+        kY, kf = kk_[0], kk_[1]
+        a_ = np.asarray(Image.open(os.path.join(Q, kf)).convert('RGB').resize((GW, GH), Image.BOX)).astype(int)
+        wk_ = (a_[..., 2] > a_[..., 0] + 15) & (a_[..., 2] > a_[..., 1] - 10)
+        for d in dock_c:
+            mk_ = lab_d == d['k']; ring = ndi.binary_dilation(mk_, iterations=6) & ~ndi.binary_dilation(mk_, iterations=2) & wk_
+            c_ = np.median(a_[ring], 0) if ring.any() else np.median(a_[wk_], 0)
+            d.setdefault('col', {})[str(kY)] = [int(v) for v in c_]
+    docks = [{'from': d['from'], 'rects': d['rects'], 'root': d['root'], 'col': d['col']} for d in dock_c]
+    pier_from = []
+    for p in pier_spots:
+        hit_ = [d['from'] for d in dock_c if lab_d[min(int(p[1] / R), GH - 1), min(int(p[0] / R), GW - 1)] == d['k']]
+        if not hit_:   # 站在港墙顶上（墙和港一起挖成）
+            near = min(dock_c, key=lambda d: min(math.hypot(r_[0] + r_[2] / 2 - p[0], r_[1] + 4 - p[1]) for r_ in d['rects'])) if dock_c else None
+            hit_ = [near['from']] if near and min(math.hypot(r_[0] + r_[2] / 2 - p[0], r_[1] + 4 - p[1]) for r_ in near['rects']) < 12 else [hb_from]
+        pier_from.append(int(hit_[0]))
     spots = spots + pier_spots
     cost8 = np.where(walk8, np.where(road8 | wall8, 1.0, np.where(house8, 6.0, 2.0)), np.inf)
     def field(srcs):
@@ -282,7 +329,7 @@ def main():
         print(f'pier spots {len(pier_spots)}, on pier {onp}, trails ending on a pier {hit} / {tot}'); return
     I = lambda v: [I(x) for x in v] if isinstance(v, (list, tuple)) else int(v)
     ships = [{**s, 'at': I(s['at']), 'path': I(s['path'])} for s in ships]; spots, wall, route, bol = I(spots), I(wall), I(route), I(bol)
-    out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'pier_spots': I(pier_spots), 'wall': wall, 'route': route,
+    out = {'quay': bol, 'bollard': bol, 'ships': ships, 'spots': spots, 'pier_spots': I(pier_spots), 'pier_from': pier_from, 'docks': docks, 'harbor_from': hb_from, 'wall': wall, 'route': route,
            'drift': [int(nx * 20), int(ny * 20)], 'walk': walk, 'derived': f'heart.py 从底账算（建城 {Y} 年的陆地、港口、粮仓 {g0["id"]}、路、房子）'}
     out.pop('enter', None)
     # 目检图
