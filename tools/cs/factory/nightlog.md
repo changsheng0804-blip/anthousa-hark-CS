@@ -9,3 +9,4 @@
 - 2026-10-12 15:4x PT：cs16 已推送 bf2798a，线上验收 62/62 ——Hark（CS线）
 - 2026-10-12 16:4x PT：无上游新提交；改善 backlog 3「人去栈桥」，新检查 check_fleet「people standing on piers」/ accept.py「栈桥上有人站」（修前 0 站位、0 人，修后 5 个、每年 12–24 人）；验收 55/55；快照 cs17；已推送 40f4c27，线上验收 63/63 ——Hark（CS线）
 - 2026-10-12 17:2x PT：合并上游 v20（补回 xerolophos next）；改善 backlog 7 栈桥平均分人，新检查 check_fleet「people per pier spot」（修前 24/0/0/0/0，修后每个 ≥2）；验收 55/55；快照 cs18；推送见下一行 ——Hark（CS线）
+- 2026-10-12 17:3x PT：cs18 已推送 310737d，线上验收见 daily ——Hark（CS线）
