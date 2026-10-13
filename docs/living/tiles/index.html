@@ -67,6 +67,39 @@ function lifeDraw(){for(const L of LIFE.tiles.values()){
     for(const w of L.W){const q=w.q,x=q[0]+(q[2]-q[0])*w.t,y=q[1]+(q[3]-q[1])*w.t,nx=-(q[3]-q[1]),ny=q[2]-q[0],nl=Math.hypot(nx,ny)||1,off=(w.dir>0?1:-1)*Math.min(2,q[4]*0.25);
       const px=x+nx/nl*off,py=y+ny/nl*off;ctx.fillStyle='rgba(40,25,10,.3)';ctx.beginPath();ctx.ellipse(px+.4,py+.6,0.9,0.5,0,0,6.283);ctx.fill();
       ctx.fillStyle=w.col;ctx.beginPath();ctx.arc(px,py,1.1,0,6.283);ctx.fill();ctx.fillStyle='#e8c9a0';ctx.beginPath();ctx.arc(px,py-0.9,0.6,0,6.283);ctx.fill()}}}
+/* ── 街区心跳就地长出来（/goal 2 项 4a）：粮船日、家户推演、炊烟、时钟，取自街区页同一份代码（tile_heart.py 一字不改地剪出来，heart/<q>.js）。
+   进了街区框、放大到街巷级才载入；退出去不画。街区页坐标 = 世界坐标 − 街区框左上角，所以画之前 translate 一下。
+   瓦片页自带的泛泛人船（LIFE）照旧，粮船日是在它上面多出来的那一层。 */
+const HEARTS=['nangang'],HEART={};let HCLK={h:6.0,day:0};const HDAY=240;
+const tkEl=document.createElement('div');tkEl.id='ticker';tkEl.style.cssText='position:fixed;left:50%;bottom:44px;transform:translateX(-50%);max-width:80vw;background:rgba(26,20,12,.82);color:#efe4cc;border:1px solid rgba(212,168,90,.4);border-radius:8px;padding:6px 12px;font-size:13px;opacity:0;transition:opacity .5s;pointer-events:none';document.body.appendChild(tkEl);
+const clkEl=document.createElement('div');clkEl.style.cssText='position:fixed;right:12px;top:12px;background:rgba(26,20,12,.85);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:999px;padding:6px 12px;font-size:13px;display:none';document.body.appendChild(clkEl);
+let tkTimer=0;const HENV_$=id=>id==='tk'?{set textContent(t){tkEl.textContent=t;tkEl.style.opacity=1;clearTimeout(tkTimer);tkTimer=setTimeout(()=>tkEl.style.opacity=0,14000)}}:id==='ticker'?{style:{set opacity(v){}}}:{style:{}};
+const HHOURS=['深夜','深夜','深夜','深夜','凌晨','清晨','清晨','上午','上午','上午','上午','中午','中午','下午','下午','下午','下午','傍晚','傍晚','晚上','晚上','夜里','夜里','夜里'];
+function heartBox(q){return M.quarters[q]}
+function heartNear(q){const [x,y,w,h]=heartBox(q),x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;return x1>x&&x0<x+w&&y1>y&&y0<y+h}
+function heartEnsure(q){let HT=HEART[q];if(HT)return HT;HT=HEART[q]={ready:false,loading:true,drawn:0,q};const B='../'+q+'/';
+  (async()=>{try{const js=await new Promise((ok,no)=>{const s=document.createElement('script');s.src='heart/'+q+'.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+    const [city,SCENE,PPL]=await Promise.all(['city.json','scene.json','people.json'].map(f=>fetch(B+f).then(r=>r.json())));
+    const HD=await fetch(B+(SCENE.street_layout?SCENE.street_layout.houses:'houses.json')).then(r=>r.json());
+    const pplImg=new Image();pplImg.src=B+'people.png';await pplImg.decode().catch(()=>{});
+    const [ox,oy]=heartBox(q);HT.ox=ox;HT.oy=oy;
+    HT.m=window.__HEART[q]({city,HD,SCENE,PPL,pplImg,cam,ctx:()=>ctx,$:HENV_$});
+    /* 炊烟：这一年站着的房子，每十栋一缕（街区页是撒 36 个点；这里跟房子走，天然在陆地上） */
+    HT.smokeY=-1;HT.smokeL=[];HT.ready=true;dirty=true}catch(e){HT.err=String(e);console.error('heart',q,e)}HT.loading=false})();return HT}
+function heartSmokes(HT,Y){if(HT.smokeY!==Y){HT.smokeY=Y;const hh=HT.m.hash;HT.smokeL=HT.m.houses.filter(h=>h.built<=Y&&h.destroyed>Y&&hh("sm"+h.id)%10===0).map(h=>({x:h.cx+3,y:h.cy-5,ph:(hh("sp"+h.id)%1000)/100}))}return HT.smokeL}
+function heartPer(t){return t>=5&&t<9?'morning':t>=9&&t<18?'day':t>=18&&t<21?'evening':'night'}
+function heartStep(dt){for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;if(!heartNear(q))continue;
+    const F=HT.m.FLEET;const sl=F&&F.slow?.3:1;const c0=HCLK.h;HCLK.h=(HCLK.h+dt*24/HDAY*sl)%24;if(HCLK.h<c0)HCLK.day++}}
+function heartDraw(now){const t=now/1000;let any=false;
+  for(const q of HEARTS){const HT=HEART[q];if(!HT)continue;HT.drawn=0;if(!heartNear(q))continue;if(!HT.ready)continue;
+    const m=HT.m;m.YEAR=YEAR;m.clock=HCLK.h;m.dayIdx=HCLK.day;
+    const vx0=cam.x-W/2/cam.z-HT.ox,vy0=cam.y-H/2/cam.z-HT.oy;
+    ctx.save();ctx.translate(HT.ox,HT.oy);const vx1=vx0+W/cam.z,vy1=vy0+H/cam.z,vis=(x,y,mm=40)=>x>vx0-mm&&x<vx1+mm&&y>vy0-mm&&y<vy1+mm;
+    const per=heartPer(HCLK.h),str=per==='morning'||per==='evening'?1:.55;
+    for(const s of heartSmokes(HT,YEAR)){if(!vis(s.x,s.y,120))continue;HT.drawn++;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
+    if(m.FLEET){m.FLEET.draw(t,vis);if(m.FLEET.on)HT.drawn+=1}
+    ctx.restore();any=true}
+  if(any){const hr=Math.floor(HCLK.h);clkEl.style.display='block';clkEl.textContent=HHOURS[hr]+' '+(hr%12||12)+' 时'}else clkEl.style.display='none'}
 const STREET_Z=1.15,SZ0=0.95,SZ1=1.45,vcache=new Map();let vloads=0;
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
   fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}else t.miss=true}).catch(()=>{t.miss=true});
@@ -146,12 +179,12 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
     if(wasDirty)lifeSync(YEAR);
     if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
-    lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);
+    lifeStep(dt);heartStep(dt);for(const q of HEARTS)if(heartNear(q))heartEnsure(q);ctx.setTransform(1,0,0,1,0,0);
     if(sA<1){const n=paintedPass();if(!redraw)drawn=n}else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
     if(pc.ok){ctx.globalAlpha=sA;const kz=cam.z/pc.z;ctx.drawImage(off,Math.round(((W/2+(pc.x-cam.x)*cam.z)*dpr)-off.width*kz/2),Math.round(((H/2+(pc.y-cam.y)*cam.z)*dpr)-off.height*kz/2),off.width*kz,off.height*kz);
-    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
+    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();heartDraw(now);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
     ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
-  else{pc.ok=false;if(cam.z*dpr>=SZ0*0.8&&prepStreet(YEAR,1,1))dirty=true;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
+  else{pc.ok=false;for(const q of HEARTS){if(HEART[q])HEART[q].drawn=0}clkEl.style.display='none';if(cam.z*dpr>=SZ0*0.8&&prepStreet(YEAR,1,1))dirty=true;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
   if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
   if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
@@ -225,6 +258,13 @@ fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q 
   grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件',j.events.map((v,i)=>['e'+i,v.name]));
   sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else flyTo(j.events[i].x,j.events[i].y,j.events[i].z,{year:j.events[i].show_year})};
   document.getElementById('ui').appendChild(sel)}).catch(()=>{});
-rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get flying(){return !!FLY},vwPath};
+const HEARTAPI={get ready(){const H=HEART.nangang;return !!(H&&H.ready)},get drawn(){return HEARTS.reduce((a,q)=>a+(HEART[q]?HEART[q].drawn:0),0)},get clock(){return HCLK.h},
+  setClock(h,d){HCLK.h=h;HCLK.day=d||0;dirty=true},
+  entities(q){q=q||'nangang';const HT=HEART[q];const o={people:[],ships:[]};if(!HT||!HT.ready)return o;const m=HT.m,F=m.FLEET;m.YEAR=YEAR;m.clock=HCLK.h;m.dayIdx=HCLK.day;if(!F||!F.active(YEAR))return o;
+    const c=HCLK.h,R=F.crowd(YEAR);for(const p of R.crowd){const r=F.pos(p,c,R.g);if(r)o.people.push([r[0]+HT.ox,r[1]+HT.oy,p.kind])}
+    if(c>=18.6&&c<23.6)R.tav.forEach(h=>F.tavPeople(h).forEach(([x,y])=>o.people.push([x+HT.ox,y+HT.oy,'tav'])));
+    for(const s of F.ships){if(c<s.t0)continue;const r=F.shipPos(s,c);o.ships.push([r[0]+HT.ox,r[1]+HT.oy])}return o},
+  smokes(h,q){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return {n:0,str:0,pts:[]};const per=heartPer(h);return {n:heartSmokes(HT,YEAR).length,str:per==='morning'||per==='evening'?1:.55,pts:heartSmokes(HT,YEAR).map(s=>[s.x+HT.ox,s.y+HT.oy])}}};
+rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>

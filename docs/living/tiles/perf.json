@@ -1,9 +1,9 @@
 {
- "url": "http://127.0.0.1:35187/tiles/",
+ "url": "http://127.0.0.1:36925/tiles/",
  "steps": [
   {
    "step": "全城一屏（首屏 0.8s）",
-   "fps": 60.3,
+   "fps": 60.1,
    "worst_ms": 17,
    "heap_mb": 0.9,
    "drawn": 14,
@@ -13,60 +13,60 @@
    "cache": 53,
    "vtiles": 0,
    "requests": 24,
-   "mb": 0.39
+   "mb": 0.4
   },
   {
    "step": "街巷级最密处",
-   "fps": 60.2,
+   "fps": 60.6,
    "worst_ms": 17,
-   "heap_mb": 11.5,
+   "heap_mb": 68.5,
    "drawn": 9,
    "houses": 2748,
    "walkers": 288,
    "ships": 11,
    "cache": 87,
    "vtiles": 25,
-   "requests": 77,
-   "mb": 4.88
+   "requests": 83,
+   "mb": 5.74
   },
   {
    "step": "街巷级横穿全城 10 秒",
    "fps": 58.8,
    "worst_ms": 33,
-   "heap_mb": 13.9,
+   "heap_mb": 31.4,
    "cache": 147,
    "vtiles": 54,
    "walkers": 22,
-   "requests": 181,
-   "mb": 9.85
+   "requests": 187,
+   "mb": 10.71
   },
   {
    "step": "换到 40 年",
    "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 11.7,
+   "heap_mb": 21.4,
    "drawn": 12,
    "houses": 147,
    "walkers": 19,
    "ships": 44,
    "cache": 177,
    "vtiles": 54,
-   "requests": 205,
-   "mb": 9.91
+   "requests": 211,
+   "mb": 10.77
   },
   {
    "step": "拉回全城",
-   "fps": 60.1,
+   "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 11.8,
+   "heap_mb": 21.5,
    "drawn": 4,
    "houses": 0,
    "walkers": 0,
    "ships": 0,
    "cache": 210,
    "vtiles": 54,
-   "requests": 210,
-   "mb": 9.99
+   "requests": 216,
+   "mb": 10.85
   }
  ]
 }
