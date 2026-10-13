@@ -38,10 +38,10 @@ FILL = np.array([255, 0, 255], np.int16)  # 探针色 #ff00ff（BGR 同）
 VW, VH = 960, 600
 def blanks(img, cam, dbg=None):
     """整块品红、且四个角都落在有瓦片的世界格里的 8×8 块数（瓦片边上被半块切到的不算）"""
-    z = cam['z']; nY, nX = VH // 8, VW // 8; inw = np.ones((nY, nX), bool)
+    z = cam['z']; ty_ = np.cos(cam.get('tilt', 0)); nY, nX = VH // 8, VW // 8; inw = np.ones((nY, nX), bool)
     for ox in (0, 7):
         for oy in (0, 7):
-            ys, xs = np.mgrid[0:nY, 0:nX]; wx = cam['x'] + (xs * 8 + ox + .5 - VW / 2) / z; wy = cam['y'] + (ys * 8 + oy + .5 - VH / 2) / z
+            ys, xs = np.mgrid[0:nY, 0:nX]; wx = cam['x'] + (xs * 8 + ox + .5 - VW / 2) / z; wy = cam['y'] + (ys * 8 + oy + .5 - VH / 2) / (z * ty_)
             txs = np.floor(wx / TP).astype(int); tys = np.floor(wy / TP).astype(int)
             inw &= np.vectorize(lambda a, b: (a, b) in have)(txs, tys)
     eq = (np.abs(img.astype(np.int16) - FILL).max(axis=2) <= 8)
@@ -49,9 +49,10 @@ def blanks(img, cam, dbg=None):
     if dbg is not None:
         for (y, x) in zip(*np.nonzero(blk)): cv2.rectangle(dbg, (x * 8, y * 8), (x * 8 + 7, y * 8 + 7), (0, 255, 0), 1)
     return int(blk.sum())
-def jump(prev, cur, k):
+def jump(prev, cur, k, ky=None):
+    ky = k if ky is None else ky
     g0 = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY).astype(np.float32); g1 = cv2.cvtColor(cur, cv2.COLOR_BGR2GRAY).astype(np.float32)
-    Mx = np.float32([[k, 0, VW / 2 * (1 - k)], [0, k, VH / 2 * (1 - k)]]); w = cv2.warpAffine(g0, Mx, (VW, VH), flags=cv2.INTER_LINEAR)
+    Mx = np.float32([[k, 0, VW / 2 * (1 - k)], [0, ky, VH / 2 * (1 - ky)]]); w = cv2.warpAffine(g0, Mx, (VW, VH), flags=cv2.INTER_LINEAR)
     x0, x1, y0, y1 = int(VW * .2), int(VW * .8), int(VH * .2), int(VH * .8)
     a = cv2.GaussianBlur(w[y0:y1, x0:x1], (5, 5), 0); b = cv2.GaussianBlur(g1[y0:y1, x0:x1], (5, 5), 0)
     return float(np.abs(a - b).mean())
@@ -68,16 +69,16 @@ with sync_playwright() as p:
     pg.evaluate("Y=>__TILES.setYear(Y)", A.year); pg.wait_for_timeout(1500)
     z0 = pg.evaluate("()=>__TILES.cam.z")
     pg.evaluate("([x,y])=>{const T=__TILES;T.cam.x=x;T.cam.y=y;T.zoomAt(innerWidth/2,innerHeight/2,1)}", list(door)); pg.wait_for_timeout(1500)
-    K = (A.zmax / z0) ** (1 / A.steps); prev = None
-    RAF2 = "k=>new Promise(r=>{__TILES.zoomAt(innerWidth/2,innerHeight/2,k);requestAnimationFrame(()=>requestAnimationFrame(()=>r({x:__TILES.cam.x,y:__TILES.cam.y,z:__TILES.cam.z,l:__TILES.level()})))})"
+    K = (A.zmax / z0) ** (1 / A.steps); prev = None; ptilt = 0.0
+    RAF2 = "k=>new Promise(r=>{__TILES.zoomAt(innerWidth/2,innerHeight/2,k);requestAnimationFrame(()=>requestAnimationFrame(()=>r({x:__TILES.cam.x,y:__TILES.cam.y,z:__TILES.cam.z,l:__TILES.level(),tilt:__TILES.tilt||0})))})"
     for i in range(A.steps + 1):
         cam = pg.evaluate(RAF2, 1 if i == 0 else K)
         img = cv2.imdecode(np.frombuffer(pg.screenshot(), np.uint8), cv2.IMREAD_COLOR)
-        bl = blanks(img, cam); j = jump(prev, img, K) if prev is not None else 0.0
-        rows.append(dict(i=i, z=round(cam['z'], 4), level=cam['l'], blank=bl, jump=round(j, 2)))
+        bl = blanks(img, cam); j = jump(prev, img, K, K * np.cos(cam['tilt']) / np.cos(ptilt)) if prev is not None else 0.0
+        rows.append(dict(i=i, z=round(cam['z'], 4), level=cam['l'], tilt=round(float(np.degrees(cam['tilt'])), 1), blank=bl, jump=round(j, 2)))
         if bl: blanks(img, cam, img2 := img.copy()); cv2.imwrite(os.path.join(A.out, f'z{i:03d}_blank.jpg'), img2, [cv2.IMWRITE_JPEG_QUALITY, 80])
         if bl or j > 1.5 or i % 25 == 0: cv2.imwrite(os.path.join(A.out, f'z{i:03d}.jpg'), img, [cv2.IMWRITE_JPEG_QUALITY, 80])
-        prev = img
+        prev = img; ptilt = cam['tilt']
     b.close()
 for k, r in enumerate(rows):
     if k == 0: r['spike'] = False; continue

@@ -36,8 +36,13 @@ canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;dis
 (async()=>{
 const M=await fetch('meta.json').then(r=>r.json());const TP=M.tile_px,NL=Object.keys(M.levels).length;
 const NAMES={nangang:'南港',jinjiao:'金角岸'};
-const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
-function rs(){W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;off.width=Math.ceil(W*PCK*dpr);off.height=Math.ceil(H*PCK*dpr);c.style.width=W+'px';c.style.height=H+'px';dirty=true;cver++}
+const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,Hv,dpr=Math.min(2,window.devicePixelRatio||1);
+/* ── 微倾（/goal 2 项 6）：H 是「摊平的视野高」。倾角 a>0 时画布画 H=Hv/cos a 行，再用 CSS scaleY(cos a) 压回 Hv 行，就是一个绕屏幕中心的俯仰；
+   画布和离屏一直按最大倾角分配，所以倾角随缩放连续变，不重新分配。指针的 y 一律先从屏幕坐标换成摊平坐标（y·H/Hv）。 */
+const AMAX=36*Math.PI/180,TZ0=2.3,TZ1=5.2;/* 倾角是 log z 的平滑步函数：z 每放大 1%，倾角最多变 0.7° */
+function tiltOf(z){const t=Math.max(0,Math.min(1,Math.log(Math.max(z*dpr,1e-6)/TZ0)/Math.log(TZ1/TZ0)));return AMAX*t*t*(3-2*t)}
+function rs(){W=innerWidth;Hv=innerHeight;const Hm=Math.ceil(Hv/Math.cos(AMAX));H=Hv/Math.cos(tiltOf(cam.z));c.width=W*dpr;c.height=Math.ceil(Hm*dpr);off.width=Math.ceil(W*PCK*dpr);off.height=Math.ceil(Hm*PCK*dpr);c.style.width=W+'px';c.style.height=Hm+'px';c.style.transformOrigin='0 0';c.style.transform=`scaleY(${Hv/H})`;dirty=true;cver++}
+function tiltStep(){const nh=Hv/Math.cos(tiltOf(cam.z));if(Math.abs(nh-H)>1e-6){H=nh;c.style.transform=`scaleY(${Hv/H})`;dirty=true}}
 let dirty=true,cver=0;const PCK=1.6,pc={ok:false};addEventListener('resize',rs);
 const WW=M.grid[0]*TP,WH=M.grid[1]*TP;   /* 级 0 像素坐标 */
 const cam={x:WW/2,y:WH/2,z:Math.min(innerWidth/WW,innerHeight/WH)*0.95};
@@ -109,6 +114,7 @@ function cardClose(){if(CARDQ){const HT=HEART[CARDQ];if(HT&&HT.m){HT.m.closeCard
 document.getElementById('cardx').onclick=cardClose;
 cardEl.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-q],[data-sp],[data-go],[data-p],[data-pf],[data-step]');if(!t||!CARDQ)return;e.preventDefault();const HT=HEART[CARDQ];cardRun(HT,()=>HT.m.cardClick(t));dirty=true});
 function heartTap(wx,wy){if(streetAlpha()<.5)return false;
+  if(tiltOf(cam.z)>0.02){const u=uprightAt(wx,wy);if(u){wx=u[0];wy=u[1]}}/* 倾斜里房子立起来了：点在屋顶上，就当点了那栋房子的脚印中心 */
   for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;const [x,y,w,h]=heartBox(q);if(!(wx>x&&wx<x+w&&wy>y&&wy<y+h))continue;
     const hs=HT.m.nearestHouse(wx-HT.ox,wy-HT.oy,YEAR,Math.max(14,40/cam.z));
     if(hs){if(CARDQ&&CARDQ!==q)cardClose();CARDQ=q;HT.yo=null;cardRun(HT,()=>HT.m.openHouse(hs.id));dirty=true;return true}
@@ -199,7 +205,7 @@ function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x
     const v=vtile(tx,ty);if(!gim)continue;
     if(v.ok){const L=layer('s',tx,ty,Y,v,zr,gim);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);drawn++}}else{ctx.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);drawn++}
     if(v.ok)vs.push([tx,ty,v])}
-  hdrawn=0;for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}}
+  hdrawn=0;if(!SKIPH)for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}}
 /* ── 级间交叉淡入（/goal 2 项 2b）：本级 l 垫底；离换级还剩 LB 个倍频程时，细一级 l-1 的瓦片按平滑步函数叠上去，
    到换级那一刻细一级刚好不透明，所以 level() 一跳，画面是连续的。细一级还没到的格子不顶粗的（垫底的就是粗的），等它到了再淡入。 */
 const LB=0.4;
@@ -228,12 +234,46 @@ let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡
 function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
 function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
   if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
-function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;flyStep(now);zoomStep(dt);if(CARDQ&&!FLY&&streetAlpha()<.15)cardClose();const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
+/* ── 房子立起来（/goal 2 项 6）：倾斜时地面被压扁，房子不跟着压——每栋房子画成一张小贴图（不含地面阴影），
+   以脚印最南边的中点为锚，竖向拉长 k=(1/cos a)·(1+0.5(1−cos a))，压扁后屋顶仍是原来的高度再高出约一成（高度感）。
+   平放的 h 层一直垫在底下（贴图没到的房子就显示压扁的版本，贴图到了把它盖住），所以没有“空房子”的闪烁。 */
+const UPR={n:0,of:0,miss:1e9};let SKIPH=false;const SPR=4,SPRL=new Map();let sprBudget=0,sprBuilt=0;
+function hbox(h){const a=[1e9,1e9,-1e9,-1e9];const add=(P)=>{for(let i=0;i<P.length;i+=2){if(P[i]<a[0])a[0]=P[i];if(P[i]>a[2])a[2]=P[i];if(P[i+1]<a[1])a[1]=P[i+1];if(P[i+1]>a[3])a[3]=P[i+1]}};
+  add(h[3]);for(const q of h[4])add(q[1]);const s=h[3];let ay=-1e9,sx=0;for(let i=0;i<s.length;i+=2){if(s[i+1]>ay)ay=s[i+1];sx+=s[i]}return {x0:a[0]-1,y0:a[1]-1,x1:a[2]+1,y1:a[3]+1,ay,ax:sx/(s.length/2)}}
+function sprOf(tx,ty,i,h,hb){const k=tx+'_'+ty+'_'+i;let r=SPRL.get(k);if(r){SPRL.delete(k);SPRL.set(k,r);return r}
+  if(sprBudget<=0)return null;const t0=performance.now();
+  const w=hb.x1-hb.x0,hh=hb.y1-hb.y0,cv=document.createElement('canvas');cv.width=Math.ceil(w*SPR);cv.height=Math.ceil(hh*SPR);const g=cv.getContext('2d');g.setTransform(cv.width/w,0,0,cv.height/hh,-hb.x0*cv.width/w,-hb.y0*cv.height/hh);
+  g.lineWidth=0.5;g.lineCap='butt';
+  for(const [kd,P,c] of h[4]){if(P.length<4)continue;g.beginPath();g.moveTo(P[0],P[1]);for(let j=2;j<P.length;j+=2)g.lineTo(P[j],P[j+1]);
+    if(kd===0){if(P.length>=6){g.fillStyle='#'+c;g.fill()}}else{if(kd===1)g.closePath();g.strokeStyle='#'+c;g.stroke()}}
+  r={cv,w,hh,x0:hb.x0,y0:hb.y0,ay:hb.ay};SPRL.set(k,r);while(SPRL.size>1800)SPRL.delete(SPRL.keys().next().value);sprBuilt++;sprBudget-=performance.now()-t0;return r}
+/* 视口（外扩 m 个世界像素）里这一年站着的房子，按南北次序（先画北边的） */
+function visHouses(Y,m){const x0=cam.x-W/2/cam.z-m,y0=cam.y-H/2/cam.z-m,x1=cam.x+W/2/cam.z+m,y1=cam.y+H/2/cam.z+m,out=[];
+  for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){const v=vcache.get(tx+'_'+ty);if(!v||!v.ok)continue;
+    const hs=v.d.h;if(!v.hb)v.hb=new Array(hs.length);
+    for(let i=0;i<hs.length;i++){const h=hs[i];if(h[0]>Y||Y>=h[1])continue;const hb=v.hb[i]||(v.hb[i]=hbox(h));if(hb.x1<x0||hb.x0>x1||hb.y1<y0||hb.y0>y1)continue;out.push([h[2],tx,ty,i,h,hb])}}
+  out.sort((a,b)=>a[0]-b[0]);return out}
+function tiltK(){const a=tiltOf(cam.z),ca=Math.cos(a);return (1/ca)*(1+0.5*(1-ca))}
+function drawUpright(Y,budgetMs){sprBudget=budgetMs;const k=tiltK(),L=visHouses(Y,30);
+  ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));let n=0;if(pc.sk){ctx.fillStyle='rgba(50,32,14,.27)';ctx.beginPath();for(const e of L){const q=e[4][3];ctx.moveTo(q[0],q[1]);for(let j=2;j<q.length;j+=2)ctx.lineTo(q[j],q[j+1]);ctx.closePath()}ctx.fill()}
+  for(const [,tx,ty,i,h,hb] of L){const r=sprOf(tx,ty,i,h,hb);if(!r)continue;ctx.drawImage(r.cv,r.x0,r.ay+(r.y0-r.ay)*k,r.w,r.hh*k);n++}
+  ctx.setTransform(1,0,0,1,0,0);UPR.miss=L.length-n;if(pc.sk)hdrawn=n;return [n,L.length]}
+let warmKey='';
+function warmUpright(Y,budgetMs){if(!(cam.z*dpr>=1.5))return;const key=Y+'|'+Math.round(cam.x/20)+'|'+Math.round(cam.y/20)+'|'+Math.round(cam.z*50)+'|'+cver;if(key===warmKey)return;sprBudget=budgetMs;let miss=0;for(const [,tx,ty,i,h,hb] of visHouses(Y,60)){if(sprBudget<=0){miss++;break}sprOf(tx,ty,i,h,hb)}if(!miss)warmKey=key}
+/* 点在立起来的房子上：从最前面（最南）往后找贴图里不透明的那一栋，返回它脚印的中心（世界坐标） */
+function uprightAt(wx,wy){const k=tiltK(),L=visHouses(YEAR,30);
+  for(let n=L.length-1;n>=0;n--){const [,tx,ty,i,h,hb]=L[n],r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;
+    const top=r.ay+(r.y0-r.ay)*k,bot=r.ay+(r.y0+r.hh-r.ay)*k;if(wx<r.x0||wx>r.x0+r.w||wy<top||wy>bot)continue;
+    const u=Math.floor((wx-r.x0)/r.w*r.cv.width),v=Math.floor((wy-top)/(bot-top)*r.cv.height);
+    if(u<0||v<0||u>=r.cv.width||v>=r.cv.height)continue;
+    if(r.cv.getContext('2d').getImageData(u,v,1,1).data[3]>40){const q=h[3];let ya=1e9,yb=-1e9,sx=0;for(let j=0;j<q.length;j+=2){sx+=q[j];if(q[j+1]<ya)ya=q[j+1];if(q[j+1]>yb)yb=q[j+1]}return [sx/(q.length/2),(ya+yb)/2]}}
+  return null}
+function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;flyStep(now);zoomStep(dt);tiltStep();if(CARDQ&&!FLY&&streetAlpha()<.15)cardClose();const street=cam.z*dpr>=SZ0;SKIPH=tiltOf(cam.z)>0.003&&UPR.miss===0&&!window.__NOUPR;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
   let redraw=false,wasDirty=dirty;
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
     const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;else if(prepStreet(YEAR,1.3))dirty=true;
-    redraw=!prepped&&dirty&&(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver||fade>0||Math.abs(cam.x-pc.x)>mx||Math.abs(cam.y-pc.y)>my);
-    if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;const OW=off.width,OH=off.height;
+    redraw=!prepped&&dirty&&(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver||pc.sk!==SKIPH||fade>0||Math.abs(cam.x-pc.x)>mx||Math.abs(cam.y-pc.y)>my);
+    if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;pc.sk=SKIPH;const OW=off.width,OH=off.height;
       octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
       octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
     else if(!prepped)dirty=false;
@@ -243,6 +283,7 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     lifeStep(dt);heartStep(dt);heartPump();ctx.setTransform(1,0,0,1,0,0);
     if(sA<1){const n=paintedPass();if(!redraw)drawn=n}else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
     if(pc.ok){ctx.globalAlpha=sA;const kz=cam.z/pc.z;ctx.drawImage(off,Math.round(((W/2+(pc.x-cam.x)*cam.z)*dpr)-off.width*kz/2),Math.round(((H/2+(pc.y-cam.y)*cam.z)*dpr)-off.height*kz/2),off.width*kz,off.height*kz);
+    if(tiltOf(cam.z)>0.003&&!window.__NOUPR){const r=drawUpright(YEAR,3);UPR.n=r[0];UPR.of=r[1]}else{UPR.n=UPR.of=0;UPR.miss=1e9;warmUpright(YEAR,2.5)}
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();heartDraw(now);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
     ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
   else{pc.ok=false;for(const q of HEARTS){if(HEART[q])HEART[q].drawn=0}clkEl.style.display='none';if(cam.z*dpr>=SZ0*0.8&&prepStreet(YEAR,1,1))dirty=true;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
@@ -262,10 +303,11 @@ let drag=null,pts=new Map();
 c.addEventListener('pointerdown',e=>{cancelFly();ZT=null;c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
 c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
   if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
-  else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
+  else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])*(H/Hv)/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
-c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;if(markHit(e.clientX,e.clientY)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
-function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
+c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY*H/Hv-H/2)/cam.z;if(markHit(e.clientX,e.clientY*H/Hv)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
+/* 缩放绕光标：光标下的世界点缩放后仍在光标下。倾角随 z 变，所以新的摊平视野高 H' 要先算出来（并立刻生效），不然光标会随倾角漂 */
+function zoomAt(sx,sy,k){const fy=sy*H/Hv,wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(fy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));H=Hv/Math.cos(tiltOf(cam.z));c.style.transform=`scaleY(${Hv/H})`;const fy2=sy*H/Hv;cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(fy2-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
 /* ── 相机动画器 + 弧线飞行（/goal 2 项 3）：flyTo 走 van Wijk & Nuij 的「先拉高再俯冲」曲线（w=视野宽，ρ=1.42）；
    飞的路上提前（0.14 的进度）取前方的瓦片、矢量街和层，落地那一帧再等一等本级瓦片/矢量层全到（至多 1 秒）。滚轮缩放走同一个动画器，带缓动。 */
@@ -283,14 +325,14 @@ function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z
   return new Promise(res=>{if(o.year)setYear(o.year);
     const p=vwPath(cam.x,cam.y,cam.z,x,y,z);if(p.S<0.02){cam.x=x;cam.y=y;cam.z=z;dirty=true;res({dur:0,hold:0});return}
     const dur=o.dur||Math.max(1.5,Math.min(3.2,0.7+0.5*p.S));FLY={p,dur,x1:x,y1:y,z1:z,t0:null,res,tEnd:null};prefetchCam(x,y,z,true)})}
-function prefetchCam(x,y,z,st){const sv=[cam.x,cam.y,cam.z];cam.x=x;cam.y=y;cam.z=z;
+function prefetchCam(x,y,z,st){const sv=[cam.x,cam.y,cam.z,H];cam.x=x;cam.y=y;cam.z=z;H=Hv/Math.cos(tiltOf(z));
   try{const l=Math.max(0,Math.min(NL-1,Math.floor(Math.log2(1/(z*dpr)))));if(vpTiles(l)<=120)prefetchLevel(YEAR,l);
     if(l>0&&vpTiles(l-1)<=FINE_MAX)prefetchLevel(YEAR,l-1);
     for(let up=l+1;up<=Math.min(NL-1,l+2);up++)if(vpTiles(up)<=40)prefetchLevel(YEAR,up);/* 粗两级垫底：细的没到，也有粗的顶着 */
     if(st&&z*dpr>=SZ0*0.8){const x0=x-W*PCK/2/z,y0=y-H*PCK/2/z,x1=x+W*PCK/2/z,y1=y+H*PCK/2/z,K=gkey(YEAR);
       for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){tile('g/'+K,0,tx,ty,true);vtile(tx,ty)}
       if(z*dpr>=SZ0)prepStreet(YEAR,1,1.3)}}
-  finally{cam.x=sv[0];cam.y=sv[1];cam.z=sv[2]}}
+  finally{cam.x=sv[0];cam.y=sv[1];cam.z=sv[2];H=sv[3]}}
 /* 视口里还没到手的东西：本级瓦片、街巷级的地面/矢量/层、离屏画布、年份淡入 */
 function pending(){let n=0;const l=level(),ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
   for(let ty=Math.floor(y0/ts);ty<=Math.floor(y1/ts);ty++)for(let tx=Math.floor(x0/ts);tx<=Math.floor(x1/ts);tx++){const t=tile(YEAR,l,tx,ty);if(t&&!t.ok&&!t.miss)n++}
@@ -321,13 +363,13 @@ fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q 
   document.getElementById('ui').appendChild(sel)}).catch(()=>{});
 const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},buildMsOf(q){return HEART[q]&&HEART[q].buildMs},mod(q){const H=HEART[q||'nangang'];return H&&H.m},card:{open(id,q,yo){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return false;if(CARDQ&&CARDQ!==q)cardClose();CARDQ=q;HT.yo=yo??null;cardRun(HT,()=>HT.m.openHouse(id));dirty=true;return true},close:cardClose,get shown(){return cardEl.style.display==='block'},get q(){return CARDQ},
     houses(q){q=q||'nangang';const HT=HEART[q];return HT&&HT.ready?HT.m.houses.filter(h=>h.built<=YEAR&&h.destroyed>YEAR).map(h=>[h.id,h.cx+HT.ox,h.cy+HT.oy]):[]},
-    screen(x,y){return [W/2+(x-cam.x)*cam.z,H/2+(y-cam.y)*cam.z]},get sel(){const HT=CARDQ&&HEART[CARDQ];return HT&&HT.m&&HT.m.sel?{kind:HT.m.sel.kind}:null}},get ready(){const H=HEART.nangang;return !!(H&&H.ready)},get drawn(){return HEARTS.reduce((a,q)=>a+(HEART[q]?HEART[q].drawn:0),0)},get clock(){return HCLK.h},
+    screen(x,y){return [W/2+(x-cam.x)*cam.z,(H/2+(y-cam.y)*cam.z)*Hv/H]},get sel(){const HT=CARDQ&&HEART[CARDQ];return HT&&HT.m&&HT.m.sel?{kind:HT.m.sel.kind}:null}},get ready(){const H=HEART.nangang;return !!(H&&H.ready)},get drawn(){return HEARTS.reduce((a,q)=>a+(HEART[q]?HEART[q].drawn:0),0)},get clock(){return HCLK.h},
   setClock(h,d){HCLK.h=h;HCLK.day=d||0;dirty=true},
   entities(q){q=q||'nangang';const HT=HEART[q];const o={people:[],ships:[]};if(!HT||!HT.ready)return o;const m=HT.m,F=m.FLEET;m.YEAR=YEAR;m.clock=HCLK.h;m.dayIdx=HCLK.day;if(!F||!F.active(YEAR))return o;
     const c=HCLK.h,R=F.crowd(YEAR);for(const p of R.crowd){const r=F.pos(p,c,R.g);if(r)o.people.push([r[0]+HT.ox,r[1]+HT.oy,p.kind])}
     if(c>=18.6&&c<23.6)R.tav.forEach(h=>F.tavPeople(h).forEach(([x,y])=>o.people.push([x+HT.ox,y+HT.oy,'tav'])));
     for(const s of F.ships){if(c<s.t0)continue;const r=F.shipPos(s,c);o.ships.push([r[0]+HT.ox,r[1]+HT.oy])}return o},
   smokes(h,q){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return {n:0,str:0,pts:[]};const per=heartPer(h);return {n:heartSmokes(HT,YEAR).length,str:per==='morning'||per==='evening'?1:.55,pts:heartSmokes(HT,YEAR).map(s=>[s.x+HT.ox,s.y+HT.oy])}}};
-rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
+rs();frame();window.__TILES={M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>

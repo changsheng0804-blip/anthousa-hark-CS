@@ -10,6 +10,7 @@
 6. 【海鸥圈】海鸥的圈心是抄干山的固定坐标（1300,1600 / 900,160），要核对在南港是不是绕在水面和港上；先写检查：圈心落在水里或码头边。
 
 ## 已修
+- /goal 2 第 9 轮 项 6：2.5D 微倾（倾角随缩放连续、房子立起来、倾斜里指针不漂、点屋顶出卡）。检查 check_tilt.py；check_zoom 把倾角算进对齐；check_tiles 淡入带字节预算 3.3 MB。——Hark（CS线）
 - /goal 2 第 8 轮 项 5：九块活人层在瓦片页里就地长出来（炊烟+家户推演+敲门卡；粮船日仅南港）。检查 check_hearts9.py、check_card_tile.py --q <九块>。——Hark（CS线）
 - 【/goal 2 项 4b】敲门卡接到瓦片页：tile_heart.py 多剪卡片段 + check_card_tile.py；顺手修街区页 csIncoming 遇建成年>60 房子抛错（第 7 轮）；FLEET.crowd/csIncoming 分帧，首次 ~300 ms 卡顿 → 0 个 >50 ms 长任务。
 - 【/goal 2 项 4a】粮船日、家户推演、炊烟、时钟接到瓦片页（南港）：tile_heart.py + check_heart.py（第 6 轮）。
