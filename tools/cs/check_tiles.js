@@ -1,4 +1,5 @@
 // CS 线 · cs33 瓦片页冒烟 + 预算：在 jsdom 里跑 docs/living/tiles/index.html，按几种缩放量一屏要画几块、要下多少字节。
+// /goal 2 2c：z 在 0.76–1.45（街巷级淡入带）要提前把街和房子的数据取好，字节预算放宽到 3 MB。
 // 用法：AH=<repo> node check_tiles.js   （模块在 /workspace/work/csjs）
 const {JSDOM,VirtualConsole}=require('/workspace/work/csjs/node_modules/jsdom');const fs=require('fs'),path=require('path'),zlib=require('zlib');
 const D=(process.env.AH||'/workspace/work/ah')+'/docs/living/tiles/';
@@ -21,7 +22,7 @@ const w=dom.window;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    if(z!==null){const q=T.M.quarters.nangang;T.cam.x=q[0]+q[2]/2;T.cam.y=q[1]+q[3]/2;T.cam.z=z}else{T.cam.z=Math.min(1920/(T.M.grid[0]*T.M.tile_px),1080/(T.M.grid[1]*T.M.tile_px))*0.95;T.cam.x=T.M.grid[0]*T.M.tile_px/2;T.cam.y=T.M.grid[1]*T.M.tile_px/2}
    w.__TILES.setYear(Y);const r0=req.length;await sleep(z!==null&&z>=1.15?900:150);
    const got=req.slice(r0);const by=got.reduce((s,f)=>{const p=path.join(D,f);if(!fs.existsSync(p))return s;return s+(f.endsWith('.json')?zlib.gzipSync(fs.readFileSync(p)).length:fs.statSync(p).size)},0);
-   const ok=T.drawn<=BUD.tiles&&by<=BUD.bytes&&T.hdrawn<=BUD.houses&&(z===null||z<T.STREET_Z||T.hdrawn>0)&&T.LIFE.walkers<=BUD.walkers&&T.LIFE.ships<=BUD.ships&&(z===null||z<T.STREET_Z||T.LIFE.walkers>0);bad+=!ok;out.push(`${ok?'✅':'❌'} ${Y} 年 ${nm}（级 ${T.level()}）：画 ${T.drawn} 块，新下载 ${got.length} 块 ${(by/1024).toFixed(0)} KB${T.hdrawn?'，矢量房子 '+T.hdrawn+' 栋，人 '+T.LIFE.walkers+'，船 '+T.LIFE.ships:''}`)}}
+   const ok=T.drawn<=BUD.tiles&&by<=((z!==null&&z>=0.76&&z<1.45)?3e6:BUD.bytes)&&T.hdrawn<=BUD.houses&&(z===null||z<T.STREET_Z||T.hdrawn>0)&&T.LIFE.walkers<=BUD.walkers&&T.LIFE.ships<=BUD.ships&&(z===null||z<T.STREET_Z||T.LIFE.walkers>0);bad+=!ok;out.push(`${ok?'✅':'❌'} ${Y} 年 ${nm}（级 ${T.level()}）：画 ${T.drawn} 块，新下载 ${got.length} 块 ${(by/1024).toFixed(0)} KB${T.hdrawn?'，矢量房子 '+T.hdrawn+' 栋，人 '+T.LIFE.walkers+'，船 '+T.LIFE.ships:''}`)}}
  // 定律：街巷级跑 20 秒模拟时间，人始终在 w 位为真的街上，船始终在水格（含四周）里；再拉到港口看船
  {const q=T.M.quarters.nangang;T.cam.x=q[0]+q[2]*0.6;T.cam.y=q[1]+q[3]*0.85;T.cam.z=2;w.__TILES.setYear(60);await sleep(400);
   let bw=0,bs=0,maxS=0;for(let k=0;k<40;k++){await sleep(30);const gi=T.M.street.ground_keys.indexOf(60),N=T.M.water_cells_n,C=T.M.water_cell,TP=T.M.tile_px;

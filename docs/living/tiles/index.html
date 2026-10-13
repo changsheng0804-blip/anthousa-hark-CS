@@ -67,7 +67,7 @@ function lifeDraw(){for(const L of LIFE.tiles.values()){
     for(const w of L.W){const q=w.q,x=q[0]+(q[2]-q[0])*w.t,y=q[1]+(q[3]-q[1])*w.t,nx=-(q[3]-q[1]),ny=q[2]-q[0],nl=Math.hypot(nx,ny)||1,off=(w.dir>0?1:-1)*Math.min(2,q[4]*0.25);
       const px=x+nx/nl*off,py=y+ny/nl*off;ctx.fillStyle='rgba(40,25,10,.3)';ctx.beginPath();ctx.ellipse(px+.4,py+.6,0.9,0.5,0,0,6.283);ctx.fill();
       ctx.fillStyle=w.col;ctx.beginPath();ctx.arc(px,py,1.1,0,6.283);ctx.fill();ctx.fillStyle='#e8c9a0';ctx.beginPath();ctx.arc(px,py-0.9,0.6,0,6.283);ctx.fill()}}}
-const STREET_Z=1.15,vcache=new Map();let vloads=0;
+const STREET_Z=1.15,SZ0=0.95,SZ1=1.45,vcache=new Map();let vloads=0;
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
   fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}}).catch(()=>{});
   if(vcache.size>60){for(const [kk,v] of vcache){if(vcache.size<=40)break;if(v.ok)vcache.delete(kk)}}return t}
@@ -90,8 +90,8 @@ function layer(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;let L=
   const MG=24,sz=TP+2*MG,cv=document.createElement('canvas');cv.width=cv.height=Math.ceil(sz*zr);const g=cv.getContext('2d');g.setTransform(zr,0,0,zr,(MG-tx*TP)*zr,(MG-ty*TP)*zr);
   L={cv,MG,sz,n:0};if(kind==='s'){g.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);paintStreets(g,v.d,Y)}else L.n=paintHouses(g,v.d,Y);
   LAY.set(k,L);while(LAY.size>90)LAY.delete(LAY.keys().next().value);return L}
-function prepStreet(Y){const x0=cam.x-W*PCK/2/cam.z,y0=cam.y-H*PCK/2/cam.z,x1=cam.x+W*PCK/2/cam.z,y1=cam.y+H*PCK/2/cam.z,K=gkey(Y);
-  const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr,STREET_Z)/STREET_Z)));
+function prepStreet(Y,zm,pk){zm=zm||1;pk=pk||PCK;const x0=cam.x-W*pk/2/cam.z,y0=cam.y-H*pk/2/cam.z,x1=cam.x+W*pk/2/cam.z,y1=cam.y+H*pk/2/cam.z,K=gkey(Y);
+  const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr*zm,STREET_Z)/STREET_Z)));
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
     const g=tile('g/'+K,0,tx,ty,true);let gim=null;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im}
     const v=vtile(tx,ty);if(!gim||!v.ok)continue;
@@ -114,10 +114,15 @@ function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块�
     /* 还没到：先用粗一级的瓦片顶着（不出现空洞） */
     for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const s=TP*2**up,sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
   ctx.globalAlpha=1}
-function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=STREET_Z;
+/* ── 换街巷级的交叉淡入（/goal 2 项 2c）：z·dpr 在 SZ0–SZ1 之间，画着的瓦片在下、矢量街和房子按 sA 淡入在上，人船同淡；不再在 STREET_Z 一刀切 */
+let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡入 */
+function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
+function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
+  if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);drawn=d0;hdrawn=h0}
+function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
   let redraw=false,wasDirty=dirty;
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
-    const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;
+    const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;else if(prepStreet(YEAR,1.3))dirty=true;
     redraw=!prepped&&dirty&&(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver||fade>0||Math.abs(cam.x-pc.x)>mx||Math.abs(cam.y-pc.y)>my);
     if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;const OW=off.width,OH=off.height;
       octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
@@ -126,11 +131,12 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
     if(wasDirty)lifeSync(YEAR);
     if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
-    lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height);
-    ctx.drawImage(off,Math.round(((pc.x-cam.x)*cam.z+W*(1-PCK)/2)*dpr),Math.round(((pc.y-cam.y)*cam.z+H*(1-PCK)/2)*dpr));
-    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);
+    lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);
+    if(sA<1)paintedPass();else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
+    if(pc.ok){ctx.globalAlpha=sA;const kz=cam.z/pc.z;ctx.drawImage(off,Math.round(((W/2+(pc.x-cam.x)*cam.z)*dpr)-off.width*kz/2),Math.round(((H/2+(pc.y-cam.y)*cam.z)*dpr)-off.height*kz/2),off.width*kz,off.height*kz);
+    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
     ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
-  else{pc.ok=false;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
+  else{pc.ok=false;if(cam.z*dpr>=SZ0*0.8&&prepStreet(YEAR,1,1))dirty=true;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
   if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
   if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
@@ -152,6 +158,6 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
 c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015))},{passive:false});
-rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
+rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
 })();
 </script></body></html>
