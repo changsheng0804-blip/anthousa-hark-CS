@@ -105,20 +105,34 @@ function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x
     if(v.ok){const L=layer('s',tx,ty,Y,v,zr,gim);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);drawn++}}else{ctx.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);drawn++}
     if(v.ok)vs.push([tx,ty,v])}
   hdrawn=0;for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}}
-function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块瓦片在级 0 像素里的边长 */
+/* ── 级间交叉淡入（/goal 2 项 2b）：本级 l 垫底；离换级还剩 LB 个倍频程时，细一级 l-1 的瓦片按平滑步函数叠上去，
+   到换级那一刻细一级刚好不透明，所以 level() 一跳，画面是连续的。细一级还没到的格子不顶粗的（垫底的就是粗的），等它到了再淡入。 */
+const LB=0.4;
+function levelF(){const u=Math.log2(1/(cam.z*dpr));const l=Math.max(0,Math.min(NL-1,Math.floor(u)));return [l,Math.max(0,Math.min(1,u-l))]}
+function drawLevel(Y,l,alpha,fallback){const f=2**l,ts=TP*f;
   const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
   ctx.globalAlpha=alpha;
   for(let ty=Math.floor(y0/ts);ty<=Math.floor(y1/ts);ty++)for(let tx=Math.floor(x0/ts);tx<=Math.floor(x1/ts);tx++){
     let t=tile(Y,l,tx,ty);
     if(t&&t.ok){ctx.drawImage(t.im,tx*ts,ty*ts,ts+0.5,ts+0.5);drawn++;continue}
+    if(!fallback)continue;
     /* 还没到：先用粗一级的瓦片顶着（不出现空洞） */
-    for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const s=TP*2**up,sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
+    for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
   ctx.globalAlpha=1}
+const FINE_MAX=64;/* 细一级在视口里要的瓦片多于这个数（全城那种大视野）就不淡入也不预取：一屏几百块太贵，那个尺度上换级的跳变本来就小 */
+function vpTiles(l){const ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;return (Math.floor(x1/ts)-Math.floor(x0/ts)+1)*(Math.floor(y1/ts)-Math.floor(y0/ts)+1)}
+function drawYear(Y,alpha){const [l,fr]=levelF();drawLevel(Y,l,alpha,true);
+  if(l>0&&fr<LB+0.45&&vpTiles(l-1)>FINE_MAX)return;
+  if(l>0&&fr<LB){const t=1-fr/LB,w=t*t*(3-2*t);drawLevel(Y,l-1,alpha*w,false)}
+  else if(l>0&&fr<LB+0.45)prefetchLevel(Y,l-1)}
+/* 离换级还有大半个倍频程时先悄悄取细一级的瓦片（只取视口内），淡入开始时它们已经在手 */
+function prefetchLevel(Y,l){const ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
+  for(let ty=Math.floor(y0/ts);ty<=Math.floor(y1/ts);ty++)for(let tx=Math.floor(x0/ts);tx<=Math.floor(x1/ts);tx++)tile(Y,l,tx,ty)}
 /* ── 换街巷级的交叉淡入（/goal 2 项 2c）：z·dpr 在 SZ0–SZ1 之间，画着的瓦片在下、矢量街和房子按 sA 淡入在上，人船同淡；不再在 STREET_Z 一刀切 */
 let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡入 */
 function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
 function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
-  if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);drawn=d0;hdrawn=h0}
+  if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
 function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
   let redraw=false,wasDirty=dirty;
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
@@ -132,7 +146,7 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     if(wasDirty)lifeSync(YEAR);
     if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
     lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);
-    if(sA<1)paintedPass();else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
+    if(sA<1){const n=paintedPass();if(!redraw)drawn=n}else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
     if(pc.ok){ctx.globalAlpha=sA;const kz=cam.z/pc.z;ctx.drawImage(off,Math.round(((W/2+(pc.x-cam.x)*cam.z)*dpr)-off.width*kz/2),Math.round(((H/2+(pc.y-cam.y)*cam.z)*dpr)-off.height*kz/2),off.width*kz,off.height*kz);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
     ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
@@ -158,6 +172,6 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
 c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015))},{passive:false});
-rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
+rs();frame();window.__TILES={M,cam,cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
 })();
 </script></body></html>

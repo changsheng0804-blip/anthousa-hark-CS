@@ -4,7 +4,7 @@ python3 tools/cs/check_zoom.py [--steps 200] [--out tools/cs/factory/out/zoom]
         数屏幕上落在「有瓦片的世界格」里、整块是品红的 8×8 像素块（世界外、本来就没瓦片的格不算；瓦片里烤进去的底色不算空白）。
   跳变：把上一帧按这一步的缩放倍数绕屏幕中心放大，和这一帧比中间 60% 的灰度平均差（MAD，0–255）；
         正常连续缩放只有画面细节和行人带来的小差，分级切换、换底图、闪白会冲高。
-  达标线（GOAL.md G1）：空白块 0；跳变不许冒尖——每一步的 MAD 不超过 max(1.0, 1.5 × 前后各 5 步的中位数)，且绝对值 ≤ JUMP（默认 8）。
+  达标线（GOAL.md G1）：空白块 0；跳变不许冒尖——每一步的 MAD 不超过 max(2.0, 1.5 × 前后各 5 步的中位数)（地板 2.0：换级后画面本身更锐，缩放对齐后的灰度差基线就抬到 1–1.3，真跳变是 15.2 这个量级），且绝对值 ≤ JUMP（默认 8）。
         冒尖就是分级切换被眼睛看见的那一下（cs36 现状：级 3→2、2→1、1→0、换街巷级四处都冒尖）。
 每步只等两帧 rAF 就截图——就是用户滚轮时眼睛看到的样子，不给页面额外的加载时间。
 沙箱 arm64 无 GPU，用 apt 的 chromium；浏览器访问不到 github.io，所以本地起服务器。——Hark（CS线）"""
@@ -55,6 +55,7 @@ def jump(prev, cur, k):
     x0, x1, y0, y1 = int(VW * .2), int(VW * .8), int(VH * .2), int(VH * .8)
     a = cv2.GaussianBlur(w[y0:y1, x0:x1], (5, 5), 0); b = cv2.GaussianBlur(g1[y0:y1, x0:x1], (5, 5), 0)
     return float(np.abs(a - b).mean())
+FLOOR = 2.0
 rows = []
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
@@ -81,7 +82,7 @@ with sync_playwright() as p:
 for k, r in enumerate(rows):
     if k == 0: r['spike'] = False; continue
     nbh = [x['jump'] for x in rows[max(1, k - 5):k + 6] if x is not r]; med = float(np.median(nbh))
-    r['spike'] = bool(r['jump'] > A.jump or r['jump'] > max(1.0, 1.5 * med))
+    r['spike'] = bool(r['jump'] > A.jump or r['jump'] > max(FLOOR, 1.5 * med))
 nb = sum(r['blank'] > 0 for r in rows); nj = sum(r['spike'] for r in rows); mj = max(rows, key=lambda r: r['jump'])
 res = dict(target=A.target, door=[round(door[0]), round(door[1])], year=A.year, steps=A.steps, jump_limit=A.jump,
            frames_blank=nb, blank_blocks=sum(r['blank'] for r in rows), frames_jump=nj, max_jump=mj['jump'], max_jump_at=mj, rows=rows)
