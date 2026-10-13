@@ -4,8 +4,33 @@
 <style>html,body{margin:0;height:100%;background:#1a140c;color:#efe4cc;font-family:"Songti SC","Noto Serif SC",serif;overflow:hidden}
 canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .b{background:rgba(26,20,12,.85);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}.b.on{background:rgba(212,168,90,.3)}
-#st{position:fixed;left:12px;bottom:10px;font-size:12px;color:#c9b48c;background:rgba(26,20,12,.7);padding:4px 8px;border-radius:6px}</style></head>
-<body><canvas id="c"></canvas><div id="ui"></div><div id="st"></div>
+#st{position:fixed;left:12px;bottom:10px;font-size:12px;color:#c9b48c;background:rgba(26,20,12,.7);padding:4px 8px;border-radius:6px}:root{--gold:#d4a85a;--gold2:#f0d79a;--ivory:#f3ead8;--mute:#b9ab90}
+.panel{background:rgba(20,17,13,.88);border:1px solid rgba(212,168,90,.35);border-radius:10px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+/* 敲门卡：样式取自街区页 */
+#card{position:fixed;right:14px;top:62px;width:330px;max-height:calc(100% - 200px);overflow:auto;padding:14px 16px;display:none}
+#card .x{position:absolute;right:10px;top:8px;background:none;border:none;color:var(--mute);font-size:20px;cursor:pointer}
+#card h2{margin:0 0 2px;font-size:18px;color:var(--gold2);font-weight:600}
+#card .meta{font-size:12px;color:var(--mute)}
+#card .portrait{width:96px;height:96px;border-radius:8px;border:1px solid var(--gold);object-fit:cover;float:right;margin:0 0 6px 10px}
+#card .quote{font-size:14px;font-style:italic;color:var(--ivory);margin:8px 0;border-left:2px solid var(--gold);padding-left:8px}
+#card .now{font-size:13.5px;margin:8px 0;padding:8px;background:rgba(212,168,90,.1);border-radius:6px}
+#card .ppl{margin:8px 0;font-size:13.5px;line-height:1.75}
+#card .ppl .dead{color:#8a7d66;text-decoration:line-through}
+#card .life{font-size:12.5px;line-height:1.7;color:var(--ivory);margin-top:8px;border-top:1px solid rgba(212,168,90,.25);padding-top:8px}
+#card .life .y{color:var(--gold);display:inline-block;min-width:58px}
+#card .life .fut{color:#6f6553}
+#card .story{font-size:14.5px;line-height:1.85;margin:10px 0;color:var(--ivory)}#card .story .by{font-size:12px;color:var(--gold);text-align:right;margin-top:2px}#card .story.fut{color:var(--mute);font-size:13px}
+#card .wf{font-size:13.5px;margin:4px 0}#card .wf b{color:var(--gold2);margin-right:8px;font-weight:normal}
+#card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
+#card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
+#card .obj b{color:var(--gold2);font-weight:normal}
+#card .cstalk{margin:10px 0;padding:8px 10px;border:1px solid rgba(212,168,90,.35);border-radius:6px}#card .cswho{font-size:12.5px;color:var(--mute);margin-bottom:6px}#card .cssp,#card .csgo{color:var(--gold2);cursor:pointer;border-bottom:1px dotted var(--gold)}#card .cssp.on{color:var(--ivory);border-bottom:1px solid var(--ivory)}#card .csqs{display:flex;flex-wrap:wrap;gap:5px}#card .csq{font-size:12px;padding:3px 8px;border:1px solid rgba(212,168,90,.4);border-radius:12px;cursor:pointer;color:var(--ivory)}#card .csq.on{background:rgba(212,168,90,.25)}#card .csans{font-size:14px;line-height:1.8;margin-top:8px;color:var(--ivory)}#card .csans b{color:var(--gold2);font-weight:normal}
+#card .cshook{margin:8px 0;font-size:14px;line-height:1.6}#card .csmore summary{font-size:12px;color:var(--mute);cursor:pointer;margin-top:8px}#card .cson{background:rgba(212,168,90,.18);border-radius:4px}#card .csstep{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:12px;color:var(--mute)}
+#card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
+@media (max-width:700px){#card{left:8px;right:8px;width:auto;top:auto;bottom:96px;max-height:48%}}
+#card{z-index:5}
+</style></head>
+<body><canvas id="c"></canvas><div id="ui"></div><div id="st"></div><div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
 <script>
 /* CS 线 · cs33 瓦片实验：浏览器只拼离线烤好的瓦片（tile_bake.py），按缩放挑级，只取视口里的瓦片。——Hark（CS线） */
 (async()=>{
@@ -75,6 +100,20 @@ const tkEl=document.createElement('div');tkEl.id='ticker';tkEl.style.cssText='po
 const clkEl=document.createElement('div');clkEl.style.cssText='position:fixed;right:12px;top:12px;background:rgba(26,20,12,.85);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:999px;padding:6px 12px;font-size:13px;display:none';document.body.appendChild(clkEl);
 let tkTimer=0;const HENV_$=id=>id==='tk'?{set textContent(t){tkEl.textContent=t;tkEl.style.opacity=1;clearTimeout(tkTimer);tkTimer=setTimeout(()=>tkEl.style.opacity=0,14000)}}:id==='ticker'?{style:{set opacity(v){}}}:{style:{}};
 const HHOURS=['深夜','深夜','深夜','深夜','凌晨','清晨','清晨','上午','上午','上午','上午','中午','中午','下午','下午','下午','下午','傍晚','傍晚','晚上','晚上','夜里','夜里','夜里'];
+/* ── 敲门卡（项 4b）：点街巷级里的房子，弹出 cs3 的卡（现在 / 一个钩子 / 敲门·再问一句 / 后来呢），同一份推演——卡片代码是 tile_heart.py 从街区页原样剪出的。
+   卡片的年份可以是任意一年（跟着一个人走完一生会跳到他的大事年），烤画只有关键年份，画面取不早于它的那一档。 */
+const cardEl=document.getElementById('card'),cardBody=document.getElementById('cardbody');var CARDQ=null,CARDLOCK=false;
+function keyYearFor(y){return M.years.find(k=>k>=y)??M.years[M.years.length-1]}
+function cardRun(HT,fn){const m=HT.m;m.YEAR=HT.yo!=null?HT.yo:YEAR;try{fn()}finally{m.YEAR=YEAR}}
+function cardClose(){if(CARDQ){const HT=HEART[CARDQ];if(HT&&HT.m){HT.m.closeCard();HT.yo=null}}CARDQ=null;cardEl.style.display='none';dirty=true}
+document.getElementById('cardx').onclick=cardClose;
+cardEl.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-q],[data-sp],[data-go],[data-p],[data-pf],[data-step]');if(!t||!CARDQ)return;e.preventDefault();const HT=HEART[CARDQ];cardRun(HT,()=>HT.m.cardClick(t));dirty=true});
+function heartTap(wx,wy){if(streetAlpha()<.5)return false;
+  for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;const [x,y,w,h]=heartBox(q);if(!(wx>x&&wx<x+w&&wy>y&&wy<y+h))continue;
+    const hs=HT.m.nearestHouse(wx-HT.ox,wy-HT.oy,YEAR,Math.max(14,40/cam.z));
+    if(hs){if(CARDQ&&CARDQ!==q)cardClose();CARDQ=q;HT.yo=null;cardRun(HT,()=>HT.m.openHouse(hs.id));dirty=true;return true}
+    if(CARDQ){cardClose();return true}}
+  return false}
 function heartBox(q){return M.quarters[q]}
 function heartNear(q){const [x,y,w,h]=heartBox(q),x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;return x1>x&&x0<x+w&&y1>y&&y0<y+h}
 function heartEnsure(q){let HT=HEART[q];if(HT)return HT;HT=HEART[q]={ready:false,loading:true,drawn:0,q};const B='../'+q+'/';
@@ -83,12 +122,21 @@ function heartEnsure(q){let HT=HEART[q];if(HT)return HT;HT=HEART[q]={ready:false
     const HD=await fetch(B+(SCENE.street_layout?SCENE.street_layout.houses:'houses.json')).then(r=>r.json());
     const pplImg=new Image();pplImg.src=B+'people.png';await pplImg.decode().catch(()=>{});
     const [ox,oy]=heartBox(q);HT.ox=ox;HT.oy=oy;
-    HT.m=window.__HEART[q]({city,HD,SCENE,PPL,pplImg,cam,ctx:()=>ctx,$:HENV_$});
+    HT.VOICES={};HT.STORIES={};
+    fetch(B+'stories.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.STORIES,j)});
+    fetch(B+'voices.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.VOICES,j);if(CARDQ===q)cardRun(HT,()=>HT.m.renderCard())});
+    const tb=performance.now();HT.m=window.__HEART[q]({city,HD,SCENE,PPL,pplImg,cam,ctx:()=>ctx,$:HENV_$,STORIES:HT.STORIES,VOICES:HT.VOICES,
+      showCard:html=>{cardBody.innerHTML=html;cardEl.style.display='block'},
+      flyTo:(x,y,z)=>flyTo(x+ox,y+oy,z),
+      setYear:y=>{CARDLOCK=true;try{setYear(keyYearFor(y))}finally{CARDLOCK=false}HT.yo=y;cardRun(HT,()=>HT.m.renderCard())}});
+    HT.buildMs=performance.now()-tb;HT.incDone=false;
     /* 炊烟：这一年站着的房子，每十栋一缕（街区页是撒 36 个点；这里跟房子走，天然在陆地上） */
     HT.smokeY=-1;HT.smokeL=[];HT.ready=true;dirty=true}catch(e){HT.err=String(e);console.error('heart',q,e)}HT.loading=false})();return HT}
 function heartSmokes(HT,Y){if(HT.smokeY!==Y){HT.smokeY=Y;const hh=HT.m.hash;HT.smokeL=HT.m.houses.filter(h=>h.built<=Y&&h.destroyed>Y&&hh("sm"+h.id)%10===0).map(h=>({x:h.cx+3,y:h.cy-5,ph:(hh("sp"+h.id)%1000)/100}))}return HT.smokeL}
 function heartPer(t){return t>=5&&t<9?'morning':t>=9&&t<18?'day':t>=18&&t<21?'evening':'night'}
-function heartStep(dt){for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;if(!heartNear(q))continue;
+function heartStep(dt){for(const q of HEARTS){const HT=HEART[q];if(HT&&HT.ready&&heartNear(q)){HT.m.YEAR=YEAR;try{if(HT.m.warmCrowd(2)&&!HT.incDone&&!HT.incErr)HT.incDone=HT.m.csIncStep(1.5)}catch(e){HT.incErr=1;console.error('heart warm',e)}}}
+  if(CARDQ){const HT=HEART[CARDQ],per=heartPer(HCLK.h);if(HT&&HT.m&&HT.per!==per){const first=HT.per===undefined;HT.per=per;if(!first)cardRun(HT,()=>HT.m.renderCard())}}
+  for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;if(!heartNear(q))continue;
     const F=HT.m.FLEET;const sl=F&&F.slow?.3:1;const c0=HCLK.h;HCLK.h=(HCLK.h+dt*24/HDAY*sl)%24;if(HCLK.h<c0)HCLK.day++}}
 function heartDraw(now){const t=now/1000;let any=false;
   for(const q of HEARTS){const HT=HEART[q];if(!HT)continue;HT.drawn=0;if(!heartNear(q))continue;if(!HT.ready)continue;
@@ -97,7 +145,9 @@ function heartDraw(now){const t=now/1000;let any=false;
     ctx.save();ctx.translate(HT.ox,HT.oy);const vx1=vx0+W/cam.z,vy1=vy0+H/cam.z,vis=(x,y,mm=40)=>x>vx0-mm&&x<vx1+mm&&y>vy0-mm&&y<vy1+mm;
     const per=heartPer(HCLK.h),str=per==='morning'||per==='evening'?1:.55;
     for(const s of heartSmokes(HT,YEAR)){if(!vis(s.x,s.y,120))continue;HT.drawn++;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
-    if(m.FLEET){m.FLEET.draw(t,vis);if(m.FLEET.on)HT.drawn+=1}
+    if(CARDQ===q){const sl=m.sel,hid=sl?(sl.kind==='house'?sl.hh.h.id:sl.kind==='person'?sl.hid:null):null,hh=hid!=null?m.houseById(hid):null;
+      if(hh){const r=9+2*Math.sin(t*3);ctx.strokeStyle='rgba(240,215,154,.95)';ctx.lineWidth=1.6/cam.z+.4;ctx.beginPath();ctx.arc(hh.cx,hh.cy,r,0,7);ctx.stroke();ctx.strokeStyle='rgba(20,17,13,.55)';ctx.lineWidth=.8/cam.z;ctx.beginPath();ctx.arc(hh.cx,hh.cy,r+1.5,0,7);ctx.stroke()}}
+    if(m.FLEET&&m.warmCrowd(0)){m.FLEET.draw(t,vis);if(m.FLEET.on)HT.drawn+=1}
     ctx.restore();any=true}
   if(any){const hr=Math.floor(HCLK.h);clkEl.style.display='block';clkEl.textContent=HHOURS[hr]+' '+(hr%12||12)+' 时'}else clkEl.style.display='none'}
 const STREET_Z=1.15,SZ0=0.95,SZ1=1.45,vcache=new Map();let vloads=0;
@@ -167,7 +217,7 @@ let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡
 function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
 function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
   if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
-function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;flyStep(now);zoomStep(dt);const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
+function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;flyStep(now);zoomStep(dt);if(CARDQ&&!FLY&&streetAlpha()<.15)cardClose();const street=cam.z*dpr>=SZ0;if(!street||!pc.ok)sRamp=0;else sRamp=Math.min(1,sRamp+dt*5);const sA=street&&pc.ok?Math.min(streetAlpha(),sRamp):0;
   let redraw=false,wasDirty=dirty;
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
     const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;else if(prepStreet(YEAR,1.3))dirty=true;
@@ -203,7 +253,7 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
   if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
   else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
-c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;if(markHit(e.clientX,e.clientY)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
+c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;if(markHit(e.clientX,e.clientY)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
 /* ── 相机动画器 + 弧线飞行（/goal 2 项 3）：flyTo 走 van Wijk & Nuij 的「先拉高再俯冲」曲线（w=视野宽，ρ=1.42）；
@@ -216,7 +266,7 @@ function vwPath(x0,y0,z0,x1,y1,z1){const w0=W/z0,w1=W/z1,dx=x1-x0,dy=y1-y0,d=Mat
   return {S,at:s=>{const u=(w0/r2)*(Math.cosh(q0)*Math.tanh(RHO*s+q0)-Math.sinh(q0)),w=w0*Math.cosh(q0)/Math.cosh(RHO*s+q0),f=u/d;return {x:x0+dx*f,y:y0+dy*f,z:W/w}}}}
 /* 弧线拉得最高也不超过「全城刚好装下」再退 25%：不飞出世界去看空白 */
 function zLow(){return Math.min(W/WW,H/WH)*0.95*0.75}
-function setYear(Y){if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)})}
+function setYear(Y){try{if(CARDQ&&!CARDLOCK){const HT=HEART[CARDQ];HT.yo=null;if(HT.m)cardRun(HT,()=>HT.m.renderCard())}}catch(e){}if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)})}
 function cancelFly(){if(FLY){const F=FLY;FLY=null;F.res({cancelled:true,dur:F.dur,hold:0})}}
 function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z));
   return new Promise(res=>{if(o.year)setYear(o.year);
@@ -258,7 +308,9 @@ fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q 
   grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件',j.events.map((v,i)=>['e'+i,v.name]));
   sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else flyTo(j.events[i].x,j.events[i].y,j.events[i].z,{year:j.events[i].show_year})};
   document.getElementById('ui').appendChild(sel)}).catch(()=>{});
-const HEARTAPI={get ready(){const H=HEART.nangang;return !!(H&&H.ready)},get drawn(){return HEARTS.reduce((a,q)=>a+(HEART[q]?HEART[q].drawn:0),0)},get clock(){return HCLK.h},
+const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},mod(q){const H=HEART[q||'nangang'];return H&&H.m},card:{open(id,q,yo){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return false;if(CARDQ&&CARDQ!==q)cardClose();CARDQ=q;HT.yo=yo??null;cardRun(HT,()=>HT.m.openHouse(id));dirty=true;return true},close:cardClose,get shown(){return cardEl.style.display==='block'},get q(){return CARDQ},
+    houses(q){q=q||'nangang';const HT=HEART[q];return HT&&HT.ready?HT.m.houses.filter(h=>h.built<=YEAR&&h.destroyed>YEAR).map(h=>[h.id,h.cx+HT.ox,h.cy+HT.oy]):[]},
+    screen(x,y){return [W/2+(x-cam.x)*cam.z,H/2+(y-cam.y)*cam.z]},get sel(){const HT=CARDQ&&HEART[CARDQ];return HT&&HT.m&&HT.m.sel?{kind:HT.m.sel.kind}:null}},get ready(){const H=HEART.nangang;return !!(H&&H.ready)},get drawn(){return HEARTS.reduce((a,q)=>a+(HEART[q]?HEART[q].drawn:0),0)},get clock(){return HCLK.h},
   setClock(h,d){HCLK.h=h;HCLK.day=d||0;dirty=true},
   entities(q){q=q||'nangang';const HT=HEART[q];const o={people:[],ships:[]};if(!HT||!HT.ready)return o;const m=HT.m,F=m.FLEET;m.YEAR=YEAR;m.clock=HCLK.h;m.dayIdx=HCLK.day;if(!F||!F.active(YEAR))return o;
     const c=HCLK.h,R=F.crowd(YEAR);for(const p of R.crowd){const r=F.pos(p,c,R.g);if(r)o.people.push([r[0]+HT.ox,r[1]+HT.oy,p.kind])}

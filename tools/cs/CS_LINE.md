@@ -11,3 +11,7 @@ flyTo(x,y,z,{year}) 走 van Wijk 曲线，沿路预取，落地等 pending()=0�
 
 ## /goal 2 第 6 轮（项 4a 心跳接到瓦片页）
 tools/cs/factory/tile_heart.py <q> 把街区页的粮船日、家户推演一字不改地剪成 docs/living/tiles/heart/<q>.js，瓦片页进街区框且到街巷级才载入；炊烟跟房子走；右上角时钟。检查 tools/cs/check_heart.py（南港：船、人不下水、炊烟、节律、退出不画）。街区页改了心跳段，重跑 tile_heart.py。下一轮：4b 敲门卡。
+
+## /goal 2 第 7 轮（项 4b 敲门卡接到瓦片页）
+tile_heart.py 现在连卡片一起剪（renderCard、cs1 敲门问话、cs2 跟一个人走一生，原样），heart/<q>.js 返回 openHouse/cardClick/nearestHouse 等；瓦片页点街巷级的房子开 #card，选中圈跟着，年份可跳到任意一年。检查 tools/cs/check_card_tile.py（含与街区页逐字比对）。同时修了街区页 csIncoming 对建成年>60 的房子抛错（九块 index.html 都改了一处），并把 FLEET.crowd / csIncoming 改成可分帧（生成器，街区页同步调用不变）。
+
