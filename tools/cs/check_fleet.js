@@ -73,7 +73,7 @@ const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7
    每年的人只站在当年已建成的栈桥上，没建成的栈桥上没人、没有站位；建前两年是工地 */
 {const FS=w.__fleet.FLEET,C=FS.C,D=C.docks||[];const yrs=new Set(D.map(d=>d.from));const hb=C.harbor_from||C.from;const last=Math.max(...(w.__anth.keys||[60]));
  let bad3=[];if(D.length<3)bad3.push('栈桥 '+D.length+' 座');if(yrs.size<3)bad3.push('只在 '+yrs.size+' 个年份建成');
- if(D.some(d=>d.from<=hb))bad3.push('港挖成那年就有栈桥');{const nb=D.filter(d=>(w.__anth.keys||[40,50,60]).some(k=>d.from>k-10&&!(d.borrow&&d.borrow[k]))).length;if(nb)bad3.push(nb+' 座没建成的栈桥借不到水（会平涂成色块）')}if(D.some(d=>d.from>60))bad3.push('60 年还没建完');
+ if(D.some(d=>d.from<=hb))bad3.push('港挖成那年就有栈桥');{const nb=D.filter(d=>(w.__anth.keys||[40,50,60]).some(k=>d.from>k-10&&!(d.borrow&&d.borrow[k]))).length;if(nb)bad3.push(nb+' 座没建成的栈桥借不到水（会平涂成色块）');const DP=w.__anth.SCENE?w.__anth.SCENE.dock_patch:null;}if(D.some(d=>d.from>60))bad3.push('60 年还没建完');
  const inD=(x,y,d)=>d.rects.some(r=>x>=r[0]-2&&x<=r[0]+r[2]+2&&y>=r[1]-2&&y<=r[1]+r[3]+2);let on=0;
  for(const Y of [36,40,45,50,57,60]){const R=FS.crowd(Y);const dead=D.filter(d=>d.from>Y);
   for(const m of R.crowd){if(dead.some(d=>inD(m.spot[0],m.spot[1],d)||m.path.some(p=>inD(p[0],p[1],d)))){on++;if(on<3)console.log('ON UNBUILT DOCK',Y,m.h.id)}}}

@@ -169,6 +169,11 @@ def compare(q, fix):
             sh(sys.executable, hp, q); sc = json.load(open(os.path.join(LIV, q, 'scene.json'))); same = True
             rec(S, '--fix：心跳位置按最新底账重算', True)
         rec(S, '心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
+    # cs24 · 码头逐年长：没建成的栈桥每个年代都有补丁，盖住栈桥和归它的船
+    if sc.get('fleet', {}).get('docks'):
+        r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_dockpatch.py'), q)
+        if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'dock_patch.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_dockpatch.py'), q)
+        rec(S, '没建成的栈桥都盖住了（连同靠在边上的画上的船）', r.returncode == 0, (r.stdout + r.stderr).strip()[-120:], '--fix 跑 dock_patch.py')
     # cs13 · 栈桥：画上的栈桥（三张画都是陆地、底账是水、连着岸）人要走得上去，≥ 95% 的栈桥像素落在人走的网里
     if sc.get('fleet', {}).get('derived'):
         r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--piers')

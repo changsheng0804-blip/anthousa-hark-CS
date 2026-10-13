@@ -184,6 +184,7 @@ const KEYS=SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
+const DOCKIM={};if(SCENE.dock_patch)for(const i in SCENE.dock_patch)for(const K in SCENE.dock_patch[i]){const u=SCENE.dock_patch[i][K][0];if(DOCKIM[u])continue;const im=new Image();im.onload=()=>{if(baseYear>=0)buildBase(baseYear)};im.src=u;DOCKIM[u]=im}
 function buildBase(Y){
   const [K,KI,PI]=keyFor(Y);bctx.globalAlpha=1;bctx.globalCompositeOperation='source-over';bctx.drawImage(KI,0,0,W,H);
   mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,W/2,H/2);mctx.setTransform(.5,0,0,.5,0,0);mctx.fillStyle='#fff';mctx.beginPath();
@@ -195,10 +196,13 @@ function buildBase(Y){
     fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
     bctx.drawImage(fillC,0,0);}
   if(Y>K){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
-  /* CS 线 · cs23 码头逐年长：没建成的栈桥，从同一张画上就近一块干净海面借水盖住（heart.py 算好 borrow 偏移），边缘羽化，看不出补丁 */
-  if(SCENE.fleet&&SCENE.fleet.docks)for(const d of SCENE.fleet.docks){const o=d.from>Y&&d.borrow&&d.borrow[K];if(!o)continue;
-    fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(4px)';fctx.fillStyle='#fff';for(const q of d.rects)fctx.fillRect(q[0]-6,q[1]-5,q[2]+12,q[3]+10);fctx.filter='none';
-    fctx.globalCompositeOperation='source-in';fctx.drawImage(KI,-o[0],-o[1],W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)}
+  /* CS 线 · cs23/cs24 码头逐年长：没建成的栈桥（连同靠在边上的画上的船）用 dock_patch.py 做好的补丁盖住——同一张画上就近借来的干净海面，已校过色、羽化过；
+     补丁图还没载入时先用 borrow 偏移现场借水 */
+  if(SCENE.fleet&&SCENE.fleet.docks)SCENE.fleet.docks.forEach((d,i)=>{if(d.from<=Y)return;const pt=SCENE.dock_patch&&SCENE.dock_patch[i]&&SCENE.dock_patch[i][K];const im=pt&&DOCKIM[pt[0]];
+    if(im&&im.complete&&im.naturalWidth){bctx.drawImage(im,pt[1],pt[2]);return}
+    const o=d.borrow&&d.borrow[K];if(!o)return;
+    fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(4px)';fctx.fillStyle='#fff';for(const q of d.rects.concat((d.hide&&d.hide[K])||[]))fctx.fillRect(q[0]-6,q[1]-5,q[2]+12,q[3]+10);fctx.filter='none';
+    fctx.globalCompositeOperation='source-in';fctx.drawImage(KI,-o[0],-o[1],W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)});
   baseYear=Y;buildingNow=houses.filter(h=>h.destroyed>Y&&(h.built===Y||h.built===Y-1));
 }
 function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}

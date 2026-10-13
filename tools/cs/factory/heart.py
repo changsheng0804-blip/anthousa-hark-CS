@@ -5,7 +5,7 @@
   码头上人站的地方、孩子爬的港墙、扛包的人从码头到粮仓走的路。
 写进 scene.json 的 fleet（句子、钟点不动），另出一张目检图 out/<q>_heart.jpg。
 用法: python tools/cs/factory/heart.py <quarter_id> [--dry]"""
-import heapq, json, math, os, sys
+import heapq, json, math, os, subprocess, sys
 import numpy as np
 from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
@@ -283,6 +283,28 @@ def main():
             mk_ = lab_d == d['k']; ring = ndi.binary_dilation(mk_, iterations=6) & ~ndi.binary_dilation(mk_, iterations=2) & wk_
             c_ = np.median(a_[ring], 0) if ring.any() else np.median(a_[wk_], 0)
             d.setdefault('col', {})[str(kY)] = [int(v) for v in c_]
+            # cs24 · 靠在没建成栈桥边上的船也一起藏：底账水里、画上不是水、不连岸也不是栈桥、离栈桥 ≤ 10 格的团就是画上的船；每条船只归最近的那座栈桥
+            if d is dock_c[0]:
+                notw = water & ~wk_ & ~ndi.binary_dilation(landm, iterations=2) & ~pier_px
+                lb_, nb_ = ndi.label(notw); dd_ = []
+                for d2 in dock_c: dd_.append(ndi.distance_transform_edt(~(lab_d == d2['k'])))
+                own = {}
+                if nb_:
+                    sz_ = ndi.sum(notw, lb_, range(1, nb_ + 1)); mins = [ndi.minimum(e, lb_, range(1, nb_ + 1)) for e in dd_]
+                    for v in range(1, nb_ + 1):
+                        if not (6 <= sz_[v - 1] <= 400): continue
+                        dm_ = [m_[v - 1] for m_ in mins]; t_ = int(np.argmin(dm_))
+                        if dm_[t_] <= 10: own.setdefault(t_, []).append(v)
+            boat = np.isin(lb_, own.get(dock_c.index(d), [-1]))
+            hide8 = []
+            if boat.any():
+                b8 = np.zeros((H8, W8), bool); bj, bi = np.nonzero(ndi.binary_dilation(boat, iterations=1)); b8[np.minimum(bj * R // R8, H8 - 1), np.minimum(bi * R // R8, W8 - 1)] = True
+                for j8 in range(H8):
+                    on_ = np.flatnonzero(np.diff(np.r_[0, b8[j8].astype(int), 0]))
+                    for a8, b8_ in zip(on_[::2], on_[1::2]): hide8.append([int(a8 * R8), int(j8 * R8), int((b8_ - a8) * R8), R8])
+            d.setdefault('hide', {})[str(kY)] = hide8
+            mk_ = mk_ | boat | (ndi.binary_dilation(mk_, iterations=3) & ~wk_ & water)   # 栈桥根贴岸的那一截残桩也藏
+            d['hide'][str(kY)] += [[int(x_ * R), int(y_ * R), R, R] for y_, x_ in zip(*np.nonzero(ndi.binary_dilation(lab_d == d['k'], iterations=3) & ~wk_ & water & ~(lab_d == d['k'])))]
             # cs22+ 借水：在这张画上找一块离栈桥最近、整块都是干净海面（没有船、没有岸）的地方，页面把那块水原样挪过来盖住没建成的栈桥
             clean = ndi.binary_erosion(wk_ & ~band, iterations=2)
             mk2 = ndi.binary_dilation(mk_, iterations=4); mj, mi = np.nonzero(mk2); best = None
@@ -295,7 +317,7 @@ def main():
                     if best: break
                 if best: break
             d.setdefault('borrow', {})[str(kY)] = list(best) if best else None
-    docks = [{'from': d['from'], 'rects': d['rects'], 'root': d['root'], 'col': d['col'], 'borrow': d['borrow']} for d in dock_c]
+    docks = [{'from': d['from'], 'rects': d['rects'], 'root': d['root'], 'col': d['col'], 'borrow': d['borrow'], 'hide': d['hide']} for d in dock_c]
     pier_from = []
     for p in pier_spots:
         hit_ = [d['from'] for d in dock_c if lab_d[min(int(p[1] / R), GH - 1), min(int(p[0] / R), GW - 1)] == d['k']]
@@ -392,6 +414,7 @@ def main():
     if '--dry' not in sys.argv:
         for k in ('enter', 'mouth'): C.pop(k, None)
         C.update(out); json.dump(sc, open(os.path.join(Q, 'scene.json'), 'w'), ensure_ascii=False)
+        if C.get('docks'): subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dock_patch.py'), q])   # cs24 盖栈桥的补丁
         cj = json.load(open(os.path.join(Q, 'city.json'))); cj['roads'] = city_roads
         json.dump(cj, open(os.path.join(Q, 'city.json'), 'w'), ensure_ascii=False); print('roads', [(r_['id'], len(r_['pts'])) for r_ in city_roads])
 
