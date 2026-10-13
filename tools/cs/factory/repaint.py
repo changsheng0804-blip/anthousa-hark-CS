@@ -18,6 +18,20 @@ for Y in ys:
     out = os.path.join(tempfile.gettempdir(), f'rp_{q}_{Y}.jpg')
     subprocess.run([sys.executable, os.path.join(HERE, 'reroof.py'), q, Y, os.path.join(raw, r['src']), out], env=env, capture_output=True, check=True)
     cur_p = os.path.join(Q, f'{pre}_af{Y}.jpg')
+    # cs21 · 蒙版合成：AI 画的岸偏了几像素（防波堤画细了、台阶画直了）——底账是陆地、画上是水、离画上陆地 ≤ 32 像素的，
+    # 用最近一块画上陆地的颜色补上（港墙、防波堤也算陆：人走在墙顶上）。底账是真相，画只许贴着它（定律四）。只补陆，不动水：船和栈桥画在水上是允许的。
+    mk = os.path.join(HERE, 'out', f'{q}_masks.npz')
+    if r.get('landfix', True) and os.path.exists(mk):
+        from scipy import ndimage as ndi
+        im_ = Image.open(out).convert('RGB'); A = np.asarray(im_).astype(int)
+        M = np.load(mk); lm = np.asarray(Image.fromarray((M['landm'] | (M['wall'] if 'wall' in M.files else False)).astype('uint8') * 255).resize(im_.size, Image.NEAREST)) > 0
+        wk = (A[..., 2] > A[..., 0] + 15) & (A[..., 2] > A[..., 1] - 10)
+        dist, (iy, ix) = ndi.distance_transform_edt(wk, return_indices=True)
+        fix = lm & wk & (dist <= 32)
+        if fix.any():
+            B = A.copy(); B[fix] = A[iy[fix], ix[fix]]
+            Image.fromarray(B.astype('uint8')).save(out, quality=92)
+        print(f'{Y} 年：蒙版合成补岸 {int(fix.sum())} 像素')
     new = np.asarray(Image.open(out).convert('RGB')).astype(int)
     cur = np.asarray(Image.open(cur_p).convert('RGB')).astype(int)
     diff = np.abs(new - cur).sum(2) > 60

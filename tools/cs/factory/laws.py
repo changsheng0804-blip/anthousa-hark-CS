@@ -5,7 +5,7 @@
          不许是一大片（那是船或者画错）。
 定律二 · 浮得住：船只走「底账和画都认作水」的地方。
 定律三 · 推得出：场景里的位置（泊位、水路、站位、街）都由 heart.py 从底账推出来；重跑 heart.py 结果必须一致，不许手抄。
-定律四 · 对得上：底账和画对不上的岸（walk 网里的 x 格）要越来越少；蒙版生成上线后应为 0。现在只报数，不判死。
+定律四 · 对得上：底账是陆地的地方画上不许是水（4 像素格量，≤50 格；cs21 起必须过）。港墙缺口按画开口不算。
 
 用法：python laws.py <q>   → 打印每条定律 ✅/❌，退出码 = 不过的条数。accept.py 会调用它。
 """
@@ -75,8 +75,18 @@ for s in F.get('ships', []):
             if not (0 <= j < PH and 0 <= i < PW) or landm[j, i] or not pw[j, i]: bad += 1
 res.append(('定律二 · 浮得住：船的水路都在底账和画都认的水上', bad == 0 and tot > 0, f'{bad}/{tot} 个点不在两边都认的水上'))
 # 定律四：只报数
-x = int((g == 'x').sum())
-res.append((f'定律四 · 对得上：底账和画对不上的岸 {x} 格（目标 0，只报数）', True, ''))
+# cs21：底账的港是四面围墙的多边形，口子不在底账里，按画上的缺口开（cs14）。落在港墙上的 x 格是港口，单独报数，不算对不上
+xg = (g == 'x'); wl = M['wall'] if 'wall' in M.files else np.zeros_like(landm)
+wl = ndi.binary_dilation(wl, iterations=max(1, 2 * R // RM))
+jj, ii = np.nonzero(xg); gate = 0
+for j, i in zip(jj, ii):
+    if wl[min(int((j + .5) * R // RM), wl.shape[0] - 1), min(int((i + .5) * R // RM), wl.shape[1] - 1)]: xg[j, i] = False; gate += 1
+x = int(xg.sum())
+# cs21 起定律四改成必须过：在蒙版的 4 像素格上量「底账是陆地、画上是水」（港墙缺口除外）。8 像素人走网上的 x 格多是岸边取整（底账过半是陆、画上三成是水），只报数
+lp = M['landm'] & M['pw'] & ~wl
+xp = int(lp.sum())
+res.append((f'定律四 · 对得上：底账陆地画成水 {xp} 格（4 像素格，≤50 才过）；人走网岸边取整 {x} 格、港墙缺口 {gate} 格只报数', xp <= 50,
+            f'{xp} 格底账陆地画成了水 → 蒙版生成重画那张画（README 第九段），repaint.py 会自动补贴岸的几像素'))
 
 for name, ok, why in res: print(('✅ ' if ok else '❌ ') + name + ('' if ok or not why else f'  —— {why}'))
 sys.exit(sum(1 for _, ok, _ in res if not ok))

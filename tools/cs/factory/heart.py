@@ -212,6 +212,12 @@ def main():
     k_ = max(2, round(PIER_W / R)); fat = ndi.binary_opening(pier_px, structure=np.ones((k_, k_), bool))
     thin = pier_px & ~ndi.binary_dilation(fat, iterations=1)
     pier_px = ndi.binary_propagation(ndi.binary_dilation(landm, iterations=2) & thin, mask=thin)
+    # cs21：栈桥要有长度。蒙版合成把岸补齐以后，岸边会剩几块两三格的碎屑（船头、浪花），不到 24 像素长的不算栈桥
+    lab_s, n_s = ndi.label(pier_px)
+    if n_s:
+        sl_ = ndi.find_objects(lab_s)
+        for k_s, sl in enumerate(sl_, 1):
+            if max(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start) * R < 24: pier_px[lab_s == k_s] = False
     if '--masks' in sys.argv:
         os.makedirs(os.path.join(os.path.dirname(__file__), 'out'), exist_ok=True)
         np.savez_compressed(os.path.join(os.path.dirname(__file__), 'out', f'{q}_masks.npz'), landm=landm, pw=pw, pier=pier_px, fat=fat, R=R, wall=wallA)
@@ -219,8 +225,10 @@ def main():
     if not os.environ.get('PIER_OFF'): walk8 = walk8 | pier8
     walk8 &= ~(pool(pw, 0) > 0.6)        # 定律一：六成以上画成水的格不能走（窄栈桥格至少四成是画上的陆地，留得住）
     if '--piers' in sys.argv:
-        pj, pi_ = np.nonzero(pier_px); ok_ = walk8[np.minimum(pj * R // R8, H8 - 1), np.minimum(pi_ * R // R8, W8 - 1)]
-        print(f'piers walkable {int(ok_.sum())} / {len(pj)}'); return
+        pj, pi_ = np.nonzero(pier_px); c8 = (np.minimum(pj * R // R8, H8 - 1), np.minimum(pi_ * R // R8, W8 - 1)); ok_ = walk8[c8]
+        # cs21：比 8 像素格还窄的栈桥尖，那一格六成以上画成了水，定律一不许走——这是格子取整，单独报数，不算没并进网
+        wet_ = (pool(pw, 0) > 0.6)[c8] & ~ok_
+        print(f'piers walkable {int(ok_.sum())} / {len(pj) - int(wet_.sum())}  (tips too thin for the 8px grid {int(wet_.sum())})'); return
     # cs17 · 栈桥上站人：画上的每座栈桥（离泊位 ≤ 700 像素）尖端和半腰各放一个站位，人家就近走过去
     pier_spots = []
     if not os.environ.get('PIER_OFF') and not os.environ.get('PIERSPOT_OFF'):
