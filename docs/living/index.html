@@ -73,7 +73,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <canvas id="c"></canvas>
 
 <div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub"><span id="scn">城东尖角</span> · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
-<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="blk" style="display:none">街区</button><button class="btn" id="other"></button><button class="btn" id="next" style="border-color:#e0b860;color:#ffd98a" onclick="location.href='nangang/'">南港（新）→</button><button class="btn" id="info">i</button></div>
+<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="next" style="border-color:#e0b860;color:#ffd98a" onclick="location.href='nangang/'">南港（新）→</button><button class="btn" id="info">i</button></div>
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
@@ -93,7 +93,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='21';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='22';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -487,7 +487,7 @@ let daphTarget=QUAY;
 function ticker(){}
 function glowYear(){const y=$('year');y.classList.add('glow');setTimeout(()=>y.classList.remove('glow'),4000);openNamed(DAPH)}
 function greet(){say(DAPH,'新来的？水，一个铜子一碗。……第一次来安托萨吧？我叫达芙涅，我爸是运水的。你想先去哪儿？',[['跟着你走走',startTour],['随便敲一扇门',()=>{hush();say(DAPH,'那就去吧。随便点一栋房子，里面的人会告诉你他们是谁。点完了再拨拨年代，看看他们以前是什么样。',[['好',hush]])}],['这座城是怎么长出来的？',()=>{hush();glowYear();say(DAPH,'拨下面那个年代。五十年前，这一片还多半是空地。你看着我，我也会跟着变小。',[['好',hush]])}]])}
-if(BLK){$('blk').style.display='';$('blk').onclick=()=>{showBlk=!showBlk;$('blk').classList.toggle('on',showBlk)}}
+if(BLK&&/[?&]debug=blocks/.test(location.search))showBlk=true;
 $('daph').onclick=()=>{if(SCENE.id==='xero'){flyTo(DHOME[0],DHOME[1],1.3);openNamed(DAPH);return}flyTo(QUAY[0],QUAY[1],1.4);greet()};
 $('scn').textContent=SCENE.title;$('other').textContent=SCENE.other.label;$('other').onclick=()=>location.href=SCENE.other.url;
 $('info').onclick=()=>$('infobox').style.display='block';$('infox').onclick=()=>$('infobox').style.display='none';
@@ -568,6 +568,10 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     for(const b of act){const c=BLK.fn[b.f][1],P=b.p;ctx.beginPath();ctx.moveTo(P[0],P[1]);for(let i=2;i<P.length;i+=2)ctx.lineTo(P[i],P[i+1]);ctx.closePath();ctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},.32)`;ctx.fill();ctx.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},.9)`;ctx.lineWidth=1.4/cam.z;ctx.stroke()}
     if(cam.z>=.45){ctx.textAlign='center';ctx.textBaseline='middle';const fs=Math.min(15,12/cam.z+4)/1;ctx.font=`600 ${13/cam.z}px "Noto Serif SC",serif`;
       for(const b of act){if(b.A<1800/cam.z/cam.z)continue;const c=BLK.fn[b.f][1],nm=BLK.fn[b.f][0];ctx.lineWidth=3/cam.z;ctx.strokeStyle='rgba(250,242,224,.9)';ctx.strokeText(nm,b.c[0],b.c[1]);ctx.fillStyle=`rgb(${c[0]*.6|0},${c[1]*.6|0},${c[2]*.6|0})`;ctx.fillText(nm,b.c[0],b.c[1])}}
+    ctx.restore()}
+  // district names, like an old map: only when zoomed out, only quarters with a character, fading as you come closer
+  if(BLK&&!showBlk&&cam.z<.75){const fa=Math.min(1,(.75-cam.z)/.25);ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`italic 600 ${15/cam.z}px "Noto Serif SC",serif`;
+    const done=[];for(const b of [...BLK.blocks].sort((p,q)=>q.A-p.A)){if(b.f==='homes'||!(b.a<=YEAR&&YEAR<b.b)||b.A<2600)continue;if(done.some(d=>d[0]===b.f&&Math.hypot(d[1]-b.c[0],d[2]-b.c[1])<320)||done.some(d=>Math.hypot(d[1]-b.c[0],d[2]-b.c[1])<110))continue;done.push([b.f,b.c[0],b.c[1]]);const nm=BLK.fn[b.f][0];ctx.globalAlpha=.8*fa;ctx.lineWidth=3.5/cam.z;ctx.strokeStyle='rgba(248,238,214,.85)';ctx.strokeText(nm,b.c[0],b.c[1]);ctx.fillStyle='rgba(96,58,30,.9)';ctx.fillText(nm,b.c[0],b.c[1])}
     ctx.restore()}
   // street names, written along the street like an old town map
   if(SN.length&&cam.z>=.6){const lv=cam.z<1.2?'m':cam.z<1.9?'ms':'mscl';
