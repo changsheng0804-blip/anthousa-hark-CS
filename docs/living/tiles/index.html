@@ -12,14 +12,14 @@ canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;dis
 const M=await fetch('meta.json').then(r=>r.json());const TP=M.tile_px,NL=Object.keys(M.levels).length;
 const NAMES={nangang:'南港',jinjiao:'金角岸'};
 const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
-function rs(){W=innerWidth;H=innerHeight;c.width=off.width=W*dpr;c.height=off.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';dirty=true}
-let dirty=true;addEventListener('resize',rs);
+function rs(){W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;off.width=Math.ceil(W*PCK*dpr);off.height=Math.ceil(H*PCK*dpr);c.style.width=W+'px';c.style.height=H+'px';dirty=true;cver++}
+let dirty=true,cver=0;const PCK=1.6,pc={ok:false};addEventListener('resize',rs);
 const WW=M.grid[0]*TP,WH=M.grid[1]*TP;   /* 级 0 像素坐标 */
 const cam={x:WW/2,y:WH/2,z:Math.min(innerWidth/WW,innerHeight/WH)*0.95};
 let YEAR=M.years[M.years.length-1],prevYear=null,fade=0;
 const cache=new Map();let loads=0,bytesSeen=0;
 function tile(Y,l,tx,ty,gr){const k=gr?Y+'/'+tx+'_'+ty:Y+'/'+l+'/'+tx+'_'+ty;let t=cache.get(k);if(t!==undefined)return t;const lv=gr?{grid:M.grid}:M.levels[l][Y];if(tx<0||ty<0||tx>=lv.grid[0]||ty>=lv.grid[1]){cache.set(k,null);return null}
-  const im=new Image();t={im,ok:false,miss:false};im.onload=()=>{t.ok=true;dirty=true};im.onerror=()=>{t.miss=true};im.src=k+'.webp';loads++;cache.set(k,t);
+  const im=new Image();t={im,ok:false,miss:false};im.onload=()=>{t.ok=true;dirty=true;cver++};im.onerror=()=>{t.miss=true};im.src=k+'.webp';loads++;cache.set(k,t);
   if(cache.size>220){for(const [kk,v] of cache){if(cache.size<=160)break;if(!v||v.ok||v.miss)cache.delete(kk)}}return t}
 function level(){/* 屏幕上一块瓦片不小于它本身像素的一半就用更细的级 */let l=Math.floor(Math.log2(1/(cam.z*dpr)));return Math.max(0,Math.min(NL-1,l))}
 let drawn=0,hdrawn=0;
@@ -35,9 +35,10 @@ function activeTiles(){const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/
   for(let ty=Math.floor(y0/TP)-1;ty<=Math.floor(y1/TP)+1;ty++)for(let tx=Math.floor(x0/TP)-1;tx<=Math.floor(x1/TP)+1;tx++)a.push([tx,ty]);return a}
 let NODE=new Map();
 function nk(x,y){return Math.round(x)+','+Math.round(y)}
-function lifeSync(Y){const want=new Set(),gi=M.street.ground_keys.indexOf(gkey(Y)),K=String(gkey(Y));
+function lifeSync(Y){let nb=1;const want=new Set(),gi=M.street.ground_keys.indexOf(gkey(Y)),K=String(gkey(Y));
   for(const [tx,ty] of activeTiles()){const k=tx+'_'+ty;want.add(k);const v=vtile(tx,ty);if(!v.ok)continue;let L=LIFE.tiles.get(k);
     if(L&&L.Y===Y)continue;
+    if(nb--<=0){dirty=true;continue}
     const segs=v.d.s.filter(q=>q[6]<=Y&&!(q[7]&&q[7]<=Y)&&(q[9]>>gi&1));
     const nh=v.d.h.filter(h=>h[0]<=Y&&Y<h[1]).length,r=rnd((tx*73856093)^(ty*19349663)^Y);
     const W_=[];const nw=segs.length?Math.min(30,Math.floor(nh/15)):0;
@@ -68,23 +69,42 @@ function lifeDraw(){for(const L of LIFE.tiles.values()){
       ctx.fillStyle=w.col;ctx.beginPath();ctx.arc(px,py,1.1,0,6.283);ctx.fill();ctx.fillStyle='#e8c9a0';ctx.beginPath();ctx.arc(px,py-0.9,0.6,0,6.283);ctx.fill()}}}
 const STREET_Z=1.15,vcache=new Map();let vloads=0;
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
-  fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true}}).catch(()=>{});
+  fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}}).catch(()=>{});
   if(vcache.size>60){for(const [kk,v] of vcache){if(vcache.size<=40)break;if(v.ok)vcache.delete(kk)}}return t}
 function gkey(Y){const ks=M.street.ground_keys;return ks.find(k=>Y<=k)??ks[ks.length-1]}
 const SSTY={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.84)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
-function drawStreet(Y){const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;const K=gkey(Y),vs=[];
+const LAY=new Map();let layBudget=3;
+function paintStreets(g,d,Y){g.lineCap='round';
+  g.strokeStyle='rgba(150,126,92,.5)';g.lineWidth=1.8;g.beginPath();for(const q of d.s)if(q[8]<=Y&&Y<q[6]){g.moveTo(q[0],q[1]);g.lineTo(q[2],q[3])}g.stroke();
+  for(const pas of [0,1])for(const k of 'lcsm'){const col=SSTY[k][pas];if(!col)continue;g.strokeStyle=col;
+    const ws=new Map();for(const q of d.s){if(q[5]!==k||q[6]>Y||(q[7]&&q[7]<=Y))continue;const w=q[4]+(pas?0:2);let p=ws.get(w);if(!p)ws.set(w,p=new Path2D());p.moveTo(q[0],q[1]);p.lineTo(q[2],q[3])}
+    for(const [w,p] of ws){g.lineWidth=w;g.stroke(p)}}}
+function paintHouses(g,d,Y){const hs=d.h.filter(h=>h[0]<=Y&&Y<h[1]);hs.sort((a,b)=>a[2]-b[2]);
+  g.fillStyle='rgba(50,32,14,.27)';for(const h of hs){const s=h[3];g.beginPath();g.moveTo(s[0],s[1]);for(let i=2;i<s.length;i+=2)g.lineTo(s[i],s[i+1]);g.fill()}
+  g.lineWidth=0.5;g.lineCap='butt';
+  for(const h of hs)for(const [kd,p,c] of h[4]){if(p.length<4)continue;g.beginPath();g.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)g.lineTo(p[i],p[i+1]);
+    if(kd===0){if(p.length>=6){g.fillStyle='#'+c;g.fill()}}else{if(kd===1)g.closePath();g.strokeStyle='#'+c;g.stroke()}}
+  return hs.length}
+function layer(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;let L=LAY.get(k);if(L){LAY.delete(k);LAY.set(k,L);return L}
+  if(layBudget<=0){dirty=true;cver++;return null}layBudget--;
+  const MG=24,sz=TP+2*MG,cv=document.createElement('canvas');cv.width=cv.height=Math.ceil(sz*zr);const g=cv.getContext('2d');g.setTransform(zr,0,0,zr,(MG-tx*TP)*zr,(MG-ty*TP)*zr);
+  L={cv,MG,sz,n:0};if(kind==='s'){g.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);paintStreets(g,v.d,Y)}else L.n=paintHouses(g,v.d,Y);
+  LAY.set(k,L);while(LAY.size>90)LAY.delete(LAY.keys().next().value);return L}
+function prepStreet(Y){const x0=cam.x-W*PCK/2/cam.z,y0=cam.y-H*PCK/2/cam.z,x1=cam.x+W*PCK/2/cam.z,y1=cam.y+H*PCK/2/cam.z,K=gkey(Y);
+  const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr,STREET_Z)/STREET_Z)));
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
-    const g=tile('g/'+K,0,tx,ty,true);if(g&&g.ok){ctx.drawImage(g.im,tx*TP,ty*TP,TP+0.5,TP+0.5);drawn++}else{const t=tile(Y,0,tx,ty);if(t&&t.ok)ctx.drawImage(t.im,tx*TP,ty*TP,TP+0.5,TP+0.5)}
-    const v=vtile(tx,ty);if(v.ok)vs.push(v.d)}
-  ctx.lineCap='round';
-  for(const v of vs)for(const q of v.s)if(q[8]<=Y&&Y<q[6]){ctx.strokeStyle='rgba(150,126,92,.5)';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3]);ctx.stroke()}
-  for(const pas of [0,1])for(const k of 'lcsm'){const col=SSTY[k][pas];if(!col)continue;ctx.strokeStyle=col;
-    for(const v of vs)for(const q of v.s){if(q[5]!==k||q[6]>Y||(q[7]&&q[7]<=Y))continue;ctx.lineWidth=q[4]+(pas?0:2);ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3]);ctx.stroke()}}
-  const hs=[];for(const v of vs)for(const h of v.h)if(h[0]<=Y&&Y<h[1])hs.push(h);hs.sort((a,b)=>a[2]-b[2]);hdrawn=hs.length;
-  ctx.fillStyle='rgba(50,32,14,.27)';for(const h of hs){const s=h[3];ctx.beginPath();ctx.moveTo(s[0],s[1]);for(let i=2;i<s.length;i+=2)ctx.lineTo(s[i],s[i+1]);ctx.fill()}
-  ctx.lineWidth=0.5;ctx.lineCap='butt';
-  for(const h of hs)for(const [kd,p,c] of h[4]){if(p.length<4)continue;ctx.beginPath();ctx.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)ctx.lineTo(p[i],p[i+1]);
-    if(kd===0){if(p.length>=6){ctx.fillStyle='#'+c;ctx.fill()}}else{if(kd===1)ctx.closePath();ctx.strokeStyle='#'+c;ctx.stroke()}}}
+    const g=tile('g/'+K,0,tx,ty,true);let gim=null;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im}
+    const v=vtile(tx,ty);if(!gim||!v.ok)continue;
+    for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+Y+'_'+zr)){layBudget=1;layer(kd,tx,ty,Y,v,zr,gim);return true}}
+  return false}
+function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x+W*PCK/2/cam.z,y1=pc.y+H*PCK/2/cam.z;const K=gkey(Y),vs=[];
+  layBudget=0;const zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr,STREET_Z)/STREET_Z)));
+  for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
+    const g=tile('g/'+K,0,tx,ty,true);let gim=null;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im}
+    const v=vtile(tx,ty);if(!gim)continue;
+    if(v.ok){const L=layer('s',tx,ty,Y,v,zr,gim);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);drawn++}}else{ctx.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);drawn++}
+    if(v.ok)vs.push([tx,ty,v])}
+  hdrawn=0;for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}}
 function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块瓦片在级 0 像素里的边长 */
   const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z;
   ctx.globalAlpha=alpha;
@@ -95,18 +115,30 @@ function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块�
     for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const s=TP*2**up,sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
   ctx.globalAlpha=1}
 function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=STREET_Z;
-  if(street){if(dirty){/* 静的一层（地面、街、房子）只在镜头或数据变了时重画，存在 off 上 */ctx=octx;}}
-  else if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
+  let redraw=false,wasDirty=dirty;
+  if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
+    const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;
+    redraw=!prepped&&dirty&&(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver||fade>0||Math.abs(cam.x-pc.x)>mx||Math.abs(cam.y-pc.y)>my);
+    if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
+    if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;const OW=off.width,OH=off.height;
+      octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
+      octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
+    else if(!prepped)dirty=false;
+    if(wasDirty)lifeSync(YEAR);
+    if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
+    lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(off,Math.round(((pc.x-cam.x)*cam.z+W*(1-PCK)/2)*dpr),Math.round(((pc.y-cam.y)*cam.z+H*(1-PCK)/2)*dpr));
+    ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);
+    ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
+  else{pc.ok=false;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
   if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
   if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
-    hdrawn=0;if(cam.z*dpr>=STREET_Z){drawStreet(YEAR)}else{if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1)}
+    hdrawn=0;if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);
     ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
     for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
-    ctx.setTransform(1,0,0,1,0,0);if(street)lifeSync(YEAR);
-    document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · ${cam.z*dpr>=STREET_Z?'街巷级 · 矢量房子 '+hdrawn+' 栋 · ':''}画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}
-  if(street){ctx=ctx0;lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(off,0,0);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);
-    const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
+    ctx.setTransform(1,0,0,1,0,0);
+    document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}}
   ctx=ctx0;requestAnimationFrame(frame)}
 const ui=document.getElementById('ui');
 for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.textContent=Y+' 年';b.onclick=()=>{if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;[...ui.children].forEach(x=>x.classList.toggle('on',x===b))};ui.appendChild(b)}
