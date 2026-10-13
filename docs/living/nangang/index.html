@@ -99,24 +99,60 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 'use strict';
 const $=id=>document.getElementById(id);
 const W=1820,H=2048;
-const [city,HD,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
+const [city,HD0,SCENE,PPL]=await Promise.all(['city.json','houses.json','scene.json','people.json'].map(f=>fetch(f).then(r=>r.json())));
+const HD=SCENE.street_layout?await fetch(SCENE.street_layout.houses).then(r=>r.json()):HD0;   /* cs29：页面用按街排好的房子；底账 houses.json 原样不动 */
 const pplImg=new Image();pplImg.src='people.png';
 const SCENES=await fetch('scenes.json').then(r=>r.ok?r.json():[]).catch(()=>[]);let sceneDaph=null,lastSceneKey='',sceneSlow=false,tkScene=null;
 const CLOSE=(SCENE.close||[]).map(c=>{const im=new Image();im.src=c.img;return Object.assign({im},c)});const closeNow=()=>CLOSE.find(c=>YEAR>=c.y[0]&&YEAR<=c.y[1]&&c.im.complete);let closeA=0,closeC=null;const zMax=()=>(closeNow()||SCENE.compose)?8:4;const inClose=(x,y)=>closeA>.35&&closeC&&x>closeC.r[0]&&x<closeC.r[2]&&y>closeC.r[1]&&y<closeC.r[3];
-let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm]=await Promise.all(['houses.json','props.json'].map(f=>fetch(K+f).then(r=>r.json())));COMP={houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
+/* CS 线 · cs29 按街道重排：下面这段房子、街道的画法取自上游 tanxinhao 线 docs/living/xerolophos/index.html（v20–v25，所有者点名取用）；
+   南港开了 street_layout 就用 tools/cs/factory/streets_ng.py 排好的街、地块、房子（houses_street.json / streets.json / houses_geom.json），地面用 ground_<年>.jpg */
+const vv=f=>f;
+if(SCENE.street_layout&&!SCENE.compose)SCENE.compose={kit:SCENE.street_layout.kit};if(SCENE.street_layout){SCENE.streets=SCENE.street_layout.streets;SCENE.junctions=SCENE.street_layout.junctions;SCENE.hgeom=SCENE.street_layout.hgeom}
+let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(vv(K+f)).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(vv(SCENE.junctions)).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(vv(SCENE.streets)).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
-function geomOf(h){if(h.g)return h.g;const p=h.p;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);y0=Math.min(y0,p[i+1]);y1=Math.max(y1,p[i+1])}
-  const bw=x1-x0,bh=y1-y0,m=COMP.hm[Math.floor(hsh(h.id)*COMP.hm.length)],w=Math.max(bw,bh*1.1)*1.3,hh=w*m.h/m.w,by=h.cy+bh*.5+hh*.18;
-  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);
-  return h.g={m,w,hh,by,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
-function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.complete||!COMP.props.complete)return;
+const HWALL=[[228,212,182],[216,194,156],[238,228,206],[204,176,136],[224,204,172],[210,200,184]],HROOF=[[186,94,60],[172,86,54],[198,112,70],[160,80,52],[180,102,66],[150,96,72]];
+const HSTYLE={market:{wall:[[236,222,192],[228,206,166]],roof:[[198,104,58],[206,118,64],[188,96,56]],awn:1,flat:.05},shops:{wall:[[234,220,190],[224,204,168]],roof:[[192,100,60],[180,92,56]],awn:.5,flat:.06},fine:{wall:[[244,238,226],[238,230,214]],roof:[[200,112,66],[190,104,62]],court:1,flat:0},workshop:{wall:[[196,162,116],[184,150,106],[204,172,128]],roof:[[142,86,58],[128,90,66],[150,100,70]],flat:.45,kiln:.35},water:{wall:[[216,222,220],[226,228,222]],roof:[[176,98,66],[166,92,64]],flat:.12},garrison:{wall:[[198,196,188],[186,184,178]],roof:[[150,92,72],[140,96,80]],flat:.15},planned:{wall:[[228,214,188]],roof:[[184,94,58]],flat:0},garden:{wall:[[206,182,140],[196,172,132]],roof:[[166,100,66]],flat:.5}};
+const shd=(c,k)=>`rgb(${Math.min(255,c[0]*k|0)},${Math.min(255,c[1]*k|0)},${Math.min(255,c[2]*k|0)})`;
+function hullJS(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p)}return lo.slice(0,-1).concat(up.slice(0,-1))}
+function geomOf(h){if(h.g)return h.g;if(HG&&HG.H[h.id])return geomHG(h);return geomOld(h)}
+function geomHG(h){const R=HG.H[h.id],p=h.p,id=h.id,pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
+  const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const sp=[];for(let i=0;i<R[1].length;i+=2)sp.push([R[1][i],R[1][i+1]]);
+  const parts=R[2].map(q=>{const P=[];for(let i=3;i<q.length;i+=2)P.push([q[i],q[i+1]]);return [q[0]===0?'f':q[0]===1?'e':'r',P,HG.pal[q[2]],q[1]===0?'g':q[1]===1?'w':'r']});
+  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);const w=Math.max(Math.hypot(p[2]-p[0],p[3]-p[1]),Math.hypot(p[6]-p[0],p[7]-p[1]));
+  return h.g={shadow:hullJS(sp),parts,fp,by:R[0],w,hh:h.ht!=null?h.ht:5,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+function geomOld(h){const p=h.p,id=h.id;const pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
+  const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const ht=h.ht!=null?h.ht:5;const up=fp.map(q=>[q[0],q[1]-ht]);
+  const stl=HSTYLE[h.fn]||{},WL=stl.wall||HWALL,RF=stl.roof||HROOF;const wall=WL[Math.floor(hsh(id,11)*WL.length)];let roof=RF[Math.floor(hsh(id,12)*RF.length)];if(hsh(id,13)<.5){const k=.9+.2*hsh(id,14);roof=roof.map(v=>v*k)}
+  const parts=[];const shadow=hullJS(fp.concat(fp.map(q=>[q[0]+ht*.55+1,q[1]+ht*.3+1])));
+  for(let k=0;k<4;k++){const a=fp[k],b=fp[(k+1)%4];const ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*((a[0]+b[0])/2-cx)+ny*((a[1]+b[1])/2-cy)<0){nx=-nx;ny=-ny}
+    if(ny<=.02||ht<.6)continue;parts.push(['f',[a,b,[b[0],b[1]-ht],[a[0],a[1]-ht]],shd(wall,.80+.18*(.5-.5*nx)),'w']);
+    if((k===0||k===2)&&ny>.55){const t0=.35+.3*hsh(id,15),dw=.16,dh=Math.min(ht*.62,3.2);const d0=[a[0]+ex*t0,a[1]+ey*t0],d1=[a[0]+ex*(t0+dw),a[1]+ey*(t0+dw)];if(ht>2)parts.push(['f',[d0,d1,[d1[0],d1[1]-dh],[d0[0],d0[1]-dh]],'rgb(70,50,36)','w']);
+      if((h.ty||hsh(id,18)<(stl.awn||0))&&ht>3){const aw=hsh(id,16)<.5?'rgb(182,64,48)':'rgb(60,96,120)';const yy=ht*.62;parts.push(['f',[[a[0]+ex*.08,a[1]+ey*.08-yy],[a[0]+ex*.92,a[1]+ey*.92-yy],[a[0]+ex*.92+nx*1.6,a[1]+ey*.92-yy+ny*1.6+.8],[a[0]+ex*.08+nx*1.6,a[1]+ey*.08-yy+ny*1.6+.8]],aw])}}}
+  const ux=up[1][0]-up[0][0],uy=up[1][1]-up[0][1],vx=up[3][0]-up[0][0],vy=up[3][1]-up[0][1],Lu=Math.hypot(ux,uy),Lv=Math.hypot(vx,vy);const tx=(up[0][0]+up[1][0]+up[2][0]+up[3][0])/4,ty=(up[0][1]+up[1][1]+up[2][1]+up[3][1])/4;
+  if(hsh(id,17)<(stl.flat!=null?stl.flat:.12)&&!h.ty){parts.push(['f',up,shd(wall,1.04),'r']);parts.push(['e',up,shd(wall,.7),'r'])}
+  else{let ax,ay,r;if(Lu>=Lv){ax=ux/Lu;ay=uy/Lu;r=(Lu-Lv)/2}else{ax=vx/Lv;ay=vy/Lv;r=(Lv-Lu)/2}const lift=Math.min(Lu,Lv)*.28;const r0=[tx-ax*r,ty-ay*r-lift],r1=[tx+ax*r,ty+ay*r-lift];const d2=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2;
+    for(let k=0;k<4;k++){const a=up[k],b=up[(k+1)%4];const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*(mx-tx)+ny*(my-ty)<0){nx=-nx;ny=-ny}
+      const kk=.86-.22*(nx*-.6+ny*-.8);let face;if(r<.3)face=[a,b,r0];else{const pa=d2(a,r0)<=d2(a,r1)?r0:r1,pb=d2(b,r0)<=d2(b,r1)?r0:r1;face=pa===pb?[a,b,pb]:[a,b,pb,pa]}parts.push(['f',face,shd(roof,kk),'r'])}
+    parts.push(['e',up,shd(roof,.62),'r']);if(r>=.3)parts.push(['r',[r0,r1],shd(roof,.7),'r'])}
+  if(stl.court&&Lu*Lv>120){const cq=up.map(q=>[tx+(q[0]-tx)*.38,ty+(q[1]-ty)*.38+.6]);parts.push(['f',cq,'rgb(214,198,162)','r']);parts.push(['e',cq,'rgb(120,84,56)','r'])}
+  if(hsh(id,19)<(stl.kiln||0)){const kx=up[2][0]*.7+tx*.3,ky=up[2][1]*.7+ty*.3;parts.push(['f',[[kx-1,ky],[kx+1,ky],[kx+1,ky-2.6],[kx-1,ky-2.6]],'rgb(70,56,48)','r'])}
+  if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);const w=Math.max(Lu,Lv);
+  return h.g={shadow,parts,fp,by:Math.max(fp[0][1],fp[1][1],fp[2][1],fp[3][1]),w,hh:ht,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
+function drawHouse(g,A,c2,bare){const X=c2||ctx;if(bare){X.fillStyle='rgba(196,170,124,.75)';X.beginPath();const P=g.fp;X.moveTo(P[0][0],P[0][1]);for(let i=1;i<4;i++)X.lineTo(P[i][0],P[i][1]);X.closePath();X.fill();X.strokeStyle='rgba(120,84,44,.9)';X.lineWidth=.5;X.stroke()}
+  for(const [k,P,c,t] of g.parts){if(bare&&t==='r')continue;X.beginPath();X.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)X.lineTo(P[i][0],P[i][1]);if(k==='f'){X.closePath();X.fillStyle=c;X.fill()}else{if(k==='e')X.closePath();X.strokeStyle=c;X.lineWidth=k==='r'?.7:.45;X.stroke()}}}
+function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.complete||!COMP.props.complete||(COMP.shops&&!COMP.shops.complete))return;
   if(!COMP.pat&&COMP.ground.complete){COMP.pat=ctx.createPattern(COMP.ground,'repeat');if(COMP.pat&&COMP.pat.setTransform)COMP.pat.setTransform(new DOMMatrix().scale(42/384))}
-  if(COMP.pat){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}
+  if(COMP.pat&&!SCENE.street_layout){ctx.globalAlpha=.68*A;ctx.fillStyle=COMP.pat;ctx.fillRect(vx0,vy0,vx1-vx0,vy1-vy0)}   /* cs29：南港有水，近看不铺满地纹 */
+  if(COMP.st.length){ctx.lineCap='round';ctx.globalAlpha=A*.55;ctx.strokeStyle='rgb(150,126,92)';ctx.beginPath();for(const q of COMP.st){if(!(q[8]<=YEAR&&q[6]>YEAR))continue;if(Math.max(q[0],q[2])<vx0-10||Math.min(q[0],q[2])>vx1+10||Math.max(q[1],q[3])<vy0-10||Math.min(q[1],q[3])>vy1+10)continue;ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3])}ctx.lineWidth=1.8;ctx.stroke();ctx.globalAlpha=A;const SC={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.85)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
+   for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k][pas];if(!col)continue;ctx.strokeStyle=col;ctx.globalAlpha=A;ctx.beginPath();for(const q of COMP.st){if(q[5]!==k||q[6]>YEAR||(q[7]&&q[7]<=YEAR))continue;if(Math.max(q[0],q[2])<vx0-10||Math.min(q[0],q[2])>vx1+10||Math.max(q[1],q[3])<vy0-10||Math.min(q[1],q[3])>vy1+10)continue;ctx.moveTo(q[0],q[1]);ctx.lineTo(q[2],q[3]);ctx.lineWidth=q[4]+(pas?0:2)}ctx.stroke()}}
   const list=[];for(let gx=Math.floor((vx0-40)/G);gx<=Math.floor((vx1+40)/G);gx++)for(let gy=Math.floor((vy0-20)/G);gy<=Math.floor((vy1+60)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const h of c)if(h.built<=YEAR&&h.destroyed>YEAR)list.push(h)}
   const it=[];for(const h of list){const g=geomOf(h);it.push([g.by,0,h,g]);if(g.pr)it.push([g.by+1.5,1,h,g]);if(g.pp&&per!=='night')it.push([g.by+2.5,2,h,g])}
+  for(const j of COMP.ju){if(j[2]>YEAR||j[0]<vx0-15||j[0]>vx1+15||j[1]<vy0-15||j[1]>vy1+15)continue;const L=j[3]==='well'?[[16,0,0,8],[15,6,3,6]]:j[3]==='stall'?[[(j[0]+j[1])%2?12:17,0,0,8]]:[[0,0,0,8]];for(const q of L)it.push([j[1]+q[2]+2,3,j,q])}
   it.sort((a,b)=>a[0]-b[0]);ctx.globalAlpha=A;
-  for(const [by,t,h,g] of it){if(t===0){const m=g.m;ctx.fillStyle='rgba(50,32,14,.22)';ctx.beginPath();ctx.ellipse(h.cx+2,by-g.hh*.22,g.w*.52,g.hh*.3,0,0,7);ctx.fill();if(h.built===YEAR)ctx.globalAlpha=A*.55;ctx.drawImage(COMP.houses,m.x,0,m.w,m.h,h.cx-g.w/2,by-g.hh,g.w,g.hh);ctx.globalAlpha=A}
+  ctx.fillStyle='rgba(50,32,14,.27)';ctx.beginPath();for(const [by,t,h,g] of it)if(t===0){const P=g.shadow;ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);ctx.closePath()}ctx.fill();
+  for(const [by,t,h,g] of it){if(t===0){drawHouse(g,A,ctx,h.built===YEAR)}
     else if(t===1){const m=g.pr,sc=6/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h.cx+g.prx-m.w*sc/2,by-m.h*sc,m.w*sc,m.h*sc)}
+    else if(t===3){const q=g,m=COMP.pm.find(z=>z.k===q[0]);if(m){const sc=q[3]/Math.max(m.w,m.h);ctx.drawImage(COMP.props,m.x,0,m.w,m.h,h[0]+q[1]-m.w*sc/2,by-2-m.h*sc,m.w*sc,m.h*sc)}}
     else{const m=g.pp,hh=5.5,ww=m.w/m.h*hh;ctx.drawImage(pplImg,m.x,m.y,m.w,m.h,h.cx+g.ppx-ww/2,by-hh,ww,hh)}}
   ctx.globalAlpha=1}
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
@@ -135,6 +171,7 @@ function todayFor(F,Y,per,id){const r=rng(hash(id+':'+Y+':'+per));if(SCENE.id!==
  if(per==='evening'&&F.faith==='尼西亚派'&&Y>=49)a.push('去阿纳斯塔西娅听格里高利讲道');if(per==='day'&&Y>=25)a.push('下午挤进竞技场喊破了嗓子');return pick(r,a)}
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
+const GRDF=SCENE.street_layout?SCENE.keys.map(k=>SCENE.street_layout.ground.replace('{K}',k[0])):null;if(GRDF)GRDF.forEach(loadIm);   /* cs29 地面：画上底账原位置的小房子抹掉了 */
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
 await Promise.all([...Object.values(IM),pplImg,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
@@ -170,7 +207,7 @@ for(const h of HD.houses){
   if(destroyed<=1||destroyed<=built+1) continue;
   let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   if(inHarbor(cx,cy)) continue;
-  houses.push({id,d:dist_,built,destroyed,p,cx,cy});
+  houses.push({id,d:dist_,built,destroyed,p,cx,cy,fx:h[5]||0,ty:h[6]||0,ht:h.length>7?h[7]:null,fn:h[8]||'homes'});
 }
 // spatial grid for click lookup
 const G=60,grid=new Map();
@@ -188,7 +225,8 @@ const base=document.createElement('canvas');base.width=W;base.height=H;const bct
 let baseYear=-1;
 function polyPath(ctx,p,s){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*s,y=cy+(p[2*i+1]-cy)*s;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
-const KEYS=SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
+const KEYS=GRDF?SCENE.keys.map((k,i)=>[k[0],IM[GRDF[i]],i?IM[GRDF[i-1]]:IM[k[2]]]):SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
+const HG=SCENE.hgeom?await fetch(SCENE.hgeom).then(r=>r.json()).catch(()=>null):null;
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
@@ -209,17 +247,28 @@ function drawHalls(Y){const L=SCENE.halls&&SCENE.halls[Y];if(!L||!L.length)retur
     bctx.fillStyle=T(c,lit);quad(-a,-b,a,0);bctx.fill();bctx.fillStyle=T(c,2-lit);quad(-a,0,a,b);bctx.fill();
     bctx.lineWidth=1;bctx.strokeStyle=T(c,.88,.18);for(const k of [-2/3*b,-1/3*b,1/3*b,2/3*b]){const p0=P(-a,k),p1=P(a,k);bctx.beginPath();bctx.moveTo(p0[0],p0[1]);bctx.lineTo(p1[0],p1[1]);bctx.stroke()}
     bctx.strokeStyle=T(c,1.22,.9);{const p0=P(-a,0),p1=P(a,0);bctx.beginPath();bctx.moveTo(p0[0],p0[1]);bctx.lineTo(p1[0],p1[1]);bctx.stroke()}}}
+/* CS 线 · cs29：街、房子画进底图（画法同上游 buildBaseProc：踩出来的小道 → 街按 巷/横街/长街/主街 两遍描边 → 房影 → 房子和街口的井、摊、炉，按底边从北往南画） */
+const STY={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.84)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
+function drawStreetHouses(Y){const c=bctx;c.globalAlpha=1;c.globalCompositeOperation='source-over';c.lineCap='round';const ST=COMP.st;
+  c.strokeStyle='rgba(150,126,92,.5)';c.lineWidth=1.8;c.beginPath();for(const q of ST)if(q[8]<=Y&&q[6]>Y){c.moveTo(q[0],q[1]);c.lineTo(q[2],q[3])}c.stroke();
+  for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=STY[k][pas];if(!col)continue;c.strokeStyle=col;const B=new Map();for(const q of ST){if(q[5]!==k||q[6]>Y||(q[7]&&q[7]<=Y))continue;const w=Math.round(q[4]*2)/2;if(!B.has(w))B.set(w,[]);B.get(w).push(q)}for(const [w,L] of B){c.beginPath();for(const q of L){c.moveTo(q[0],q[1]);c.lineTo(q[2],q[3])}c.lineWidth=w+(pas?0:2);c.stroke()}}
+  const list=houses.filter(h=>h.built<=Y&&h.destroyed>Y).map(h=>[geomOf(h),h]);
+  c.fillStyle='rgba(50,32,14,.27)';c.beginPath();for(const [g] of list){const P=g.shadow;c.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)c.lineTo(P[i][0],P[i][1]);c.closePath()}c.fill();
+  const it=list.map(([g,h])=>[g.by,0,g,h]);
+  for(const j of COMP.ju){if(j[2]>Y)continue;const L=j[3]==='well'?[[16,0,0,8],[15,6,3,6]]:j[3]==='stall'?[[(j[0]+j[1])%2?12:17,0,0,8]]:[[0,0,0,8]];for(const q of L)it.push([j[1]+q[2]+2,1,q,j])}
+  it.sort((a,b)=>a[0]-b[0]);
+  for(const [by,t,g,h] of it){if(t===0)drawHouse(g,1,c,h.built===Y);else{const q=g,j=h,m=COMP.pm.find(z=>z.k===q[0]);if(m&&COMP.props.complete){const sc=q[3]/Math.max(m.w,m.h);c.drawImage(COMP.props,m.x,0,m.w,m.h,j[0]+q[1]-m.w*sc/2,by-2-m.h*sc,m.w*sc,m.h*sc)}}}}
 function buildBase(Y){
   const [K,KI,PI]=keyFor(Y);bctx.globalAlpha=1;bctx.globalCompositeOperation='source-over';bctx.drawImage(KI,0,0,W,H);
   mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,W/2,H/2);mctx.setTransform(.5,0,0,.5,0,0);mctx.fillStyle='#fff';mctx.beginPath();
   let any=false;
-  for(const h of houses) if((h.built>Y&&h.built<=K)||(h.built<=Y&&h.destroyed>Y&&h.destroyed<=K)){polyPath(mctx,h.p,2.0);any=true}
+  if(!GRDF)for(const h of houses) if((h.built>Y&&h.built<=K)||(h.built<=Y&&h.destroyed>Y&&h.destroyed<=K)){polyPath(mctx,h.p,2.0);any=true}
   for(const k in late) if(late[k].built>Y&&late[k].built<=K){polyPath(mctx,late[k].p.flat(),1.15);any=true}
   if(any){mctx.fill();
     fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(3px)';fctx.drawImage(maskC,0,0,W,H);fctx.filter='none';
     fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
     bctx.drawImage(fillC,0,0);}
-  if(Y>K){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
+  if(Y>K&&!GRDF){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
   /* CS 线 · cs23/cs24 码头逐年长：没建成的栈桥（连同靠在边上的画上的船）用 dock_patch.py 做好的补丁盖住——同一张画上就近借来的干净海面，已校过色、羽化过；
      补丁图还没载入时先用 borrow 偏移现场借水 */
   if(SCENE.fleet&&SCENE.fleet.docks)SCENE.fleet.docks.forEach((d,i)=>{if(d.from<=Y)return;const pt=SCENE.dock_patch&&SCENE.dock_patch[i]&&SCENE.dock_patch[i][K];const im=pt&&DOCKIM[pt[0]];
@@ -228,10 +277,12 @@ function buildBase(Y){
     fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(4px)';fctx.fillStyle='#fff';for(const q of d.rects.concat((d.hide&&d.hide[K])||[]))fctx.fillRect(q[0]-6,q[1]-5,q[2]+12,q[3]+10);fctx.filter='none';
     fctx.globalCompositeOperation='source-in';fctx.drawImage(KI,-o[0],-o[1],W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)});
   drawHalls(Y);   /* cs27 */
+  if(GRDF&&COMP)drawStreetHouses(Y);   /* cs29 */
   baseYear=Y;buildingNow=houses.filter(h=>h.destroyed>Y&&(h.built===Y||h.built===Y-1));
 }
 function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}
 let YEAR=50;buildBase(50);
+if(COMP&&GRDF)COMP.props.onload=()=>{if(baseYear>=0)buildBase(baseYear)};   /* cs29：街口的井、摊、炉图载入后重画一次 */
 const prevBase=document.createElement('canvas');prevBase.width=W;prevBase.height=H;let fadeT=0;
 
 /* ---------- households (persistent, grow with time) ---------- */

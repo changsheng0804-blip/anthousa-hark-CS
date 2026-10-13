@@ -196,3 +196,9 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 ## cs27 留。cs28 按街道、街区分区（所有者点名取上游 tanxinhao 线 v23 的“街围出街区、街区整块一种”）
 - tools/cs/factory/blocks.py（取代 halls.py）：主街把地切成大格；临港大格顺港岸、其余顺最近主街开巷（84×64，巷宽 6）切出约 540 个街区；街区里活着的房子按 districts.py 投票，非民居一种 ≥40% 整块算它；货栈/仓场街区整块用空地底图抹平，顺街区方向排两排长屋（进深 18、长 ≤56、七成在街区里、不碰水和地标）。同种相连的街区写一个名，小而要紧的（仓场、汲水坊）先写。
 - 南港底账房子是满地撒的、没有巷子，民居街区暂不重排房子（要重画画），只按街区定性。62/62。
+
+## cs29 按街道重排，道路系统同步上游（所有者点名取 tanxinhao 线 v20–v25 的街道 + 房屋体系）
+- tools/cs/factory/streets_ng.py：照 streets_xero.py 改成南港的地（陆地=步行网两边都算陆地；不准盖=地标、栈桥、离水<8px；长街顺大道方向；48 年火烧地按新街坊直排；街区判法用南港优先顺序，沿港一线地块直接判码头货栈）。底账 houses.json 不动，重排结果 houses_street.json（每户 id/年份不变，街上没地方的 39 户留在原处）；另出 streets.json、junctions.json、houses_geom.json；分区跟着地块写进 scene.zones/zone_labels。
+- tools/cs/factory/house_types.py 取自上游，加 dock/horrea 色板，货栈地块出长屋 hall。ground_ng.py：三张画的陆地统一铺成同一种沙地（留水、地标、菜园绿、48 年烧掉那片焦土）。render_ng.py 在 Python 里照页面画法出预览。
+- 页面：scene.street_layout 开着就用上游 buildBaseProc 的画法（小道→街两遍描边→房影→房子和井摊炉），近看用上游 drawComposed（南港不铺满地纹）。kits/hill 取自上游。
+- 检查 tools/cs/check_streets.py（重排只挪位置、不下水、不上栈桥、街不下水、分区、长屋、地面图）；accept 62/62。cs28 的街区格子和 halls 退役（blocks.py 不再跑）。

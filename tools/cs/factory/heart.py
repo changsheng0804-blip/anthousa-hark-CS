@@ -428,10 +428,11 @@ def main():
         for k in ('enter', 'mouth'): C.pop(k, None)
         C.update(out); json.dump(sc, open(os.path.join(Q, 'scene.json'), 'w'), ensure_ascii=False)
         if C.get('docks'): subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dock_patch.py'), q])   # cs24 盖栈桥的补丁
-        if C.get('docks'): subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'districts.py'), q])   # cs26 分区跟着码头
-        if C.get('docks'): subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'blocks.py'), q])   # cs27 货栈长屋
         cj = json.load(open(os.path.join(Q, 'city.json'))); cj['roads'] = city_roads
         json.dump(cj, open(os.path.join(Q, 'city.json'), 'w'), ensure_ascii=False); print('roads', [(r_['id'], len(r_['pts'])) for r_ in city_roads])
+        if C.get('docks'):   # cs26–cs29 分区跟着码头；开了按街道排就重排街和房子（分区跟着地块），主街要先写进 city.json
+            _f = os.path.dirname(os.path.abspath(__file__)); _sl = sc.get('street_layout')
+            for _s in (['streets_ng.py'] if _sl else ['districts.py', 'blocks.py']): subprocess.run([sys.executable, os.path.join(_f, _s), q])
 
 
 if __name__ == '__main__':

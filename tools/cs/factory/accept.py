@@ -171,8 +171,12 @@ def compare(q, fix):
         rec(S, '心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
     # cs26 · 分区（埋在底下，从底账推；判法顺序照上游 district_rules.py）
     if sc.get('fleet', {}).get('docks'):
-        r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
-        if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'districts.py'), q); sh(sys.executable, os.path.join(HERE, 'blocks.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
+        if sc.get('street_layout'):   # cs29 按街道重排：分区跟着地块，检查换成 check_streets
+            r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
+            if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'streets_ng.py'), q); sh(sys.executable, os.path.join(HERE, 'ground_ng.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
+        else:
+            r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
+            if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'districts.py'), q); sh(sys.executable, os.path.join(HERE, 'blocks.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
         rec(S, '分区从底账推出来（港边货栈、粮仓仓场、临街铺面……）', r.returncode == 0, (r.stdout + r.stderr).strip()[-140:], '--fix 跑 districts.py')
     # cs24 · 码头逐年长：没建成的栈桥每个年代都有补丁，盖住栈桥和归它的船
     if sc.get('fleet', {}).get('docks'):
@@ -286,6 +290,7 @@ def sheet(q, sc):
 def live(q, sc):
     S = '四、线上'
     files = ['index.html', 'scene.json', 'city.json', 'houses.json'] + sorted({f for k in sc['keys'] for f in k[1:]})
+    if sc.get('street_layout'): SL_ = sc['street_layout']; files += [SL_['houses'], SL_['streets'], SL_['junctions'], SL_['hgeom']] + [SL_['ground'].replace('{K}', str(k[0])) for k in sc['keys']]   # cs29
     for f in files:
         loc = os.path.join(LIV, q, f)
         if not os.path.exists(loc):

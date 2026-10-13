@@ -240,6 +240,14 @@
    "what": "按街道、街区分区（取上游 v23 做法）：主街切大格→顺街/顺港岸开巷切街区→街区整块定性→货栈街区整块翻建成成排长屋",
    "machine": "pass",
    "owner": "待评"
+  },
+  {
+   "v": "cs29",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "按街道重排 + 道路系统同步上游（streets_ng.py 取自 streets_xero.py，house_types.py，页面画法取自上游 v25）；地面 ground_K 抹掉画上小房子",
+   "machine": "pass",
+   "owner": "待评"
   }
  ]
 }
