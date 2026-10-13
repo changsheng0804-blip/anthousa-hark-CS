@@ -197,8 +197,8 @@ const DOCKIM={};if(SCENE.dock_patch)for(const i in SCENE.dock_patch)for(const K 
    先用空地底图（bare.jpg）抹掉那几户画上的小屋顶，再画长屋 */
 const BAREIM=new Image();BAREIM.onload=()=>{if(baseYear>=0)buildBase(baseYear)};BAREIM.src='bare.jpg';
 function drawHalls(Y){const L=SCENE.halls&&SCENE.halls[Y];if(!L||!L.length)return;
-  if(BAREIM.complete&&BAREIM.naturalWidth){fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(2px)';fctx.fillStyle='#fff';
-    for(const h of houses){if(!(h.built<=Y&&h.destroyed>Y))continue;const z=zoneOf(h,Y);if(z!=='dock'&&z!=='horrea')continue;polyPath(fctx,h.p,1.6);fctx.fill()}
+  if(BAREIM.complete&&BAREIM.naturalWidth){fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(1.5px)';fctx.fillStyle='#fff';
+    for(const k of (SCENE.hall_blocks&&SCENE.hall_blocks[Y])||[]){const p=SCENE.blocks[k];fctx.beginPath();fctx.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)fctx.lineTo(p[i],p[i+1]);fctx.closePath();fctx.fill()}   /* cs28：整个货栈街区翻建 */
     fctx.filter='none';fctx.globalCompositeOperation='source-in';fctx.drawImage(BAREIM,0,0,W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)}
   const T=(c,k,a)=>`rgba(${Math.min(255,c[0]*k)|0},${Math.min(255,c[1]*k)|0},${Math.min(255,c[2]*k)|0},${a==null?1:a})`;
   for(const [cx,cy,ux,uy,a,b,r,g,bb] of L){const vx=-uy,vy=ux,c=[r,g,bb];const P=(s,t)=>[cx+ux*s+vx*t,cy+uy*s+vy*t];
