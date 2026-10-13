@@ -62,6 +62,45 @@ for Y in YS:
     stat.setdefault('time', {})[str(Y)] = {'render_s': round(t_render, 1), 'tiles_s': round(t_tiles, 1)}
     stat.setdefault('psnr', {})[str(Y)] = psnr
     print(Y, stat['time'][str(Y)], psnr, flush=True)
+# ── 街巷级：地面瓦片（不含街和房子）+ 每块矢量数据（街 + 房子几何，带建成/拆毁年，换年份不用重下）
+t2 = time.time(); sys.path.insert(0, HERE); import house_types as HT
+GK = sorted({min([k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'] if Y <= k[0]] or [max(k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'])]) for q in QS for Y in YS})
+gb = {}
+for K in GK:
+    mos = Image.new('RGBA', (NX * TP, NY * TP), (0, 0, 0, 0))
+    for q in QS:
+        ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy))
+    d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = np.asarray(mos)[..., 3]; nb = 0
+    for ty in range(NY):
+        for tx in range(NX):
+            if A[ty * TP:(ty + 1) * TP, tx * TP:(tx + 1) * TP].max() == 0: continue
+            bio = io.BytesIO(); mos.crop((tx * TP, ty * TP, (tx + 1) * TP, (ty + 1) * TP)).save(bio, 'WEBP', quality=82, method=4)
+            open(os.path.join(d, f'{tx}_{ty}.webp'), 'wb').write(bio.getvalue()); nb += len(bio.getvalue())
+    gb[str(K)] = nb
+R = lambda v: round(v * 2) / 2
+vec = {}
+def put(tx, ty, k, item): vec.setdefault((tx, ty), {'s': [], 'h': []})[k].append(item)
+KC = {'fill': 0, 'edge': 1, 'line': 2}
+for q in QS:
+    ox, oy, w, h = stat['quarters'][q]; Q = os.path.join(LIV, q) + '/'
+    for st in json.load(open(Q + 'streets.json')):
+        x0, y0, x1, y1 = st[0] + ox, st[1] + oy, st[2] + ox, st[3] + oy; pad = st[4] + 2
+        it = [R(x0), R(y0), R(x1), R(y1), st[4], st[5], st[6], st[7], st[8]]
+        for ty in range(int((min(y0, y1) - pad) // TP), int((max(y0, y1) + pad) // TP) + 1):
+            for tx in range(int((min(x0, x1) - pad) // TP), int((max(x0, x1) + pad) // TP) + 1): put(tx, ty, 's', it)
+    for hh in json.load(open(Q + 'houses_street.json'))['houses']:
+        if hh[3] <= hh[2] + 1: continue
+        by, parts, shadow = HT.geom(hh)
+        P = [[KC[k], [c for xy in poly for c in (R(xy[0] + ox), R(xy[1] + oy))], '%02x%02x%02x' % tuple(col[:3])] for k, lay, poly, col in parts]
+        sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
+        cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
+        put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P])
+d = os.path.join(OUT, 'vec'); os.makedirs(d, exist_ok=True); import gzip; vb = []; vg = []; nh = []
+for (tx, ty), v in vec.items():
+    v['h'].sort(key=lambda x: x[2]); b = json.dumps(v, separators=(',', ':')).encode()
+    open(os.path.join(d, f'{tx}_{ty}.json'), 'wb').write(b); vb.append(len(b)); vg.append(len(gzip.compress(b))); nh.append(len(v['h']))
+stat['street'] = {'ground_keys': GK, 'ground_bytes': gb, 'vec_tiles': len(vb), 'vec_bytes': sum(vb), 'vec_gzip': sum(vg), 'vec_max_gzip': max(vg), 'max_houses_tile': max(nh), 'seconds': round(time.time() - t2, 1)}
+print('street', stat['street'])
 stat['total_s'] = round(time.time() - t_all, 1)
 json.dump(stat, open(os.path.join(OUT, 'meta.json'), 'w'), ensure_ascii=False, indent=1)
 for l, v in stat['levels'].items(): print('level', l, v)

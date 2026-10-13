@@ -178,16 +178,16 @@
  ],
  "time": {
   "40": {
-   "render_s": 1.7,
+   "render_s": 1.5,
    "tiles_s": 2.2
   },
   "50": {
-   "render_s": 1.8,
+   "render_s": 1.6,
    "tiles_s": 2.3
   },
   "60": {
    "render_s": 1.7,
-   "tiles_s": 2.2
+   "tiles_s": 2.3
   }
  },
  "psnr": {
@@ -204,5 +204,23 @@
    "nangang": 35.6
   }
  },
- "total_s": 12.7
+ "street": {
+  "ground_keys": [
+   40,
+   50,
+   60
+  ],
+  "ground_bytes": {
+   "40": 736218,
+   "50": 745890,
+   "60": 736882
+  },
+  "vec_tiles": 39,
+  "vec_bytes": 6309893,
+  "vec_gzip": 1287421,
+  "vec_max_gzip": 73891,
+  "max_houses_tile": 518,
+  "seconds": 6.6
+ },
+ "total_s": 19.0
 }

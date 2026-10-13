@@ -108,4 +108,5 @@
 ## 第十三段：瓦片实验（cs33，推演中）
 - `python tile_bake.py [年…]`：把所有 street_layout 街区按世界坐标烤成瓦片金字塔 docs/living/tiles/<年>/<级>/<x>_<y>.webp（级 0 = 32×32 单位 = 455 px），写 meta.json（时间、每级块数与字节、拼回 PSNR）。
 - docs/living/tiles/index.html：只拼瓦片的全城页；`node tools/cs/check_tiles.js` 量各级一屏画几块、下多少字节。
-- 还没做：街巷级（放大 >1.5 倍）换成矢量房子和人；地标 AI 单画；程序水面。
+- 街巷级（cs33b）：屏幕上 1 个瓦片像素 ≥1.15 个屏幕像素时换手——地面用 tiles/g/<关键年>/ 的纯地面瓦片，街和房子取 tiles/vec/<x>_<y>.json（带建成/拆毁年，换年不重下），浏览器按 render_ng 同一画法画。
+- 还没做：街巷级的人和船；地标 AI 单画；程序水面。
