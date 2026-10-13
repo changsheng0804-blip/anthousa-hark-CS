@@ -1,6 +1,6 @@
 # nanan 验收
 
-通过 70 / 70
+通过 54 / 54
 
 
 ## 一、拉取
@@ -58,24 +58,6 @@
 - ✅ 60 年 Granary of the Founder 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.82，全街区 0.80
 - ✅ 60 年 Cistern of the Founder 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.76，全街区 0.80
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nanan_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ na_af40.jpg —— 一致
-- ✅ na_af50.jpg —— 一致
-- ✅ na_af60.jpg —— 一致
-- ✅ houses_street.json —— 一致
-- ✅ streets.json —— 一致
-- ✅ junctions.json —— 一致
-- ✅ houses_geom.json —— 一致
-- ✅ ground_0.jpg —— 一致
-- ✅ ground_40.jpg —— 一致
-- ✅ ground_50.jpg —— 一致
-- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29

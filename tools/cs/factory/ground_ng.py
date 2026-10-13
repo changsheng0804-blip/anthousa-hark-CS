@@ -60,7 +60,7 @@ def vnoise(cell, s):
     return (h(ix, iy) * (1 - fx) + h(ix + 1, iy) * fx) * (1 - fy) + (h(ix, iy + 1) * (1 - fx) + h(ix + 1, iy + 1) * fx) * fy
 _land = ~wat
 _landI = Image.fromarray(_land.astype(np.uint8) * 255).resize((W, H), Image.NEAREST).filter(ImageFilter.GaussianBlur(3))
-_landM = np.asarray(_landI) > 127
+_landM = np.asarray(_landI) > 127; _landM0 = _landM.copy()
 _dist = cv2.distanceTransform((~_landM).astype(np.uint8), cv2.DIST_L2, 5)      # 离岸像素数
 _N1 = vnoise(260, 1) * 0.65 + vnoise(90, 2) * 0.35
 WAT = PAL.get('water', {'shallow_lab': [150, 108, 124], 'deep_lab': [104, 114, 126], 'depth_px': 220, 'ripple_cell': 70, 'ripple_p': 0.33})
@@ -113,6 +113,19 @@ for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:  
             if h[3] == 48:
                 p = h[4]; cx = sum(p[0::2]) / 4; cy = sum(p[1::2]) / 4; bd.ellipse([cx - 16, cy - 16, cx + 16, cy + 16], fill=255)
         fire = (np.asarray(bm.filter(ImageFilter.GaussianBlur(6))) > 100) & dark
+    # cs38 港池岸线：底账港池是矩形，把岸线往水里收出弯和圆角（只收水不加水；只动画上是水色的像素）
+    from harbor_shape import shore_keep
+    hm = Image.new('L', (W, H), 0); hd = ImageDraw.Draw(hm)
+    for s_ in json.load(open(Q + 'frame.json'))['structures']:
+        if s_['type'] == 'harbor' and int(s_['built']) <= K and s_.get('destroyed') in (None, 'None'): hd.polygon([tuple(p) for p in s_['pts']], fill=255)
+    harb = np.asarray(hm) > 0
+    _landM = _landM0.copy()
+    if harb.any():
+        kp = shore_keep(_landM0, harb, WX0, WY0, PXU)
+        bl = (a[..., 1] > a[..., 0] + 12) & (a[..., 2] > a[..., 0] + 6)
+        carve = ~_landM0 & ~kp & bl
+        keep = keep & ~carve
+        _landM = _landM0 | carve
     hold = keep | np.asarray(Image.fromarray((green | fire).astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(3))).astype(bool)
     m = Image.fromarray(((~hold) * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(2))
     sand = SAND
