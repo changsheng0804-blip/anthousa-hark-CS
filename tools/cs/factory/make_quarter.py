@@ -99,9 +99,9 @@ def main():
                 hb = [s['id'] for s in fr['structures'] if s['type'] == 'harbor' and s['built'] <= max(R['keys'])]
                 print('    没有心跳配方，跳过' + (f'（框里有港 {hb}，要心跳得先写 fleet 配方）' if hb else ''))
         elif st == 'streets':
-            run(py('streets_ng.py'), q); run(os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
+            run(py('streets_ng.py'), q)   # check_streets 要地面图，挪到 ground 段后面跑（cs36）
         elif st == 'ground':
-            run(py('ground_ng.py'), q)
+            run(py('ground_ng.py'), q); run(os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
         elif st == 'render':
             for Y in R['keys']: run(py('render_ng.py'), q, str(Y))
         elif st == 'accept':

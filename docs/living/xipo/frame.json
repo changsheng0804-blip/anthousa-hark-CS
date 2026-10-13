@@ -1,0 +1,2288 @@
+{
+ "frame": [
+  417.0,
+  352.0,
+  128,
+  144
+ ],
+ "scale": 14.21875,
+ "structures": [
+  {
+   "id": "aq_hadrian",
+   "type": "aqueduct",
+   "name": "Old Aqueduct",
+   "built": -657,
+   "destroyed": null,
+   "xy": [
+    -124,
+    -90
+   ],
+   "geom": "line",
+   "width": null,
+   "pts": [
+    [
+     -3085,
+     -2090
+    ],
+    [
+     -1664,
+     -882
+    ],
+    [
+     -242,
+     -28
+    ],
+    [
+     896,
+     611
+    ],
+    [
+     2033,
+     1138
+    ],
+    [
+     3114,
+     1393
+    ]
+   ],
+   "history": [
+    {
+     "year": -657,
+     "text": "A Roman governor brings water from the western hills in a channel."
+    }
+   ]
+  },
+  {
+   "id": "wall_founder",
+   "type": "wall",
+   "name": "Wall of the Founder",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    155,
+    712
+   ],
+   "geom": "line",
+   "width": null,
+   "pts": [
+    [
+     640,
+     -1450
+    ],
+    [
+     -330,
+     2874
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "The Founder walks the line of the new wall with a spear, 'until he who walks before me stops.'"
+    }
+   ]
+  },
+  {
+   "id": "r_mese",
+   "type": "road",
+   "name": "The Mese",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1278,
+    1471
+   ],
+   "geom": "line",
+   "width": 2.1,
+   "pts": [
+    [
+     3370,
+     1507
+    ],
+    [
+     3171,
+     1479
+    ],
+    [
+     2758,
+     1450
+    ],
+    [
+     2389,
+     1351
+    ],
+    [
+     2033,
+     1223
+    ],
+    [
+     1607,
+     1265
+    ],
+    [
+     1038,
+     1393
+    ],
+    [
+     469,
+     1536
+    ],
+    [
+     -242,
+     1706
+    ],
+    [
+     -810,
+     1820
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "The Middle Street, 25 metres wide between porticoes, runs from the Milion to the land gate."
+    },
+    {
+     "year": 1,
+     "text": "14 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "r_north3",
+   "type": "road",
+   "name": "Street of the Potters",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1033,
+    469
+   ],
+   "geom": "line",
+   "width": 1.2,
+   "pts": [
+    [
+     1038,
+     1393
+    ],
+    [
+     1010,
+     682
+    ],
+    [
+     1066,
+     -455
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "A street through the new northern quarter."
+    }
+   ]
+  },
+  {
+   "id": "r_west_s",
+   "type": "road",
+   "name": "Lane of the Gardeners",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1082,
+    1837
+   ],
+   "geom": "line",
+   "width": 1.2,
+   "pts": [
+    [
+     1038,
+     1393
+    ],
+    [
+     1109,
+     2104
+    ],
+    [
+     1123,
+     2281
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "Gardens give way to houses."
+    }
+   ]
+  },
+  {
+   "id": "r_south2",
+   "type": "road",
+   "name": "Street of the Ropemakers",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1631,
+    1826
+   ],
+   "geom": "line",
+   "width": 1.2,
+   "pts": [
+    [
+     1607,
+     1265
+    ],
+    [
+     1635,
+     1962
+    ],
+    [
+     1661,
+     2386
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "A street down to the southern shore."
+    }
+   ]
+  },
+  {
+   "id": "d_forum",
+   "type": "district",
+   "name": "Region of the Forum",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1541,
+    379
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     469,
+     1564
+    ],
+    [
+     3057,
+     1422
+    ],
+    [
+     3057,
+     286
+    ],
+    [
+     2945,
+     220
+    ],
+    [
+     2851,
+     246
+    ],
+    [
+     2847,
+     246
+    ],
+    [
+     2844,
+     246
+    ],
+    [
+     2841,
+     246
+    ],
+    [
+     2838,
+     246
+    ],
+    [
+     2835,
+     246
+    ],
+    [
+     2832,
+     245
+    ],
+    [
+     2830,
+     243
+    ],
+    [
+     2784,
+     220
+    ],
+    [
+     2768,
+     222
+    ],
+    [
+     2766,
+     222
+    ],
+    [
+     2763,
+     222
+    ],
+    [
+     2760,
+     222
+    ],
+    [
+     2757,
+     220
+    ],
+    [
+     2754,
+     220
+    ],
+    [
+     2753,
+     219
+    ],
+    [
+     2750,
+     218
+    ],
+    [
+     2628,
+     139
+    ],
+    [
+     2626,
+     138
+    ],
+    [
+     2623,
+     135
+    ],
+    [
+     2622,
+     134
+    ],
+    [
+     2619,
+     131
+    ],
+    [
+     2618,
+     128
+    ],
+    [
+     2581,
+     57
+    ],
+    [
+     2538,
+     74
+    ],
+    [
+     2535,
+     75
+    ],
+    [
+     2532,
+     75
+    ],
+    [
+     2530,
+     77
+    ],
+    [
+     2527,
+     77
+    ],
+    [
+     2524,
+     77
+    ],
+    [
+     2521,
+     75
+    ],
+    [
+     2518,
+     75
+    ],
+    [
+     2517,
+     74
+    ],
+    [
+     2515,
+     75
+    ],
+    [
+     2512,
+     75
+    ],
+    [
+     2510,
+     77
+    ],
+    [
+     2507,
+     77
+    ],
+    [
+     2504,
+     77
+    ],
+    [
+     2387,
+     67
+    ],
+    [
+     2384,
+     67
+    ],
+    [
+     2382,
+     65
+    ],
+    [
+     2379,
+     65
+    ],
+    [
+     2376,
+     64
+    ],
+    [
+     2375,
+     63
+    ],
+    [
+     2372,
+     61
+    ],
+    [
+     2370,
+     58
+    ],
+    [
+     2352,
+     41
+    ],
+    [
+     2271,
+     70
+    ],
+    [
+     2268,
+     71
+    ],
+    [
+     2265,
+     71
+    ],
+    [
+     2262,
+     71
+    ],
+    [
+     2259,
+     71
+    ],
+    [
+     2257,
+     71
+    ],
+    [
+     2254,
+     71
+    ],
+    [
+     2251,
+     70
+    ],
+    [
+     2248,
+     68
+    ],
+    [
+     2247,
+     67
+    ],
+    [
+     2244,
+     65
+    ],
+    [
+     2217,
+     45
+    ],
+    [
+     2215,
+     44
+    ],
+    [
+     2214,
+     43
+    ],
+    [
+     2211,
+     40
+    ],
+    [
+     2210,
+     37
+    ],
+    [
+     2208,
+     36
+    ],
+    [
+     2197,
+     11
+    ],
+    [
+     2197,
+     9
+    ],
+    [
+     2195,
+     6
+    ],
+    [
+     2195,
+     3
+    ],
+    [
+     2195,
+     0
+    ],
+    [
+     2195,
+     -3
+    ],
+    [
+     2200,
+     -70
+    ],
+    [
+     2168,
+     -94
+    ],
+    [
+     2138,
+     -90
+    ],
+    [
+     2136,
+     -90
+    ],
+    [
+     2134,
+     -90
+    ],
+    [
+     2131,
+     -90
+    ],
+    [
+     2129,
+     -91
+    ],
+    [
+     2126,
+     -91
+    ],
+    [
+     2123,
+     -92
+    ],
+    [
+     2035,
+     -132
+    ],
+    [
+     2032,
+     -134
+    ],
+    [
+     2029,
+     -135
+    ],
+    [
+     2026,
+     -138
+    ],
+    [
+     1992,
+     -171
+    ],
+    [
+     1991,
+     -172
+    ],
+    [
+     1989,
+     -175
+    ],
+    [
+     1988,
+     -176
+    ],
+    [
+     1952,
+     -237
+    ],
+    [
+     1951,
+     -240
+    ],
+    [
+     1949,
+     -242
+    ],
+    [
+     1949,
+     -245
+    ],
+    [
+     1948,
+     -247
+    ],
+    [
+     1948,
+     -250
+    ],
+    [
+     1948,
+     -253
+    ],
+    [
+     1951,
+     -346
+    ],
+    [
+     1924,
+     -381
+    ],
+    [
+     1756,
+     -485
+    ],
+    [
+     1753,
+     -486
+    ],
+    [
+     1750,
+     -489
+    ],
+    [
+     1749,
+     -492
+    ],
+    [
+     1654,
+     -610
+    ],
+    [
+     1652,
+     -611
+    ],
+    [
+     1651,
+     -614
+    ],
+    [
+     1571,
+     -765
+    ],
+    [
+     1570,
+     -766
+    ],
+    [
+     1570,
+     -769
+    ],
+    [
+     1568,
+     -772
+    ],
+    [
+     1568,
+     -775
+    ],
+    [
+     1568,
+     -776
+    ],
+    [
+     1568,
+     -779
+    ],
+    [
+     1568,
+     -782
+    ],
+    [
+     1577,
+     -839
+    ],
+    [
+     1398,
+     -995
+    ],
+    [
+     1395,
+     -998
+    ],
+    [
+     1393,
+     -1000
+    ],
+    [
+     1391,
+     -1002
+    ],
+    [
+     1389,
+     -1005
+    ],
+    [
+     1355,
+     -1081
+    ],
+    [
+     1354,
+     -1083
+    ],
+    [
+     1354,
+     -1086
+    ],
+    [
+     1354,
+     -1089
+    ],
+    [
+     1352,
+     -1091
+    ],
+    [
+     1352,
+     -1093
+    ],
+    [
+     1354,
+     -1115
+    ],
+    [
+     1339,
+     -1125
+    ],
+    [
+     1273,
+     -1119
+    ],
+    [
+     1270,
+     -1118
+    ],
+    [
+     1267,
+     -1119
+    ],
+    [
+     1264,
+     -1119
+    ],
+    [
+     1169,
+     -1138
+    ],
+    [
+     1166,
+     -1138
+    ],
+    [
+     953,
+     -1203
+    ],
+    [
+     950,
+     -1204
+    ],
+    [
+     947,
+     -1206
+    ],
+    [
+     944,
+     -1207
+    ],
+    [
+     943,
+     -1209
+    ],
+    [
+     941,
+     -1210
+    ],
+    [
+     938,
+     -1211
+    ],
+    [
+     937,
+     -1214
+    ],
+    [
+     879,
+     -1298
+    ],
+    [
+     877,
+     -1301
+    ],
+    [
+     876,
+     -1304
+    ],
+    [
+     874,
+     -1307
+    ],
+    [
+     873,
+     -1308
+    ],
+    [
+     873,
+     -1311
+    ],
+    [
+     873,
+     -1314
+    ],
+    [
+     873,
+     -1317
+    ],
+    [
+     874,
+     -1337
+    ],
+    [
+     874,
+     -1339
+    ],
+    [
+     876,
+     -1342
+    ],
+    [
+     876,
+     -1345
+    ],
+    [
+     877,
+     -1348
+    ],
+    [
+     879,
+     -1349
+    ],
+    [
+     880,
+     -1352
+    ],
+    [
+     882,
+     -1354
+    ],
+    [
+     901,
+     -1378
+    ],
+    [
+     865,
+     -1443
+    ],
+    [
+     852,
+     -1436
+    ],
+    [
+     849,
+     -1435
+    ],
+    [
+     846,
+     -1435
+    ],
+    [
+     843,
+     -1433
+    ],
+    [
+     840,
+     -1433
+    ],
+    [
+     837,
+     -1433
+    ],
+    [
+     835,
+     -1433
+    ],
+    [
+     832,
+     -1433
+    ],
+    [
+     829,
+     -1435
+    ],
+    [
+     734,
+     -1469
+    ],
+    [
+     731,
+     -1469
+    ],
+    [
+     728,
+     -1470
+    ],
+    [
+     727,
+     -1472
+    ],
+    [
+     681,
+     -1506
+    ],
+    [
+     678,
+     -1507
+    ],
+    [
+     677,
+     -1509
+    ],
+    [
+     675,
+     -1511
+    ],
+    [
+     617,
+     -1592
+    ],
+    [
+     540,
+     -1592
+    ],
+    [
+     469,
+     1564
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "Settlers from Asia and Thrace build north of the Mese."
+    }
+   ]
+  },
+  {
+   "id": "d_harbor",
+   "type": "district",
+   "name": "Region of the Harbor",
+   "built": 1,
+   "destroyed": null,
+   "xy": [
+    1549,
+    2094
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     469,
+     1621
+    ],
+    [
+     94,
+     3046
+    ],
+    [
+     256,
+     3063
+    ],
+    [
+     438,
+     3050
+    ],
+    [
+     667,
+     2983
+    ],
+    [
+     818,
+     2902
+    ],
+    [
+     963,
+     2785
+    ],
+    [
+     965,
+     2784
+    ],
+    [
+     968,
+     2783
+    ],
+    [
+     970,
+     2781
+    ],
+    [
+     973,
+     2781
+    ],
+    [
+     975,
+     2780
+    ],
+    [
+     978,
+     2780
+    ],
+    [
+     981,
+     2780
+    ],
+    [
+     1088,
+     2783
+    ],
+    [
+     995,
+     2721
+    ],
+    [
+     992,
+     2719
+    ],
+    [
+     991,
+     2717
+    ],
+    [
+     990,
+     2716
+    ],
+    [
+     988,
+     2713
+    ],
+    [
+     987,
+     2712
+    ],
+    [
+     985,
+     2709
+    ],
+    [
+     984,
+     2706
+    ],
+    [
+     948,
+     2599
+    ],
+    [
+     948,
+     2596
+    ],
+    [
+     948,
+     2593
+    ],
+    [
+     947,
+     2592
+    ],
+    [
+     946,
+     2589
+    ],
+    [
+     928,
+     2538
+    ],
+    [
+     928,
+     2535
+    ],
+    [
+     928,
+     2532
+    ],
+    [
+     928,
+     2532
+    ],
+    [
+     927,
+     2532
+    ],
+    [
+     927,
+     2530
+    ],
+    [
+     926,
+     2527
+    ],
+    [
+     899,
+     2443
+    ],
+    [
+     897,
+     2440
+    ],
+    [
+     897,
+     2437
+    ],
+    [
+     897,
+     2434
+    ],
+    [
+     897,
+     2431
+    ],
+    [
+     897,
+     2429
+    ],
+    [
+     897,
+     2427
+    ],
+    [
+     899,
+     2424
+    ],
+    [
+     900,
+     2421
+    ],
+    [
+     900,
+     2419
+    ],
+    [
+     901,
+     2417
+    ],
+    [
+     990,
+     2298
+    ],
+    [
+     991,
+     2296
+    ],
+    [
+     992,
+     2293
+    ],
+    [
+     995,
+     2292
+    ],
+    [
+     997,
+     2291
+    ],
+    [
+     1000,
+     2289
+    ],
+    [
+     1002,
+     2288
+    ],
+    [
+     1005,
+     2288
+    ],
+    [
+     1008,
+     2286
+    ],
+    [
+     1029,
+     2284
+    ],
+    [
+     1032,
+     2282
+    ],
+    [
+     1034,
+     2279
+    ],
+    [
+     1037,
+     2278
+    ],
+    [
+     1039,
+     2278
+    ],
+    [
+     1042,
+     2276
+    ],
+    [
+     1045,
+     2276
+    ],
+    [
+     1180,
+     2254
+    ],
+    [
+     1183,
+     2254
+    ],
+    [
+     1186,
+     2254
+    ],
+    [
+     1189,
+     2254
+    ],
+    [
+     1192,
+     2254
+    ],
+    [
+     1194,
+     2255
+    ],
+    [
+     1197,
+     2257
+    ],
+    [
+     1199,
+     2258
+    ],
+    [
+     1201,
+     2259
+    ],
+    [
+     1203,
+     2261
+    ],
+    [
+     1233,
+     2286
+    ],
+    [
+     1233,
+     2288
+    ],
+    [
+     1234,
+     2288
+    ],
+    [
+     1237,
+     2289
+    ],
+    [
+     1238,
+     2291
+    ],
+    [
+     1241,
+     2292
+    ],
+    [
+     1284,
+     2328
+    ],
+    [
+     1317,
+     2285
+    ],
+    [
+     1318,
+     2282
+    ],
+    [
+     1321,
+     2281
+    ],
+    [
+     1322,
+     2279
+    ],
+    [
+     1325,
+     2278
+    ],
+    [
+     1327,
+     2276
+    ],
+    [
+     1329,
+     2275
+    ],
+    [
+     1332,
+     2274
+    ],
+    [
+     1335,
+     2274
+    ],
+    [
+     1338,
+     2274
+    ],
+    [
+     1341,
+     2274
+    ],
+    [
+     1344,
+     2274
+    ],
+    [
+     1347,
+     2274
+    ],
+    [
+     1348,
+     2275
+    ],
+    [
+     1351,
+     2275
+    ],
+    [
+     1354,
+     2276
+    ],
+    [
+     1355,
+     2278
+    ],
+    [
+     1358,
+     2279
+    ],
+    [
+     1381,
+     2299
+    ],
+    [
+     1484,
+     2322
+    ],
+    [
+     1487,
+     2322
+    ],
+    [
+     1490,
+     2323
+    ],
+    [
+     1493,
+     2325
+    ],
+    [
+     1493,
+     2325
+    ],
+    [
+     1496,
+     2325
+    ],
+    [
+     1730,
+     2387
+    ],
+    [
+     1698,
+     2336
+    ],
+    [
+     1696,
+     2335
+    ],
+    [
+     1695,
+     2332
+    ],
+    [
+     1693,
+     2329
+    ],
+    [
+     1693,
+     2326
+    ],
+    [
+     1692,
+     2323
+    ],
+    [
+     1692,
+     2322
+    ],
+    [
+     1692,
+     2319
+    ],
+    [
+     1693,
+     2316
+    ],
+    [
+     1693,
+     2313
+    ],
+    [
+     1695,
+     2311
+    ],
+    [
+     1695,
+     2308
+    ],
+    [
+     1696,
+     2306
+    ],
+    [
+     1698,
+     2303
+    ],
+    [
+     1701,
+     2301
+    ],
+    [
+     1702,
+     2299
+    ],
+    [
+     1705,
+     2298
+    ],
+    [
+     1706,
+     2296
+    ],
+    [
+     1709,
+     2295
+    ],
+    [
+     1769,
+     2268
+    ],
+    [
+     1772,
+     2268
+    ],
+    [
+     1774,
+     2266
+    ],
+    [
+     1777,
+     2266
+    ],
+    [
+     1780,
+     2266
+    ],
+    [
+     1783,
+     2266
+    ],
+    [
+     1784,
+     2266
+    ],
+    [
+     1784,
+     2266
+    ],
+    [
+     1787,
+     2266
+    ],
+    [
+     1850,
+     2266
+    ],
+    [
+     1853,
+     2266
+    ],
+    [
+     1853,
+     2266
+    ],
+    [
+     1854,
+     2266
+    ],
+    [
+     1857,
+     2266
+    ],
+    [
+     1914,
+     2265
+    ],
+    [
+     1914,
+     2265
+    ],
+    [
+     1917,
+     2265
+    ],
+    [
+     1920,
+     2265
+    ],
+    [
+     1922,
+     2264
+    ],
+    [
+     1995,
+     2265
+    ],
+    [
+     1996,
+     2265
+    ],
+    [
+     1999,
+     2265
+    ],
+    [
+     2002,
+     2266
+    ],
+    [
+     2005,
+     2266
+    ],
+    [
+     2038,
+     2279
+    ],
+    [
+     2039,
+     2279
+    ],
+    [
+     2040,
+     2276
+    ],
+    [
+     2042,
+     2275
+    ],
+    [
+     2045,
+     2274
+    ],
+    [
+     2046,
+     2272
+    ],
+    [
+     2049,
+     2271
+    ],
+    [
+     2052,
+     2269
+    ],
+    [
+     2055,
+     2269
+    ],
+    [
+     2057,
+     2268
+    ],
+    [
+     2123,
+     2259
+    ],
+    [
+     2127,
+     2259
+    ],
+    [
+     2130,
+     2259
+    ],
+    [
+     2515,
+     2305
+    ],
+    [
+     2518,
+     2305
+    ],
+    [
+     2521,
+     2306
+    ],
+    [
+     2720,
+     2377
+    ],
+    [
+     2940,
+     2437
+    ],
+    [
+     3135,
+     2439
+    ],
+    [
+     3137,
+     2433
+    ],
+    [
+     3137,
+     2430
+    ],
+    [
+     3138,
+     2429
+    ],
+    [
+     3138,
+     2426
+    ],
+    [
+     3139,
+     2423
+    ],
+    [
+     3141,
+     2420
+    ],
+    [
+     3144,
+     2419
+    ],
+    [
+     3145,
+     2417
+    ],
+    [
+     3145,
+     2416
+    ],
+    [
+     3057,
+     1507
+    ],
+    [
+     469,
+     1621
+    ]
+   ],
+   "history": [
+    {
+     "year": 1,
+     "text": "Sailors and porters settle by the new harbor."
+    }
+   ]
+  },
+  {
+   "id": "aqb_valley",
+   "type": "aqueduct_bridge",
+   "name": "Bridge of the Aqueduct",
+   "built": 11,
+   "destroyed": null,
+   "xy": [
+    1354,
+    466
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     1446,
+     535
+    ],
+    [
+     1664,
+     579
+    ],
+    [
+     1668,
+     559
+    ],
+    [
+     1453,
+     516
+    ],
+    [
+     1054,
+     314
+    ],
+    [
+     1045,
+     331
+    ]
+   ],
+   "history": [
+    {
+     "year": 11,
+     "text": "Where the ground falls away under the channel, an arcade of stone 560 m long carries it."
+    },
+    {
+     "year": 11,
+     "text": "3 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "aq_great",
+   "type": "aqueduct",
+   "name": "Great Aqueduct",
+   "built": 11,
+   "destroyed": null,
+   "xy": [
+    -813,
+    -436
+   ],
+   "geom": "line",
+   "width": null,
+   "pts": [
+    [
+     -3939,
+     -1450
+    ],
+    [
+     -2360,
+     -782
+    ],
+    [
+     -469,
+     -796
+    ],
+    [
+     -370,
+     -398
+    ],
+    [
+     1450,
+     526
+    ],
+    [
+     1877,
+     611
+    ],
+    [
+     2247,
+     754
+    ]
+   ],
+   "history": [
+    {
+     "year": 11,
+     "text": "Water is the binding limit: the old channel and one cistern serve 43,000. A new channel from springs in the Thracian hills, 62 m above the sea, falls evenly to the third hill."
+    },
+    {
+     "year": 11,
+     "text": "6 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "r_mese_north",
+   "type": "road",
+   "name": "Northern Mese",
+   "built": 11,
+   "destroyed": null,
+   "xy": [
+    971,
+    731
+   ],
+   "geom": "line",
+   "width": 1.8,
+   "pts": [
+    [
+     1237,
+     1351
+    ],
+    [
+     1109,
+     967
+    ],
+    [
+     896,
+     540
+    ],
+    [
+     640,
+     142
+    ]
+   ],
+   "history": [
+    {
+     "year": 11,
+     "text": "At the Philadelphion the Mese forks; the northern branch climbs to the fourth hill."
+    },
+    {
+     "year": 11,
+     "text": "20 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "church_apostles",
+   "type": "church",
+   "name": "Church of the Holy Apostles",
+   "built": 11,
+   "destroyed": null,
+   "xy": [
+    610,
+    -17
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     594,
+     -67
+    ],
+    [
+     626,
+     -67
+    ],
+    [
+     626,
+     -33
+    ],
+    [
+     660,
+     -33
+    ],
+    [
+     660,
+     -1
+    ],
+    [
+     626,
+     -1
+    ],
+    [
+     626,
+     33
+    ],
+    [
+     594,
+     33
+    ],
+    [
+     594,
+     -1
+    ],
+    [
+     560,
+     -1
+    ],
+    [
+     560,
+     -33
+    ],
+    [
+     594,
+     -33
+    ]
+   ],
+   "history": [
+    {
+     "year": 11,
+     "text": "A cross-shaped church on the fourth hill, raised as a mausoleum for the Founder."
+    }
+   ]
+  },
+  {
+   "id": "barracks_gate",
+   "type": "barracks",
+   "name": "Barracks of the Gate",
+   "built": 11,
+   "destroyed": null,
+   "xy": [
+    156,
+    1834
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     94,
+     1809
+    ],
+    [
+     206,
+     1789
+    ],
+    [
+     219,
+     1860
+    ],
+    [
+     107,
+     1880
+    ]
+   ],
+   "history": [
+    {
+     "year": 11,
+     "text": "The guard of the land gate needs quarters."
+    }
+   ]
+  },
+  {
+   "id": "baths_constantius",
+   "type": "baths",
+   "name": "Baths of Constantius",
+   "built": 25,
+   "destroyed": null,
+   "xy": [
+    441,
+    370
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     373,
+     348
+    ],
+    [
+     479,
+     310
+    ],
+    [
+     509,
+     391
+    ],
+    [
+     402,
+     429
+    ]
+   ],
+   "history": [
+    {
+     "year": 25,
+     "text": "Now that the Great Aqueduct runs full, the emperor gives the fourth hill public baths, a domed hall beside the Holy Apostles."
+    }
+   ]
+  },
+  {
+   "id": "cistern_modestus",
+   "type": "cistern",
+   "name": "Cistern of Modestus",
+   "built": 41,
+   "destroyed": null,
+   "xy": [
+    427,
+    156
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     363,
+     107
+    ],
+    [
+     491,
+     107
+    ],
+    [
+     491,
+     206
+    ],
+    [
+     363,
+     206
+    ]
+   ],
+   "history": [
+    {
+     "year": 41,
+     "text": "The prefect Modestus digs an open reservoir beside the Holy Apostles, fed from the Great Aqueduct before it enters the city."
+    }
+   ]
+  },
+  {
+   "id": "d_xerolophos",
+   "type": "district",
+   "name": "Xerolophos quarter",
+   "built": 42,
+   "destroyed": null,
+   "xy": [
+    305,
+    1015
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     -14,
+     1621
+    ],
+    [
+     498,
+     1564
+    ],
+    [
+     498,
+     256
+    ],
+    [
+     284,
+     256
+    ],
+    [
+     -14,
+     1621
+    ]
+   ],
+   "history": [
+    {
+     "year": 42,
+     "text": "Between the Founder's wall and the old forum quarter the dry seventh hill fills with houses."
+    }
+   ]
+  },
+  {
+   "id": "cistern_carriers",
+   "type": "cistern",
+   "name": "Cistern of the Water-Carriers",
+   "built": 54,
+   "destroyed": null,
+   "xy": [
+    213,
+    1422
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     164,
+     1386
+    ],
+    [
+     263,
+     1386
+    ],
+    [
+     263,
+     1457
+    ],
+    [
+     164,
+     1457
+    ]
+   ],
+   "history": [
+    {
+     "year": 54,
+     "text": "The water-carriers of the dry hill pool their coppers for a cistern halfway up the slope, so they no longer climb from Modestus with every jar."
+    },
+    {
+     "year": 54,
+     "text": "17 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "forum_theodosius",
+   "type": "forum",
+   "name": "Forum of Theodosius",
+   "built": 57,
+   "destroyed": null,
+   "xy": [
+    1834,
+    1251
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     1763,
+     1194
+    ],
+    [
+     1905,
+     1194
+    ],
+    [
+     1905,
+     1308
+    ],
+    [
+     1763,
+     1308
+    ]
+   ],
+   "history": [
+    {
+     "year": 57,
+     "text": "Theodosius lays out a great forum on the Forum Tauri, beside the fountain where Valens' water arrives."
+    },
+    {
+     "year": 57,
+     "text": "29 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "r_carriers",
+   "type": "road",
+   "name": "Carriers' Steps",
+   "built": 62,
+   "destroyed": null,
+   "xy": [
+    327,
+    1329
+   ],
+   "geom": "line",
+   "width": 1.2,
+   "pts": [
+    [
+     327,
+     1578
+    ],
+    [
+     327,
+     1081
+    ]
+   ],
+   "history": [
+    {
+     "year": 62,
+     "text": "A stepped lane from the Mese straight up the middle of the hill, so a carrier no longer threads between houses with a full jar."
+    },
+    {
+     "year": 62,
+     "text": "40 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "cistern_slope",
+   "type": "cistern",
+   "name": "Second Cistern of the Water-Carriers",
+   "built": 62,
+   "destroyed": null,
+   "xy": [
+    327,
+    1038
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     284,
+     1002
+    ],
+    [
+     370,
+     1002
+    ],
+    [
+     370,
+     1074
+    ],
+    [
+     284,
+     1074
+    ]
+   ],
+   "history": [
+    {
+     "year": 62,
+     "text": "The water-carriers' first cistern (AF 54) sits at the foot of the hill and the queue there runs till dark; the families of the upper slope pool their coppers again for a second cistern at the head of the new steps."
+    },
+    {
+     "year": 62,
+     "text": "15 houses were pulled down to make room."
+    }
+   ]
+  },
+  {
+   "id": "xenon_xerolophos",
+   "type": "monastery",
+   "name": "House of the Widows and Orphans",
+   "built": 65,
+   "destroyed": null,
+   "xy": [
+    384,
+    1436
+   ],
+   "geom": "polygon",
+   "width": null,
+   "pts": [
+    [
+     348,
+     1408
+    ],
+    [
+     419,
+     1408
+    ],
+    [
+     419,
+     1465
+    ],
+    [
+     348,
+     1465
+    ]
+   ],
+   "history": [
+    {
+     "year": 65,
+     "text": "On the hill one household in seven has no grown man left and small children at home. Neighbours and the monks who took in their sons build a house where widows bake for the street and orphans learn a trade."
+    },
+    {
+     "year": 65,
+     "text": "13 houses were pulled down to make room."
+    }
+   ]
+  }
+ ]
+}

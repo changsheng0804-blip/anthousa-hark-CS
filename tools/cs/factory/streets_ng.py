@@ -449,7 +449,7 @@ for i, q in enumerate(outS):
                 for j in SGG.get((ix, iy), []):
                     if j != i and segd(ex, ey, outS[j]) <= max(1.5, outS[j][4] / 2 + 0.5):
                         nbr[i].append(j); nbr[j].append(i)
-def edge(q): return min(q[0], q[2], q[1], q[3]) < 4 or max(q[0], q[2]) > W - 4 or max(q[1], q[3]) > H - 4
+def edge(q): return min(q[0], q[2], q[1], q[3]) < 14 or max(q[0], q[2]) > W - 14 or max(q[1], q[3]) > H - 14   # cs36：clip 留 4–12 px 边，没有主街的街区（海岸、墙外）靠出框的街接回全城
 conn = [q[5] == 'm' or edge(q) for q in outS]  # a road leaving the quarter's edge joins the rest of the city
 # spread connectivity through segments already present
 def spread(seed, Y):

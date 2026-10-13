@@ -1,6 +1,6 @@
 # jinjiao 验收
 
-通过 48 / 48
+通过 47 / 48
 
 
 ## 一、拉取
@@ -18,7 +18,7 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ jinjiao ⇄ nangang 来回都能走
-- ✅ jinjiao ⇄ gucheng 来回都能走
+- ❌ jinjiao ⇄ jiaowan 来回都能走  → 修：在 jiaowan/scene.json 加 next 指回 jinjiao
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page jinjiao years 40:1309/1309 50:2582/2582 60:2837/2837 errors 0
 - ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 3179 unplaced 0 streets 2882 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 4 ok
@@ -29,7 +29,7 @@
 - ✅ 接缝：全城网出框的地方，街区的街接得上 —— 9/10 没接上 [(335, 2048)]
 - ✅ 地面颜色在全城色板上 —— 沙地最大 ΔE 0.0（≤4），水面最大 ΔE 4.5（≤6）
 - ✅ 换年代地面不跳色 —— 相邻年份最大 ΔE 0.0（≤5）
-- ✅ 和别的街区是同一座城的颜色 —— 对 ['gucheng', 'nangang'] 最大 ΔE 0.4（≤6）
+- ✅ 和别的街区是同一座城的颜色 —— 对 ['dongjia', 'gucheng', 'jiaowan', 'nanan', 'nangang', 'qiangwai', 'siqiu', 'xipo'] 最大 ΔE 1.1（≤6）
 
 ## 定律
 - ✅ 定律三 · 推得出：重跑 land.py，位置与街和线上一致

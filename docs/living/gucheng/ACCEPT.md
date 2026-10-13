@@ -1,6 +1,6 @@
 # gucheng 验收
 
-通过 135 / 135
+通过 119 / 120
 
 
 ## 一、拉取
@@ -43,7 +43,8 @@
 - ✅ 地标 建城者蓄水池 在本街区框内
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
-- ✅ gucheng ⇄ jinjiao 来回都能走
+- ❌ gucheng ⇄ jinjiao 来回都能走  → 修：在 jinjiao/scene.json 加 next 指回 gucheng
+- ✅ gucheng ⇄ dongjia 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page gucheng years 40:4008/4008 50:4796/4796 60:5057/5057 errors 0
 - ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5582 unplaced 1 streets 5023 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 2, 3] labels 60 12 ok
@@ -54,7 +55,7 @@
 - ✅ 接缝：全城网出框的地方，街区的街接得上 —— 48/51 没接上 [(0, 1213), (0, 383), (1820, 1160)]
 - ✅ 地面颜色在全城色板上 —— 沙地最大 ΔE 0.4（≤4），水面最大 ΔE 4.9（≤6）
 - ✅ 换年代地面不跳色 —— 相邻年份最大 ΔE 0.4（≤5）
-- ✅ 和别的街区是同一座城的颜色 —— 对 ['jinjiao', 'nangang'] 最大 ΔE 0.4（≤6）
+- ✅ 和别的街区是同一座城的颜色 —— 对 ['dongjia', 'jiaowan', 'jinjiao', 'nanan', 'nangang', 'qiangwai', 'siqiu', 'xipo'] 最大 ΔE 1.0（≤6）
 
 ## 定律
 - ✅ 定律三 · 推得出：重跑 land.py，位置与街和线上一致
@@ -123,24 +124,6 @@
 - ✅ 60 年 Horrea Troadensia 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.81，全街区 0.81
 - ✅ 60 年 Anastasia 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.74，全街区 0.81
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/gucheng_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ gu_af40.jpg —— 一致
-- ✅ gu_af50.jpg —— 一致
-- ✅ gu_af60.jpg —— 一致
-- ✅ houses_street.json —— 一致
-- ✅ streets.json —— 一致
-- ✅ junctions.json —— 一致
-- ✅ houses_geom.json —— 一致
-- ✅ ground_0.jpg —— 一致
-- ✅ ground_40.jpg —— 一致
-- ✅ ground_50.jpg —— 一致
-- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29

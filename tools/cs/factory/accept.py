@@ -126,7 +126,8 @@ def compare(q, fix):
     for L in city['landmarks']:
         s = st.get(L['id'])
         if not s:
-            rec(S, f"地标 {L['name']} 在底账里", L['id'] == 'fire_ruins', '页面自造的地点' if L['id'] == 'fire_ruins' else '底账没有这个 id', '删掉或换成底账 id'); continue
+            _own = L['id'] == 'fire_ruins' or L['id'] == 'homes_' + q   # homes_<q>：框里没有地标时街区本身当落脚点（cs36）
+            rec(S, f"地标 {L['name']} 在底账里", _own, '页面自造的地点' if _own else '底账没有这个 id', '删掉或换成底账 id'); continue
         ys = [int(y) for y in re.findall(r'建城 (\d+) 年', L['story'])]
         exp = s['built']
         ok = (not ys and exp <= 1) or (exp in ys)
@@ -159,7 +160,8 @@ def compare(q, fix):
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
     # 工厂：所有街区共用一份页面；页面在 jsdom 里跑得起来、每个关键年站着的房子和底账一样多
     if q != 'nangang' and os.path.exists(os.path.join(HERE, 'quarters', q + '.json')):
-        same_pg = open(os.path.join(LIV, q, 'index.html'), 'rb').read() == open(os.path.join(LIV, 'nangang', 'index.html'), 'rb').read()
+        _nt = lambda f: re.sub(r'<title>[^<]*</title>', '', open(f).read(), count=1)   # cs36：标题跟街区走，其余一字不差
+        same_pg = _nt(os.path.join(LIV, q, 'index.html')) == _nt(os.path.join(LIV, 'nangang', 'index.html'))
         if not same_pg and FIX: sh(sys.executable, os.path.join(HERE, 'scene_auto.py'), q); same_pg = True
         rec(S, '页面和模板一字不差（所有街区共用一份）', same_pg, '', '--fix 跑 scene_auto.py 重拷')
     if sc.get('street_layout'):
@@ -293,7 +295,7 @@ def picture(q, sc):
 def sheet(q, sc):
     fr = json.load(open(os.path.join(LIV, q, 'frame.json')))
     L = [s for s in fr['structures'] if s['geom'] == 'polygon' and s['type'] not in ('district', 'farmland', 'harbor')]
-    T = 260; out = Image.new('RGB', (T * len(sc['keys']), T * len(L)), (30, 30, 30))
+    T = 260; out = Image.new('RGB', (T * len(sc['keys']), T * max(1, len(L))), (30, 30, 30))   # cs36：框里一座地标也没有（墙外、海岸）也要出得了表
     for j, (Y, img, _) in enumerate(sc['keys']):
         im = Image.open(os.path.join(LIV, q, img)).convert('RGB').resize((PW, PH))
         for i, s in enumerate(L):

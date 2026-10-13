@@ -3,9 +3,9 @@
  "tile_px": 455,
  "scale": 14.21875,
  "quarters": {
-  "gucheng": [
-   2232,
-   2531,
+  "nangang": [
+   412,
+   3213,
    1820,
    2048
   ],
@@ -15,9 +15,45 @@
    1820,
    2048
   ],
-  "nangang": [
+  "gucheng": [
+   2232,
+   2531,
+   1820,
+   2048
+  ],
+  "siqiu": [
    412,
-   3213,
+   2190,
+   1820,
+   2048
+  ],
+  "dongjia": [
+   4052,
+   2531,
+   1820,
+   2048
+  ],
+  "xipo": [
+   14,
+   2275,
+   1820,
+   2048
+  ],
+  "qiangwai": [
+   14,
+   4322,
+   1820,
+   2048
+  ],
+  "jiaowan": [
+   2161,
+   483,
+   1820,
+   2048
+  ],
+  "nanan": [
+   2232,
+   3953,
    1820,
    2048
   ]
@@ -30,96 +66,96 @@
  "levels": {
   "0": {
    "40": {
-    "tiles": 80,
-    "bytes": 1764132,
-    "max_tile": 51320,
+    "tiles": 146,
+    "bytes": 2708730,
+    "max_tile": 56434,
     "grid": [
-     9,
-     12
+     13,
+     14
     ]
    },
    "50": {
-    "tiles": 80,
-    "bytes": 2001762,
-    "max_tile": 52376,
+    "tiles": 146,
+    "bytes": 3086678,
+    "max_tile": 56794,
     "grid": [
-     9,
-     12
+     13,
+     14
     ]
    },
    "60": {
-    "tiles": 80,
-    "bytes": 2048602,
-    "max_tile": 53302,
+    "tiles": 146,
+    "bytes": 3158440,
+    "max_tile": 57888,
     "grid": [
-     9,
-     12
+     13,
+     14
     ]
    }
   },
   "1": {
    "40": {
-    "tiles": 26,
-    "bytes": 547406,
-    "max_tile": 55962,
+    "tiles": 43,
+    "bytes": 814610,
+    "max_tile": 57042,
     "grid": [
-     5,
-     6
+     7,
+     7
     ]
    },
    "50": {
-    "tiles": 26,
-    "bytes": 631948,
-    "max_tile": 60410,
+    "tiles": 43,
+    "bytes": 956820,
+    "max_tile": 60322,
     "grid": [
-     5,
-     6
+     7,
+     7
     ]
    },
    "60": {
-    "tiles": 26,
-    "bytes": 645964,
-    "max_tile": 60900,
+    "tiles": 43,
+    "bytes": 978630,
+    "max_tile": 62096,
     "grid": [
-     5,
-     6
+     7,
+     7
     ]
    }
   },
   "2": {
    "40": {
-    "tiles": 8,
-    "bytes": 156420,
-    "max_tile": 35012,
+    "tiles": 14,
+    "bytes": 230132,
+    "max_tile": 47204,
     "grid": [
-     3,
-     3
+     4,
+     4
     ]
    },
    "50": {
-    "tiles": 8,
-    "bytes": 183686,
-    "max_tile": 39232,
+    "tiles": 14,
+    "bytes": 275684,
+    "max_tile": 62318,
     "grid": [
-     3,
-     3
+     4,
+     4
     ]
    },
    "60": {
-    "tiles": 8,
-    "bytes": 188248,
-    "max_tile": 39940,
+    "tiles": 14,
+    "bytes": 282048,
+    "max_tile": 64244,
     "grid": [
-     3,
-     3
+     4,
+     4
     ]
    }
   },
   "3": {
    "40": {
     "tiles": 4,
-    "bytes": 46910,
-    "max_tile": 23426,
+    "bytes": 67408,
+    "max_tile": 35770,
     "grid": [
      2,
      2
@@ -127,8 +163,8 @@
    },
    "50": {
     "tiles": 4,
-    "bytes": 54170,
-    "max_tile": 27074,
+    "bytes": 79128,
+    "max_tile": 42518,
     "grid": [
      2,
      2
@@ -136,8 +172,8 @@
    },
    "60": {
     "tiles": 4,
-    "bytes": 55020,
-    "max_tile": 27858,
+    "bytes": 80586,
+    "max_tile": 43718,
     "grid": [
      2,
      2
@@ -147,8 +183,8 @@
   "4": {
    "40": {
     "tiles": 1,
-    "bytes": 12620,
-    "max_tile": 12620,
+    "bytes": 17676,
+    "max_tile": 17676,
     "grid": [
      1,
      1
@@ -156,8 +192,8 @@
    },
    "50": {
     "tiles": 1,
-    "bytes": 13930,
-    "max_tile": 13930,
+    "bytes": 19900,
+    "max_tile": 19900,
     "grid": [
      1,
      1
@@ -165,8 +201,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 14020,
-    "max_tile": 14020,
+    "bytes": 20124,
+    "max_tile": 20124,
     "grid": [
      1,
      1
@@ -179,38 +215,67 @@
   192
  ],
  "grid": [
-  9,
-  12
+  13,
+  14
+ ],
+ "owner_order": [
+  "nangang",
+  "jinjiao",
+  "gucheng",
+  "siqiu",
+  "dongjia",
+  "xipo",
+  "qiangwai",
+  "jiaowan",
+  "nanan"
  ],
  "time": {
   "40": {
-   "render_s": 2.8,
-   "tiles_s": 3.5
+   "render_s": 6.4,
+   "tiles_s": 5.6
   },
   "50": {
-   "render_s": 2.5,
-   "tiles_s": 3.4
+   "render_s": 6.9,
+   "tiles_s": 5.7
   },
   "60": {
-   "render_s": 2.6,
-   "tiles_s": 3.5
+   "render_s": 7.1,
+   "tiles_s": 5.7
   }
  },
  "psnr": {
   "40": {
+   "nangang": 36.3,
+   "jinjiao": 37.9,
    "gucheng": 35.4,
-   "jinjiao": 37.8,
-   "nangang": 36.3
+   "siqiu": 35.6,
+   "dongjia": 41.8,
+   "xipo": 37.5,
+   "qiangwai": 42.9,
+   "jiaowan": 38.8,
+   "nanan": 44.9
   },
   "50": {
-   "gucheng": 35.1,
+   "nangang": 35.9,
    "jinjiao": 37.1,
-   "nangang": 35.8
+   "gucheng": 35.1,
+   "siqiu": 35.0,
+   "dongjia": 41.6,
+   "xipo": 36.3,
+   "qiangwai": 41.9,
+   "jiaowan": 38.7,
+   "nanan": 44.3
   },
   "60": {
+   "nangang": 35.7,
+   "jinjiao": 37.0,
    "gucheng": 35.0,
-   "jinjiao": 36.9,
-   "nangang": 35.7
+   "siqiu": 34.9,
+   "dongjia": 41.6,
+   "xipo": 36.1,
+   "qiangwai": 41.7,
+   "jiaowan": 38.7,
+   "nanan": 44.2
   }
  },
  "water_cell": 8,
@@ -222,16 +287,16 @@
    60
   ],
   "ground_bytes": {
-   "40": 1225810,
-   "50": 1253364,
-   "60": 1227496
+   "40": 2046850,
+   "50": 2077096,
+   "60": 2053136
   },
-  "vec_tiles": 73,
-  "vec_bytes": 10971808,
-  "vec_gzip": 2193131,
+  "vec_tiles": 132,
+  "vec_bytes": 14960029,
+  "vec_gzip": 2901973,
   "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 10.2
+  "seconds": 17.8
  },
- "total_s": 29.7
+ "total_s": 60.4
 }

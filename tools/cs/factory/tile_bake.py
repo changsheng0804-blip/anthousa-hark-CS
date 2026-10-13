@@ -18,6 +18,19 @@ X0 = min(math.floor(f[0] / TU) * TU for f in FR.values()); Y0 = min(math.floor(f
 X1 = max(math.ceil((f[0] + f[2]) / TU) * TU for f in FR.values()); Y1 = max(math.ceil((f[1] + f[3]) / TU) * TU for f in FR.values())
 NX, NY = (X1 - X0) // TU, (Y1 - Y0) // TU
 stat['origin'] = [X0, Y0]; stat['grid'] = [NX, NY]
+# cs36 地皮归属：街区框可以互相叠（全城补齐时框放不严），叠着的地方归先长的街区——地面、街、房子都只从归属的街区取一份。
+# 地标是全城共用的同一张图、贴在同一个世界位置，所以两块地接缝处的地标两边一模一样，切开看不出来。
+ORDER = ['nangang', 'jinjiao', 'gucheng', 'siqiu', 'dongjia', 'xipo', 'qiangwai', 'jiaowan', 'nanan']
+QS = sorted(QS, key=lambda q: ORDER.index(q) if q in ORDER else len(ORDER))
+OWN = np.full((NY * TP, NX * TP), -1, np.int8)
+for i, q in enumerate(QS):
+    f = FR[q]; ox, oy = round((f[0] - X0) * S), round((f[1] - Y0) * S); w, h = round(f[2] * S), round(f[3] * S)
+    v = OWN[oy:oy + h, ox:ox + w]; v[v < 0] = i
+def owns(q, x, y):
+    x, y = int(x), int(y)
+    return 0 <= y < OWN.shape[0] and 0 <= x < OWN.shape[1] and OWN[y, x] == QS.index(q)
+def own_mask(q, ox, oy, w, h): return Image.fromarray(((OWN[oy:oy + h, ox:ox + w] == QS.index(q)) * 255).astype(np.uint8))
+stat['owner_order'] = QS
 t_all = time.time()
 for Y in YS:
     t0 = time.time()
@@ -27,7 +40,7 @@ for Y in YS:
         subprocess.run([sys.executable, os.path.join(HERE, 'render_ng.py'), q, str(Y)], check=True, capture_output=True)
         im = Image.open(os.path.join(HERE, 'out', f'{q}_render_{Y}.jpg')).convert('RGBA')
         f = FR[q]; ox, oy = round((f[0] - X0) * S), round((f[1] - Y0) * S)
-        mos.paste(im, (ox, oy))
+        mos.paste(im, (ox, oy), own_mask(q, ox, oy, im.width, im.height))
         stat['quarters'][q] = [ox, oy, im.width, im.height]
     t_render = time.time() - t0
     # 金字塔
@@ -58,7 +71,7 @@ for Y in YS:
             back.paste(Image.open(os.path.join(OUT, str(Y), '0', fn)), (tx * TP, ty * TP))
         a = np.asarray(back.crop((ox, oy, ox + w, oy + h)).convert('RGB')).astype(float)
         b = np.asarray(Image.open(os.path.join(HERE, 'out', f'{q}_render_{Y}.jpg')).convert('RGB')).astype(float)
-        mse = ((a - b) ** 2).mean(); psnr[q] = round(10 * math.log10(255 ** 2 / max(mse, 1e-9)), 1)
+        om = np.asarray(own_mask(q, ox, oy, w, h)) > 0; mse = ((a - b) ** 2)[om].mean(); psnr[q] = round(10 * math.log10(255 ** 2 / max(mse, 1e-9)), 1)
     stat.setdefault('time', {})[str(Y)] = {'render_s': round(t_render, 1), 'tiles_s': round(t_tiles, 1)}
     stat.setdefault('psnr', {})[str(Y)] = psnr
     print(Y, stat['time'][str(Y)], psnr, flush=True)
@@ -69,7 +82,7 @@ gb = {}; WM = {}   # 每个关键年的水面蒙版（地面画上：绿蓝压�
 for K in GK:
     mos = Image.new('RGBA', (NX * TP, NY * TP), (0, 0, 0, 0))
     for q in QS:
-        ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy))
+        ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy), own_mask(q, ox, oy, w, h))
     a = np.asarray(mos).astype(np.int16); WM[K] = (a[..., 3] > 0) & ((a[..., 1] - a[..., 0]) > 15)
     d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = a[..., 3]; nb = 0
     for ty in range(NY):
@@ -87,6 +100,7 @@ for q in QS:
     ox, oy, w, h = stat['quarters'][q]; Q = os.path.join(LIV, q) + '/'
     for st in json.load(open(Q + 'streets.json')):
         x0, y0, x1, y1 = st[0] + ox, st[1] + oy, st[2] + ox, st[3] + oy; pad = st[4] + 2
+        if not owns(q, (x0 + x1) / 2, (y0 + y1) / 2): continue
         # 定律 1：人只走地面画上是陆地的街——每 4 像素取一点，全是陆地才给这一关键年的走位（位掩码，按 GK 顺序）
         L = max(1, int(math.hypot(x1 - x0, y1 - y0) / 4)); wb = 0
         for i, K in enumerate(GK):
@@ -104,6 +118,7 @@ for q in QS:
         P = [[KC[k], [c for xy in poly for c in (R(xy[0] + ox), R(xy[1] + oy))], '%02x%02x%02x' % tuple(col[:3])] for k, lay, poly, col in parts]
         sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
+        if not owns(q, cx, cy): continue
         put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P])
 # 定律 2：船只在水格里走——每块瓦片按 8 像素格记水格（格里 ≥95% 是水才算），每个关键年一串 0/1
 WC = 8; NC = math.ceil(TP / WC); nwater = 0

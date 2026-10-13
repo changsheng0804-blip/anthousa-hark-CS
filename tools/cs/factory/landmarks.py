@@ -4,7 +4,7 @@ python3 landmarks.py <q> place    → 把画好的 raw/landmarks/<id>.png 按底
 地标种类的画法写在 TYPES 里，是全城一张表；不许按街区写。"""
 import json, os, sys, math
 import numpy as np, cv2
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 LM = os.path.join(HERE, 'raw', 'landmarks')
 BUILD = {'fort', 'forum', 'monument', 'palace', 'hippodrome', 'church', 'granary', 'cistern', 'warehouse', 'gate', 'baths', 'column', 'theatre', 'temple', 'market'}
@@ -74,13 +74,20 @@ def compose(q, keys, pre):
     Q = os.path.join(ROOT, 'docs', 'living', q); raw = os.path.join(HERE, 'raw', q); os.makedirs(raw, exist_ok=True)
     PAL = json.load(open(os.path.join(HERE, 'city', 'palette.json'))); sand = np.array(PAL['sand_rgb'])
     wat = cv2.cvtColor(np.uint8([[PAL['water_lab_mean']]]), cv2.COLOR_LAB2RGB)[0, 0]
-    LS = lms(q); miss = [L['id'] for L in LS if not os.path.exists(os.path.join(LM, L['id'] + '.webp')) and (L['destroyed'] in (None, 'None') or int(L['destroyed']) > min(keys))]
+    LS = lms(q); miss = [L['id'] for L in LS if not os.path.exists(os.path.join(LM, L['id'] + '.webp')) and (L['destroyed'] in (None, 'None') or int(L['destroyed']) > min(keys)) and int(L['built']) <= max(keys)]
     for Y in keys:
         b = np.asarray(Image.open(os.path.join(Q, f'base_{Y}.png')).convert('RGB').resize((1820, 2048), Image.NEAREST)).astype(np.int16)
         water = (b[..., 2] > b[..., 0] + 30) & (b[..., 2] > 100) & (b[..., 1] < b[..., 2])
         house = (b[..., 0] > b[..., 1] + 40) & (b[..., 0] > 140)
         out = np.where(water[..., None], wat, sand).astype(np.uint8)
         out[house] = b[house].astype(np.uint8)
+        if 48 <= Y < 56:   # cs36：48 年大火烧掉的房子，几年内地上是焦土（全城规则，AI 画整图时是它自己画的灰烬）
+            bm = Image.new('L', (1820, 2048), 0); bd = ImageDraw.Draw(bm)
+            for h in json.load(open(os.path.join(Q, 'houses.json')))['houses']:
+                if h[3] == 48: bd.polygon([(h[4][i], h[4][i + 1]) for i in range(0, len(h[4]), 2)], fill=255)
+            ash = np.asarray(bm.filter(ImageFilter.MaxFilter(9)).filter(ImageFilter.GaussianBlur(3))).astype(float)[..., None] / 255
+            rs = np.random.RandomState(48); n = rs.rand(2048, 1820, 1) * 30
+            out = (out * (1 - ash) + (np.array([48, 42, 38]) + n) * ash).astype(np.uint8)
         im = Image.fromarray(out).convert('RGBA')
         for L in sorted(LS, key=lambda L: -L['w'] * L['h']):
             if int(L['built']) > Y or (L['destroyed'] not in (None, 'None') and int(L['destroyed']) <= Y): continue
@@ -95,7 +102,9 @@ if __name__ == '__main__':
     if mode == 'drafts':
         miss = []
         for L in lms(q):
-            if L['destroyed'] not in (None, 'None') and int(L['destroyed']) <= 40: continue
+            R = json.load(open(os.path.join(HERE, 'quarters', q + '.json')))
+            if L['destroyed'] not in (None, 'None') and int(L['destroyed']) <= min(R['keys']): continue
+            if int(L['built']) > max(R['keys']): continue   # 最后一个关键年以后才建的，先不画
             if os.path.exists(os.path.join(LM, L['id'] + '.webp')): continue
             draft(L).save(os.path.join(LM, L['id'] + '_draft.png'))
             miss.append(f"{L['id']}\t{L['w']:.0f}x{L['h']:.0f}\tA {ID.get(L['id']) or TYPES[L['type']]}. {STYLE}")
