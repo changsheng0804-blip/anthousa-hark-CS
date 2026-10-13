@@ -157,6 +157,15 @@ def compare(q, fix):
         r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules', 'AH': ROOT})
         m = re.search(r'vein cards (\d+) bad (\d+)', r.stdout)
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
+    # 工厂：所有街区共用一份页面；页面在 jsdom 里跑得起来、每个关键年站着的房子和底账一样多
+    if q != 'nangang' and os.path.exists(os.path.join(HERE, 'quarters', q + '.json')):
+        same_pg = open(os.path.join(LIV, q, 'index.html'), 'rb').read() == open(os.path.join(LIV, 'nangang', 'index.html'), 'rb').read()
+        if not same_pg and FIX: sh(sys.executable, os.path.join(HERE, 'scene_auto.py'), q); same_pg = True
+        rec(S, '页面和模板一字不差（所有街区共用一份）', same_pg, '', '--fix 跑 scene_auto.py 重拷')
+    if sc.get('street_layout'):
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_page.js'), q], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules', 'AH': ROOT})
+        m = re.search(r'page \S+ years (.*) errors (\d+)', r.stdout)
+        rec(S, '页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多', bool(m) and m.group(2) == '0', (r.stdout.strip() or r.stderr.strip())[-160:], '看 check_page.js 打出的错误')
     # 心跳的位置从底账算：底账一变，泊位、水路、扛包路线跟着变
     if sc.get('fleet', {}).get('derived'):
         hp = os.path.join(HERE, 'heart.py')
@@ -170,7 +179,7 @@ def compare(q, fix):
             rec(S, '--fix：心跳位置按最新底账重算', True)
         rec(S, '心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街）', same, sc['fleet'].get('derived', ''), '--fix 重跑 heart.py')
     # cs26 · 分区（埋在底下，从底账推；判法顺序照上游 district_rules.py）
-    if sc.get('fleet', {}).get('docks'):
+    if sc.get('fleet', {}).get('docks') or sc.get('street_layout'):
         if sc.get('street_layout'):   # cs29 按街道重排：分区跟着地块，检查换成 check_streets
             r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
             if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'streets_ng.py'), q); sh(sys.executable, os.path.join(HERE, 'ground_ng.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_streets.py'), q)
@@ -215,7 +224,7 @@ def compare(q, fix):
 
 def picture(q, sc):
     # 工厂定律（通用，不针对街区写死）：tools/cs/factory/LAWS.md
-    if sc.get('fleet', {}).get('walk'):
+    if sc.get('fleet', {}).get('walk') or sc.get('walk'):
         r = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'cs', 'factory', 'laws.py'), q], capture_output=True, text=True, timeout=600)
         for ln in r.stdout.strip().splitlines():
             if ln[:1] in '✅❌': rec('定律', ln[2:].split('  ——')[0], ln.startswith('✅'), ln.split('  ——')[1].strip() if '  ——' in ln else '', '看 LAWS.md；多半是 heart.py 的站位/网算法，或画和底账对不上要局部重画')

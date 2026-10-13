@@ -20,7 +20,7 @@ houses = [h for h in D['houses']]; late = D['late']
 city = json.load(open(X + 'city.json'))
 LM = {l['id']: l for l in city['landmarks']}
 SCN = json.load(open(X + 'scene.json'))
-_WK = SCN['fleet']['walk']; _R = _WK['R']
+_WK = (SCN.get('fleet') or {}).get('walk') or SCN['walk']; _R = _WK['R']   # 工厂：有港用 heart 的，没港用 land.py 的
 _wat = np.array([c == 'w' for c in _WK['quay']]).reshape(_WK['H'], _WK['W'])
 _wat = _ndi.binary_opening(_wat, iterations=1)
 _DW = _ndi.distance_transform_edt(~_wat) * _R
@@ -50,7 +50,7 @@ for k, v in late.items():
     p = v['p']; cx = sum(q[0] for q in p) / len(p); cy = sum(q[1] for q in p) / len(p); _NBP.append([(cx + (q[0] - cx) * 1.15, cy + (q[1] - cy) * 1.15) for q in p])
 NB = []
 _NBP_CUT = [P for k, P in zip(late.keys(), _NBP) if not k.startswith('forum')]
-_PIERS = [r for d_ in SCN['fleet'].get('docks', []) for r in d_['rects']]
+_PIERS = [r for d_ in SCN.get('fleet', {}).get('docks', []) for r in d_['rects']]
 def _nb_land(x, y):   # 只因为是地标才不准盖（不是水、不是栈桥）
     if _dw(x, y) < 8: return False
     return not any(r[0] - 10 <= x <= r[0] + r[2] + 10 and r[1] - 10 <= y <= r[1] + r[3] + 10 for r in _PIERS)
@@ -75,11 +75,21 @@ for _x, _y in _BURNT: _BG.setdefault((int(_x // 30), int(_y // 30)), 1)
 def old(x, y):
     if (int(x // 30), int(y // 30)) in _BG: return 0.0   # 48 年火烧地，烧后按新街坊直着重排   # burnt ground re-laid as a planned grid after 48
     return max(0.0, min(1.0, (38 - age(x, y)) / 28))
+def _shore_dir():
+    sh = _wat ^ _ndi.binary_erosion(_wat); sh[0, :] = sh[-1, :] = sh[:, 0] = sh[:, -1] = False
+    ys, xs = np.nonzero(sh)
+    if len(xs) > 40:
+        P_ = np.c_[xs, ys].astype(float) * _R; c_ = P_.mean(0); u_, s_, vt = np.linalg.svd(P_ - c_, full_matrices=False); v_ = vt[0]
+    else:
+        rr = max(city['roads'] or [{'pts': [[0, 645], [1819, 560]]}], key=lambda r: math.hypot(r['pts'][-1][0] - r['pts'][0][0], r['pts'][-1][1] - r['pts'][0][1]))['pts']
+        v_ = np.array([rr[-1][0] - rr[0][0], rr[-1][1] - rr[0][1]], float); v_ /= np.linalg.norm(v_) or 1
+    if v_[0] < 0: v_ = -v_
+    return [[0, 1000], [float(1000 * v_[0]), float(1000 + 1000 * v_[1])]]
 # ---------------- streets ----------------
 streets = []  # dict(w, kind, pts)
 for r in city['roads']:
     streets.append(dict(w=15, kind='main', pts=[list(map(float, p)) for p in r['pts']]))
-_wd = SCN.get('wide_street') or [[0, 645], [1819, 560]]
+_wd = SCN.get('wide_street') or _shore_dir()   # 工厂：没写大道的街区，长街顺着岸线（没有岸就顺着最长的路）
 d = np.array([_wd[-1][0] - _wd[0][0], _wd[-1][1] - _wd[0][1]], float); d /= np.linalg.norm(d); n = np.array([d[1], -d[0]])   # 长街顺着大道（大致顺港岸）
 if n[0] < 0: n = -n
 corners = [(0, 0), (W, 0), (0, H), (W, H)]
@@ -257,7 +267,7 @@ LOTS = {
     'dock':     dict(wid=(22, 30), dep=(13, 16), gap=(2.5, 4.5), shop=0.0, rear=True),    # 货栈：长而浅的长屋，背靠背两排
     'horrea':   dict(wid=(24, 32), dep=(13, 16), gap=(3.0, 5.0), shop=0.0, rear=True),
 }
-_F = SCN['fleet']; _HB = _F.get('harbor_from', 33)
+_F = SCN.get('fleet', {}); _HB = _F.get('harbor_from', 33)
 _GR = [(LM[k]['xy'], late[k]['built']) for k in late if k.startswith('horrea') and k in LM]
 _WA = [(LM[k]['xy'] if k in LM else np.mean(late[k]['p'], 0), late[k]['built']) for k in late if k.startswith(('cistern', 'nymph'))]
 DY = {'dock': _HB + 2, 'horrea': min([b for _, b in _GR] or [0])}
@@ -269,10 +279,13 @@ def _inter(p1, p2, p3, p4):
     t = ((p3[0] - p1[0]) * (p4[1] - p3[1]) - (p3[1] - p1[1]) * (p4[0] - p3[0])) / d_; u = ((p3[0] - p1[0]) * (p2[1] - p1[1]) - (p3[1] - p1[1]) * (p2[0] - p1[0])) / d_
     if 0 <= t <= 1 and 0 <= u <= 1: return (p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1]))
 MJ = [q for i in range(len(_R_)) for j in range(i + 1, len(_R_)) for a, b in zip(_R_[i][:-1], _R_[i][1:]) for c, d_ in zip(_R_[j][:-1], _R_[j][1:]) for q in [_inter(a, b, c, d_)] if q]
+_FRM = json.load(open(X + 'frame.json'))
+_MK = [np.mean(late[s_['id']]['p'], 0).tolist() for s_ in _FRM['structures'] if s_['type'] == 'market' and s_['id'] in late]
 def classify(cx, cy, area, front, burnt_share):
     if _dw(cx, cy) <= 75 and any(math.hypot(cx - x, cy - y) <= 420 for x, y in _HARB): return 'dock'
     if any(math.hypot(cx - x, cy - y) <= 110 for (x, y), b in _GR): return 'horrea'
     if any(math.hypot(cx - x, cy - y) <= 130 for (x, y), b in _WA): return 'water'
+    if any(math.hypot(cx - x, cy - y) <= 160 for x, y in _MK) and front >= 0.12: return 'market'   # 工厂：底账里的市场四周是铺面街
     if burnt_share >= 0.4: return 'planned'
     if front >= 0.22:
         if front >= 0.3 and any(math.hypot(cx - x, cy - y) < 170 for x, y in MJ): return 'market'
@@ -306,6 +319,7 @@ for _L in range(1, _nd + 1):
     DFN[_L] = 'homes' if _area > 70000 else classify((_xx.mean() + _x0) / SCD, (_yy.mean() + _y0) / SCD, _area, _front, _brn.get(_L, 0) / max(1, _cnt.get(_L, 0)))
 def district(x, y):
     if not (0 <= x < W and 0 <= y < H): return 'homes'
+    if any(math.hypot(x - a, y - b) <= 130 for a, b in _MK): return 'market'   # 工厂：底账里的市场四周的地块按地块判（街区块太大时整块判不出来）
     if _dw(x, y) <= 62 and any(math.hypot(x - a, y - b) <= 420 for a, b in _HARB): return 'dock'   # 南港：沿港一线的地块按地块判，不等整块
     return DFN.get(int(DLAB[int(y * SCD), int(x * SCD)]), 'homes')
 from collections import Counter as _C

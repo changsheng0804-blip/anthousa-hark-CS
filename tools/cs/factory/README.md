@@ -89,3 +89,11 @@
 - heart.py 把画上的栈桥（不算港墙顶）按离泊位远近排队，港挖成以后港边 600 像素内住户每涨一截就建成一座；写进 scene.fleet.docks（from、8 像素格的 rects、根、每张关键年画的四周水色）和 pier_from。
 - 页面 FLEET.dockDraw 每天都画：没建成的用水色盖掉，建前两年是工地。人走到没建成的栈桥根就停下。
 - 检查：check_fleet「docks」。
+
+## 第十一段：一条命令长一个街区（cs30 起）
+`python tools/cs/factory/make_quarter.py <q> [--from 段名]`，配方 `tools/cs/factory/quarters/<q>.json` 只写这块地特有的：名字、框、关键年、地标中文名和一句话、街头气氛、链到哪个街区。
+段：grow → scene（scene_auto.py，拷公用页面）→ paint（缺画就写草图 + PROMPT.txt、退出码 3，Hark 调 generate_image 存进 raw/<q>/ 再 `--from paint`；多张候选逐张铺屋顶交 critic，对位 ≥0.8 里挑底账陆地画成水最少的）→ land（land.py：走得上的网、城里的街，任何街区都要）→ heart（只有写了 fleet 配方的港才跑）→ streets → ground → render → accept --fix。
+- 所有街区共用一份页面（模板 = nangang/index.html），accept 查一字不差；check_page.js 在 jsdom 里跑页面，每个关键年站着的房子数 = 底账。
+- repaint.py 新增两步：底账陆地成片画成水 → 铺本画沙色；沙色校到 east_af30 的沙色（nangang 的配方 palette:false，原画不动）。
+- streets_ng / ground_ng / laws / check_streets 不再要求 scene.fleet：没港就用 scene.walk；长街方向默认顺岸线；底账市场四周的地块是 market。
+- 第一块：金角岸 jinjiao（框 440,210），中途零手写坐标；唯一的人工是 60 年第一张画沙地太橙，critic 判不过，多画两张候选后工厂自己挑中 m3。

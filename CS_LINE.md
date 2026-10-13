@@ -203,3 +203,9 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 - 页面：scene.street_layout 开着就用上游 buildBaseProc 的画法（小道→街两遍描边→房影→房子和井摊炉），近看用上游 drawComposed（南港不铺满地纹）。kits/hill 取自上游。
 - 检查 tools/cs/check_streets.py（重排只挪位置、不下水、不上栈桥、街不下水、分区、长屋、地面图）；accept 62/62。cs28 的街区格子和 halls 退役（blocks.py 不再跑）。
 - cs29b：盖地标前就住在那片地上的人家也排到街上（地标地皮上也切地块，只给同一 zone 的老住户），街上没地方的从 39 户降到 1 户；地标盖起来那年压在它上面的街巷收掉（大道停在狄奥多西广场两头）；还没盖的地标地皮上画的旧房子照样抹；新加 ground_0.jpg 给最早那些年用。check_streets 加第 6 条。
+
+
+## cs30 · 一条命令长街区（金角岸）
+- make_quarter.py + quarters/<q>.json 配方 + scene_auto.py + land.py + check_page.js；README 第十一段。
+- 金角岸（金角湾南岸、圣使徒教堂、余烬市；3,179 户）从零长成，验收 39/39；南港改动后仍 64/64、三张画像素不变。
+——Hark（CS线）

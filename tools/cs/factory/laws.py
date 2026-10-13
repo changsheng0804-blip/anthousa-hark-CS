@@ -19,22 +19,23 @@ PIER_W = int(os.environ.get('PIER_W', 22))
 sc = json.load(open(os.path.join(LIV, 'scene.json'))); F = sc.get('fleet', {})
 res = []
 
-if not F.get('walk'):
-    print(f'{q}: 没有会动的东西（scene.fleet.walk 不存在），定律跳过'); sys.exit(0)
+if not F.get('walk') and not sc.get('walk'):
+    print(f'{q}: 没有走得上的网（scene.walk / fleet.walk 都不存在），定律跳过'); sys.exit(0)
+LAND_ONLY = not F.get('walk')   # 工厂：没港的街区，网和街由 land.py 推
 
 # 定律三先跑：重算一次，顺便拿到底账/画的蒙版
 before = json.dumps([F, json.load(open(os.path.join(LIV, 'city.json'))).get('roads')], sort_keys=True)
-out = subprocess.run([sys.executable, os.path.join(FAC, 'heart.py'), q, '--json', '--masks'], cwd=ROOT, capture_output=True, text=True)
+out = subprocess.run([sys.executable, os.path.join(FAC, 'land.py' if LAND_ONLY else 'heart.py'), q, '--json', '--masks'], cwd=ROOT, capture_output=True, text=True)
 try:
     now_ = json.loads(out.stdout.strip().splitlines()[-1]); roads = now_.pop('_roads', None)
-    same = all(F.get(k) == v for k, v in now_.items()) and (roads is None or roads == json.load(open(os.path.join(LIV, 'city.json'))).get('roads'))
+    same = all((sc if LAND_ONLY else F).get(k) == v for k, v in now_.items()) and (roads is None or roads == json.load(open(os.path.join(LIV, 'city.json'))).get('roads'))
 except Exception as e:
     same = False; now_ = {}
-res.append(('定律三 · 推得出：重跑 heart.py，位置与街和线上一致', same, '' if same else '有位置不是从底账推出来的，或底账变了没重算 → accept.py --fix'))
+res.append(('定律三 · 推得出：重跑 ' + ('land.py' if LAND_ONLY else 'heart.py') + '，位置与街和线上一致', same, '' if same else '有位置不是从底账推出来的，或底账变了没重算 → accept.py --fix'))
 
 M = np.load(os.path.join(FAC, 'out', f'{q}_masks.npz'))
 landm, pw = M['landm'], M['pw']           # 底账陆地（像素），画上的水（像素）
-W = F['walk']; R = W['R']; g = np.array(list(W['quay'])).reshape(W['H'], W['W'])
+W = F.get('walk') or sc['walk']; R = W['R']; g = np.array(list(W['quay'])).reshape(W['H'], W['W'])
 walk = ~np.isin(g, ['w', 'x'])
 PH, PW = landm.shape
 
@@ -73,7 +74,7 @@ for s in F.get('ships', []):
             if min(x, y, PW * RM - x, PH * RM - y) < 30: continue   # 船从图外驶入，图边 30 像素不算
             tot += 1
             if not (0 <= j < PH and 0 <= i < PW) or landm[j, i] or not pw[j, i]: bad += 1
-res.append(('定律二 · 浮得住：船的水路都在底账和画都认的水上', bad == 0 and tot > 0, f'{bad}/{tot} 个点不在两边都认的水上'))
+res.append(('定律二 · 浮得住：船的水路都在底账和画都认的水上', bad == 0 and (tot > 0 or not F.get('ships')), f'{bad}/{tot} 个点不在两边都认的水上' if F.get('ships') else '这个街区没有会开的船'))
 # 定律四：只报数
 # cs21：底账的港是四面围墙的多边形，口子不在底账里，按画上的缺口开（cs14）。落在港墙上的 x 格是港口，单独报数，不算对不上
 xg = (g == 'x'); wl = M['wall'] if 'wall' in M.files else np.zeros_like(landm)

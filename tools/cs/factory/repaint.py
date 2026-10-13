@@ -32,7 +32,34 @@ for Y in ys:
             B = A.copy(); B[fix] = A[iy[fix], ix[fix]]
             Image.fromarray(B.astype('uint8')).save(out, quality=92)
         print(f'{Y} 年：蒙版合成补岸 {int(fix.sum())} 像素')
+        # 工厂：AI 把底账陆地成片画成了水（金角岸 40、60 年把对岸画没了）。离岸远的补不上颜色，就铺成这张画自己的沙地色（底账是真相；房子、地标由后面的段铺）
+        im_ = Image.open(out).convert('RGB'); A = np.asarray(im_).astype(int)
+        wk = (A[..., 2] > A[..., 0] + 15) & (A[..., 2] > A[..., 1] - 10)
+        far = ndi.binary_opening(lm & wk, iterations=2)
+        if far.sum() > 2000:
+            sand = np.median(A[lm & ~wk].reshape(-1, 3), 0)
+            rs = np.random.RandomState(int(Y)); nz = np.asarray(Image.fromarray((rs.rand(A.shape[0] // 16 + 1, A.shape[1] // 16 + 1) * 255).astype('uint8')).resize((A.shape[1], A.shape[0]), Image.BICUBIC)).astype(float)
+            fill = np.clip(sand[None, None, :] + (nz[..., None] - 128) * 0.12, 0, 255)
+            soft = np.asarray(Image.fromarray((far * 255).astype('uint8')).filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.GaussianBlur(3))).astype(float)[..., None] / 255
+            B = A * (1 - soft) + fill * soft
+            Image.fromarray(B.astype('uint8')).save(out, quality=92)
+            print(f'{Y} 年：底账陆地成片画成水，铺沙 {int(far.sum())} 像素')
+    # 工厂：每张画的沙地校到风格参考图的沙色（金角岸 60 年 AI 把沙地画得太橙，橙到和屋顶分不开）。只挪和本画沙色相近的像素，屋顶、水不动
+    if r.get('palette', True):
+        A = np.asarray(Image.open(out).convert('RGB')).astype(float)
+        wk = (A[..., 2] > A[..., 0] + 15) & (A[..., 2] > A[..., 1] - 10)
+        hm = Image.new('L', (A.shape[1], A.shape[0]), 0); hd = ImageDraw.Draw(hm)
+        for h in json.load(open(os.path.join(Q, 'houses.json')))['houses']:
+            if h[2] <= int(Y) < h[3]: hd.polygon([(h[4][i], h[4][i + 1]) for i in range(0, len(h[4]), 2)], fill=255)
+        hm = np.asarray(hm.filter(ImageFilter.MaxFilter(9))) > 0
+        sand = np.median(A[~wk & ~hm].reshape(-1, 3), 0); REF = np.array([203., 181., 139.])   # east_af30.jpg 的沙色
+        dist = np.sqrt(((A - sand) ** 2).sum(2)); wgt = np.clip((80 - dist) / 40, 0, 1)[..., None] * (~wk)[..., None]
+        if np.abs(REF - sand).max() > 6:
+            A = np.clip(A + (REF - sand) * wgt, 0, 255); Image.fromarray(A.astype('uint8')).save(out, quality=92)
+            print(f'{Y} 年：沙色 {sand.round().tolist()} → {REF.tolist()}')
     new = np.asarray(Image.open(out).convert('RGB')).astype(int)
+    if not os.path.exists(cur_p):   # 工厂：新街区第一次铺
+        Image.open(out).convert('RGB').save(cur_p, quality=92); print(f'{Y} 年：第一次铺，写 {os.path.basename(cur_p)}'); continue
     cur = np.asarray(Image.open(cur_p).convert('RGB')).astype(int)
     diff = np.abs(new - cur).sum(2) > 60
     frac = diff.mean()

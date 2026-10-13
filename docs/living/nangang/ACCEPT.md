@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 62 / 62
+通过 64 / 64
 
 
 ## 一、拉取
@@ -28,7 +28,9 @@
 - ✅ 静态文字没有串别的街区 —— 干净
 - ✅ 「怎么做的」写的年代 = 实际关键年 —— 写 [40, 50, 60]，实际 [40, 50, 60]
 - ✅ nangang ⇄ xerolophos 来回都能走
+- ✅ nangang ⇄ jinjiao 来回都能走
 - ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
+- ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page nangang years 40:3226/3226 50:4201/4201 60:4679/4679 errors 0
 - ✅ 心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街） —— heart.py 从底账算（建城 60 年的陆地、港口、粮仓 horrea_theodosius、路、房子）
 - ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5206 unplaced 1 streets 5021 in water 0 on piers 0 street segs in water 2 halls 40/50/60 [21, 35, 82] labels 60 15 ok
 - ✅ 没建成的栈桥都盖住了（连同靠在边上的画上的船） —— dock patches 8 / 8, uncovered cells 0
