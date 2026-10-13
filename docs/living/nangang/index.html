@@ -193,6 +193,22 @@ function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
 const DOCKIM={};if(SCENE.dock_patch)for(const i in SCENE.dock_patch)for(const K in SCENE.dock_patch[i]){const u=SCENE.dock_patch[i][K][0];if(DOCKIM[u])continue;const im=new Image();im.onload=()=>{if(baseYear>=0)buildBase(baseYear)};im.src=u;DOCKIM[u]=im}
+/* CS 线 · cs27 货栈长屋：码头货栈、仓场一带的小房子换成一排排长屋（tools/cs/factory/halls.py 从分区推出；照画上粮仓的样子：长条瓦顶、一道屋脊、浅色墙边）。
+   先用空地底图（bare.jpg）抹掉那几户画上的小屋顶，再画长屋 */
+const BAREIM=new Image();BAREIM.onload=()=>{if(baseYear>=0)buildBase(baseYear)};BAREIM.src='bare.jpg';
+function drawHalls(Y){const L=SCENE.halls&&SCENE.halls[Y];if(!L||!L.length)return;
+  if(BAREIM.complete&&BAREIM.naturalWidth){fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(2px)';fctx.fillStyle='#fff';
+    for(const h of houses){if(!(h.built<=Y&&h.destroyed>Y))continue;const z=zoneOf(h,Y);if(z!=='dock'&&z!=='horrea')continue;polyPath(fctx,h.p,1.6);fctx.fill()}
+    fctx.filter='none';fctx.globalCompositeOperation='source-in';fctx.drawImage(BAREIM,0,0,W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)}
+  const T=(c,k,a)=>`rgba(${Math.min(255,c[0]*k)|0},${Math.min(255,c[1]*k)|0},${Math.min(255,c[2]*k)|0},${a==null?1:a})`;
+  for(const [cx,cy,ux,uy,a,b,r,g,bb] of L){const vx=-uy,vy=ux,c=[r,g,bb];const P=(s,t)=>[cx+ux*s+vx*t,cy+uy*s+vy*t];
+    const quad=(s0,t0,s1,t1,dx,dy)=>{const q=[P(s0,t0),P(s1,t0),P(s1,t1),P(s0,t1)];bctx.beginPath();bctx.moveTo(q[0][0]+(dx||0),q[0][1]+(dy||0));for(let i=1;i<4;i++)bctx.lineTo(q[i][0]+(dx||0),q[i][1]+(dy||0));bctx.closePath()};
+    const lit=(vx*-.6+vy*-.8)>0?1.08:.9;
+    bctx.fillStyle='rgba(50,32,18,.35)';quad(-a-1,-b-1,a+1,b+1,3,3);bctx.fill();
+    bctx.fillStyle='rgb(214,200,172)';quad(-a-1,-b-1,a+1,b+1);bctx.fill();
+    bctx.fillStyle=T(c,lit);quad(-a,-b,a,0);bctx.fill();bctx.fillStyle=T(c,2-lit);quad(-a,0,a,b);bctx.fill();
+    bctx.lineWidth=1;bctx.strokeStyle=T(c,.88,.18);for(const k of [-2/3*b,-1/3*b,1/3*b,2/3*b]){const p0=P(-a,k),p1=P(a,k);bctx.beginPath();bctx.moveTo(p0[0],p0[1]);bctx.lineTo(p1[0],p1[1]);bctx.stroke()}
+    bctx.strokeStyle=T(c,1.22,.9);{const p0=P(-a,0),p1=P(a,0);bctx.beginPath();bctx.moveTo(p0[0],p0[1]);bctx.lineTo(p1[0],p1[1]);bctx.stroke()}}}
 function buildBase(Y){
   const [K,KI,PI]=keyFor(Y);bctx.globalAlpha=1;bctx.globalCompositeOperation='source-over';bctx.drawImage(KI,0,0,W,H);
   mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,W/2,H/2);mctx.setTransform(.5,0,0,.5,0,0);mctx.fillStyle='#fff';mctx.beginPath();
@@ -211,6 +227,7 @@ function buildBase(Y){
     const o=d.borrow&&d.borrow[K];if(!o)return;
     fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(4px)';fctx.fillStyle='#fff';for(const q of d.rects.concat((d.hide&&d.hide[K])||[]))fctx.fillRect(q[0]-6,q[1]-5,q[2]+12,q[3]+10);fctx.filter='none';
     fctx.globalCompositeOperation='source-in';fctx.drawImage(KI,-o[0],-o[1],W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)});
+  drawHalls(Y);   /* cs27 */
   baseYear=Y;buildingNow=houses.filter(h=>h.destroyed>Y&&(h.built===Y||h.built===Y-1));
 }
 function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}

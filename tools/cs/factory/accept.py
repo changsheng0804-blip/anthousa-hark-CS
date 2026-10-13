@@ -172,7 +172,7 @@ def compare(q, fix):
     # cs26 · 分区（埋在底下，从底账推；判法顺序照上游 district_rules.py）
     if sc.get('fleet', {}).get('docks'):
         r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
-        if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'districts.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
+        if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'districts.py'), q); sh(sys.executable, os.path.join(HERE, 'halls.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
         rec(S, '分区从底账推出来（港边货栈、粮仓仓场、临街铺面……）', r.returncode == 0, (r.stdout + r.stderr).strip()[-140:], '--fix 跑 districts.py')
     # cs24 · 码头逐年长：没建成的栈桥每个年代都有补丁，盖住栈桥和归它的船
     if sc.get('fleet', {}).get('docks'):
