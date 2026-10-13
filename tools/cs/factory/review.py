@@ -187,7 +187,7 @@ sd.text((20, ly + 80), '蓝 = 底账和画都认的水　红斜线 = 底账和�
 x = 20
 for k, (nm, col) in KINDS.items():
     sd.rectangle([x, ly + 125, x + 22, ly + 147], fill=col); sd.text((x + 30, ly + 122), f'{nm} {tot[k]}', font=font(22), fill=(230, 215, 180)); x += 200
-sd.text((20, ly + 170), f'对不上的岸：{int(clash.sum())} 格（{int(clash.sum()) * R * R} 平方像素）——蒙版生成上线后应为 0', font=font(22), fill=(255, 150, 140))
+sd.text((20, ly + 170), f'人走网岸边取整：{int(clash.sum())} 格（8 像素格，只报数；定律四按 4 像素格量底账陆地画成水，见 laws.py）', font=font(22), fill=(255, 150, 140))
 os.makedirs(os.path.join(ROOT, 'tools/cs/factory/out'), exist_ok=True)
 outp = os.path.join(ROOT, f'tools/cs/factory/out/{Q}_review.jpg'); sheet.save(outp, quality=88)
 print(json.dumps({'out': outp, 'clusters': len(clusters), 'picked': [(sorted(c['kinds']), c['n']) for c in picked], 'clash': int(clash.sum()), 'per_kind': tot}, ensure_ascii=False))
