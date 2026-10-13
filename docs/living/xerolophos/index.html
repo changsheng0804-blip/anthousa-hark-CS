@@ -36,6 +36,8 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card .x{position:absolute;right:10px;top:8px;background:none;border:none;color:var(--mute);font-size:20px;cursor:pointer}
 #card h2{margin:0 0 2px;font-size:18px;color:var(--gold2);font-weight:600}
 #card .meta{font-size:12px;color:var(--mute)}
+#card .door{font-size:12.5px;color:var(--ivory);margin:3px 0 2px}#card .door b{color:var(--gold);font-weight:normal}#card .door i{color:var(--mute);font-style:normal}
+#card .gh button i{font-style:normal;color:var(--mute);margin-left:3px;font-size:11px}#card .gq .st{display:block;font-style:normal;font-size:11.5px;color:var(--mute);margin-top:2px}
 #card .portrait{width:96px;height:96px;border-radius:8px;border:1px solid var(--gold);object-fit:cover;float:right;margin:0 0 6px 10px}
 #card .quote{font-size:14px;font-style:italic;color:var(--ivory);margin:8px 0;border-left:2px solid var(--gold);padding-left:8px}
 #card .now{font-size:13.5px;margin:8px 0;padding:8px;background:rgba(212,168,90,.1);border-radius:6px}
@@ -96,7 +98,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='liu3b';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='liu4';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -124,6 +126,13 @@ function drawComposed(A,vx0,vy0,vx1,vy1,per){if(!COMP||A<=0||!COMP.houses.comple
 const STORIES=await fetch('stories.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 /* 刘线：数百户由邻居讲的故事，经 tools/check_stories.py 对照底账核对。liu2：不再阻塞首屏，后台加载完再刷新已打开的卡片 */
 const TALK={};fetch('talk.json').then(r=>r.ok?r.json():{}).then(v=>{Object.assign(TALK,v.years||{});$('gsp').style.display=Object.keys(TALK).length?'':'none'}).catch(()=>{$('gsp').style.display='none'});
+/* liu4 · 门牌：街名、门牌、街区功能是谭线（上游）的空间事实，只读引用（facts_upstream/，见 SOURCE.md）；刘线不画街，只让人住在真街上 */
+const ADDR={st:[],fn:{},h:{}};fetch('facts_upstream/addr.json').then(r=>r.ok?r.json():null).then(v=>{if(!v)return;ADDR.st=v.streets;ADDR.fn=v.fn;ADDR.h=v.h;try{if(sel)renderCard()}catch(e){}}).catch(()=>{});
+function streetName(si,Y){const S=ADDR.st[si];if(!S)return null;const R=S[2];for(let i=0;i<R.length;i++){const r=R[i];if(r[1]<=Y&&Y<r[2])return (i>0&&Y-r[1]<4)?r[0]+'（原'+R[i-1][0]+'）':r[0]}return null}
+function addrOf(id,Y){const a=ADDR.h[id];if(!a)return null;const r=a[1].find(x=>x[2]<=Y&&Y<x[3]);const fn=ADDR.fn[a[0]]||'';if(!r)return {st:null,no:0,fn};const st=streetName(r[0],Y);return {st,no:r[1],fn}}
+function streetOf(id,Y){const a=addrOf(id,Y);return a&&a.st?a.st.replace(/（.*）/,''):''}
+function doorHTML(id,Y){const a=addrOf(id,Y);if(!a)return '';return `<div class="door">⌂ ${a.st?`<b>${a.st}</b> ${a.no} 号`:'<i>街名未定（离街还远）</i>'}${a.fn?' · '+a.fn:''}</div>`}
+function sceneWhere(S){for(const c of S.cast){const st=streetOf(c[3],YEAR);if(st)return S.where+'（'+st+'）'}return S.where}
 const VOICES={};fetch('voices.json').then(r=>r.ok?r.json():{}).then(v=>{Object.assign(VOICES,v);try{if(sel)renderCard()}catch(e){}}).catch(()=>{});
 /* liu2：没有故事的人家，「此刻」按行当和时辰挑一句山上的日常（干山上没有码头，只有运水人会下山去港口卖水） */
 const TODAY_HILL={
@@ -337,7 +346,7 @@ function renderGossip(Y){const T=TALK[Y]||[];const esc=t=>String(t).replace(/[&<
   if(!rows.length)html+=`<div class="now">这一年山上还没几户人家开口。把年代往后拨。</div>`;
   const used=new Set();
   for(const t of rows){const q=[[t.quote_house,t.quote],...(t.alt||[])].find(c=>!used.has(c[1])&&up(c[0]))||[t.quote_house,t.quote];used.add(q[1]);
-    html+=`<div class="gt">${esc(t.zh)}<i>${t.n} 户在说</i></div><div class="gq" data-go="${q[0]}">“${esc(q[1])}”</div><div class="gh">`+t.hs.slice(0,6).map(id=>{const al=aliveAt(household(houseById(id)),Y);return `<button data-go="${id}">${esc(al[0]?al[0].n+'家':'这一家')}</button>`}).join('')+`</div>`}
+    const qs=streetOf(q[0],Y);html+=`<div class="gt">${esc(t.zh)}<i>${t.n} 户在说</i></div><div class="gq" data-go="${q[0]}">“${esc(q[1])}”${qs?`<span class="st">——${esc(qs)}</span>`:''}</div><div class="gh">`+t.hs.slice(0,6).map(id=>{const al=aliveAt(household(houseById(id)),Y);const s2=streetOf(id,Y);return `<button data-go="${id}">${esc(al[0]?al[0].n+'家':'这一家')}${s2?`<i>${esc(s2)}</i>`:''}</button>`}).join('')+`</div>`}
   showCard(html+`<div class="pin">◆ 点一句话或一户人家，跳过去看</div>`)}
 $('gsp').addEventListener('click',e=>{e.stopPropagation();hush();sel={kind:'gossip'};threads=[];renderCard()});
 $('cardbody').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;e.stopPropagation();goHouse(+b.dataset.go)});
@@ -349,7 +358,7 @@ function renderDeep(h,S,Y,per){
   if(Y<h.built&&!cur){showCard(`<h2>这里还是空地</h2><div class="meta">建城 ${Y} 年</div><div class="now">这栋房子要到建城 ${h.built} 年才盖起来，住进来的人家有一段故事。把年代往后拨。</div><div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);return}
   const now=gone||Y<h.built?'':(S.now[per==='race'?'day':per]||S.now.day);
   const ppl=al.map(m=>`${m.n}（${m.r}，${Y-m.b} 岁）`).join('、');
-  showCard(`<h2>${S.title}</h2><div class="meta">${S.meta}</div>`
+  showCard(`<h2>${S.title}</h2>${doorHTML(h.id,Y)}<div class="meta">${S.meta}</div>`
    +(now?`<div class="now">此刻：${now}</div>`:'')
    +`<div class="quote">“${S.quote}”</div>`
    +(gone?`<div class="story">${S.gone||'这家人已经不在这里了。'}</div>`:(cur?`<div class="story">${cur[1]}</div>`:''))
@@ -381,7 +390,7 @@ function renderCard(){
       const beats=V.life.filter(b=>b[0]<=Y),cur=beats[beats.length-1];
       if(cur)vHTML=`<div class="story">${cur[1]}<div class="by">${by}</div></div>`;else vHTML=`<div class="story fut">${narN}还没搬来，这一家的事，过几年才有人讲。</div>`;
       vHTML+=`<details><summary>邻居讲的这一家</summary><div class="life">${V.life.map(([y,t])=>`<div class="${y>Y?'fut':''}"><span class="y">建城 ${y} 年</span>${y>Y?'……':t}</div>`).join('')}</div></details>`}
-    showCard(`<h2>${al.length?nm:'空房子'}</h2><div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'来自'+F.origin} · ${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>`
+    showCard(`<h2>${al.length?nm:'空房子'}</h2>${doorHTML(h.id,Y)}<div class="meta">${F.trade} · ${F.origin==='本城生'?'本城生':'来自'+F.origin} · ${F.faith} · 房子建于${h.built<1?'拜扎斯时代':'建城 '+h.built+' 年'}</div>`
       +`<div class="ppl">${ppl}</div>`+(today?`<div class="now">此刻：${today}</div>`:'')
       +vHTML+`<div class="obj">屋里有：${objHTML}</div>`+(vOn?`<details><summary>这一家的年代（底账）</summary>${lifeHTML(hh.ev,Y)}</details>`:lifeHTML(hh.ev,Y))+`<div class="pin">◆ 已固定：拨动年代，看这一家怎么过</div>`);
     if(!gone&&al.length){
@@ -445,7 +454,7 @@ $('ystat').textContent=`这一角 ${houses.filter(h=>h.built<=50&&h.destroyed>50
 /* ---------- ticker ---------- */
 const TK={morning:['米利翁门开始发面包','一艘特罗阿德的粮船进了港','圣伊琳娜的晨钟响了','运水人挑着罐子往山坡上走'],day:['银钱商在柱廊下吵了起来','一个亚历山大里亚来的修士在广场上布道','卸粮工在粮仓前排成了长队','有人在大道上丢了一头驴'],race:['蓝党赢下第三场','绿党的人把帽子扔上了跑道','竞技场的吼声隔着三条街都听得见'],evening:['一支婚礼队伍举着火把走过大道','阿纳斯塔西娅门口又挤满了人','酒馆里有人说皇帝在东方打了败仗'],night:['打更人喊：小心火烛','金角湾上只剩几盏船灯','卫城的守夜兵点起了火盆']};
 let tkT=0;$('ticker').style.cursor='pointer';$('ticker').onclick=()=>{if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]){if(clock<tkScene.h[0]||clock>=tkScene.h[1]-.3){clock=tkScene.h[0]+.02;lastSceneKey=''}flyTo(tkScene.at[0],tkScene.at[1]-20,2.2)}};
-function announceScenes(){const L=SCENES.filter(S=>YEAR>=S.y[0]&&YEAR<=S.y[1]);if(!L.length)return;const S=L[Math.floor(Math.random()*L.length)];tkScene=S;const hh=Math.floor(S.h[0]);$('tk').textContent='这一年，'+(hh<12?'上午 ':hh<18?'下午 ':'傍晚 ')+(hh>12?hh-12:hh)+' 点，'+S.where+'有人会碰面 · 点这里去看';$('ticker').style.opacity=1;tkT=25}function tick(){if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock>=tkScene.h[0]&&clock<tkScene.h[1])return;if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&Math.random()<.5){announceScenes();return}tkScene=null;const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
+function announceScenes(){const L=SCENES.filter(S=>YEAR>=S.y[0]&&YEAR<=S.y[1]);if(!L.length)return;const S=L[Math.floor(Math.random()*L.length)];tkScene=S;const hh=Math.floor(S.h[0]);$('tk').textContent='这一年，'+(hh<12?'上午 ':hh<18?'下午 ':'傍晚 ')+(hh>12?hh-12:hh)+' 点，'+sceneWhere(S)+'有人会碰面 · 点这里去看';$('ticker').style.opacity=1;tkT=25}function tick(){if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&clock>=tkScene.h[0]&&clock<tkScene.h[1])return;if(tkScene&&YEAR>=tkScene.y[0]&&YEAR<=tkScene.y[1]&&Math.random()<.5){announceScenes();return}tkScene=null;const per=race.on?'race':periodOf(clock);const a=(SCENE.ticker&&SCENE.ticker[per])||TK[per]||TK.day;const el=$('ticker');el.style.opacity=0;setTimeout(()=>{$('tk').textContent=pick(Math.random,a);el.style.opacity=1},500)}
 
 /* ---------- sound (synthesized) ---------- */
 let AC=null,master,sea,crowd,crowdF,roar,soundOn=false;
@@ -595,7 +604,7 @@ function drawScenes(t,vis){const bubbles=[];let started=null;sceneSlow=false;
         if(cam.z>=1.4){ctx.font=`${10/cam.z}px serif`;const tw=ctx.measureText(name).width;ctx.fillStyle='rgba(20,17,13,.7)';ctx.fillRect(x-tw/2-2/cam.z,y+1/cam.z,tw+4/cam.z,12/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(name,x-tw/2,y+10/cam.z)}}});
     if(u>walkIn&&u<walkOut){const L=S.lines.length;const li=Math.min(L-1,Math.floor((u-walkIn)/(walkOut-walkIn)*L));const [who,txt]=S.lines[li];if(cam.z>=.9&&vis(S.at[0],S.at[1]))sceneSlow=true;bubbles.push({p:pos[who]||S.at,txt,S,who:(S.cast.find(c=>c[0]===who)||[0,''])[1]})}
     else if(cam.z<.9){bubbles.push({p:S.at,txt:null,S})}}
-  if(started){tkScene=started;$('tk').textContent=started.where+'，有人在说话 · 点这里去听';$('ticker').style.opacity=1;tkT=Math.max(tkT,10)}
+  if(started){tkScene=started;$('tk').textContent=sceneWhere(started)+'，有人在说话 · 点这里去听';$('ticker').style.opacity=1;tkT=Math.max(tkT,10)}
   return ()=>{for(const b of bubbles){const [x,y]=b.p;const pulse=.5+.5*Math.sin(t*4);
     if(!b.txt||cam.z<.9){const r=7/cam.z;ctx.fillStyle=`rgba(255,240,210,${.75+.25*pulse})`;ctx.beginPath();ctx.ellipse(x,y-22/cam.z,r*1.4,r,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(x-3/cam.z,y-16/cam.z);ctx.lineTo(x,y-10/cam.z);ctx.lineTo(x+2/cam.z,y-16/cam.z);ctx.fill();ctx.fillStyle='#5a3a22';for(let k=-1;k<=1;k++){ctx.beginPath();ctx.arc(x+k*4/cam.z,y-22/cam.z,1.2/cam.z,0,7);ctx.fill()}continue}
     const fs=13/cam.z,pad=6/cam.z;ctx.font=`${fs}px serif`;const head=b.who?b.who+'：':'';const tw=Math.min(ctx.measureText(head+b.txt).width,240/cam.z);
@@ -607,7 +616,7 @@ function drawScenes(t,vis){const bubbles=[];let started=null;sceneSlow=false;
 function qp(th,mx,my,u){const a=(1-u)*(1-u),b=2*u*(1-u),c=u*u;return[a*th.fx+b*mx+c*th.x,a*th.fy+b*my+c*th.y]}
 function drawQ(th,mx,my,k){ctx.beginPath();ctx.moveTo(th.fx,th.fy);const N=24;for(let i=1;i<=N*k;i++){const q=qp(th,mx,my,i/N);ctx.lineTo(q[0],q[1])}ctx.stroke()}
 requestAnimationFrame(frame);
-window.__anth={VOICES,cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
+window.__anth={VOICES,ADDR,addrOf,sceneWhere,cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
 })();
 </script>
 </body>

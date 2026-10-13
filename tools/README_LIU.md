@@ -17,3 +17,9 @@
 11. 居民请愿草案：`drafts/proposals_af61_70/`（不进 proposals/）。`make_petitions.py` 生成五份 era 格式的请愿；`trial_petitions.py` 在 /tmp 副本里逐份跑 build_all + check，结果写 `trial_results.json`；说明和数字见该目录 README.md。
 12. b11–b13 去套路：「X 接手这栋屋子……」开头、「我做鞋/我开酒馆，……」结尾改写 99 行（tsv 补丁 → apply_patch.py，再同步回 bNN.txt/json）；b14 补齐 385 户里已选未写的 14 户。
 13. 自查：`python3 tools/smoke_liu3.py http://localhost:8765/docs/living/xerolophos/ ../shots` —— 几个年份打开「街坊在说什么」、点一户跳过去、桌面 + 手机宽度、控制台无报错。
+
+## liu4（2026-10-12）· 人住在真街上
+14. 只读引入谭线的空间事实：`python3 tools/facts_from_upstream.py <上游提交>`（需 numpy）→ `docs/living/xerolophos/facts_upstream/`：上游 houses/streetnames/blocks/junctions 原样复制 + 刘线推演的门牌表 `addr.json`（每户每段年份的街、门牌、街区功能）+ `junctions_named.json`（路口的井/炉/摊挂到街名上）。来源提交写在 SOURCE.md。不搬上游画法。
+15. 页面：人家卡片标「⌂ 街名 门牌 · 街区功能」（改名后 4 年内写「（原某某巷）」），「街坊在说什么」每户、每句标街名，相遇（scenes）的地点后标街名。BUILD='liu4'。
+16. 40 户闲话按真实街名/街区功能改写一句：`tools/batches/liu4_streets.json` → `python3 tools/apply_streets.py`（核对改写里提到这户那年真正所在的街）。`check_stories.py` 新增：提到的街名必须在上游底账里、且那年已经叫这个名字；像街名却不在底账里的「某某巷/街/大道」报错；街名里的「运水人/埃及/哥特」不算行当/籍贯。
+17. 自查：`python3 tools/smoke_liu4.py http://localhost:8765/docs/living/xerolophos/ ../shots`。

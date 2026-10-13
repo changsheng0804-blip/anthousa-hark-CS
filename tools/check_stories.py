@@ -11,6 +11,8 @@ against the engine ledger and the page's own household derivation:
   - the narrator lives in the house they speak from, in every year they speak about;
   - (liu2) the 'now' line has a version for each time of day (morning/day/evening/night) with no words from the wrong hour,
     and nothing that puts a hill family at the quay or at sea unless their trade takes them there;
+  - (liu4) every street named is in the upstream ledger (facts_upstream/addr.json) and already carries that name that year;
+    a '…巷/…街/…大道' that is no known street is flagged;
   - (liu2) repetition across the whole street: tools/dedup.py — one image in at most 3 households, one 6-character stock phrase in at most 3.
 usage:
   python3 tools/check_stories.py                      # check voices.json (exit 1 on any failure)
@@ -66,6 +68,36 @@ EVENTS = [  # (pattern, earliest year)
     (re.compile('阿德里安堡'), 49),
 ]
 BANNED = re.compile('地震|瘟疫|鼠疫|饥荒|洪水|海啸') if not QUAKES else re.compile('海啸')
+# ---- (liu4) street names: upstream spatial facts, read-only (docs/living/xerolophos/facts_upstream/addr.json) ----
+ADDR_PATH = os.path.join(XD, 'facts_upstream', 'addr.json')
+STREET_YEARS = {}  # name -> list of (from, to) the street carried that name
+if os.path.exists(ADDR_PATH):
+    for nm0, y0, R in json.load(open(ADDR_PATH, encoding='utf-8'))['streets']:
+        for nm, a, b in R: STREET_YEARS.setdefault(nm, []).append((max(a, y0), b))
+STREET_RE = sorted(STREET_YEARS, key=len, reverse=True)
+STREET_SUFFIX = re.compile('巷|街|大道')
+STREET_GENERIC = set('条全满上在着隔沿过回出一两半这那整后前对大小穿临当看的下里到逛进去跨')
+
+def check_streets(t, y, errs, where):
+    """every street named must exist in the upstream ledger and already carry that name in year y;
+    a '…巷/…街/…大道' that is not a known street name is flagged (generic 整条街/满街/上街 are fine)."""
+    covered = [False] * len(t)
+    for nm in STREET_RE:
+        i = t.find(nm)
+        while i >= 0:
+            if not any(covered[i:i + len(nm)]):
+                for k in range(i, i + len(nm)): covered[k] = True
+                if not any(a <= y < b for a, b in STREET_YEARS[nm]):
+                    yrs = '、'.join(f'{a}–{b - 1 if b < 999 else "今"}' for a, b in STREET_YEARS[nm])
+                    errs.append(f'{where}: 街名 {nm} 在建城 {y} 年还没有（这个名字用于 {yrs} 年）')
+            i = t.find(nm, i + 1)
+    if not STREET_YEARS: return
+    for m in STREET_SUFFIX.finditer(t):
+        if covered[m.start()]: continue
+        prev = t[m.start() - 1] if m.start() else ''
+        if not prev or prev in STREET_GENERIC or not ('\u4e00' <= prev <= '\u9fff'): continue
+        errs.append(f'{where}: “{t[max(0, m.start() - 3):m.end()]}”像街名，但底账里没有这条街')
+
 DEATH = re.compile('死|去世|走了|没了|埋|坟|夭折|没留住|下葬|忌日|过世|不在了|没能')
 
 # ---- time of day (liu2) ----
@@ -142,6 +174,7 @@ def person(fam, n):
 def check_line(t, y, ctx, errs, where, memory=False):
     """ctx: dict fam, house, nar_people(list), tie_fams(list of (fam)), allow_names"""
     if BANNED.search(t): errs.append(f'{where}: 提到底账里没有的灾害')
+    check_streets(t, y, errs, where)
     for pat, y0 in EVENTS:
         if pat.search(t) and y < y0: errs.append(f'{where}: {pat.pattern[:8]}… 在 {y0} 年才发生')
     if '大火' in t and y < FIRES[0]: errs.append(f'{where}: {y} 年之前没有大火')
@@ -150,6 +183,7 @@ def check_line(t, y, ctx, errs, where, memory=False):
         if N > y: errs.append(f'{where}: 提到将来的第 {N} 年')
         if '火' in t[m.end():m.end() + 6] and N not in FIRES: errs.append(f'{where}: 第 {N} 年没有大火')
     t2, structs = strip_structs(t)
+    for nm in STREET_RE: t2 = t2.replace(nm, '□')  # liu4: 运水人巷/埃及人巷/哥特人巷 are street names, not trade/origin words
     for w in structs:
         b = STRUCT_WORDS[w]
         if b > y and not (BUILDING_WORDS.search(t) and b - 3 <= y):
