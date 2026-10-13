@@ -42,6 +42,8 @@ def bodies(h):
     B = [body(h)]
     po = HT_.portico(h) if len(h) > 12 else None
     if po: B.append(list(po[0]) + [(x, y - po[1]) for x, y in po[0]])
+    ax = HT_.annex(h) if len(h) > 12 else None
+    if ax: B.append(list(ax[0]) + [(x, y - ax[1] - 0.6) for x, y in ax[0]])
     return B
 def bodyhit(h, segs, g):
     polys = []
@@ -156,8 +158,8 @@ if __name__ == '__main__' and 'fixpo' in sys.argv:
     # a colonnade that a later lane runs into is simply not built (the house itself is checked by streets_xero)
     bad = set(strict_all()); n = 0
     for h in HS:
-        if h[0] in bad and len(h) > 12 and h[12]: h[12] = 0; n += 1
-    json.dump(HD, open(X + 'houses.json', 'w'), separators=(',', ':')); print('porticos dropped', n); sys.exit()
+        if h[0] in bad and len(h) > 12: h[12] = (h[12] & ~1) | 4; n += 1
+    json.dump(HD, open(X + 'houses.json', 'w'), separators=(',', ':')); print('porticos/annexes dropped', n); sys.exit()
 if __name__ == '__main__':
     out = [audit(Y, draw=('xero_af%d.jpg' % Y) if Y in (40, 50, 60) else None) for Y in (40, 45, 50, 55, 60)]
     for r in out: print(r)

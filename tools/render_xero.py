@@ -98,11 +98,12 @@ ROOF = [(186, 94, 60), (172, 86, 54), (198, 112, 70), (160, 80, 52), (180, 102, 
 LX, LY = -0.6, -0.8   # light from the north-west
 def shade(c, k): return tuple(max(0, min(255, int(v * k))) for v in c)
 import house_types as HT_
-def house_parts(h):
+def house_parts(h, Y=None):
     by, P, sh = HT_.geom(h)
+    if Y is not None: P = HT_.at(P, Y)
     M = {'fill': None, 'edge': 'edge', 'line': 'ridge'}
     out = [('shadow', sh)]
-    for kind, lay, poly, col in P:
+    for kind, lay, poly, col, *_ in P:
         out.append((M[kind] or ('wall' if lay == 'w' else 'roof'), poly, col))
     return by, out
 def draw_parts(d, sd_, parts, a_mul=1.0):
@@ -140,7 +141,7 @@ def render(Y, crop=None):
     items = []
     for hh_ in HS:
         if not (hh_[2] <= Y < hh_[3]): continue
-        by, parts = house_parts(hh_)
+        by, parts = house_parts(hh_, Y)
         items.append((by, 'h', parts, hh_[2] == Y))
     for jx, jy, jyr, kind in JU:
         if jyr > Y: continue

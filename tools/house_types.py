@@ -65,7 +65,7 @@ def split(pts, front, t0, t1, s=0.96):
 SPLIT = {'yard': (0.5, 1.0), 'hut': (0.0, 0.5), 'garden': (0.0, 0.62)}
 def portico(h):
     """a colonnade in front of a row house: (strip on the ground, roof height, outward normal) or None"""
-    if len(h) < 13 or not h[12]: return None
+    if len(h) < 13 or not (h[12] & 1): return None
     p = h[4]; front = h[10]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
     cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
     a, b = pts[front], pts[(front + 1) % 4]
@@ -192,7 +192,7 @@ def _portico(parts, po, roof, wall, hid, fn):
     top = [(x, y - ph) for x, y in strip]
     parts.append(('fill', 'r', top, shade(roof, 1.08 if ny > 0 else 0.9)))
     parts.append(('line', 'r', [top[3], top[2]], shade(roof, 0.62)))
-def geom(h):
+def _geom_full(h):
     """h: [id, dd, b, e, poly8, fx, t, ht, fn, typ, front]. Returns (by, parts, shadow_pts)."""
     hid = h[0]; p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
     ht = h[7] if len(h) > 7 else 5; fn = h[8] if len(h) > 8 else 'homes'
@@ -299,6 +299,9 @@ def geom(h):
     if po: by = max(by, max(q[1] for q in po[0]))
     return by, parts, shadow
 
+def r1(v):
+    v = round(v, 1)
+    return int(v) if v == int(v) else v
 def export(HS, path):
     import json
     pal = {}; out = {}
@@ -310,7 +313,106 @@ def export(HS, path):
     for h in HS:
         by, parts, sh = geom(h)
         P = []
-        for kind, lay, poly, col in parts:
-            P.append([KC[kind], LC[lay], ci(col)] + [round(v, 1) for q in poly for v in q])
-        out[h[0]] = [round(by, 1), [round(v, 1) for q in sh for v in q], P]
+        T = []; D = defaults(h)
+        p4 = h[4]; cx = (p4[0] + p4[2] + p4[4] + p4[6]) / 4; cy = (p4[1] + p4[3] + p4[5] + p4[7]) / 4
+        for i, q in enumerate(parts):
+            kind, lay, poly, col = q[:4]
+            P.append([KC[kind], LC[lay], ci(col)] + [r1(v - (cx if j % 2 == 0 else cy)) for pt in poly for j, v in enumerate(pt)])
+            rng = tuple(q[4]) if len(q) > 4 else None
+            dflt = None if lay == 'g' else (D[0], D[1] if lay == 'r' else D[2])
+            if rng != dflt: T.append([i] + (list(rng) if rng else [0, FOREVER]))
+        # stage table: default life for walls [y0, wall end) and roofs [y0, roof end), then the exceptions
+        out[h[0]] = [r1(by - cy), [r1(v - (cx if j % 2 == 0 else cy)) for q in sh for j, v in enumerate(q)], P, [D[0], D[1], D[2], T]]
     json.dump(dict(pal=['rgb(%s)' % k for k in pal], H=out), open(path, 'w'), separators=(',', ':'))
+
+
+# ---------------- P3: a house's life (stages by year) ----------------
+FOREVER = 9999
+def annex(h):
+    """a lean-to the family adds in the kitchen garden some years after building: (quad, height, year) or None"""
+    if not has_garden(h) or (len(h) > 12 and h[12] & 4) or hsh(h[0], 90) > 0.55: return None
+    p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]; front = h[10]
+    q = split(pts, front, 0.645, 0.84)   # against the back wall of the house
+    side = hsh(h[0], 91) < 0.5
+    a, b = (q[0], _lerp(q[0], q[1], 0.5)) if side else (_lerp(q[0], q[1], 0.5), q[1])
+    c, d = (_lerp(q[3], q[2], 0.5), q[3]) if side else (q[2], _lerp(q[3], q[2], 0.5))
+    quad = [a, b, c, d] if side else [a, b, c, d]
+    quad = [q[0], _lerp(q[0], q[1], .5), _lerp(q[3], q[2], .5), q[3]] if side else [_lerp(q[0], q[1], .5), q[1], q[2], _lerp(q[3], q[2], .5)]
+    yr = h[2] + 8 + int(hsh(h[0], 92) * 16)
+    if yr >= life_end(h): return None
+    return quad, 2.4, yr
+def life_end(h):
+    e = h[3]
+    if 47 <= e <= 49: return FOREVER   # burnt in the fire: no slow decay, just gone
+    return e - 2 if e < 900 and e - h[2] > 8 else FOREVER
+def defaults(h):
+    b, e = h[2], h[3]; E = life_end(h)
+    framed = b >= 2 and E - b > 4
+    return (b + 2 if framed else b, E, e if e < 900 else FOREVER)
+def geom(h):
+    by, parts, sh = _geom_full(h)
+    hid, b, e = h[0], h[2], h[3]
+    E = life_end(h)
+    framed = b >= 2 and E - b > 4
+    up0 = b + 2 if framed else b
+    out = []
+    for q in parts:
+        kind, lay, poly, col = q[:4]
+        if lay == 'g': out.append(q); continue
+        rng = (up0, E if lay == 'r' else (e if e < 900 else FOREVER))
+        out.append((kind, lay, poly, col, rng))
+    fp = footprint(h); ht = h[7] if len(h) > 7 else 5
+    cx = sum(q[0] for q in fp) / 4; cy = sum(q[1] for q in fp) / 4
+    roofs = [q for q in parts if q[1] == 'r' and q[0] == 'fill' and len(q[2]) >= 3]
+    # the year after the foundations: a timber frame with poles at the corners, no roof yet
+    if framed:
+        R = (b + 1, b + 2); T = (150, 112, 74)
+        out.append(('fill', 'g', fp, (170, 142, 102), R)); out.append(('edge', 'g', fp, T, R))
+        for k in sorted(range(4), key=lambda k: -fp[k][1])[:2]:
+            x, y = fp[k]
+            out.append(('fill', 'w', [(x - .3, y), (x + .3, y), (x + .3, y - ht), (x - .3, y - ht)], T, R))
+        for k in range(4):
+            a, c = fp[k], fp[(k + 1) % 4]; nx, ny = _ny(a, c, (cx, cy))
+            if ny > 0.02:   # half-built wall on the sides we see
+                hh = ht * (0.35 + 0.3 * hsh(hid, 95 + k))
+                out.append(('fill', 'w', [a, c, (c[0], c[1] - hh), (a[0], a[1] - hh)], (198, 186, 162), R))
+        out.append(('edge', 'w', [(x, y - ht) for x, y in fp], (110, 78, 48), R))
+    # weathering: after ~20 years a few re-laid tiles, after ~35 moss
+    if E - b > 22 and roofs:
+        for j, q in enumerate(roofs[:2]):
+            poly = q[2]; px = sum(v[0] for v in poly) / len(poly); py = sum(v[1] for v in poly) / len(poly)
+            t = 0.22 + 0.12 * hsh(hid, 100 + j)
+            patch = [(px + (x - px) * t + (hsh(hid, 103 + j) - .5), py + (y - py) * t) for x, y in poly]
+            out.append(('fill', 'r', patch, shade(q[3], 1.16 if hsh(hid, 106 + j) < .5 else 0.82), (b + 18 + int(8 * hsh(hid, 107)), E)))
+            if E - b > 38 and j < 1:
+                moss = [(px + (x - px) * 0.14 + 0.6, py + (y - py) * 0.14 + 0.3) for x, y in poly]
+                out.append(('fill', 'r', moss, (116, 112, 78), (b + 34, E)))
+    # a lean-to in the garden
+    ax = annex(h)
+    if ax:
+        quad, ah, yr = ax; R = (yr, e if e < 900 else FOREVER)
+        wall = parts and next((q[3] for q in parts if q[1] == 'w'), (220, 200, 170)) or (220, 200, 170)
+        rf = roofs[0][3] if roofs else (170, 96, 60)
+        A = []
+        walls(A, quad, ah, shade(wall, 0.97), hid + 7, 0, door=False)
+        upq = [(x, y - ah) for x, y in quad]
+        A.append(('fill', 'r', upq, shade(rf, 0.9))); A.append(('edge', 'r', upq, shade(rf, 0.6)))
+        ins = [(k, l, pl, c, R) for k, l, pl, c in A]
+        if sum(v[1] for v in quad) / 4 < cy:   # behind the house: draw before it
+            i0 = next((i for i, q in enumerate(out) if q[1] != 'g'), len(out)); out[i0:i0] = ins
+        else: out += ins
+    # last years before it comes down: roof falls in, weeds in the walls
+    if E < FOREVER:
+        R = (E, e)
+        for q in roofs:
+            g = tuple(int(v * 0.55 + 70) for v in q[3])
+            out.append(('fill', 'r', q[2], g, R))
+        tx = sum(v[0] for v in fp) / 4; ty = sum(v[1] for v in fp) / 4 - ht
+        hole = [(tx + (x - cx) * 0.4 + 0.5, ty + (y - cy) * 0.4) for x, y in fp]
+        out.append(('fill', 'r', hole, (58, 46, 38), R))
+        for j in range(3):
+            x, y = _lerp(fp[j], fp[(j + 1) % 4], 0.3 + 0.4 * hsh(hid, 110 + j))
+            out.append(('fill', 'g', [(x - 1, y + .4), (x + 1, y + .4), (x, y - 1.2)], (104, 120, 64), R))
+    return by, out, sh
+def at(parts, Y):
+    return [q for q in parts if len(q) < 5 or q[4][0] <= Y < q[4][1]]
