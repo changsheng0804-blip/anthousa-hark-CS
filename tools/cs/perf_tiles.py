@@ -48,10 +48,10 @@ with sync_playwright() as p:
     pg.evaluate("()=>{window.__pan=false;__TILES.setYear(40)}"); step('换到 40 年')
     pg.evaluate("()=>{const T=__TILES;T.cam.z=0.08;T.zoomAt(innerWidth/2,innerHeight/2,1)}"); step('拉回全城')
     # ── /goal 2 项 7：飞行场景。FPS 只量飞行期间；落地后的等待（hold）另记
-    FLY_JS = """async([x,y,z,yr])=>{const T=__TILES;let n=0,worst=0,last=performance.now(),run=true,gaps=[];const t0=last;
-      const f=t=>{if(!run)return;n++;const g=t-last;worst=Math.max(worst,g);gaps.push(g);last=t;requestAnimationFrame(f)};requestAnimationFrame(f);
+    FLY_JS = """async([x,y,z,yr])=>{const T=__TILES;let n=0,worst=0,last=performance.now(),run=true,gaps=[],big=[];const t0=last;
+      const f=t=>{if(!run)return;n++;const g=t-last;worst=Math.max(worst,g);gaps.push(g);if(g>40)big.push([Math.round(t-t0),Math.round(g),+T.cam.z.toFixed(2)]);last=t;requestAnimationFrame(f)};requestAnimationFrame(f);
       const r=await T.flyTo(x,y,z,{year:yr});run=false;const el=performance.now()-t0;gaps.sort((a,b)=>a-b);
-      return {fps:+(n*1000/el).toFixed(1),worst_ms:+worst.toFixed(0),p99_ms:+gaps[Math.floor(gaps.length*.99)].toFixed(0),dur:r.dur,hold:r.hold,frames:n,tilt_deg:+(T.tilt*57.2958).toFixed(1)}}"""
+      return {fps:+(n*1000/el).toFixed(1),worst_ms:+worst.toFixed(0),p99_ms:+gaps[Math.floor(gaps.length*.99)].toFixed(0),dur:r.dur,hold:r.hold,frames:n,big,tilt_deg:+(T.tilt*57.2958).toFixed(1)}}"""
     P = json.load(open(os.path.join(ROOT, 'docs', 'living', 'tiles', 'places.json'))); QC = {c['q']: c for c in P['quarters']}
     def fly(name, q, z=4.5):
         c = QC[q]; pg.wait_for_timeout(800)

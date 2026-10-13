@@ -52,7 +52,7 @@ const cache=new Map();let loads=0,bytesSeen=0;
 const LQ=[],LQMAX=4;let lqN=0;function lqPump(){while(lqN<LQMAX&&LQ.length){lqN++;LQ.pop()()}}
 function tile(Y,l,tx,ty,gr){const k=gr?Y+'/'+tx+'_'+ty:Y+'/'+l+'/'+tx+'_'+ty;let t=cache.get(k);if(t!==undefined)return t;const lv=gr?{grid:M.grid}:M.levels[l][Y];if(tx<0||ty<0||tx>=lv.grid[0]||ty>=lv.grid[1]){cache.set(k,null);return null}
   const im=new Image();t={im,ok:false,miss:false};const done=()=>{lqN--;lqPump()};
-  im.onload=()=>{const fin=()=>{t.ok=true;dirty=true;cver++;done()};if(window.createImageBitmap)createImageBitmap(im).then(bm=>{t.im=bm;fin()},fin);else fin()};im.onerror=()=>{t.miss=true;done()};LQ.push(()=>{im.src=k+'.webp'});lqPump();loads++;cache.set(k,t);
+  im.onload=()=>{const fin=()=>{t.ok=true;dirty=true;cver++;done()};if(window.createImageBitmap)createImageBitmap(im).then(bm=>{t.im=bm;fin()},fin);else fin()};im.onerror=()=>{t.miss=true;done()};LQ.push(()=>{if(window.createImageBitmap&&window.Blob&&!window.__NOFETCHBM){fetch(k+'.webp').then(r=>r.ok?r.blob():Promise.reject()).then(bl=>createImageBitmap(bl)).then(bm=>{t.im=bm;t.ok=true;dirty=true;cver++;done()},()=>{t.miss=true;done()})}else im.src=k+'.webp'});   /* 从 Blob 解码在线程池里做；从 <img> 做会在主线程上同步解码（一块 16 ms） */lqPump();loads++;cache.set(k,t);
   if(cache.size>220){for(const [kk,v] of cache){if(cache.size<=160)break;if(!v||v.ok||v.miss)cache.delete(kk)}}return t}
 function level(){/* 屏幕上一块瓦片不小于它本身像素的一半就用更细的级 */let l=Math.floor(Math.log2(1/(cam.z*dpr)));return Math.max(0,Math.min(NL-1,l))}
 let drawn=0,hdrawn=0;
@@ -171,8 +171,9 @@ function heartDraw(now){const t=now/1000;let any=false;
     ctx.restore();any=true}
   if(any){const hr=Math.floor(HCLK.h);clkEl.style.display='block';clkEl.textContent=HHOURS[hr]+' '+(hr%12||12)+' 时'}else clkEl.style.display='none'}
 const STREET_Z=1.15,SZ0=0.95,SZ1=1.45,vcache=new Map();let vloads=0;
+const VQ=[];let vqN=0;function vqPump(){while(vqN<2&&VQ.length){vqN++;VQ.pop()()}}   /* 矢量块一次至多 2 块在途，解析隔开（一块 JSON 5–10 ms，28 块挤在同一帧是一次 50–67 ms 的卡） */
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
-  fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}else t.miss=true}).catch(()=>{t.miss=true});
+  VQ.push(()=>fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true;cver++}else t.miss=true}).catch(()=>{t.miss=true}).then(()=>{vqN--;setTimeout(vqPump,12)}));vqPump();
   if(vcache.size>60){for(const [kk,v] of vcache){if(vcache.size<=40)break;if(v.ok)vcache.delete(kk)}}return t}
 function gkey(Y){const ks=M.street.ground_keys;return ks.find(k=>Y<=k)??ks[ks.length-1]}
 const SSTY={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.84)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
@@ -193,17 +194,36 @@ function layer(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;let L=
   const MG=24,sz=TP+2*MG,cv=document.createElement('canvas');cv.width=cv.height=Math.ceil(sz*zr);const g=cv.getContext('2d');g.setTransform(zr,0,0,zr,(MG-tx*TP)*zr,(MG-ty*TP)*zr);
   L={cv,MG,sz,n:0};if(kind==='s'){g.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);paintStreets(g,v.d,Y)}else L.n=paintHouses(g,v.d,Y);
   LAY.set(k,L);while(LAY.size>90)LAY.delete(LAY.keys().next().value);return L}
+/* ── 层建在 Worker 里（/goal 2 项 7b）：2000 px 见方的层一块 15–30 ms，在主线程上建会把飞行里的帧顶到 50–67 ms；
+   Worker 里用 OffscreenCanvas 画（同一份 paintStreets / paintHouses 源码），画完转成 ImageBitmap 交回来。没有 Worker/OffscreenCanvas（jsdom 检查）就走原来的同步路径。 */
+const LWP=new Map(),LWMAX=1;let LW=null;
+function mkLW(){if(window.__NOWORKER||!window.Worker||!window.OffscreenCanvas||!window.createImageBitmap||!window.Blob||!URL.createObjectURL)return null;
+  const src=`const SSTY=${JSON.stringify(SSTY)};${paintStreets.toString()}\n${paintHouses.toString()}\nconst VC=new Map();
+function vec(u){let p=VC.get(u);if(!p){p=fetch(u).then(r=>r.json());VC.set(u,p);if(VC.size>40)VC.delete(VC.keys().next().value)}return p}
+onmessage=async e=>{const m=e.data;try{const d=await vec(m.vurl),MG=24,TP=m.TP,zr=m.zr,sz=TP+2*MG,cv=new OffscreenCanvas(Math.ceil(sz*zr),Math.ceil(sz*zr)),g=cv.getContext('2d');
+g.setTransform(zr,0,0,zr,(MG-m.tx*TP)*zr,(MG-m.ty*TP)*zr);let n=0;if(m.kind==='s'){g.drawImage(m.gb,m.tx*TP,m.ty*TP,TP+0.5,TP+0.5);paintStreets(g,d,m.Y);m.gb.close()}else n=paintHouses(g,d,m.Y);
+const bm=cv.transferToImageBitmap();postMessage({k:m.k,bm,n},[bm])}catch(err){postMessage({k:m.k,err:String(err)})}}`;
+  try{const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+    w.onmessage=e=>{const m=e.data;LWP.delete(m.k);if(m.err){console.error('layer worker',m.err);LW=null;dirty=true;cver++;return}
+      LAY.set(m.k,{cv:m.bm,MG:24,sz:TP+48,n:m.n});while(LAY.size>90)LAY.delete(LAY.keys().next().value);dirty=true;if(+m.k.split('_').pop()===zrOf(1))cver++};   /* 下一档（预取的）层到了不用重画：画面用不到它 */
+    w.onerror=e=>{console.error('layer worker',e.message);LW=null;dirty=true;cver++};return w}catch(e){return null}}
+function layerAsync(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;if(LWP.has(k))return;LWP.set(k,1);
+  const post=gb=>{if(!LW){LWP.delete(k);return}LW.postMessage({k,kind,tx,ty,Y,zr,TP,vurl:new URL('vec/'+tx+'_'+ty+'.json',location.href).href,gb},gb?[gb]:[])};
+  if(kind==='s')createImageBitmap(gim).then(post,()=>{LWP.delete(k);dirty=true});else post(null)}
 /* 层的分辨率档：STREET_Z×2^k，至多 4。飞行途中（落地前）至多取 STREET_Z×2：最细一档的层是 2000 px 见方，一帧画一块要 15–30 ms，飞行中不值得；落地后再补细 */
 function zrOf(zm){let zr=Math.min(4,STREET_Z*2**Math.ceil(Math.log2(Math.max(cam.z*dpr*zm,STREET_Z)/STREET_Z)));if(FLY&&FLY.tEnd==null&&zr>STREET_Z*2)zr=STREET_Z*2;return zr}
 let psMemo='';
 function prepStreet(Y,zm,pk){zm=zm||1;pk=pk||PCK;const mk=Y+'|'+zm+'|'+pk+'|'+Math.round(cam.x/(TP/8))+'|'+Math.round(cam.y/(TP/8))+'|'+Math.round(Math.log2(cam.z)*8)+'|'+cver+'|'+layBudgetTick;if(mk===psMemo)return false;const r=prepStreet0(Y,zm,pk);psMemo=r?'':mk;return r}
 function prepStreet0(Y,zm,pk){const x0=cam.x-W*pk/2/cam.z,y0=cam.y-H*pk/2/cam.z,x1=cam.x+W*pk/2/cam.z,y1=cam.y+H*pk/2/cam.z,K=gkey(Y);
-  const zr=zrOf(zm);let wait=false;
+  const zr=zrOf(zm);let wait=false;const miss=[];
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
     const g=tile('g/'+K,0,tx,ty,true);let gim=null,wt=false;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im;else wt=(g&&!g.miss)||(t&&!t.miss)}
     if(!gim){if(wt)wait=true;continue}/* 这块的地面还在路上（换年份时尤其）：等，别把空地画进离屏层 */
     const v=vtile(tx,ty);if(!v.ok)continue;
-    for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+Y+'_'+zr)){layBudget=1;layer(kd,tx,ty,Y,v,zr,gim);return true}}
+    for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+Y+'_'+zr)){
+      if(LW){miss.push([(tx*TP+TP/2-cam.x)**2+(ty*TP+TP/2-cam.y)**2,kd,tx,ty,v,gim]);continue}
+      layBudget=1;layer(kd,tx,ty,Y,v,zr,gim);return true}}
+  if(LW&&miss.length){miss.sort((a,b)=>a[0]-b[0]);for(const [,kd,tx,ty,v,gim] of miss){if(LWP.size>=LWMAX)break;layerAsync(kd,tx,ty,Y,v,zr,gim)}return true}
   return wait}
 function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x+W*PCK/2/cam.z,y1=pc.y+H*PCK/2/cam.z;const K=gkey(Y),vs=[];
   layBudget=0;const zr=zrOf(1);
@@ -283,18 +303,18 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
     const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;else if(prepStreet(YEAR,1.3))dirty=true;
     const inFly=!!FLY&&FLY.tEnd==null;
-    redraw=!prepped&&dirty&&(!pc.ok||pc.Y!==YEAR||pc.ver!==cver||pc.sk!==SKIPH||fade>0||!pcCovers(inFly)||(pc.z!==cam.z&&!inFly));
-    if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;pc.sk=SKIPH;const OW=off.width,OH=off.height;
+    redraw=!prepped&&dirty&&(!pc.ok||pc.Y!==YEAR||(pc.ver!==cver&&(!inFly||now-rdT>150))||pc.sk!==SKIPH||fade>0||!pcCovers(inFly)||(pc.z!==cam.z&&!inFly));   /* 飞行途中，只因新货到了的重画至多 150 ms 一次（一次 25 ms） */
+    if(redraw){rdT=now;dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;pc.sk=SKIPH;const OW=off.width,OH=off.height;
       octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
       octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
     else if(!prepped)dirty=false;
     if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
-    if(wasDirty)lifeSync(YEAR);
+    if(wasDirty&&(!inFly||now-lsT>200)){lsT=now;lifeSync(YEAR)}   /* 飞行途中人船的同步 200 ms 一次，落地后每帧照旧 */
     if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
     lifeStep(dt);heartStep(dt);heartPump();ctx.setTransform(1,0,0,1,0,0);
     if(sA<1){const n=paintedPass();if(!redraw)drawn=n}else{ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height)}
     if(pc.ok){ctx.globalAlpha=sA;const kz=cam.z/pc.z;ctx.drawImage(off,Math.round(((W/2+(pc.x-cam.x)*cam.z)*dpr)-off.width*kz/2),Math.round(((H/2+(pc.y-cam.y)*cam.z)*dpr)-off.height*kz/2),off.width*kz,off.height*kz);
-    if(tiltOf(cam.z)>0.003&&!window.__NOUPR){const r=drawUpright(YEAR,3);UPR.n=r[0];UPR.of=r[1]}else{UPR.n=UPR.of=0;UPR.miss=1e9;warmUpright(YEAR,2.5)}
+    if(tiltOf(cam.z)>0.003&&!window.__NOUPR){const r=drawUpright(YEAR,inFly?1.2:3);UPR.n=r[0];UPR.of=r[1]}else{UPR.n=UPR.of=0;UPR.miss=1e9;warmUpright(YEAR,2.5)}
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();heartDraw(now);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}
     ctx.lineWidth=1;const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
   else{pc.ok=false;for(const q of HEARTS){if(HEART[q])HEART[q].drawn=0}clkEl.style.display='none';if(cam.z*dpr>=SZ0*0.8&&prepStreet(YEAR,1,1))dirty=true;if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
@@ -354,7 +374,7 @@ function pending(){let n=0;const l=level(),ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.
       for(const kd of 'sh')if(!LAY.has(kd+tx+'_'+ty+'_'+YEAR+'_'+zr))n++}
     if(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver)n++}
   if(fade>0)n++;return n}
-let pfT=0;
+let pfT=0,rdT=0,lsT=0;
 function flyStep(now){const F=FLY;if(!F)return;if(F.t0==null)F.t0=now;const e=u=>u*u*(3-2*u);
   const t=Math.min(1,(now-F.t0)/1000/F.dur),c=F.p.at(F.p.S*e(t));dirty=true;
   if(t<1){cam.x=c.x;cam.y=c.y;cam.z=Math.max(zLow(),Math.min(6,c.z));if(now-pfT<90)return;pfT=now;const ta=Math.min(1,t+0.14),ca=F.p.at(F.p.S*e(ta));prefetchCam(ca.x,ca.y,Math.max(zLow(),Math.min(6,ca.z)),t>0.3);return}
@@ -382,6 +402,6 @@ const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},build
     if(c>=18.6&&c<23.6)R.tav.forEach(h=>F.tavPeople(h).forEach(([x,y])=>o.people.push([x+HT.ox,y+HT.oy,'tav'])));
     for(const s of F.ships){if(c<s.t0)continue;const r=F.shipPos(s,c);o.ships.push([r[0]+HT.ox,r[1]+HT.oy])}return o},
   smokes(h,q){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return {n:0,str:0,pts:[]};const per=heartPer(h);return {n:heartSmokes(HT,YEAR).length,str:per==='morning'||per==='evening'?1:.55,pts:heartSmokes(HT,YEAR).map(s=>[s.x+HT.ox,s.y+HT.oy])}}};
-rs();frame();window.__TILES={M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
+LW=mkLW();rs();frame();window.__TILES={LWP,get LW(){return LW},M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>
