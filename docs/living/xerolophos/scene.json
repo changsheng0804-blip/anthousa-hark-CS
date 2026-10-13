@@ -63,5 +63,6 @@
  "junctions": "junctions.json",
  "streetnames": "streetnames.json",
  "ground": "ground.json",
- "groundImg": "xero_ground.jpg"
+ "groundImg": "xero_ground.jpg",
+ "blocks": "blocks.json"
 }

@@ -413,6 +413,40 @@ for si_k, grp in groupby(range(len(outS)), key=lambda i: outS[i][7]):
             for i in run:
                 if outS[i][6] > Y0: pass
 print('holes filled', holes, file=sys.stderr)
+# ---- fix J: streets close into blocks. A street that has grown to within ~90 px of the road it runs into
+# (or a hole of up to ~90 px inside it) is walked through two years after both sides are there.
+def end_touch(i_, ex, ey, si_):
+    best = None
+    for ix in (int(ex // 30) - 1, int(ex // 30), int(ex // 30) + 1):
+        for iy in (int(ey // 30) - 1, int(ey // 30), int(ey // 30) + 1):
+            for j in SGG.get((ix, iy), []):
+                if outS[j][7] == si_ or outS[j][6] >= 999: continue
+                if segd(ex, ey, outS[j]) <= outS[j][4] / 2 + 2:
+                    if best is None or outS[j][6] < best: best = outS[j][6]
+    return best
+closed = 0
+for _pass in range(3):
+    ch = 0
+    for si_k, grp in groupby(sorted(range(len(outS)), key=lambda i: (outS[i][7], i)), key=lambda i: outS[i][7]):
+        idx = list(grp)
+        if si_k < 0 or outS[idx[0]][5] == 'm': continue
+        yrs = [outS[i][6] for i in idx]
+        # virtual anchors at both ends: the road this street runs into
+        a0 = end_touch(idx[0], outS[idx[0]][0], outS[idx[0]][1], si_k)
+        a1 = end_touch(idx[-1], outS[idx[-1]][2], outS[idx[-1]][3], si_k)
+        ext = [a0 if a0 is not None else 999] + yrs + [a1 if a1 is not None else 999]
+        vis_ = [k for k, y in enumerate(ext) if y < 999]
+        for a_, b_ in zip(vis_[:-1], vis_[1:]):
+            if b_ - a_ < 2: continue
+            run = idx[a_:b_ - 1]   # ext index k maps to idx[k-1]
+            L = sum(math.hypot(outS[i][2] - outS[i][0], outS[i][3] - outS[i][1]) for i in run)
+            Y0 = max(ext[a_], ext[b_]) + 2
+            if L <= 90 and Y0 <= 60 and any(outS[i][6] > Y0 for i in run):
+                for i in run: outS[i][6] = min(outS[i][6], Y0)
+                ch += 1
+    closed += ch
+    if not ch: break
+print('fixJ gaps closed into blocks', closed, file=sys.stderr)
 # ---- audit fix C2: islands with no way to the network get a short connecting lane, or are dropped
 fixed = 0; dropped_isl = 0
 for i in unreach:
