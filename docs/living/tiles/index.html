@@ -11,8 +11,8 @@ canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;dis
 (async()=>{
 const M=await fetch('meta.json').then(r=>r.json());const TP=M.tile_px,NL=Object.keys(M.levels).length;
 const NAMES={nangang:'南港',jinjiao:'金角岸'};
-const c=document.getElementById('c'),ctx=c.getContext('2d');let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
-function rs(){W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';dirty=true}
+const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
+function rs(){W=innerWidth;H=innerHeight;c.width=off.width=W*dpr;c.height=off.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';dirty=true}
 let dirty=true;addEventListener('resize',rs);
 const WW=M.grid[0]*TP,WH=M.grid[1]*TP;   /* 级 0 像素坐标 */
 const cam={x:WW/2,y:WH/2,z:Math.min(innerWidth/WW,innerHeight/WH)*0.95};
@@ -24,6 +24,48 @@ function tile(Y,l,tx,ty,gr){const k=gr?Y+'/'+tx+'_'+ty:Y+'/'+l+'/'+tx+'_'+ty;let
 function level(){/* 屏幕上一块瓦片不小于它本身像素的一半就用更细的级 */let l=Math.floor(Math.log2(1/(cam.z*dpr)));return Math.max(0,Math.min(NL-1,l))}
 let drawn=0,hdrawn=0;
 /* ── 街巷级（cs33b）：放大到一块瓦片比它本身像素还大时，地面用不含街和房子的地面瓦片，街和房子按块取矢量画（和 render_ng 同一画法） */
+
+/* ── 街巷级的人和船（cs33c）：只在视口和外面一圈瓦片里活；离开就收掉，远处不跑。
+   人只走烤瓦片时验过「全程是陆地」的街（定律 1，段上 w 位）；船只在「格里 ≥95% 是水、且四周 8 格也是水」的格子里挪（定律 2）。
+   人数跟这块瓦片当年站着的房子走（每 15 栋一个人，至多 30），船数跟水格走（每 400 格一条，至多 3）。 */
+const LIFE={tiles:new Map(),walkers:0,ships:0};const WCELL=()=>M.water_cell,NCELL=()=>M.water_cells_n;
+function rnd(seed){let x=seed|0||1;return()=>((x^=x<<13,x^=x>>>17,x^=x<<5)>>>0)/4294967296}
+function lifeKey(Y){return Y}
+function activeTiles(){const x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam.z,x1=cam.x+W/2/cam.z,y1=cam.y+H/2/cam.z,a=[];
+  for(let ty=Math.floor(y0/TP)-1;ty<=Math.floor(y1/TP)+1;ty++)for(let tx=Math.floor(x0/TP)-1;tx<=Math.floor(x1/TP)+1;tx++)a.push([tx,ty]);return a}
+let NODE=new Map();
+function nk(x,y){return Math.round(x)+','+Math.round(y)}
+function lifeSync(Y){const want=new Set(),gi=M.street.ground_keys.indexOf(gkey(Y)),K=String(gkey(Y));
+  for(const [tx,ty] of activeTiles()){const k=tx+'_'+ty;want.add(k);const v=vtile(tx,ty);if(!v.ok)continue;let L=LIFE.tiles.get(k);
+    if(L&&L.Y===Y)continue;
+    const segs=v.d.s.filter(q=>q[6]<=Y&&!(q[7]&&q[7]<=Y)&&(q[9]>>gi&1));
+    const nh=v.d.h.filter(h=>h[0]<=Y&&Y<h[1]).length,r=rnd((tx*73856093)^(ty*19349663)^Y);
+    const W_=[];const nw=segs.length?Math.min(30,Math.floor(nh/15)):0;
+    for(let i=0;i<nw;i++){const q=segs[Math.floor(r()*segs.length)];W_.push({q,t:r(),dir:r()<.5?1:-1,sp:4+r()*4,col:['#7a3b2a','#3d5a7a','#6b6b3a','#8a6d4a','#4a3a5a','#a0522d'][Math.floor(r()*6)]})}
+    const S_=[];const wg=v.d.wg&&v.d.wg[K];
+    if(wg){const N=NCELL(),ok=(i,j)=>{for(let a=-4;a<=4;a++)for(let b=-4;b<=4;b++){const ii=i+a,jj=j+b;if(ii<0||jj<0||ii>=N||jj>=N||wg[jj*N+ii]!=='1')return false}return true};
+      const cand=[];for(let j=4;j<N-4;j++)for(let i=4;i<N-4;i++)if(ok(i,j))cand.push([i,j]);
+      const ns=Math.min(3,Math.floor(cand.length/400));
+      for(let n=0;n<ns;n++){const [i,j]=cand[Math.floor(r()*cand.length)];const cx=tx*TP+(i+.5)*WCELL(),cy=ty*TP+(j+.5)*WCELL();S_.push({x:cx,y:cy,i,j,tx,ty,tgt:null,ok,ang:r()*6.28,sp:2+r()*2})}}
+    LIFE.tiles.set(k,{Y,W:W_,S:S_,segs})}
+  for(const k of [...LIFE.tiles.keys()])if(!want.has(k))LIFE.tiles.delete(k);
+  NODE=new Map();for(const L of LIFE.tiles.values())for(const q of L.segs)for(const e of [0,1]){const key=nk(q[e*2],q[e*2+1]);if(!NODE.has(key))NODE.set(key,[]);NODE.get(key).push([q,e])}}
+let lastT=0;
+function lifeStep(dt){let nw=0,ns=0;
+  for(const L of LIFE.tiles.values()){
+    for(const w of L.W){const q=w.q,len=Math.hypot(q[2]-q[0],q[3]-q[1])||1;w.t+=w.dir*w.sp*dt/len;
+      if(w.t>1||w.t<0){const e=w.t>1?1:0;const nx=q[e*2],ny=q[e*2+1];const nb=(NODE.get(nk(nx,ny))||[]).filter(([qq])=>qq!==q);
+        if(nb.length){const [qq,ee]=nb[Math.floor(Math.random()*nb.length)];w.q=qq;w.t=ee;w.dir=ee?-1:1}else{w.dir=-w.dir;w.t=e}}nw++}
+    for(const b of L.S){if(!b.tgt){const N=NCELL(),opts=[];for(let a=-1;a<=1;a++)for(let c2=-1;c2<=1;c2++){if(!a&&!c2)continue;const i=b.i+a,j=b.j+c2;if(i>3&&j>3&&i<N-4&&j<N-4&&b.ok(i,j))opts.push([i,j])}
+        if(opts.length){/* 大致保持航向 */opts.sort((p,q2)=>Math.abs(Math.atan2(p[1]-b.j,p[0]-b.i)-b.ang)-Math.abs(Math.atan2(q2[1]-b.j,q2[0]-b.i)-b.ang)+(Math.random()-.5)*2);b.tgt=opts[0]}}
+      if(b.tgt){const gx=b.tx*TP+(b.tgt[0]+.5)*WCELL(),gy=b.ty*TP+(b.tgt[1]+.5)*WCELL(),dx=gx-b.x,dy=gy-b.y,d=Math.hypot(dx,dy);
+        if(d<0.5){b.i=b.tgt[0];b.j=b.tgt[1];b.tgt=null}else{const st=Math.min(d,b.sp*dt);b.x+=dx/d*st;b.y+=dy/d*st;b.ang=Math.atan2(dy,dx)}}ns++}}
+  LIFE.walkers=nw;LIFE.ships=ns}
+function lifeDraw(){for(const L of LIFE.tiles.values()){
+    for(const b of L.S){ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.ang);ctx.scale(2.1,2.1);/* 船身约 44 像素，比画上停着的大船（约 60）小一号 */ctx.fillStyle='rgba(20,40,40,.25)';ctx.beginPath();ctx.ellipse(1.5,2,10,3.4,0,0,6.283);ctx.fill();ctx.fillStyle='#6b4423';ctx.beginPath();ctx.moveTo(-10,0);ctx.quadraticCurveTo(-8,-3.4,4,-3.2);ctx.quadraticCurveTo(10,-2,11,0);ctx.quadraticCurveTo(10,2,4,3.2);ctx.quadraticCurveTo(-8,3.4,-10,0);ctx.fill();ctx.strokeStyle='#3e2612';ctx.lineWidth=.6;ctx.stroke();ctx.fillStyle='rgba(236,224,196,.95)';ctx.beginPath();ctx.moveTo(-1,-7);ctx.quadraticCurveTo(2.5,0,-1,7);ctx.lineTo(0.6,7);ctx.quadraticCurveTo(4,0,0.6,-7);ctx.fill();ctx.restore()}
+    for(const w of L.W){const q=w.q,x=q[0]+(q[2]-q[0])*w.t,y=q[1]+(q[3]-q[1])*w.t,nx=-(q[3]-q[1]),ny=q[2]-q[0],nl=Math.hypot(nx,ny)||1,off=(w.dir>0?1:-1)*Math.min(2,q[4]*0.25);
+      const px=x+nx/nl*off,py=y+ny/nl*off;ctx.fillStyle='rgba(40,25,10,.3)';ctx.beginPath();ctx.ellipse(px+.4,py+.6,0.9,0.5,0,0,6.283);ctx.fill();
+      ctx.fillStyle=w.col;ctx.beginPath();ctx.arc(px,py,1.1,0,6.283);ctx.fill();ctx.fillStyle='#e8c9a0';ctx.beginPath();ctx.arc(px,py-0.9,0.6,0,6.283);ctx.fill()}}}
 const STREET_Z=1.15,vcache=new Map();let vloads=0;
 function vtile(tx,ty){const k=tx+'_'+ty;let t=vcache.get(k);if(t!==undefined)return t;t={ok:false};vcache.set(k,t);vloads++;
   fetch('vec/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{if(j){t.d=j;t.ok=true;dirty=true}}).catch(()=>{});
@@ -52,15 +94,20 @@ function drawYear(Y,alpha){const l=level(),f=2**l,ts=TP*f;   /* 这一级一块�
     /* 还没到：先用粗一级的瓦片顶着（不出现空洞） */
     for(let up=l+1;up<NL;up++){const g=2**(up-l),p=tile(Y,up,Math.floor(tx/g),Math.floor(ty/g));if(p&&p.ok){const s=TP*2**up,sx=(tx%g)*TP/g,sy=(ty%g)*TP/g;ctx.drawImage(p.im,sx,sy,TP/g,TP/g,tx*ts,ty*ts,ts+0.5,ts+0.5);break}}}
   ctx.globalAlpha=1}
-function frame(){if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
+function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)/1000||0);lastT=now;const street=cam.z*dpr>=STREET_Z;
+  if(street){if(dirty){/* 静的一层（地面、街、房子）只在镜头或数据变了时重画，存在 off 上 */ctx=octx;}}
+  else if(LIFE.tiles.size){LIFE.tiles.clear();LIFE.walkers=LIFE.ships=0}
+  if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
   if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
     hdrawn=0;if(cam.z*dpr>=STREET_Z){drawStreet(YEAR)}else{if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1)}
     ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
     for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
-    ctx.setTransform(1,0,0,1,0,0);
+    ctx.setTransform(1,0,0,1,0,0);if(street)lifeSync(YEAR);
     document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · ${cam.z*dpr>=STREET_Z?'街巷级 · 矢量房子 '+hdrawn+' 栋 · ':''}画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}
-  requestAnimationFrame(frame)}
+  if(street){ctx=ctx0;lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(off,0,0);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));lifeDraw();ctx.setTransform(1,0,0,1,0,0);
+    const st=document.getElementById('st');st.dataset.life=`人 ${LIFE.walkers} · 船 ${LIFE.ships}`;if(!st.textContent.includes('· 人 '))st.textContent+=' · '+st.dataset.life;else st.textContent=st.textContent.replace(/· 人 \d+ · 船 \d+/,'· '+st.dataset.life)}
+  ctx=ctx0;requestAnimationFrame(frame)}
 const ui=document.getElementById('ui');
 for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.textContent=Y+' 年';b.onclick=()=>{if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;[...ui.children].forEach(x=>x.classList.toggle('on',x===b))};ui.appendChild(b)}
 /* 拖、滚轮、双指 */
@@ -73,6 +120,6 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
 c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY-H/2)/cam.z;for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 function zoomAt(sx,sy,k){const wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(sy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(sy-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015))},{passive:false});
-rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},get vloads(){return vloads},STREET_Z,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
+rs();frame();window.__TILES={M,cam,cache,level,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,zoomAt,setYear:Y=>{prevYear=YEAR;YEAR=Y;fade=1}};
 })();
 </script></body></html>

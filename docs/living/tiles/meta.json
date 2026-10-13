@@ -178,12 +178,12 @@
  ],
  "time": {
   "40": {
-   "render_s": 1.5,
-   "tiles_s": 2.2
+   "render_s": 1.7,
+   "tiles_s": 2.4
   },
   "50": {
-   "render_s": 1.6,
-   "tiles_s": 2.3
+   "render_s": 1.9,
+   "tiles_s": 2.2
   },
   "60": {
    "render_s": 1.7,
@@ -204,6 +204,8 @@
    "nangang": 35.6
   }
  },
+ "water_cell": 8,
+ "water_cells_n": 57,
  "street": {
   "ground_keys": [
    40,
@@ -215,12 +217,12 @@
    "50": 745890,
    "60": 736882
   },
-  "vec_tiles": 39,
-  "vec_bytes": 6309893,
-  "vec_gzip": 1287421,
-  "vec_max_gzip": 73891,
+  "vec_tiles": 48,
+  "vec_bytes": 6542586,
+  "vec_gzip": 1293774,
+  "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 6.6
+  "seconds": 6.7
  },
- "total_s": 19.0
+ "total_s": 20.2
 }

@@ -65,18 +65,20 @@ for Y in YS:
 # ── 街巷级：地面瓦片（不含街和房子）+ 每块矢量数据（街 + 房子几何，带建成/拆毁年，换年份不用重下）
 t2 = time.time(); sys.path.insert(0, HERE); import house_types as HT
 GK = sorted({min([k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'] if Y <= k[0]] or [max(k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'])]) for q in QS for Y in YS})
-gb = {}
+gb = {}; WM = {}   # 每个关键年的水面蒙版（地面画上：绿蓝压过红 = 水）
 for K in GK:
     mos = Image.new('RGBA', (NX * TP, NY * TP), (0, 0, 0, 0))
     for q in QS:
         ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy))
-    d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = np.asarray(mos)[..., 3]; nb = 0
+    a = np.asarray(mos).astype(np.int16); WM[K] = (a[..., 3] > 0) & ((a[..., 1] - a[..., 0]) > 15)
+    d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = a[..., 3]; nb = 0
     for ty in range(NY):
         for tx in range(NX):
             if A[ty * TP:(ty + 1) * TP, tx * TP:(tx + 1) * TP].max() == 0: continue
             bio = io.BytesIO(); mos.crop((tx * TP, ty * TP, (tx + 1) * TP, (ty + 1) * TP)).save(bio, 'WEBP', quality=82, method=4)
             open(os.path.join(d, f'{tx}_{ty}.webp'), 'wb').write(bio.getvalue()); nb += len(bio.getvalue())
     gb[str(K)] = nb
+COV = A > 0
 R = lambda v: round(v * 2) / 2
 vec = {}
 def put(tx, ty, k, item): vec.setdefault((tx, ty), {'s': [], 'h': []})[k].append(item)
@@ -85,7 +87,15 @@ for q in QS:
     ox, oy, w, h = stat['quarters'][q]; Q = os.path.join(LIV, q) + '/'
     for st in json.load(open(Q + 'streets.json')):
         x0, y0, x1, y1 = st[0] + ox, st[1] + oy, st[2] + ox, st[3] + oy; pad = st[4] + 2
-        it = [R(x0), R(y0), R(x1), R(y1), st[4], st[5], st[6], st[7], st[8]]
+        # 定律 1：人只走地面画上是陆地的街——每 4 像素取一点，全是陆地才给这一关键年的走位（位掩码，按 GK 顺序）
+        L = max(1, int(math.hypot(x1 - x0, y1 - y0) / 4)); wb = 0
+        for i, K in enumerate(GK):
+            ok = True
+            for j in range(L + 1):
+                px, py = int(x0 + (x1 - x0) * j / L), int(y0 + (y1 - y0) * j / L)
+                if not (0 <= py < WM[K].shape[0] and 0 <= px < WM[K].shape[1]) or WM[K][py, px] or not COV[py, px]: ok = False; break
+            if ok: wb |= 1 << i
+        it = [R(x0), R(y0), R(x1), R(y1), st[4], st[5], st[6], st[7], st[8], wb]
         for ty in range(int((min(y0, y1) - pad) // TP), int((max(y0, y1) + pad) // TP) + 1):
             for tx in range(int((min(x0, x1) - pad) // TP), int((max(x0, x1) + pad) // TP) + 1): put(tx, ty, 's', it)
     for hh in json.load(open(Q + 'houses_street.json'))['houses']:
@@ -95,6 +105,18 @@ for q in QS:
         sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
         put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P])
+# 定律 2：船只在水格里走——每块瓦片按 8 像素格记水格（格里 ≥95% 是水才算），每个关键年一串 0/1
+WC = 8; NC = math.ceil(TP / WC); nwater = 0
+for ty in range(NY):
+    for tx in range(NX):
+        for K in GK:
+            m = WM[K][ty * TP:(ty + 1) * TP, tx * TP:(tx + 1) * TP]
+            if m.sum() < WC * WC * 9: continue
+            pm = np.zeros((NC * WC, NC * WC), bool); pm[:m.shape[0], :m.shape[1]] = m
+            cells = pm.reshape(NC, WC, NC, WC).mean(axis=(1, 3)) >= 0.95
+            if cells.sum() < 9: continue
+            vec.setdefault((tx, ty), {'s': [], 'h': []}).setdefault('wg', {})[str(K)] = ''.join('1' if c else '0' for c in cells.flatten()); nwater += 1
+stat['water_cell'] = WC; stat['water_cells_n'] = NC
 d = os.path.join(OUT, 'vec'); os.makedirs(d, exist_ok=True); import gzip; vb = []; vg = []; nh = []
 for (tx, ty), v in vec.items():
     v['h'].sort(key=lambda x: x[2]); b = json.dumps(v, separators=(',', ':')).encode()
