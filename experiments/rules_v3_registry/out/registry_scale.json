@@ -1,0 +1,566 @@
+{
+ "scope": "scale",
+ "tile": 7,
+ "household_years": 624344,
+ "families": 37058,
+ "fang": 155,
+ "districts": [
+  "拜扎斯区",
+  "城墙外新区",
+  "广场区",
+  "港口区",
+  "干山区"
+ ],
+ "seconds": {
+  "python_import": 0.266,
+  "load": 0.276,
+  "build_21y": 0.225,
+  "per_year_ms": 10.73,
+  "total_in_process": 0.849
+ },
+ "peak_rss_mb_after_build": 155.8,
+ "office_changes_50_70": {
+  "district": 2,
+  "fang": 69,
+  "elder": 139,
+  "guild": 6
+ },
+ "years": {
+  "50": {
+   "households": 28315,
+   "people": 152873,
+   "ledger_houses_registered": 22169,
+   "by_district": {
+    "广场区": {
+     "households": 16870,
+     "houses": 12824
+    },
+    "港口区": {
+     "households": 7042,
+     "houses": 5523
+    },
+    "干山区": {
+     "households": 4403,
+     "houses": 3822
+    }
+   },
+   "households_per_house": {
+    "mean": 1.28,
+    "max": 7,
+    "hist": {
+     "0": 0,
+     "1": 17066,
+     "2": 4270,
+     "3": 665,
+     "4": 140,
+     "5": 21,
+     "6": 0,
+     "7": 7
+    }
+   },
+   "owners": 22169,
+   "tenants": 6146,
+   "hosted": 91,
+   "bread": {
+    "books": 22169,
+    "portions_per_book": 11.32,
+    "portions_total": 251027,
+    "people_fed": 139013,
+    "households_full": 24738,
+    "households_partial": 2842,
+    "households_none": 735
+   },
+   "needy14": 3962,
+   "needy14_with_alms": 3241,
+   "parish": {
+    "无": 5495,
+    "阿纳斯塔西娅": 7000,
+    "城里的阿里乌派教堂": 15820
+   },
+   "garrison": 2814,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "51": {
+   "households": 28644,
+   "people": 155414,
+   "ledger_houses_registered": 22470,
+   "by_district": {
+    "广场区": {
+     "households": 17031,
+     "houses": 12971
+    },
+    "港口区": {
+     "households": 7175,
+     "houses": 5649
+    },
+    "干山区": {
+     "households": 4438,
+     "houses": 3850
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 5,
+    "hist": {
+     "0": 0,
+     "1": 17297,
+     "2": 4333,
+     "3": 693,
+     "4": 133,
+     "5": 14
+    }
+   },
+   "owners": 22470,
+   "tenants": 6174,
+   "hosted": 70,
+   "bread": {
+    "books": 22470,
+    "portions_per_book": 11.23,
+    "portions_total": 252439,
+    "people_fed": 141519,
+    "households_full": 24990,
+    "households_partial": 2919,
+    "households_none": 735
+   },
+   "needy14": 4221,
+   "needy14_with_alms": 1120,
+   "parish": {
+    "无": 21532,
+    "阿纳斯塔西娅": 7112
+   },
+   "garrison": 2996,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "54": {
+   "households": 29358,
+   "people": 161252,
+   "ledger_houses_registered": 23093,
+   "by_district": {
+    "广场区": {
+     "households": 17346,
+     "houses": 13237
+    },
+    "港口区": {
+     "households": 7518,
+     "houses": 5964
+    },
+    "干山区": {
+     "households": 4494,
+     "houses": 3892
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 5,
+    "hist": {
+     "0": 0,
+     "1": 17822,
+     "2": 4445,
+     "3": 679,
+     "4": 126,
+     "5": 21
+    }
+   },
+   "owners": 23093,
+   "tenants": 6265,
+   "hosted": 35,
+   "bread": {
+    "books": 23093,
+    "portions_per_book": 10.94,
+    "portions_total": 252637,
+    "people_fed": 146790,
+    "households_full": 24255,
+    "households_partial": 4130,
+    "households_none": 973
+   },
+   "needy14": 4641,
+   "needy14_with_alms": 1253,
+   "parish": {
+    "无": 5691,
+    "阿纳斯塔西娅": 7343,
+    "城外木院": 16324
+   },
+   "garrison": 3577,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "55": {
+   "households": 29596,
+   "people": 163205,
+   "ledger_houses_registered": 23247,
+   "by_district": {
+    "广场区": {
+     "households": 17479,
+     "houses": 13321
+    },
+    "港口区": {
+     "households": 7567,
+     "houses": 5985
+    },
+    "干山区": {
+     "households": 4550,
+     "houses": 3941
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 5,
+    "hist": {
+     "0": 0,
+     "1": 17948,
+     "2": 4431,
+     "3": 707,
+     "4": 140,
+     "5": 21
+    }
+   },
+   "owners": 23247,
+   "tenants": 6349,
+   "hosted": 14,
+   "bread": {
+    "books": 23247,
+    "portions_per_book": 12.11,
+    "portions_total": 281590,
+    "people_fed": 151347,
+    "households_full": 26474,
+    "households_partial": 2541,
+    "households_none": 581
+   },
+   "needy14": 4634,
+   "needy14_with_alms": 1225,
+   "parish": {
+    "无": 5740,
+    "阿纳斯塔西娅": 7399,
+    "城外木院": 16457
+   },
+   "garrison": 3906,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "57": {
+   "households": 30121,
+   "people": 165585,
+   "ledger_houses_registered": 23653,
+   "by_district": {
+    "广场区": {
+     "households": 17696,
+     "houses": 13433
+    },
+    "港口区": {
+     "households": 7742,
+     "houses": 6167
+    },
+    "干山区": {
+     "households": 4683,
+     "houses": 4053
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 6,
+    "hist": {
+     "0": 0,
+     "1": 18263,
+     "2": 4522,
+     "3": 700,
+     "4": 133,
+     "5": 28,
+     "6": 7
+    }
+   },
+   "owners": 23653,
+   "tenants": 6468,
+   "hosted": 14,
+   "bread": {
+    "books": 23653,
+    "portions_per_book": 11.92,
+    "portions_total": 281982,
+    "people_fed": 153846,
+    "households_full": 26054,
+    "households_partial": 3297,
+    "households_none": 770
+   },
+   "needy14": 4410,
+   "needy14_with_alms": 1127,
+   "parish": {
+    "无": 5887,
+    "阿纳斯塔西娅": 7448,
+    "城外木院": 16786
+   },
+   "garrison": 4354,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "60": {
+   "households": 30681,
+   "people": 167384,
+   "ledger_houses_registered": 24220,
+   "by_district": {
+    "广场区": {
+     "households": 17829,
+     "houses": 13608
+    },
+    "港口区": {
+     "households": 8057,
+     "houses": 6433
+    },
+    "干山区": {
+     "households": 4795,
+     "houses": 4179
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 6,
+    "hist": {
+     "0": 0,
+     "1": 18823,
+     "2": 4543,
+     "3": 686,
+     "4": 133,
+     "5": 28,
+     "6": 7
+    }
+   },
+   "owners": 24220,
+   "tenants": 6461,
+   "hosted": 14,
+   "bread": {
+    "books": 24220,
+    "portions_per_book": 11.65,
+    "portions_total": 282280,
+    "people_fed": 155981,
+    "households_full": 26656,
+    "households_partial": 3262,
+    "households_none": 763
+   },
+   "needy14": 4305,
+   "needy14_with_alms": 1120,
+   "parish": {
+    "无": 6048,
+    "阿纳斯塔西娅": 7588,
+    "城外木院": 17045
+   },
+   "garrison": 5418,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "62": {
+   "households": 30366,
+   "people": 160111,
+   "ledger_houses_registered": 23982,
+   "by_district": {
+    "广场区": {
+     "households": 17605,
+     "houses": 13531
+    },
+    "港口区": {
+     "households": 7987,
+     "houses": 6384
+    },
+    "干山区": {
+     "households": 4774,
+     "houses": 4067
+    }
+   },
+   "households_per_house": {
+    "mean": 1.27,
+    "max": 6,
+    "hist": {
+     "0": 0,
+     "1": 18683,
+     "2": 4431,
+     "3": 693,
+     "4": 140,
+     "5": 28,
+     "6": 7
+    }
+   },
+   "owners": 23982,
+   "tenants": 6384,
+   "hosted": 35,
+   "bread": {
+    "books": 23982,
+    "portions_per_book": 11.53,
+    "portions_total": 276471,
+    "people_fed": 150213,
+    "households_full": 26817,
+    "households_partial": 2856,
+    "households_none": 693
+   },
+   "needy14": 3521,
+   "needy14_with_alms": 945,
+   "parish": {
+    "无": 5992,
+    "阿纳斯塔西娅": 7469,
+    "城外木院": 16905
+   },
+   "garrison": 5376,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "65": {
+   "households": 29939,
+   "people": 152705,
+   "ledger_houses_registered": 23821,
+   "by_district": {
+    "广场区": {
+     "households": 17304,
+     "houses": 13419
+    },
+    "港口区": {
+     "households": 7889,
+     "houses": 6363
+    },
+    "干山区": {
+     "households": 4746,
+     "houses": 4039
+    }
+   },
+   "households_per_house": {
+    "mean": 1.26,
+    "max": 6,
+    "hist": {
+     "0": 0,
+     "1": 18739,
+     "2": 4256,
+     "3": 672,
+     "4": 112,
+     "5": 28,
+     "6": 14
+    }
+   },
+   "owners": 23821,
+   "tenants": 6118,
+   "hosted": 70,
+   "bread": {
+    "books": 23821,
+    "portions_per_book": 11.32,
+    "portions_total": 269580,
+    "people_fed": 142128,
+    "households_full": 26957,
+    "households_partial": 2408,
+    "households_none": 574
+   },
+   "needy14": 2681,
+   "needy14_with_alms": 2681,
+   "parish": {
+    "无": 5901,
+    "阿纳斯塔西娅": 7343,
+    "城门外砖堂": 16695
+   },
+   "garrison": 5348,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  },
+  "70": {
+   "households": 29281,
+   "people": 142184,
+   "ledger_houses_registered": 23499,
+   "by_district": {
+    "广场区": {
+     "households": 16863,
+     "houses": 13188
+    },
+    "港口区": {
+     "households": 7721,
+     "houses": 6293
+    },
+    "干山区": {
+     "households": 4697,
+     "houses": 4018
+    }
+   },
+   "households_per_house": {
+    "mean": 1.25,
+    "max": 6,
+    "hist": {
+     "0": 0,
+     "1": 18662,
+     "2": 4088,
+     "3": 602,
+     "4": 112,
+     "5": 21,
+     "6": 14
+    }
+   },
+   "owners": 23499,
+   "tenants": 5782,
+   "hosted": 56,
+   "bread": {
+    "books": 23499,
+    "portions_per_book": 10.96,
+    "portions_total": 257475,
+    "people_fed": 134197,
+    "households_full": 25998,
+    "households_partial": 2667,
+    "households_none": 616
+   },
+   "needy14": 1169,
+   "needy14_with_alms": 1169,
+   "parish": {
+    "无": 5810,
+    "阿纳斯塔西娅": 7140,
+    "城门外砖堂": 16331
+   },
+   "garrison": 5285,
+   "offices": {
+    "district_heads": 3,
+    "fang_heads": 155,
+    "fang_total": 155,
+    "elders": 309,
+    "guild_heads": 18
+   }
+  }
+ },
+ "query": {
+  "index_build_s": 0.089,
+  "rec_us": 2.83,
+  "rel_us": 1.35,
+  "verify_checked": 3000,
+  "verify_mismatch": 0
+ },
+ "peak_rss_mb": 268.7
+}
