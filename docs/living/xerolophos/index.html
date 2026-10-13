@@ -18,7 +18,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #topr{position:fixed;right:14px;top:12px;display:flex;gap:8px;align-items:center}
 .btn{background:var(--ink2);color:var(--ivory);border:1px solid rgba(212,168,90,.45);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--gold)}
-.btn.on{background:rgba(212,168,90,.25);border-color:var(--gold)}
+.btn.on{background:#d4a85a;color:#1e160c;border-color:var(--gold)}
 #clock{padding:7px 12px;font-size:13px}
 #year{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;width:min(560px,calc(100% - 28px));padding:10px 16px 12px}
 #year .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--mute)}
@@ -75,7 +75,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 <canvas id="c"></canvas>
 
 <div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub"><span id="scn"></span> · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
-<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="next" style="display:none;border-color:#e0b860;color:#ffd98a"></button><button class="btn" id="info">i</button></div>
+<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="blk" style="display:none">街区</button><button class="btn" id="other"></button><button class="btn" id="next" style="display:none;border-color:#e0b860;color:#ffd98a"></button><button class="btn" id="info">i</button></div>
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
@@ -95,7 +95,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='20';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='21';const vv=f=>f+(String(f).includes('?')?'':'?v='+BUILD);try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -111,22 +111,25 @@ function streetAt(x,y,Y,maxd=45){let b=null,bd=maxd*maxd;for(const st of SN){if(
 let COMP=null;if(SCENE.compose){const K=SCENE.compose.kit||'';const L=src=>{const i=new Image();i.src=K+src;return i};const [hm,pm,sm]=await Promise.all(['houses.json','props.json','shops.json'].map(f=>fetch(vv(K+f)).then(r=>r.ok?r.json():[])));const JU=SCENE.junctions?await fetch(vv(SCENE.junctions)).then(r=>r.json()):[];const ST=SCENE.streets?await fetch(vv(SCENE.streets)).then(r=>r.json()):[];COMP={ju:JU,sm,shops:sm.length?L('shops.webp'):null,st:ST,houses:L('houses.webp'),props:L('props.webp'),ground:L('ground.webp'),hm,pm,pat:null,ppl:null}}
 const hsh=(n,k=0)=>{let x=(Math.imul(n,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
 const HWALL=[[228,212,182],[216,194,156],[238,228,206],[204,176,136],[224,204,172],[210,200,184]],HROOF=[[186,94,60],[172,86,54],[198,112,70],[160,80,52],[180,102,66],[150,96,72]];
+const HSTYLE={market:{wall:[[236,222,192],[228,206,166]],roof:[[198,104,58],[206,118,64],[188,96,56]],awn:1,flat:.05},shops:{wall:[[234,220,190],[224,204,168]],roof:[[192,100,60],[180,92,56]],awn:.5,flat:.06},fine:{wall:[[244,238,226],[238,230,214]],roof:[[200,112,66],[190,104,62]],court:1,flat:0},workshop:{wall:[[196,162,116],[184,150,106],[204,172,128]],roof:[[142,86,58],[128,90,66],[150,100,70]],flat:.45,kiln:.35},water:{wall:[[216,222,220],[226,228,222]],roof:[[176,98,66],[166,92,64]],flat:.12},garrison:{wall:[[198,196,188],[186,184,178]],roof:[[150,92,72],[140,96,80]],flat:.15},planned:{wall:[[228,214,188]],roof:[[184,94,58]],flat:0},garden:{wall:[[206,182,140],[196,172,132]],roof:[[166,100,66]],flat:.5}};
 const shd=(c,k)=>`rgb(${Math.min(255,c[0]*k|0)},${Math.min(255,c[1]*k|0)},${Math.min(255,c[2]*k|0)})`;
 function hullJS(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p)}return lo.slice(0,-1).concat(up.slice(0,-1))}
 function geomOf(h){if(h.g)return h.g;const p=h.p,id=h.id;const pts=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;
   const fp=pts.map(q=>[cx+(q[0]-cx)*.92,cy+(q[1]-cy)*.92]);const ht=h.ht!=null?h.ht:5;const up=fp.map(q=>[q[0],q[1]-ht]);
-  const wall=HWALL[Math.floor(hsh(id,11)*6)];let roof=HROOF[Math.floor(hsh(id,12)*6)];if(hsh(id,13)<.5){const k=.9+.2*hsh(id,14);roof=roof.map(v=>v*k)}
+  const stl=HSTYLE[h.fn]||{},WL=stl.wall||HWALL,RF=stl.roof||HROOF;const wall=WL[Math.floor(hsh(id,11)*WL.length)];let roof=RF[Math.floor(hsh(id,12)*RF.length)];if(hsh(id,13)<.5){const k=.9+.2*hsh(id,14);roof=roof.map(v=>v*k)}
   const parts=[];const shadow=hullJS(fp.concat(fp.map(q=>[q[0]+ht*.55+1,q[1]+ht*.3+1])));
   for(let k=0;k<4;k++){const a=fp[k],b=fp[(k+1)%4];const ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*((a[0]+b[0])/2-cx)+ny*((a[1]+b[1])/2-cy)<0){nx=-nx;ny=-ny}
     if(ny<=.02||ht<.6)continue;parts.push(['f',[a,b,[b[0],b[1]-ht],[a[0],a[1]-ht]],shd(wall,.80+.18*(.5-.5*nx)),'w']);
     if((k===0||k===2)&&ny>.55){const t0=.35+.3*hsh(id,15),dw=.16,dh=Math.min(ht*.62,3.2);const d0=[a[0]+ex*t0,a[1]+ey*t0],d1=[a[0]+ex*(t0+dw),a[1]+ey*(t0+dw)];if(ht>2)parts.push(['f',[d0,d1,[d1[0],d1[1]-dh],[d0[0],d0[1]-dh]],'rgb(70,50,36)','w']);
-      if(h.ty&&ht>3){const aw=hsh(id,16)<.5?'rgb(182,64,48)':'rgb(60,96,120)';const yy=ht*.62;parts.push(['f',[[a[0]+ex*.08,a[1]+ey*.08-yy],[a[0]+ex*.92,a[1]+ey*.92-yy],[a[0]+ex*.92+nx*1.6,a[1]+ey*.92-yy+ny*1.6+.8],[a[0]+ex*.08+nx*1.6,a[1]+ey*.08-yy+ny*1.6+.8]],aw])}}}
+      if((h.ty||hsh(id,18)<(stl.awn||0))&&ht>3){const aw=hsh(id,16)<.5?'rgb(182,64,48)':'rgb(60,96,120)';const yy=ht*.62;parts.push(['f',[[a[0]+ex*.08,a[1]+ey*.08-yy],[a[0]+ex*.92,a[1]+ey*.92-yy],[a[0]+ex*.92+nx*1.6,a[1]+ey*.92-yy+ny*1.6+.8],[a[0]+ex*.08+nx*1.6,a[1]+ey*.08-yy+ny*1.6+.8]],aw])}}}
   const ux=up[1][0]-up[0][0],uy=up[1][1]-up[0][1],vx=up[3][0]-up[0][0],vy=up[3][1]-up[0][1],Lu=Math.hypot(ux,uy),Lv=Math.hypot(vx,vy);const tx=(up[0][0]+up[1][0]+up[2][0]+up[3][0])/4,ty=(up[0][1]+up[1][1]+up[2][1]+up[3][1])/4;
-  if(hsh(id,17)<.12&&!h.ty){parts.push(['f',up,shd(wall,1.04),'r']);parts.push(['e',up,shd(wall,.7),'r'])}
+  if(hsh(id,17)<(stl.flat!=null?stl.flat:.12)&&!h.ty){parts.push(['f',up,shd(wall,1.04),'r']);parts.push(['e',up,shd(wall,.7),'r'])}
   else{let ax,ay,r;if(Lu>=Lv){ax=ux/Lu;ay=uy/Lu;r=(Lu-Lv)/2}else{ax=vx/Lv;ay=vy/Lv;r=(Lv-Lu)/2}const lift=Math.min(Lu,Lv)*.28;const r0=[tx-ax*r,ty-ay*r-lift],r1=[tx+ax*r,ty+ay*r-lift];const d2=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2;
     for(let k=0;k<4;k++){const a=up[k],b=up[(k+1)%4];const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*(mx-tx)+ny*(my-ty)<0){nx=-nx;ny=-ny}
       const kk=.86-.22*(nx*-.6+ny*-.8);let face;if(r<.3)face=[a,b,r0];else{const pa=d2(a,r0)<=d2(a,r1)?r0:r1,pb=d2(b,r0)<=d2(b,r1)?r0:r1;face=pa===pb?[a,b,pb]:[a,b,pb,pa]}parts.push(['f',face,shd(roof,kk),'r'])}
     parts.push(['e',up,shd(roof,.62),'r']);if(r>=.3)parts.push(['r',[r0,r1],shd(roof,.7),'r'])}
+  if(stl.court&&Lu*Lv>120){const cq=up.map(q=>[tx+(q[0]-tx)*.38,ty+(q[1]-ty)*.38+.6]);parts.push(['f',cq,'rgb(214,198,162)','r']);parts.push(['e',cq,'rgb(120,84,56)','r'])}
+  if(hsh(id,19)<(stl.kiln||0)){const kx=up[2][0]*.7+tx*.3,ky=up[2][1]*.7+ty*.3;parts.push(['f',[[kx-1,ky],[kx+1,ky],[kx+1,ky-2.6],[kx-1,ky-2.6]],'rgb(70,56,48)','r'])}
   if(!COMP.ppl)COMP.ppl=PPL.filter(q=>q.k!==12&&q.k!==13);const w=Math.max(Lu,Lv);
   return h.g={shadow,parts,fp,by:Math.max(fp[0][1],fp[1][1],fp[2][1],fp[3][1]),w,hh:ht,pp:hsh(h.id,4)<.4?COMP.ppl[Math.floor(hsh(h.id,5)*COMP.ppl.length)]:null,ppx:(hsh(h.id,6)-.5)*w*.6,pr:hsh(h.id,1)<.35?COMP.pm[Math.floor(hsh(h.id,2)*COMP.pm.length)]:null,prx:(hsh(h.id,7)-.5)*w*.8}}
 function drawHouse(g,A,c2,bare){const X=c2||ctx;if(bare){X.fillStyle='rgba(196,170,124,.75)';X.beginPath();const P=g.fp;X.moveTo(P[0][0],P[0][1]);for(let i=1;i<4;i++)X.lineTo(P[i][0],P[i][1]);X.closePath();X.fill();X.strokeStyle='rgba(120,84,44,.9)';X.lineWidth=.5;X.stroke()}
@@ -189,7 +192,7 @@ for(const h of HD.houses){
   if(destroyed<=1||destroyed<=built+1) continue;
   let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   if(inHarbor(cx,cy)) continue;
-  houses.push({id,d:dist_,built,destroyed,p,cx,cy,fx:h[5]||0,ty:h[6]||0,ht:h.length>7?h[7]:null});
+  houses.push({id,d:dist_,built,destroyed,p,cx,cy,fx:h[5]||0,ty:h[6]||0,ht:h.length>7?h[7]:null,fn:h[8]||'homes'});
 }
 // spatial grid for click lookup
 const G=60,grid=new Map();
@@ -211,6 +214,7 @@ const KEYS=SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');
 const fillC=document.createElement('canvas');fillC.width=W;fillC.height=H;const fctx=fillC.getContext('2d');
+const BLK=SCENE.blocks?await fetch(vv(SCENE.blocks)).then(r=>r.json()).catch(()=>null):null;let showBlk=false;
 const GROUND=SCENE.ground?await fetch(vv(SCENE.ground)).then(r=>r.json()).catch(()=>null):null;
 let GI=null;if(GROUND){GI=loadIm(SCENE.groundImg);for(const o of GROUND)o.im=loadIm(o.f);await Promise.all([GI,...GROUND.map(o=>o.im)].map(i=>i.decode().catch(()=>{})));if(COMP)await Promise.all([COMP.props].map(i=>i.decode().catch(()=>{})))}
 const STY={m:['rgba(118,104,86,.75)','rgb(174,163,144)'],s:['rgba(140,118,88,.43)','rgba(200,182,146,.84)'],c:['rgba(140,118,88,.35)','rgba(203,186,150,.75)'],l:[null,'rgba(205,189,154,.65)']};
@@ -659,6 +663,7 @@ let daphTarget=QUAY;
 function ticker(){}
 function glowYear(){const y=$('year');y.classList.add('glow');setTimeout(()=>y.classList.remove('glow'),4000);openNamed(DAPH)}
 function greet(){say(DAPH,'新来的？水，一个铜子一碗。……第一次来安托萨吧？我叫达芙涅，我爸是运水的。你想先去哪儿？',[['跟着你走走',startTour],['随便敲一扇门',()=>{hush();say(DAPH,'那就去吧。随便点一栋房子，里面的人会告诉你他们是谁。点完了再拨拨年代，看看他们以前是什么样。',[['好',hush]])}],['这座城是怎么长出来的？',()=>{hush();glowYear();say(DAPH,'拨下面那个年代。五十年前，这一片还多半是空地。你看着我，我也会跟着变小。',[['好',hush]])}]])}
+if(BLK){$('blk').style.display='';$('blk').onclick=()=>{showBlk=!showBlk;$('blk').classList.toggle('on',showBlk)}}
 $('daph').onclick=()=>{if(SCENE.id==='xero'){flyTo(DHOME[0],DHOME[1],1.3);openNamed(DAPH);return}flyTo(QUAY[0],QUAY[1],1.4);greet()};
 $('scn').textContent=SCENE.title;$('other').textContent=SCENE.other.label;$('other').onclick=()=>location.href=SCENE.other.url;if(SCENE.next){$('next').style.display='';$('next').textContent=SCENE.next.label;$('next').onclick=()=>location.href=SCENE.next.url}if(SCENE.banner){const b=document.createElement('div');b.className='panel';b.style.cssText='position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:50;padding:22px 30px;text-align:center;max-width:440px;transition:opacity 1s';b.innerHTML=SCENE.banner;document.body.appendChild(b);b.onclick=()=>b.remove();setTimeout(()=>{b.style.opacity=0;setTimeout(()=>b.remove(),1000)},7000)}
 if(SCENE.info){const ib=$('infobox');ib.innerHTML='<b style="color:var(--gold2)">这是怎么做的</b><br>'+SCENE.info+'<br><button class="btn" id="infox">知道了</button>'}$('info').onclick=()=>$('infobox').style.display='block';$('infox').onclick=()=>$('infobox').style.display='none';$('infox').onclick=()=>$('infobox').style.display='none';
@@ -1013,6 +1018,12 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     if(cam.z>=1.1){ctx.font=`${12/cam.z}px serif`;const tw=ctx.measureText(S.title).width;const bx=[h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z];const DP=DAPH.where(YEAR);if(LB.some(b=>bx[0]<b[0]+b[2]&&b[0]<bx[0]+bx[2]&&bx[1]<b[1]+b[3]&&b[1]<bx[1]+bx[3])||(DP&&dist(h.cx,h.cy,DP[0],DP[1])<22/cam.z))continue;LB.push(bx);ctx.fillStyle='rgba(20,17,13,.75)';ctx.fillRect(h.cx+5/cam.z,h.cy-11/cam.z,tw+6/cam.z,15/cam.z);ctx.fillStyle='#ffe2a8';ctx.fillText(S.title,h.cx+8/cam.z,h.cy)}}
   // voiced houses (刘线): small warm dots once you are close enough to read doors
   if(cam.z>=1.3){ctx.fillStyle='rgba(255,214,140,.55)';const rr=1.8/Math.max(cam.z,.5);for(const id in VOICES){const h=houseById(+id);if(!h||!(h.built<=YEAR&&h.destroyed>YEAR)||!vis(h.cx,h.cy))continue;ctx.beginPath();ctx.arc(h.cx,h.cy,rr,0,7);ctx.fill()}}
+  // blocks (街区): ground enclosed by streets, coloured by what it became
+  if(BLK&&showBlk){ctx.save();const act=BLK.blocks.filter(b=>b.a<=YEAR&&YEAR<b.b);
+    for(const b of act){const c=BLK.fn[b.f][1],P=b.p;ctx.beginPath();ctx.moveTo(P[0],P[1]);for(let i=2;i<P.length;i+=2)ctx.lineTo(P[i],P[i+1]);ctx.closePath();ctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},.32)`;ctx.fill();ctx.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},.9)`;ctx.lineWidth=1.4/cam.z;ctx.stroke()}
+    if(cam.z>=.45){ctx.textAlign='center';ctx.textBaseline='middle';const fs=Math.min(15,12/cam.z+4)/1;ctx.font=`600 ${13/cam.z}px "Noto Serif SC",serif`;
+      for(const b of act){if(b.A<1800/cam.z/cam.z)continue;const c=BLK.fn[b.f][1],nm=BLK.fn[b.f][0];ctx.lineWidth=3/cam.z;ctx.strokeStyle='rgba(250,242,224,.9)';ctx.strokeText(nm,b.c[0],b.c[1]);ctx.fillStyle=`rgb(${c[0]*.6|0},${c[1]*.6|0},${c[2]*.6|0})`;ctx.fillText(nm,b.c[0],b.c[1])}}
+    ctx.restore()}
   // street names, written along the street like an old town map
   if(SN.length&&cam.z>=.6){const lv=cam.z<1.2?'m':cam.z<1.9?'ms':'mscl';
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';

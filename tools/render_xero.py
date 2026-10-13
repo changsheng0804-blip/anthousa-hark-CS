@@ -82,6 +82,16 @@ def sprite(k, w, h):
 SS = 2  # supersample
 # ---- houses are drawn from their own footprint: walls rise from the lot, the roof sits on top (hip roof along the long side).
 # What you see is exactly the body the street audit checks, so a house can never be drawn over a road.
+STYLE = {  # block function -> house look (keep in sync with index.html HSTYLE)
+    'market': dict(wall=[(236, 222, 192), (228, 206, 166)], roof=[(198, 104, 58), (206, 118, 64), (188, 96, 56)], awn=1.0, flat=0.05),
+    'shops': dict(wall=[(234, 220, 190), (224, 204, 168)], roof=[(192, 100, 60), (180, 92, 56)], awn=0.5, flat=0.06),
+    'fine': dict(wall=[(244, 238, 226), (238, 230, 214)], roof=[(200, 112, 66), (190, 104, 62)], court=1, flat=0.0),
+    'workshop': dict(wall=[(196, 162, 116), (184, 150, 106), (204, 172, 128)], roof=[(142, 86, 58), (128, 90, 66), (150, 100, 70)], flat=0.45, kiln=0.35),
+    'water': dict(wall=[(216, 222, 220), (226, 228, 222)], roof=[(176, 98, 66), (166, 92, 64)], flat=0.12),
+    'garrison': dict(wall=[(198, 196, 188), (186, 184, 178)], roof=[(150, 92, 72), (140, 96, 80)], flat=0.15),
+    'planned': dict(wall=[(228, 214, 188)], roof=[(184, 94, 58)], flat=0.0),
+    'garden': dict(wall=[(206, 182, 140), (196, 172, 132)], roof=[(166, 100, 66)], flat=0.5),
+}
 WALL = [(228, 212, 182), (216, 194, 156), (238, 228, 206), (204, 176, 136), (224, 204, 172), (210, 200, 184)]
 ROOF = [(186, 94, 60), (172, 86, 54), (198, 112, 70), (160, 80, 52), (180, 102, 66), (150, 96, 72)]
 LX, LY = -0.6, -0.8   # light from the north-west
@@ -92,7 +102,9 @@ def house_parts(h):
     fp = [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]
     ht = h[7] if len(h) > 7 else 5; ty = h[6] if len(h) > 6 else 0
     up = [(x, y - ht) for x, y in fp]
-    wall = WALL[int(hsh(hid, 11) * len(WALL))]; roof = ROOF[int(hsh(hid, 12) * len(ROOF))]
+    fn = h[8] if len(h) > 8 else 'homes'; stl = STYLE.get(fn, {})
+    WL = stl.get('wall', WALL); RF = stl.get('roof', ROOF)
+    wall = WL[int(hsh(hid, 11) * len(WL))]; roof = RF[int(hsh(hid, 12) * len(RF))]
     if hsh(hid, 13) < 0.5: roof = shade(roof, 0.9 + 0.2 * hsh(hid, 14))
     parts = []
     # shadow toward the south-east
@@ -112,8 +124,9 @@ def house_parts(h):
             t0 = 0.35 + 0.3 * hsh(hid, 15); dw = 0.16
             d0 = (a[0] + ex * t0, a[1] + ey * t0); d1 = (a[0] + ex * (t0 + dw), a[1] + ey * (t0 + dw))
             dh = min(ht * 0.62, 3.2)
+            if ht > 2 and False: pass
             if ht > 2: parts.append(('door', [d0, d1, (d1[0], d1[1] - dh), (d0[0], d0[1] - dh)], (70, 50, 36)))
-            if ty and ht > 3:
+            if (ty or hsh(hid, 18) < stl.get('awn', 0)) and ht > 3:
                 aw = (182, 64, 48) if hsh(hid, 16) < .5 else (60, 96, 120)
                 parts.append(('door', [(a[0] + ex * .08, a[1] + ey * .08 - ht * .62), (a[0] + ex * .92, a[1] + ey * .92 - ht * .62),
                                        (a[0] + ex * .92 + nx * 1.6, a[1] + ey * .92 - ht * .62 + ny * 1.6 + .8), (a[0] + ex * .08 + nx * 1.6, a[1] + ey * .08 - ht * .62 + ny * 1.6 + .8)], aw))
@@ -121,7 +134,7 @@ def house_parts(h):
     ux, uy = up[1][0] - up[0][0], up[1][1] - up[0][1]; vx, vy = up[3][0] - up[0][0], up[3][1] - up[0][1]
     Lu, Lv = math.hypot(ux, uy), math.hypot(vx, vy)
     tx, ty_ = sum(q[0] for q in up) / 4, sum(q[1] for q in up) / 4
-    flat = hsh(hid, 17) < 0.12 and not ty
+    flat = hsh(hid, 17) < stl.get('flat', 0.12) and not ty
     if flat:
         parts.append(('roof', up, shade(wall, 1.04)))
         parts.append(('edge', up, shade(wall, 0.7)))
@@ -149,6 +162,12 @@ def house_parts(h):
             parts.append(('roof', face, shade(roof, kk)))
         parts.append(('edge', up, shade(roof, 0.62)))
         if r >= 0.3: parts.append(('ridge', [r0, r1], shade(roof, 0.7)))
+    if stl.get('court') and Lu * Lv > 120:   # courtyard house: an open court in the middle of the roof
+        cq = [(tx + (x - tx) * 0.38, ty_ + (y - ty_) * 0.38 + 0.6) for x, y in up]
+        parts.append(('roof', cq, (214, 198, 162))); parts.append(('edge', cq, (120, 84, 56)))
+    if hsh(hid, 19) < stl.get('kiln', 0):         # workshop kiln / furnace chimney
+        kx, ky = up[2][0] * 0.7 + tx * 0.3, up[2][1] * 0.7 + ty_ * 0.3
+        parts.append(('roof', [(kx - 1, ky), (kx + 1, ky), (kx + 1, ky - 2.6), (kx - 1, ky - 2.6)], (70, 56, 48)))
     return max(q[1] for q in fp), parts
 def draw_parts(d, sd_, parts, a_mul=1.0):
     S_ = lambda poly: [(x * SS, y * SS) for x, y in poly]
