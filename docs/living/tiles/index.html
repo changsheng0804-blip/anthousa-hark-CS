@@ -119,11 +119,11 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
   if(street){const mx=W*(PCK-1)/2/cam.z*0.8,my=H*(PCK-1)/2/cam.z*0.8;
     const prepped=dirty&&prepStreet(YEAR);if(prepped)dirty=true;
     redraw=!prepped&&dirty&&(!pc.ok||pc.z!==cam.z||pc.Y!==YEAR||pc.ver!==cver||fade>0||Math.abs(cam.x-pc.x)>mx||Math.abs(cam.y-pc.y)>my);
-    if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
     if(redraw){dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;const OW=off.width,OH=off.height;
       octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
       octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
     else if(!prepped)dirty=false;
+    if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
     if(wasDirty)lifeSync(YEAR);
     if(redraw||wasDirty)document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 街巷级 · 矢量房子 ${hdrawn} 栋 · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`;
     lifeStep(dt);ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,c.width,c.height);

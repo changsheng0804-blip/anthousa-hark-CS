@@ -10,6 +10,7 @@ const dom=new JSDOM(html,{runScripts:'dangerously',pretendToBeVisual:true,virtua
  const noop=new Proxy(function(){},{get:(t,k)=>noop,apply:()=>noop,set:()=>true});
  w.HTMLCanvasElement.prototype.getContext=()=>noop;
  w.Image=class{set src(s){this._s=s;req.push(s);const ok=fs.existsSync(path.join(D,s));setTimeout(()=>ok?this.onload&&this.onload():this.onerror&&this.onerror(),1)}get src(){return this._s}};
+ w.Path2D=class{moveTo(){}lineTo(){}};
  w.requestAnimationFrame=f=>setTimeout(f,5);
 }});
 const w=dom.window;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -18,7 +19,7 @@ const w=dom.window;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  const views=[['全城',null],['街区',0.45],['街坊',1.0],['街巷',2.5],['贴近',5]];
  for(const Y of T.M.years){for(const [nm,z] of views){
    if(z!==null){const q=T.M.quarters.nangang;T.cam.x=q[0]+q[2]/2;T.cam.y=q[1]+q[3]/2;T.cam.z=z}else{T.cam.z=Math.min(1920/(T.M.grid[0]*T.M.tile_px),1080/(T.M.grid[1]*T.M.tile_px))*0.95;T.cam.x=T.M.grid[0]*T.M.tile_px/2;T.cam.y=T.M.grid[1]*T.M.tile_px/2}
-   w.__TILES.setYear(Y);const r0=req.length;await sleep(150);
+   w.__TILES.setYear(Y);const r0=req.length;await sleep(z!==null&&z>=1.15?900:150);
    const got=req.slice(r0);const by=got.reduce((s,f)=>{const p=path.join(D,f);if(!fs.existsSync(p))return s;return s+(f.endsWith('.json')?zlib.gzipSync(fs.readFileSync(p)).length:fs.statSync(p).size)},0);
    const ok=T.drawn<=BUD.tiles&&by<=BUD.bytes&&T.hdrawn<=BUD.houses&&(z===null||z<T.STREET_Z||T.hdrawn>0)&&T.LIFE.walkers<=BUD.walkers&&T.LIFE.ships<=BUD.ships&&(z===null||z<T.STREET_Z||T.LIFE.walkers>0);bad+=!ok;out.push(`${ok?'✅':'❌'} ${Y} 年 ${nm}（级 ${T.level()}）：画 ${T.drawn} 块，新下载 ${got.length} 块 ${(by/1024).toFixed(0)} KB${T.hdrawn?'，矢量房子 '+T.hdrawn+' 栋，人 '+T.LIFE.walkers+'，船 '+T.LIFE.ships:''}`)}}
  // 定律：街巷级跑 20 秒模拟时间，人始终在 w 位为真的街上，船始终在水格（含四周）里；再拉到港口看船
