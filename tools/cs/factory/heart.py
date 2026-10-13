@@ -283,7 +283,19 @@ def main():
             mk_ = lab_d == d['k']; ring = ndi.binary_dilation(mk_, iterations=6) & ~ndi.binary_dilation(mk_, iterations=2) & wk_
             c_ = np.median(a_[ring], 0) if ring.any() else np.median(a_[wk_], 0)
             d.setdefault('col', {})[str(kY)] = [int(v) for v in c_]
-    docks = [{'from': d['from'], 'rects': d['rects'], 'root': d['root'], 'col': d['col']} for d in dock_c]
+            # cs22+ 借水：在这张画上找一块离栈桥最近、整块都是干净海面（没有船、没有岸）的地方，页面把那块水原样挪过来盖住没建成的栈桥
+            clean = ndi.binary_erosion(wk_ & ~band, iterations=2)
+            mk2 = ndi.binary_dilation(mk_, iterations=4); mj, mi = np.nonzero(mk2); best = None
+            for r_ in range(6, 90, 2):
+                for dj in range(-r_, r_ + 1, 2):
+                    for di in (-r_, r_) if abs(dj) != r_ else range(-r_, r_ + 1, 2):
+                        a, b = mj + dj, mi + di
+                        if a.min() < 0 or b.min() < 0 or a.max() >= GH or b.max() >= GW: continue
+                        if clean[a, b].all() and not (ndi.binary_dilation(mk2, iterations=1)[np.clip(a, 0, GH - 1), np.clip(b, 0, GW - 1)]).any(): best = (di * R, dj * R); break
+                    if best: break
+                if best: break
+            d.setdefault('borrow', {})[str(kY)] = list(best) if best else None
+    docks = [{'from': d['from'], 'rects': d['rects'], 'root': d['root'], 'col': d['col'], 'borrow': d['borrow']} for d in dock_c]
     pier_from = []
     for p in pier_spots:
         hit_ = [d['from'] for d in dock_c if lab_d[min(int(p[1] / R), GH - 1), min(int(p[0] / R), GW - 1)] == d['k']]

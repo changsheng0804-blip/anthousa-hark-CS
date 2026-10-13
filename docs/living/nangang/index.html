@@ -195,6 +195,10 @@ function buildBase(Y){
     fctx.globalCompositeOperation='source-in';fctx.drawImage(PI,0,0,W,H);fctx.globalCompositeOperation='source-over';
     bctx.drawImage(fillC,0,0);}
   if(Y>K){const donors=houses.filter(h=>h.built<=K&&h.destroyed>Y);let i=0;for(const h of houses){if(!(h.built>K&&h.built<=Y&&h.destroyed>Y))continue;const d=donors[(h.id*7919)%donors.length];const bb=bbox(d.p,2.0),tb=bbox(h.p,2.0);bctx.save();bctx.beginPath();polyPath(bctx,h.p,2.0);bctx.clip();bctx.drawImage(KI,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1],tb[0],tb[1],tb[2]-tb[0],tb[3]-tb[1]);bctx.restore()}}
+  /* CS 线 · cs23 码头逐年长：没建成的栈桥，从同一张画上就近一块干净海面借水盖住（heart.py 算好 borrow 偏移），边缘羽化，看不出补丁 */
+  if(SCENE.fleet&&SCENE.fleet.docks)for(const d of SCENE.fleet.docks){const o=d.from>Y&&d.borrow&&d.borrow[K];if(!o)continue;
+    fctx.globalCompositeOperation='source-over';fctx.clearRect(0,0,W,H);fctx.filter='blur(4px)';fctx.fillStyle='#fff';for(const q of d.rects)fctx.fillRect(q[0]-6,q[1]-5,q[2]+12,q[3]+10);fctx.filter='none';
+    fctx.globalCompositeOperation='source-in';fctx.drawImage(KI,-o[0],-o[1],W,H);fctx.globalCompositeOperation='source-over';bctx.drawImage(fillC,0,0)}
   baseYear=Y;buildingNow=houses.filter(h=>h.destroyed>Y&&(h.built===Y||h.built===Y-1));
 }
 function bbox(p,sc){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*sc,y=cy+(p[2*i+1]-cy)*sc;a=Math.min(a,x);b=Math.min(b,y);c=Math.max(c,x);d=Math.max(d,y)}return[a,b,c,d]}
@@ -849,10 +853,12 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
       const R=d.rects.slice().sort((a,b)=>Math.hypot(a[0]-d.root[0],a[1]-d.root[1])-Math.hypot(b[0]-d.root[0],b[1]-d.root[1]));const n=Math.max(1,Math.round(R.length*(d.from-Y===2?.35:.7)));
       for(let j=0;j<3;j++){const q=R[Math.max(0,n-1-j)];let p=[q[0]+q[2]/2,q[1]+q[3]/2];if(!FLEET_walkable(p[0],p[1]))p=[d.root[0],d.root[1]];out.push({d,R,n,p})}}return out};
   FLEET.dockDraw=function(t){const D=C.docks;if(!D||!D.length)return;const Y=YEAR;const ks=(SCENE.keys||[]).map(k=>k[0]);let kk=ks[0];for(const k of ks)if(k<=Y)kk=k;
-    for(const d of D){if(d.from<=Y)continue;const c=d.col[kk]||d.col[Object.keys(d.col)[0]];ctx.save();ctx.fillStyle=ctx.shadowColor=`rgb(${c[0]},${c[1]},${c[2]})`;ctx.shadowBlur=5;for(const q of d.rects)ctx.fillRect(q[0]-1,q[1],q[2]+2,q[3]);ctx.restore()}
+    for(const d of D){if(d.from<=Y||(d.borrow&&d.borrow[keyFor(Y)[0]]))continue;const c=d.col[kk]||d.col[Object.keys(d.col)[0]];ctx.save();ctx.fillStyle=ctx.shadowColor=`rgb(${c[0]},${c[1]},${c[2]})`;ctx.shadowBlur=5;for(const q of d.rects)ctx.fillRect(q[0]-1,q[1],q[2]+2,q[3]);ctx.restore()}   /* 借不到水才退回平涂 */
     const W=FLEET.dockWork(Y);const done=new Set();
     for(const w of W){if(done.has(w.d))continue;done.add(w.d);ctx.fillStyle='rgba(122,86,52,.95)';for(let i=0;i<w.n;i++){const q=w.R[i];ctx.fillRect(q[0],q[1]+1,q[2],q[3]-2)}
-      ctx.fillStyle='rgba(58,40,26,.9)';for(let i=w.n;i<w.R.length;i++){const q=w.R[i];for(let x=q[0]+2;x<q[0]+q[2];x+=6){ctx.beginPath();ctx.arc(x,q[1]+4,1.3,0,7);ctx.fill()}}}
+      ctx.fillStyle='rgba(58,40,26,.9)';for(let i=w.n;i<w.R.length;i++){const q=w.R[i];for(let x=q[0]+2;x<q[0]+q[2];x+=6){ctx.beginPath();ctx.arc(x,q[1]+4,1.3,0,7);ctx.fill()}}
+      /* 岸上栈桥根：一垛木料、一堆石块（工地） */
+      const [rx,ry]=w.d.root;ctx.fillStyle='rgba(150,108,66,.95)';for(let k=0;k<4;k++)ctx.fillRect(rx-9,ry-12+k*2,12,1.6);ctx.fillStyle='rgba(165,160,150,.95)';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(rx+6+(k%3)*2.4,ry-10+Math.floor(k/3)*2.2,1.3,0,7);ctx.fill()}}
     if(clock>=7&&clock<17)for(const [i,w] of W.entries()){const b=Math.sin(t*4+i*2)*.8;ctx.fillStyle='rgba(70,48,30,.95)';ctx.beginPath();ctx.arc(w.p[0]+(i-1)*3,w.p[1]+b,1.6,0,7);ctx.fill();ctx.fillStyle='rgba(220,190,150,.95)';ctx.beginPath();ctx.arc(w.p[0]+(i-1)*3,w.p[1]-2+b,1,0,7);ctx.fill()}};
   FLEET.draw=function(t,vis){FLEET.dockDraw(t);FLEET.on=FLEET.active(YEAR);FLEET.slow=false;if(!FLEET.on)return;const c=clock,Y=YEAR,R=FLEET.crowd(Y);
     FLEET.slow=c>=C.snap-.35&&c<C.hold+.3;
