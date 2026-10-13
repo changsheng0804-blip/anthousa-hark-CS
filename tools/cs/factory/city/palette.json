@@ -1,0 +1,7 @@
+{
+ "说明": "全城一张色板（cs32，CITY_RULES L7）。每个街区、每个年份的地面都往这里靠；不许为某个街区另调。Lab 用 OpenCV 8 位刻度。",
+ "sand_rgb": [206, 183, 142],
+ "water_lab_mean": [119, 112, 125],
+ "water_lab_std": [16, 3, 3],
+ "tol": {"sand_dE": 4, "water_dE": 6, "year_dE": 5, "quarter_dE": 6}
+}

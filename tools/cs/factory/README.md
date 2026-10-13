@@ -103,3 +103,4 @@
 - `python city_streets.py`：按底账（大道、城墙、岸、坡、旧区）给整座城长街，写 city/streets.json。底账或规则一变，streets_ng.py 会自动先重跑它。
 - streets_ng.py 不再自己长街，只把全城网裁到框里；配方里不许写街网参数。
 - 改街网只能改 city_streets.py 的参数表 P（全城一张），不许为某个街区加例外。
+- cs32：地面颜色只从 city/palette.json 来（沙、水），ground_ng.py 统一，check_palette.py 在 accept 里查。

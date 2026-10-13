@@ -18,13 +18,32 @@ def keep_at(K):   # 水、这一年已经盖起来的地标不抹（还没盖的
         p = v['p']; cx = sum(x for x, _ in p) / len(p); cy = sum(y for _, y in p) / len(p); dl.polygon([(cx + (x - cx) * 1.08, cy + (y - cy) * 1.08) for x, y in p], fill=255)
     return np.maximum(np.asarray(watI), np.asarray(lmI)) > 0
 keep = keep_at(0)
+PAL = json.load(open(os.path.join(HERE, 'city', 'palette.json')))
+import cv2
+_wcore = np.asarray(watI.filter(ImageFilter.MinFilter(9)).filter(ImageFilter.MinFilter(15))) > 0   # 水心（统计用）
+_wzone = np.asarray(watI.filter(ImageFilter.MaxFilter(25))) > 0                                    # 可能画成水的地方（含没建栈桥的补丁）
+def water_to_palette(img):
+    # 水面按全城色板做 Lab 均值/方差匹配：保留波纹和深浅，换掉各张画自己的水色；船、栈桥（不偏蓝绿）不动
+    a = np.asarray(img).astype(np.uint8)
+    if not _wcore.any(): return img
+    L = cv2.cvtColor(a, cv2.COLOR_RGB2LAB).astype(float)
+    f = a.astype(float); blu = (f[..., 1] > f[..., 0] + 12) & (f[..., 2] > f[..., 0] + 6) & _wzone
+    core = _wcore & blu
+    if core.sum() < 500: return img
+    mu = L[core].mean(0); sd = L[core].std(0) + 1e-6
+    tm = np.array(PAL['water_lab_mean'], float); ts = np.array(PAL['water_lab_std'], float)
+    sc_ = np.clip(ts / sd, 0.5, 2.0); sc_[1:] = np.minimum(sc_[1:], 1.0)
+    N = (L - mu) * sc_ + tm
+    out = cv2.cvtColor(np.clip(N, 0, 255).astype(np.uint8), cv2.COLOR_LAB2RGB).astype(float)
+    m = np.asarray(Image.fromarray(blu.astype(np.uint8) * 255).filter(ImageFilter.GaussianBlur(1.5))).astype(float)[..., None] / 255
+    return Image.fromarray(np.clip(out * m + f * (1 - m), 0, 255).astype(np.uint8))
 gt = Image.open(Q + 'kits/hill/ground.webp').convert('RGB').resize((48, 48), Image.LANCZOS)
 # 三张画的地面颜色不一样（50 年那张偏暗），统一用一种沙色、一张纹理，免得换年代时地面跳色
 SAND = None
 for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:   # ground_0：第一张画把地标也抹掉，给最早那些年用
     A = Image.open(Q + f).convert('RGB').resize((W, H)); a = np.asarray(A).astype(float); keep = keep_at(K)
     if SAND is None:
-        land = a[~keep]; land = land[(land[:, 0] - land[:, 2] < 70) & (land.sum(1) > 420)]; SAND = np.median(land, 0)
+        SAND = np.array(PAL['sand_rgb'], float)   # cs32：全城一种沙色，不再取各自画上的
     # 整片陆地铺成同一种沙地；留下水、地标、画上的绿（菜园、树）和火烧过的焦土
     green = (a[..., 1] > a[..., 0] + 4) & (a[..., 1] > a[..., 2] + 10)
     dark = (a.sum(2) < 330) & (np.abs(a[..., 0] - a[..., 2]) < 40)
@@ -46,4 +65,5 @@ for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:  
     rs = np.random.RandomState(5); noise = np.asarray(Image.fromarray((rs.rand(H // 64, W // 64) * 255).astype(np.uint8)).resize((W, H), Image.BICUBIC)).astype(float)[..., None]
     ga = ga * 0.5 + sand * 0.5 + (noise - 128) * 0.08
     G = Image.composite(Image.fromarray(np.clip(ga, 0, 255).astype(np.uint8)), A, m)
+    G = water_to_palette(G)
     G.save(Q + f'ground_{K}.jpg', quality=88); print('ground', K, 'sand', sand.round())
