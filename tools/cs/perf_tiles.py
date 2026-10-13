@@ -1,6 +1,8 @@
 """CS 线 · cs36 真浏览器压力测（Chromium + Playwright）：全城瓦片页的首屏下载、帧率、内存。
 python3 tools/cs/perf_tiles.py [url]   默认起本地服务器读 docs/living/tiles/
-场景：全城一屏 → 推到街巷级最密的地方 → 街巷级横穿全城 10 秒 → 换年份。每段记 FPS（rAF 实测）、JS 堆、累计请求数和字节。
+场景：全城一屏 → 推到街巷级最密的地方 → 街巷级横穿全城 10 秒 → 换年份 → 拉回全城；
+/goal 2 项 7 加三个：从全城飞到门口（南港门口，z=4.5 倾斜带）、门口飞到另一块街区（第四丘门口，z=4.5）、倾斜带里平移 6 秒。
+飞行场景的 FPS = 飞行期间（flyTo 起到落地）rAF 实测的平均，worst_ms = 其间最长一帧；G5 线：平均 ≥50 FPS、最差一帧 ≤50 ms。每段记 FPS（rAF 实测）、JS 堆、累计请求数和字节。
 注意：沙箱是 arm64、无 GPU（SwiftShader 软件渲染），帧率是悲观值，看相对变化和有没有掉坑。"""
 import json, os, sys, time, threading, http.server, socketserver, functools
 from playwright.sync_api import sync_playwright
@@ -45,5 +47,23 @@ with sync_playwright() as p:
     r = dict(step='街巷级横穿全城 10 秒', **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False))
     pg.evaluate("()=>{window.__pan=false;__TILES.setYear(40)}"); step('换到 40 年')
     pg.evaluate("()=>{const T=__TILES;T.cam.z=0.08;T.zoomAt(innerWidth/2,innerHeight/2,1)}"); step('拉回全城')
+    # ── /goal 2 项 7：飞行场景。FPS 只量飞行期间；落地后的等待（hold）另记
+    FLY_JS = """async([x,y,z,yr])=>{const T=__TILES;let n=0,worst=0,last=performance.now(),run=true,gaps=[];const t0=last;
+      const f=t=>{if(!run)return;n++;const g=t-last;worst=Math.max(worst,g);gaps.push(g);last=t;requestAnimationFrame(f)};requestAnimationFrame(f);
+      const r=await T.flyTo(x,y,z,{year:yr});run=false;const el=performance.now()-t0;gaps.sort((a,b)=>a-b);
+      return {fps:+(n*1000/el).toFixed(1),worst_ms:+worst.toFixed(0),p99_ms:+gaps[Math.floor(gaps.length*.99)].toFixed(0),dur:r.dur,hold:r.hold,frames:n,tilt_deg:+(T.tilt*57.2958).toFixed(1)}}"""
+    P = json.load(open(os.path.join(ROOT, 'docs', 'living', 'tiles', 'places.json'))); QC = {c['q']: c for c in P['quarters']}
+    def fly(name, q, z=4.5):
+        c = QC[q]; pg.wait_for_timeout(800)
+        f = pg.evaluate(FLY_JS, [c['x'], c['y'], z, 60])
+        m = pg.evaluate("()=>({heap_mb:+(performance.memory.usedJSHeapSize/1048576).toFixed(1),houses:__TILES.hdrawn,walkers:__TILES.LIFE.walkers,cache:__TILES.cache.size,vtiles:__TILES.vtiles.size})")
+        r = dict(step=name, **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
+    pg.evaluate("()=>{const T=__TILES;T.cam.z=0.08;T.zoomAt(innerWidth/2,innerHeight/2,1);T.setYear(60)}"); pg.wait_for_timeout(1500)
+    fly('飞行：全城→南港门口（z=4.5 倾斜）', 'nangang')
+    fly('飞行：南港门口→第四丘门口（z=4.5）', 'siqiu')
+    pg.wait_for_timeout(800)
+    pg.evaluate("""()=>{const T=__TILES;window.__pan=true;const t0=performance.now(),x0=T.cam.x,y0=T.cam.y;(function f(){if(!window.__pan)return;const k=Math.min(1,(performance.now()-t0)/6000);T.cam.x=x0+450*k;T.cam.y=y0-120*k;T.zoomAt(innerWidth/2,innerHeight/2,1);if(k<1)requestAnimationFrame(f)})()}""")
+    pg.wait_for_timeout(200); f = pg.evaluate(FPS_JS, 5600); pg.evaluate("()=>{window.__pan=false}")
+    r = dict(step='倾斜带平移 6 秒（z=4.5）', **f, tilt_deg=pg.evaluate("()=>+(__TILES.tilt*57.2958).toFixed(1)"), houses=pg.evaluate("()=>__TILES.hdrawn"), requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
     b.close()
 json.dump(out, open(os.path.join(ROOT, 'docs', 'living', 'tiles', 'perf.json'), 'w'), ensure_ascii=False, indent=1)

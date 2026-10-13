@@ -1,8 +1,8 @@
 {
- "url": "http://127.0.0.1:37313/tiles/",
+ "url": "http://127.0.0.1:34645/tiles/",
  "steps": [
   {
-   "step": "全城一屏（首屏 0.8s）",
+   "step": "全城一屏（首屏 0.9s）",
    "fps": 60.1,
    "worst_ms": 17,
    "heap_mb": 1.1,
@@ -13,13 +13,13 @@
    "cache": 53,
    "vtiles": 0,
    "requests": 24,
-   "mb": 0.41
+   "mb": 0.42
   },
   {
    "step": "街巷级最密处",
-   "fps": 59.8,
-   "worst_ms": 50,
-   "heap_mb": 92.6,
+   "fps": 59.3,
+   "worst_ms": 67,
+   "heap_mb": 72.6,
    "drawn": 9,
    "houses": 2748,
    "walkers": 288,
@@ -31,9 +31,9 @@
   },
   {
    "step": "街巷级横穿全城 10 秒",
-   "fps": 56.4,
+   "fps": 56.7,
    "worst_ms": 50,
-   "heap_mb": 44.9,
+   "heap_mb": 45.2,
    "cache": 147,
    "vtiles": 54,
    "walkers": 22,
@@ -44,7 +44,7 @@
    "step": "换到 40 年",
    "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 58.5,
+   "heap_mb": 59.9,
    "drawn": 12,
    "houses": 147,
    "walkers": 19,
@@ -58,7 +58,7 @@
    "step": "拉回全城",
    "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 58.7,
+   "heap_mb": 60.1,
    "drawn": 4,
    "houses": 0,
    "walkers": 0,
@@ -67,6 +67,49 @@
    "vtiles": 54,
    "requests": 266,
    "mb": 14.81
+  },
+  {
+   "step": "飞行：全城→南港门口（z=4.5 倾斜）",
+   "fps": 41.9,
+   "worst_ms": 67,
+   "p99_ms": 67,
+   "dur": 2.184066104489082,
+   "hold": 0.35,
+   "frames": 108,
+   "tilt_deg": 33,
+   "heap_mb": 55.3,
+   "houses": 198,
+   "walkers": 220,
+   "cache": 209,
+   "vtiles": 45,
+   "requests": 428,
+   "mb": 24.77
+  },
+  {
+   "step": "飞行：南港门口→第四丘门口（z=4.5）",
+   "fps": 39.2,
+   "worst_ms": 67,
+   "p99_ms": 67,
+   "dur": 2.151770409833859,
+   "hold": 0.35,
+   "frames": 99,
+   "tilt_deg": 33,
+   "heap_mb": 54.9,
+   "houses": 199,
+   "walkers": 329,
+   "cache": 219,
+   "vtiles": 57,
+   "requests": 450,
+   "mb": 27.53
+  },
+  {
+   "step": "倾斜带平移 6 秒（z=4.5）",
+   "fps": 59.7,
+   "worst_ms": 33,
+   "tilt_deg": 33,
+   "houses": 216,
+   "requests": 450,
+   "mb": 27.53
   }
  ]
 }

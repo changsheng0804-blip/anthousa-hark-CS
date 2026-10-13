@@ -3,7 +3,7 @@
 "name": "南港门口",
 "dur": 1.76,
 "hold": 0.12,
-"frames": 7,
+"frames": 8,
 "zmin": 0.089,
 "land_blank": 0,
 "errs": []
@@ -13,34 +13,34 @@
 "dur": 2.02,
 "hold": 0.12,
 "frames": 8,
-"zmin": 0.478,
+"zmin": 0.48,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "东岬门口",
 "dur": 1.74,
-"hold": 0.1,
-"frames": 7,
-"zmin": 0.693,
+"hold": 0.13,
+"frames": 8,
+"zmin": 0.709,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "南岸门口",
 "dur": 2.0,
-"hold": 0.12,
+"hold": 0.1,
 "frames": 10,
-"zmin": 0.497,
+"zmin": 0.492,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "大皇宫",
 "dur": 1.52,
-"hold": 0.13,
+"hold": 0.12,
 "frames": 8,
-"zmin": 0.924,
+"zmin": 0.918,
 "land_blank": 0,
 "errs": []
 },
@@ -49,15 +49,15 @@
 "dur": 1.5,
 "hold": 0.12,
 "frames": 7,
-"zmin": 1.204,
+"zmin": 1.207,
 "land_blank": 0,
 "errs": []
 },
 {
 "name": "拜占斯卫城",
 "dur": 1.66,
-"hold": 0.12,
-"frames": 7,
+"hold": 0.13,
+"frames": 8,
 "zmin": 0.788,
 "land_blank": 0,
 "errs": []
@@ -67,7 +67,7 @@
 "dur": 1.73,
 "hold": 0.12,
 "frames": 8,
-"zmin": 0.704,
+"zmin": 0.724,
 "land_blank": 0,
 "errs": []
 },
@@ -83,7 +83,7 @@
 {
 "name": "48 年南港大火",
 "dur": 1.5,
-"hold": 0.12,
+"hold": 0.1,
 "frames": 7,
 "zmin": 1.569,
 "land_blank": 0,

@@ -15,3 +15,5 @@ tools/cs/factory/tile_heart.py <q> 把街区页的粮船日、家户推演一字
 ## /goal 2 第 7 轮（项 4b 敲门卡接到瓦片页）
 tile_heart.py 现在连卡片一起剪（renderCard、cs1 敲门问话、cs2 跟一个人走一生，原样），heart/<q>.js 返回 openHouse/cardClick/nearestHouse 等；瓦片页点街巷级的房子开 #card，选中圈跟着，年份可跳到任意一年。检查 tools/cs/check_card_tile.py（含与街区页逐字比对）。同时修了街区页 csIncoming 对建成年>60 的房子抛错（九块 index.html 都改了一处），并把 FLEET.crowd / csIncoming 改成可分帧（生成器，街区页同步调用不变）。
 
+## /goal 2 第 10 轮（项 7a perf 飞行场景 + 第一刀优化）
+perf_tiles.py 加「全城→南港门口」「南港门口→第四丘门口」（z=4.5 倾斜带）和「倾斜带平移」三个场景，FPS 取飞行期间 rAF 均值。查出飞行慢的四个真因（每帧整层重画、大瓦片首绘同步解码 123 ms、2 核机器上预取解码饿住主线程、预取每帧扫），改后冷飞 33/24→42/39 FPS，最差帧 183/117→67 ms；飞行途中旧层拉伸（只在飞行里，步进缩放不拉伸，否则 check_zoom 冒尖）。离 G5 的 ≥50/≤50 还差：落地等瓦片时现建 zr=4 的大层。下一轮做 7b。
