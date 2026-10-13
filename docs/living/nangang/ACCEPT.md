@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 55 / 55
+通过 60 / 60
 
 
 ## 一、拉取
@@ -30,11 +30,18 @@
 - ✅ nangang ⇄ xerolophos 来回都能走
 - ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
 - ✅ 心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街） —— heart.py 从底账算（建城 60 年的陆地、港口、粮仓 horrea_theodosius、路、房子）
-- ✅ 画上的栈桥人走得上去 —— piers walkable 2084 / 2149
-- ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 5, on pier 5, trails ending on a pier 613 / 2665
+- ✅ 画上的栈桥人走得上去 —— piers walkable 662 / 695
+- ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 2, on pier 2, trails ending on a pier 1622 / 2665
 - ✅ 港口的口子对上画、船进得了港 —— gates on mouth 2 / 2, ships inside 2, ships entering via mouth 2
 - ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1478 bad 0；同句近邻 574/85289
 - ✅ 每种会动的东西都登记并在该在的地方 —— movers 14 kinds; missing none ; off-domain {} ;
+
+## 定律
+- ✅ 定律三 · 推得出：重跑 heart.py，位置与街和线上一致
+- ✅ 定律一 · 站得住：能走的格不在画上的水里（一格里画成水的不超过六成）
+- ✅ 定律一 · 站得住：底账水里能走的只许是窄栈桥（≤38px）
+- ✅ 定律二 · 浮得住：船的水路都在底账和画都认的水上
+- ✅ 定律四 · 对得上：底账和画对不上的岸 331 格（目标 0，只报数）
 
 ## 三、画面
 - ✅ 40 年 房子对位 —— 0.886（命中 0.869 / 空地干净 0.904）
@@ -55,11 +62,11 @@
 - ✅ 60 年 Nymphaeum Maius 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.87，全街区 0.87
 - ✅ 60 年 Horrea Alexandrina 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.88，全街区 0.87
 - ✅ 60 年 Forum of Theodosius 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.73，全街区 0.87
-- ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nangang_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
+- ✅ 公共建筑目检表 —— /workspace/work/ah2/tools/cs/factory/out/nangang_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
 
 ## 五、假成功
 - ✅ 脉不露面 —— 页面上没有看脉的按钮或图层
-- ✅ 假成功率 5/7 = 71% —— 待评：cs3、cs6、cs10、cs11、cs12、cs13、cs14、cs15、cs16、cs17
+- ✅ 假成功率 5/7 = 71% —— 待评：cs3、cs6、cs10、cs11、cs12、cs13、cs14、cs15、cs16、cs17、cs18
 - ✅ cs2 的假成功已补成检查（想法留，但露得太多） —— 敲门卡一眼只露一件事
 - ✅ cs5 的假成功已补成检查（看不懂要干嘛；脉应该是地下管线，不该） —— 脉不露面
 - ✅ cs7 的假成功已补成检查（人从海里走过去：码头人群走直线，水和） —— check_fleet.js 人不下水、船不上岸

@@ -21,10 +21,10 @@ def standing(s, Y):
     return s['built'] <= Y and not (s['destroyed'] is not None and s['destroyed'] <= Y)
 
 
-def dijkstra(cost, src):
-    """cost: GH×GW，inf 不可走；src: [(j,i)]；返回距离和前驱"""
+def dijkstra(cost, src, d0=None):
+    """cost: GH×GW，inf 不可走；src: [(j,i)]；d0: {(j,i): 起点附加距离}；返回距离和前驱"""
     D = np.full(cost.shape, np.inf); P = np.full(cost.shape + (2,), -1, int); h = []
-    for s in src: D[s] = 0; heapq.heappush(h, (0.0, s))
+    for s in src: v = (d0 or {}).get(s, 0.0); D[s] = min(D[s], v); heapq.heappush(h, (v, s))
     nb = [(-1, 0, 1), (1, 0, 1), (0, -1, 1), (0, 1, 1), (-1, -1, 1.414), (1, 1, 1.414), (-1, 1, 1.414), (1, -1, 1.414)]
     while h:
         d, (j, i) = heapq.heappop(h)
@@ -207,8 +207,17 @@ def main():
     pc = ~pw & ~landm & ~band2 & (clear <= 120)
     pc = ndi.binary_opening(pc, structure=np.ones((2, 2), bool))
     pier_px = ndi.binary_propagation(ndi.binary_dilation(landm, iterations=2) & pc, mask=pc)
+    # 定律一·栈桥是窄的（cs19 查收图抓到：靠在栈桥边的船被并成了能走的「栈桥」）。比 PIER_W 宽的团剔掉，再从岸边重新连
+    PIER_W = int(os.environ.get('PIER_W', 22))
+    k_ = max(2, round(PIER_W / R)); fat = ndi.binary_opening(pier_px, structure=np.ones((k_, k_), bool))
+    thin = pier_px & ~ndi.binary_dilation(fat, iterations=1)
+    pier_px = ndi.binary_propagation(ndi.binary_dilation(landm, iterations=2) & thin, mask=thin)
+    if '--masks' in sys.argv:
+        os.makedirs(os.path.join(os.path.dirname(__file__), 'out'), exist_ok=True)
+        np.savez_compressed(os.path.join(os.path.dirname(__file__), 'out', f'{q}_masks.npz'), landm=landm, pw=pw, pier=pier_px, fat=fat, R=R, wall=wallA)
     pier8 = pool(pier_px, 0) >= 0.4
     if not os.environ.get('PIER_OFF'): walk8 = walk8 | pier8
+    walk8 &= ~(pool(pw, 0) > 0.6)        # 定律一：六成以上画成水的格不能走（窄栈桥格至少四成是画上的陆地，留得住）
     if '--piers' in sys.argv:
         pj, pi_ = np.nonzero(pier_px); ok_ = walk8[np.minimum(pj * R // R8, H8 - 1), np.minimum(pi_ * R // R8, W8 - 1)]
         print(f'piers walkable {int(ok_.sum())} / {len(pj)}'); return
@@ -236,7 +245,9 @@ def main():
         for p in srcs:
             j, i = int(p[1] / R8), int(p[0] / R8)
             if 0 <= j < H8 and 0 <= i < W8 and walk8[j, i]: src.append((j, i))
-        D, Pp = dijkstra(cost8, src); GH, GW = oh, ow
+        PEN = float(os.environ.get('PIER_PEN', 0))   # 栈桥站位的起点附加距离；cs18 起超员的人家改走广搜去空站位，这里不用再加
+        d0 = {(int(p[1] / R8), int(p[0] / R8)): PEN for p in pier_spots}
+        D, Pp = dijkstra(cost8, src, d0); GH, GW = oh, ow
         dirs = {(-1, 0): '0', (1, 0): '1', (0, -1): '2', (0, 1): '3', (-1, -1): '4', (1, 1): '5', (-1, 1): '6', (1, -1): '7'}
         rows = []
         for j in range(H8):

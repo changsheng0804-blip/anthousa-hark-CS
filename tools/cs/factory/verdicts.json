@@ -1,1 +1,171 @@
-{"说明": "所有者的评语账。machine = 交付时机器验收结果；owner = 留 / 再来 / 待评；再来且 machine=pass 就是一次「假成功」，必须写 check：从那次假成功长出来的检查项名字（accept.py 里 rec 的名字，或独立检查脚本）。", "verdicts": [{"v": "cs1", "q": "xerolophos", "date": "2026-10-12", "what": "敲门问话", "machine": "pass", "owner": "留"}, {"v": "cs2", "q": "xerolophos", "date": "2026-10-12", "what": "跟一个人过一生、跨户婚姻", "machine": "pass", "owner": "再来", "issue": "想法留，但露得太多", "check": "敲门卡一眼只露一件事", "script": "tools/cs/check_card.js"}, {"v": "cs3", "q": "xerolophos", "date": "2026-10-12", "what": "收紧的卡片：一句现在、一个钩子、后来呢", "machine": "pass", "owner": "待评"}, {"v": "cs4", "q": "nangang", "date": "2026-10-12", "what": "生产线第一个街区：南港", "machine": "pass", "owner": "留"}, {"v": "cs5", "q": "nangang", "date": "2026-10-12", "what": "粮脉（按钮 + 金线流程图）", "machine": "pass", "owner": "再来", "issue": "看不懂要干嘛；脉应该是地下管线，不该浮上来让人看", "check": "脉不露面"}, {"v": "cs6", "q": "nangang", "date": "2026-10-12", "what": "粮船日", "machine": "pass", "owner": "待评"}, {"v": "cs7", "q": "nangang", "date": "2026-10-12", "what": "打通：心跳位置从底账算 + 画照配方局部重铺", "machine": "pass", "owner": "再来", "issue": "人从海里走过去：码头人群走直线，水和船对人没有约束", "check": "check_fleet.js 人不下水、船不上岸", "script": "tools/cs/check_fleet.js"}, {"v": "cs8", "q": "nangang", "date": "2026-10-12", "what": "人走的网：陆地+港墙顶，水里不能走", "machine": "pass", "owner": "再来", "issue": "还有人在海里走（底账的岸和画上的岸对不上）；船太快", "check": "check_fleet.js 人只走底账和画都是陆地的格子、船速上限", "script": "tools/cs/check_fleet.js"}, {"v": "cs9", "q": "nangang", "date": "2026-10-12", "what": "人走的网同时服从底账和画；船按水路长短慢慢进港", "machine": "pass", "owner": "再来", "issue": "街上的人还在海里走：city.json 的路是别的街区抄来的", "check": "check_fleet.js 街的每个点都在人走的网上", "script": "tools/cs/check_fleet.js"}, {"v": "cs10", "q": "nangang", "date": "2026-10-12", "what": "街从底账长、切掉水里的几截；街上的人和摊子不下水", "machine": "pass", "owner": "待评"}, {"v": "cs11", "q": "nangang", "date": "2026-10-12", "what": "街上的人（520）和摊子（420）全街走一遍，偏到水里就回街心", "machine": "pass", "owner": "待评"}, {"v": "cs12", "q": "nangang", "date": "2026-10-12", "what": "画上的宽街补进人走的街网：街上的人和摊子沿宽街也有", "machine": "pass", "owner": "待评"}, {"v": "cs13", "q": "nangang", "date": "2026-10-12", "what": "画上的栈桥并进人走的网（人走得上栈桥）", "machine": "pass", "owner": "待评"}, {"v": "cs14", "q": "nangang", "date": "2026-10-12", "what": "港口的口子按画上围墙的缺口定；两艘船开进港里", "machine": "pass", "owner": "待评"}, {"v": "cs15", "q": "nangang", "date": "2026-10-12", "what": "大船进港最后一段匀减速、船的真实速度不过 450；散场分三拨（16.8 / 17.3 / 17.8 点）", "machine": "pass", "owner": "待评"}, {"v": "cs16", "q": "nangang", "date": "2026-10-12", "what": "会动的东西登记册：炊烟、工地上的人、面包房炉烟不再落在水里；每种会动的东西都有在水/在陆检查", "machine": "pass", "owner": "待评"}, {"v": "cs17", "q": "nangang", "date": "2026-10-12", "what": "画上的栈桥尖端和半腰有人站（5 个站位）；栈桥上的人扛包不跨水", "machine": "pass", "owner": "待评"}, {"v": "cs18", "q": "nangang", "date": "2026-10-12", "what": "每座栈桥都有人（站位每个至少 2 人，沿栈桥走过去）", "machine": "pass", "owner": "待评"}]}
+{
+ "说明": "所有者的评语账。machine = 交付时机器验收结果；owner = 留 / 再来 / 待评；再来且 machine=pass 就是一次「假成功」，必须写 check：从那次假成功长出来的检查项名字（accept.py 里 rec 的名字，或独立检查脚本）。",
+ "verdicts": [
+  {
+   "v": "cs1",
+   "q": "xerolophos",
+   "date": "2026-10-12",
+   "what": "敲门问话",
+   "machine": "pass",
+   "owner": "留"
+  },
+  {
+   "v": "cs2",
+   "q": "xerolophos",
+   "date": "2026-10-12",
+   "what": "跟一个人过一生、跨户婚姻",
+   "machine": "pass",
+   "owner": "再来",
+   "issue": "想法留，但露得太多",
+   "check": "敲门卡一眼只露一件事",
+   "script": "tools/cs/check_card.js"
+  },
+  {
+   "v": "cs3",
+   "q": "xerolophos",
+   "date": "2026-10-12",
+   "what": "收紧的卡片：一句现在、一个钩子、后来呢",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs4",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "生产线第一个街区：南港",
+   "machine": "pass",
+   "owner": "留"
+  },
+  {
+   "v": "cs5",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "粮脉（按钮 + 金线流程图）",
+   "machine": "pass",
+   "owner": "再来",
+   "issue": "看不懂要干嘛；脉应该是地下管线，不该浮上来让人看",
+   "check": "脉不露面"
+  },
+  {
+   "v": "cs6",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "粮船日",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs7",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "打通：心跳位置从底账算 + 画照配方局部重铺",
+   "machine": "pass",
+   "owner": "再来",
+   "issue": "人从海里走过去：码头人群走直线，水和船对人没有约束",
+   "check": "check_fleet.js 人不下水、船不上岸",
+   "script": "tools/cs/check_fleet.js"
+  },
+  {
+   "v": "cs8",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "人走的网：陆地+港墙顶，水里不能走",
+   "machine": "pass",
+   "owner": "再来",
+   "issue": "还有人在海里走（底账的岸和画上的岸对不上）；船太快",
+   "check": "check_fleet.js 人只走底账和画都是陆地的格子、船速上限",
+   "script": "tools/cs/check_fleet.js"
+  },
+  {
+   "v": "cs9",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "人走的网同时服从底账和画；船按水路长短慢慢进港",
+   "machine": "pass",
+   "owner": "再来",
+   "issue": "街上的人还在海里走：city.json 的路是别的街区抄来的",
+   "check": "check_fleet.js 街的每个点都在人走的网上",
+   "script": "tools/cs/check_fleet.js"
+  },
+  {
+   "v": "cs10",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "街从底账长、切掉水里的几截；街上的人和摊子不下水",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs11",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "街上的人（520）和摊子（420）全街走一遍，偏到水里就回街心",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs12",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "画上的宽街补进人走的街网：街上的人和摊子沿宽街也有",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs13",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "画上的栈桥并进人走的网（人走得上栈桥）",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs14",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "港口的口子按画上围墙的缺口定；两艘船开进港里",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs15",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "大船进港最后一段匀减速、船的真实速度不过 450；散场分三拨（16.8 / 17.3 / 17.8 点）",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs16",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "会动的东西登记册：炊烟、工地上的人、面包房炉烟不再落在水里；每种会动的东西都有在水/在陆检查",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs17",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "画上的栈桥尖端和半腰有人站（5 个站位）；栈桥上的人扛包不跨水",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs18",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "每座栈桥都有人（站位每个至少 2 人，沿栈桥走过去）",
+   "machine": "pass",
+   "owner": "待评"
+  },
+  {
+   "v": "cs19",
+   "q": "nangang",
+   "date": "2026-10-12",
+   "what": "工厂定律 laws.py + 查收图 review.py；剔掉被当成栈桥的船",
+   "machine": "pass",
+   "owner": "待评"
+  }
+ ]
+}

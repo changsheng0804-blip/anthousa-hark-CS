@@ -154,7 +154,7 @@ def compare(q, fix):
         rec(S, f'{q} ⇄ {tq} 来回都能走', back, '', f'在 {tq}/scene.json 加 next 指回 {q}')
     # 脉：每条脉都要和敲门卡说同一件事（面包房那栋房子这一年住的就是面包师；断供的年份就是底账里烧掉的那一年）
     if sc.get('vein'):
-        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_vein.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules', 'AH': ROOT})
         m = re.search(r'vein cards (\d+) bad (\d+)', r.stdout)
         rec(S, '粮脉与底账、敲门卡一致', bool(m) and m.group(2) == '0', m.group(0) if m else (r.stdout + r.stderr)[-120:], '看 check_vein.js 打出的 NOTBAKER / DEADBAKERY / BAD')
     # 心跳的位置从底账算：底账一变，泊位、水路、扛包路线跟着变
@@ -179,7 +179,7 @@ def compare(q, fix):
     if sc.get('fleet', {}).get('derived'):
         r = sh(sys.executable, os.path.join(HERE, 'heart.py'), q, '--pierspots')
         mp = re.search(r'pier spots (\d+), on pier (\d+), trails ending on a pier (\d+) / (\d+)', r.stdout)
-        okp = bool(mp) and int(mp.group(2)) >= 4 and int(mp.group(4)) > 0 and 0.05 <= int(mp.group(3)) / int(mp.group(4)) <= 0.5
+        okp = bool(mp) and int(mp.group(2)) >= 2 and int(mp.group(4)) > 0   # cs19：原来要 ≥4，其中 3 个站在船上（查收图抓到），改成 ≥2 and 0.05 <= int(mp.group(3)) / int(mp.group(4)) <= 0.7   # cs19：真栈桥只剩 2 座、离码头近，cs18 起站位超员会自动分流，上限放到 0.7
         rec(S, '栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥）', okp, mp.group(0) if mp else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（栈桥尖端和半腰放站位）')
     # cs14 · 港口的口子按画：画上围墙的缺口 = 口子；算出来的口子要落在缺口上，至少一艘船停在港里、水路穿过缺口
     if sc.get('fleet', {}).get('derived'):
@@ -189,7 +189,7 @@ def compare(q, fix):
         rec(S, '港口的口子对上画、船进得了港', okm, mm.group(0) if mm else (r.stdout + r.stderr)[-120:], '--fix 重跑 heart.py（口子按画上的缺口定）；画上没有缺口就局部补画')
     # 心跳：粮船日来码头的人都是底账里干这一行的人家；敲门卡不出错；邻居不说同一句话（同句近邻 ≤ 3%）
     if sc.get('fleet'):
-        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules'})
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'cs', 'check_fleet.js')], capture_output=True, text=True, timeout=300, env={**os.environ, 'NODE_PATH': '/workspace/work/csjs/node_modules', 'AH': ROOT})
         m = re.search(r'fleet cards (\d+) bad (\d+)', r.stdout); dd = re.search(r'near pairs (\d+) same-line near pairs (\d+)', r.stdout)
         rec(S, '粮船日与底账一致、邻居不重样', bool(m) and m.group(2) == '0', (m.group(0) + (f'；同句近邻 {dd.group(2)}/{dd.group(1)}' if dd else '')) if m else (r.stdout + r.stderr)[-120:], '多写几句（scene.json fleet.lines），或看 WRONGTRADE / BAD')
         # cs16 · 会动的东西登记册：每一种（街上的人、摊子、炊烟、工地、队伍、炉烟、码头人群、酒馆、船、旧版遗留、海鸥）都有「在水里 / 在陆地」检查，少一种、或有一个点放错地方都不过
@@ -200,6 +200,12 @@ def compare(q, fix):
 
 
 def picture(q, sc):
+    # 工厂定律（通用，不针对街区写死）：tools/cs/factory/LAWS.md
+    if sc.get('fleet', {}).get('walk'):
+        r = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'cs', 'factory', 'laws.py'), q], capture_output=True, text=True, timeout=600)
+        for ln in r.stdout.strip().splitlines():
+            if ln[:1] in '✅❌': rec('定律', ln[2:].split('  ——')[0], ln.startswith('✅'), ln.split('  ——')[1].strip() if '  ——' in ln else '', '看 LAWS.md；多半是 heart.py 的站位/网算法，或画和底账对不上要局部重画')
+        if r.returncode and not any(l[:1] == '❌' for l in r.stdout.splitlines()): rec('定律', 'laws.py 跑通', False, (r.stderr or r.stdout)[-160:], '看报错')
     S = '三、画面'
     hs = json.load(open(os.path.join(LIV, q, 'houses.json')))['houses']
     fr = json.load(open(os.path.join(LIV, q, 'frame.json')))

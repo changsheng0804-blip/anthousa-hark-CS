@@ -48,10 +48,10 @@ def cell_frac(mk):                        # 和 heart.py 的 pool 完全同一�
 
 
 ledger_water = cell_frac(~landm) > 0.5
-paint_water = cell_frac(pw) > 0.5
+paint_water = cell_frac(pw) > 0.6
 # 定律一 a：能走的格不许在画上的水里
 a = int((walk & paint_water).sum())
-res.append(('定律一 · 站得住：能走的格不在画上的水里', a == 0, f'{a} 格能走却画成了水'))
+res.append(('定律一 · 站得住：能走的格不在画上的水里（一格里画成水的不超过六成）', a == 0, f'{a} 格能走却画成了水'))
 # 定律一 b：在底账水里的能走格（=画上的栈桥）必须窄
 over = walk & ledger_water & ~(cell_frac(M['wall']) > 0.05)   # 底账里的港墙、码头本来就能走
 dt = ndi.distance_transform_edt(over) * R
