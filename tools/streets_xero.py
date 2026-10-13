@@ -210,6 +210,44 @@ for s in streets:
     rd.line([tuple(p) for p in s['pts']], fill=255, width=int(s['w'] + 3), joint='curve')
 road = np.asarray(road) > 0
 lotmap = np.zeros((H, W), bool)
+# ---- districts (街区): the ground the full street network encloses, each with a character that decides how its lots are cut
+sys.path.insert(0, '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/gen')
+import cv2
+from scipy import ndimage
+import district_rules as DR
+SCD = 0.5; wd_, hd_ = int(W * SCD), int(H * SCD)
+dm = np.zeros((hd_, wd_), np.uint8); mainm = np.zeros_like(dm)
+_ys = np.arange(hd_)[:, None] / SCD; _xs = np.arange(wd_)[None, :] / SCD
+dm[_xs < wall_x(_ys) + 6] = 1
+cv2.line(dm, (int(DR.AQ[0][0] * SCD), int(DR.AQ[0][1] * SCD)), (int(DR.AQ[1][0] * SCD), int(DR.AQ[1][1] * SCD)), 1, 6)
+_bx, _by = LM['baths_constantius']['xy']; cv2.circle(dm, (int(_bx * SCD), int(_by * SCD)), int(46 * SCD), 1, -1)
+for _z in DR.CIST.values(): cv2.fillPoly(dm, [np.int32([[q[0] * SCD, q[1] * SCD] for q in _z['p']])], 1)
+for s in streets:
+    _p = np.int32([[q[0] * SCD, q[1] * SCD] for q in s['pts']])
+    cv2.polylines(dm, [_p], False, 1, max(1, int(round(s['w'] * SCD))))
+    if s['kind'] == 'main': cv2.polylines(mainm, [_p], False, 1, max(1, int(round(s['w'] * SCD)) + 2))
+DLAB, _nd = ndimage.label(dm == 0)
+_cnt = {}
+for h in houses:
+    _cx = sum(h[4][0::2]) / 4; _cy = sum(h[4][1::2]) / 4
+    if 0 <= _cx < W and 0 <= _cy < H: _L = DLAB[int(_cy * SCD), int(_cx * SCD)]; _cnt[_L] = _cnt.get(_L, 0) + 1
+DFN = {0: 'homes'}
+_objs = ndimage.find_objects(DLAB)
+for _L in range(1, _nd + 1):
+    _sl = _objs[_L - 1]
+    _y0, _y1 = max(0, _sl[0].start - 3), min(hd_, _sl[0].stop + 3); _x0, _x1 = max(0, _sl[1].start - 3), min(wd_, _sl[1].stop + 3)
+    _c = DLAB[_y0:_y1, _x0:_x1] == _L
+    _area = _c.sum() / SCD / SCD
+    if _area > 70000: DFN[_L] = 'homes'; continue
+    _yy, _xx = np.nonzero(_c)
+    _ring = cv2.dilate(_c.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & ~_c
+    _front = (_ring & mainm[_y0:_y1, _x0:_x1].astype(bool)).sum() / max(1, _ring.sum())
+    DFN[_L] = DR.classify((_xx.mean() + _x0) / SCD, (_yy.mean() + _y0) / SCD, _area, _front, _cnt.get(_L, 0) / _area)
+def district(x, y):
+    if not (0 <= x < W and 0 <= y < H): return 'homes'
+    return DFN.get(int(DLAB[int(y * SCD), int(x * SCD)]), 'homes')
+from collections import Counter as _C
+print('districts', _nd, _C(DFN.values()).most_common(), file=sys.stderr)
 
 def rect(cx, cy, ux, uy, a, b):  # center, unit along-street, half sizes
     vx, vy = -uy, ux
@@ -245,17 +283,25 @@ for si in order:
             t = random.uniform(0, 4)
             while t < L:
                 kd = s['kind']
-                shop = kd == 'main' or (kd == 'street' and random.random() < 0.3)
-                if shop: wid = random.uniform(10.5, 13); dep = random.uniform(13, 16)
-                else: wid = random.uniform(11, 17); dep = random.uniform(9, 14)
+                _pr = s['w'] / 2 + 9
+                dfn = district(ax + ux * (t + 5) - uy * _pr * side, ay + uy * (t + 5) + ux * _pr * side)
+                LR = DR.LOTS.get(dfn)
+                if LR:
+                    shop = random.random() < LR['shop'] or (kd == 'main' and dfn != 'fine')
+                    wid = random.uniform(*LR['wid']); dep = random.uniform(*LR['dep'])
+                else:
+                    shop = kd == 'main' or (kd == 'street' and random.random() < 0.3)
+                    if shop: wid = random.uniform(10.5, 13); dep = random.uniform(13, 16)
+                    else: wid = random.uniform(11, 17); dep = random.uniform(9, 14)
                 off = s['w'] / 2 + 3 + dep / 2
                 cx = ax + ux * (t + wid / 2) - uy * off * side; cy = ay + uy * (t + wid / 2) + ux * off * side
                 lot = try_lot(rect(cx, cy, ux, uy, wid / 2, dep / 2), 0, s['kind'], si)
-                if lot: lot['t'] = 1 if shop else 0; lot['door'] = side; lot['fx'] = 1 if (uy * side) < -0.15 else 0; lots.append(lot)
-                t += wid + (random.uniform(0.2, 0.6) if shop else random.uniform(0.8, 2.6))
+                if lot: lot['t'] = 1 if shop else 0; lot['door'] = side; lot['fx'] = 1 if (uy * side) < -0.15 else 0; lot['f'] = dfn; lots.append(lot)
+                t += wid + (random.uniform(*LR['gap']) if LR else random.uniform(0.2, 0.6) if shop else random.uniform(0.8, 2.6))
 front = len(lots)
 # rear row (houses reached through yards): fills capacity behind the street fronts
 for L0 in list(lots[:front]):
+    if not DR.LOTS.get(L0['f'], {'rear': True})['rear']: continue
     p = L0['p']; cx, cy = L0['cx'], L0['cy']
     s = streets[L0['si']]
     # vector from street to lot = perpendicular; approximate via first edge
@@ -267,7 +313,7 @@ for L0 in list(lots[:front]):
         # pick the direction pointing away from the street: the lot must not be nearer the street
         if road[int(min(H - 1, max(0, ny))), int(min(W - 1, max(0, nx)))]: continue
         lot = try_lot(rect(nx, ny, ux, uy, el / 2 - 0.5, dep / 2), 1, 'rear', L0['si'])
-        if lot: lot['t'] = 0; lot['fx'] = 1 - L0['fx']; lots.append(lot); break
+        if lot: lot['t'] = 0; lot['fx'] = 1 - L0['fx']; lot['f'] = L0['f']; lots.append(lot); break
 print('streets', len(streets), 'front lots', front, 'rear', len(lots) - front, file=sys.stderr)
 
 # ---------------- assign houses ----------------
@@ -651,6 +697,50 @@ def track_ok(q, a, b):
                 if pip(q[0], q[1], vol) or pip(q[2], q[3], vol): return h
                 if min(_segseg(vol[k], vol[(k + 1) % len(vol)], (q[0], q[1]), (q[2], q[3])) for k in range(len(vol))) < q[4] / 2 + 0.8: return h
     return None
+# ---- fix K: after houses settled, no stretch of road is ever cut off in any year: an island gets a short lane
+# to the nearest connected road (only where no house ever stands on it from then on)
+def _vis(q, Y): return q[6] <= Y and not (len(q) > 8 and q[8] and q[8] <= Y)
+def _edge(q): return min(q[0], q[2], q[1], q[3]) < 4 or max(q[0], q[2]) > W - 4 or max(q[1], q[3]) > H - 4
+kfix = kfail = 0
+for Y in range(1, 61):
+    vs = [i for i, q in enumerate(outS) if _vis(q, Y)]
+    g_ = {}
+    for i in vs:
+        q = outS[i]; g_.setdefault((int((q[0] + q[2]) / 2 // 30), int((q[1] + q[3]) / 2 // 30)), []).append(i)
+    par = {i: i for i in vs}
+    def fd(i):
+        while par[i] != i: par[i] = par[par[i]]; i = par[i]
+        return i
+    for i in vs:
+        q = outS[i]
+        for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+            for ix in (int(ex // 30) - 1, int(ex // 30), int(ex // 30) + 1):
+                for iy in (int(ey // 30) - 1, int(ey // 30), int(ey // 30) + 1):
+                    for j in g_.get((ix, iy), []):
+                        if j != i and _sd(ex, ey, (outS[j][0], outS[j][1]), (outS[j][2], outS[j][3]))[0] <= outS[j][4] / 2 + 2: par[fd(i)] = fd(j)
+    good = {fd(i) for i in vs if outS[i][5] == 'm' or _edge(outS[i])}
+    comps = {}
+    for i in vs:
+        r_ = fd(i)
+        if r_ not in good: comps.setdefault(r_, []).append(i)
+    for r_, isl in comps.items():
+        iss = set(isl); cands = []
+        for a_ in isl:
+            q = outS[a_]
+            for ex, ey in ((q[0], q[1]), (q[2], q[3])):
+                for ix in range(int(ex // 30) - 2, int(ex // 30) + 3):
+                    for iy in range(int(ey // 30) - 2, int(ey // 30) + 3):
+                        for j in g_.get((ix, iy), []):
+                            if j in iss or fd(j) not in good: continue
+                            dd, pq_ = _sd(ex, ey, (outS[j][0], outS[j][1]), (outS[j][2], outS[j][3]))
+                            if dd < 60: cands.append((dd, ex, ey, pq_))
+        done_ = False
+        for dd, ex, ey, (px, py) in sorted(cands)[:12]:
+            st_ = [round(ex, 1), round(ey, 1), round(px, 1), round(py, 1), 4, 'l', Y, -2]
+            if nobuild((ex + px) / 2, (ey + py) / 2) or track_ok(st_, Y, 9999): continue
+            outS.append(st_); kfix += 1; done_ = True; break
+        if not done_: kfail += 1
+print('fixK islands joined', kfix, 'could not', kfail, file=sys.stderr)
 ntr = 0
 for q in outS:
     while len(q) < 10: q.append(0)
@@ -698,6 +788,13 @@ for x, y in jc:
     JU.append([round(x), round(y), yy, kind])
 json.dump(JU, open(X + 'junctions.json', 'w'))
 print('junctions', len(JU), file=sys.stderr)
+# each house takes the character of the district its lot was cut for (the new quarter only after the fire)
+for h in newH:
+    while len(h) < 8: h.append(4)
+    f = lots[assigned[h[0]]].get('f', 'homes') if h[0] in assigned else 'homes'
+    if f == 'planned' and h[2] < 48: f = 'homes'
+    h[8:] = [f]
+print('houses by district', _C(h[8] for h in newH).most_common(), file=sys.stderr)
 D2 = dict(D); D2['houses'] = newH
 json.dump(D2, open(X + 'houses.json', 'w'), separators=(',', ':'))
 json.dump(outS, open(X + 'streets.json', 'w'), separators=(',', ':'))
