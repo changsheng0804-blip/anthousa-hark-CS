@@ -187,6 +187,12 @@ def compare(q, fix):
             r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
             if r.returncode and FIX: sh(sys.executable, os.path.join(HERE, 'districts.py'), q); sh(sys.executable, os.path.join(HERE, 'blocks.py'), q); r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_zones.py'), q)
         rec(S, '分区从底账推出来（港边货栈、粮仓仓场、临街铺面……）', r.returncode == 0, (r.stdout + r.stderr).strip()[-140:], '--fix 跑 districts.py')
+    # cs31 · 全城一张街网：街区只裁窗口（tools/cs/factory/CITY_RULES.md）
+    if sc.get('street_layout'):
+        r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_citynet.py'), q)
+        for ln in r.stdout.strip().splitlines():
+            if ln[:1] in '✅❌': rec(S, ln[2:].split('  ——')[0], ln.startswith('✅'), ln.split('  ——')[1].strip() if '  ——' in ln else '', '改全城规则 city_streets.py（不许改某个街区），再重跑 streets_ng.py')
+        if r.returncode and not any(l[:1] == '❌' for l in r.stdout.splitlines()): rec(S, 'check_citynet 跑通', False, (r.stderr or r.stdout)[-160:], '看报错')
     # cs24 · 码头逐年长：没建成的栈桥每个年代都有补丁，盖住栈桥和归它的船
     if sc.get('fleet', {}).get('docks'):
         r = sh(sys.executable, os.path.join(ROOT, 'tools', 'cs', 'check_dockpatch.py'), q)

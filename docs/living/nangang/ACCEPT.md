@@ -1,6 +1,6 @@
 # nangang 验收
 
-通过 64 / 64
+通过 69 / 69
 
 
 ## 一、拉取
@@ -32,12 +32,17 @@
 - ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page nangang years 40:3226/3226 50:4201/4201 60:4679/4679 errors 0
 - ✅ 心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街） —— heart.py 从底账算（建城 60 年的陆地、港口、粮仓 horrea_theodosius、路、房子）
-- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5206 unplaced 1 streets 5021 in water 0 on piers 0 street segs in water 2 halls 40/50/60 [21, 35, 82] labels 60 15 ok
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5206 unplaced 1 streets 4931 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [15, 38, 76] labels 60 18 ok
+- ✅ 一张网：街区的街都从全城街网裁下来 —— 797/800 段在全城网上
+- ✅ 顺着大道：近大道的街和大道平行或垂直 —— 386/415
+- ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
+- ✅ 同分布：框里街的疏密和全城一样（随密度，不随街区） —— 框里 0.238 / 全城 0.230 = 1.03
+- ✅ 接缝：全城网出框的地方，街区的街接得上 —— 53/55 没接上 [(1820, 293), (1351, 0)]
 - ✅ 没建成的栈桥都盖住了（连同靠在边上的画上的船） —— dock patches 8 / 8, uncovered cells 0
 - ✅ 画上的栈桥人走得上去 —— piers walkable 1065 / 1072
 - ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 8, on pier 8, trails ending on a pier 1567 / 2683
 - ✅ 港口的口子对上画、船进得了港 —— gates on mouth 2 / 2, ships inside 2, ships entering via mouth 2
-- ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1481 bad 0；同句近邻 697/89488
+- ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1467 bad 0；同句近邻 681/91880
 - ✅ 每种会动的东西都登记并在该在的地方 —— movers 15 kinds; missing none ; off-domain {} ;
 
 ## 定律

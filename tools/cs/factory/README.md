@@ -97,3 +97,9 @@
 - repaint.py 新增两步：底账陆地成片画成水 → 铺本画沙色；沙色校到 east_af30 的沙色（nangang 的配方 palette:false，原画不动）。
 - streets_ng / ground_ng / laws / check_streets 不再要求 scene.fleet：没港就用 scene.walk；长街方向默认顺岸线；底账市场四周的地块是 market。
 - 第一块：金角岸 jinjiao（框 440,210），中途零手写坐标；唯一的人工是 60 年第一张画沙地太橙，critic 判不过，多画两张候选后工厂自己挑中 m3。
+
+## 第十二段：全城一张街网（cs31 起，所有者定的原则）
+街区将来要拼成一座城，基础设施不许各自为政。规则分层、只读上层，见 CITY_RULES.md。
+- `python city_streets.py`：按底账（大道、城墙、岸、坡、旧区）给整座城长街，写 city/streets.json。底账或规则一变，streets_ng.py 会自动先重跑它。
+- streets_ng.py 不再自己长街，只把全城网裁到框里；配方里不许写街网参数。
+- 改街网只能改 city_streets.py 的参数表 P（全城一张），不许为某个街区加例外。

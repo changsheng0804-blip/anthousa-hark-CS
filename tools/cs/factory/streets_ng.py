@@ -75,73 +75,22 @@ for _x, _y in _BURNT: _BG.setdefault((int(_x // 30), int(_y // 30)), 1)
 def old(x, y):
     if (int(x // 30), int(y // 30)) in _BG: return 0.0   # 48 年火烧地，烧后按新街坊直着重排   # burnt ground re-laid as a planned grid after 48
     return max(0.0, min(1.0, (38 - age(x, y)) / 28))
-def _shore_dir():
-    sh = _wat ^ _ndi.binary_erosion(_wat); sh[0, :] = sh[-1, :] = sh[:, 0] = sh[:, -1] = False
-    ys, xs = np.nonzero(sh)
-    if len(xs) > 40:
-        P_ = np.c_[xs, ys].astype(float) * _R; c_ = P_.mean(0); u_, s_, vt = np.linalg.svd(P_ - c_, full_matrices=False); v_ = vt[0]
-    else:
-        rr = max(city['roads'] or [{'pts': [[0, 645], [1819, 560]]}], key=lambda r: math.hypot(r['pts'][-1][0] - r['pts'][0][0], r['pts'][-1][1] - r['pts'][0][1]))['pts']
-        v_ = np.array([rr[-1][0] - rr[0][0], rr[-1][1] - rr[0][1]], float); v_ /= np.linalg.norm(v_) or 1
-    if v_[0] < 0: v_ = -v_
-    return [[0, 1000], [float(1000 * v_[0]), float(1000 + 1000 * v_[1])]]
 # ---------------- streets ----------------
 streets = []  # dict(w, kind, pts)
 for r in city['roads']:
     streets.append(dict(w=15, kind='main', pts=[list(map(float, p)) for p in r['pts']]))
-_wd = SCN.get('wide_street') or _shore_dir()   # 工厂：没写大道的街区，长街顺着岸线（没有岸就顺着最长的路）
-d = np.array([_wd[-1][0] - _wd[0][0], _wd[-1][1] - _wd[0][1]], float); d /= np.linalg.norm(d); n = np.array([d[1], -d[0]])   # 长街顺着大道（大致顺港岸）
-if n[0] < 0: n = -n
-corners = [(0, 0), (W, 0), (0, H), (W, H)]
-us = [np.dot(c, n) for c in corners]; vs = [np.dot(c, d) for c in corners]
-umin, umax, vmin, vmax = min(us), max(us), min(vs), max(vs)
-def P(u, v): return (n * u + d * v).tolist()
-# long streets (parallel to the wall), alternating street / lane
-longs = []
-u = umin + 40; i = 0
-while u < umax:
-    w = 8 if i % 2 == 0 else 5
-    ph = random.random() * 6.28; amp = random.uniform(3, 9)
-    ph2, ph3 = random.random() * 6.28, random.random() * 6.28
-    pts = []
-    for v in np.arange(vmin, vmax + 1, 15):
-        bx, by = P(u + amp * math.sin(v / 210 + ph), v); o = old(bx, by)
-        pts.append(P(u + amp * math.sin(v / 210 + ph) * (1 - 0.8 * (o == 0)) + o * (14 * math.sin(v / 60 + ph2) + 7 * math.sin(v / 23 + ph3)), v))
-    longs.append((u, w, pts, ph, amp)); u += random.uniform(64, 82); i += 1
-def ulong(L, v): u, w, pts, ph, amp = L; return u + amp * math.sin(v / 210 + ph)
-# break long lanes randomly (dead ends) - lanes only
-for (u0, w, pts, ph, amp) in longs:
-    if w == 8:
-        streets.append(dict(w=w, kind='street', pts=pts))
-    else:
-        cur = []
-        for p in pts:
-            if random.random() < 0.025 + 0.09 * old(*p) and len(cur) > 6:
-                streets.append(dict(w=w, kind='lane', pts=cur)); cur = []
-                continue
-            cur.append(p)
-        if len(cur) > 1: streets.append(dict(w=w, kind='lane', pts=cur))
-# cross streets: pieces between consecutive long streets
-v = vmin + 60
-while v < vmax:
-    tilt = random.uniform(-0.12, 0.12)
-    for a, b in zip(longs[:-1], longs[1:]):
-        if random.random() < 0.72:
-            vv = v + tilt * a[0]
-            ua, ub = ulong(a, vv), ulong(b, vv + tilt * (b[0] - a[0]))
-            A_, B_ = P(ua, vv), P(ub, vv + tilt * (b[0] - a[0]))
-            o = old((A_[0] + B_[0]) / 2, (A_[1] + B_[1]) / 2)
-            if o < 0.15:   # planned: square to the long streets
-                vm = vv + tilt * (b[0] - a[0]) / 2; A_, B_ = P(ua, vm), P(ub, vm)
-                streets.append(dict(w=7, kind='cross', pts=[A_, B_]))
-            else:          # old: kinked alley, plus stray short alleys
-                km = random.uniform(-22, 22) * o
-                M_ = P((ua + ub) / 2 + random.uniform(-8, 8) * o, vv + tilt * (b[0] - a[0]) / 2 + km)
-                streets.append(dict(w=6 - 2 * o, kind='cross', pts=[A_, M_, B_]))
-                if random.random() < 0.8 * o:
-                    v2 = vv + random.uniform(40, 100); u2 = ua + random.uniform(10, 25)
-                    streets.append(dict(w=4, kind='lane', pts=[P(ulong(a, v2), v2), P(u2 + random.uniform(15, 30), v2 + random.uniform(-25, 25)), P(u2 + random.uniform(30, 45), v2 + random.uniform(-30, 30))]))
-    v += random.uniform(130, 175)
+# cs31：街不再在街区里各长各的。全城一张网（city_streets.py，世界坐标），这里只裁窗口。
+_CSP = os.path.join(HERE, 'city', 'streets.json')
+if not os.path.exists(_CSP) or os.path.getmtime(_CSP) < os.path.getmtime(os.path.join(ROOT, 'world.json')) or os.path.getmtime(_CSP) < os.path.getmtime(os.path.join(HERE, 'city_streets.py')):
+    import subprocess; subprocess.run([sys.executable, os.path.join(HERE, 'city_streets.py')], check=True)   # 底账或全城规则变了：全城网先重长
+_CS = json.load(open(_CSP))
+_FR0 = json.load(open(X + 'frame.json')); _fx, _fy = _FR0['frame'][0], _FR0['frame'][1]; _fs = _FR0['scale']
+_KW = {'street': 8, 'lane': 5}
+for c_ in _CS['streets']:
+    pts = [[(x - _fx) * _fs, (y - _fy) * _fs] for x, y in c_['pts']]
+    if not any(-60 < x < W + 60 and -60 < y < H + 60 for x, y in pts): continue
+    w_ = _KW.get(c_['kind']) or (7 if c_['old'] < 0.15 else 6 - 2 * c_['old'])
+    streets.append(dict(w=w_, kind=c_['kind'], pts=pts))
 
 # clip streets to interior
 def clip(st):
