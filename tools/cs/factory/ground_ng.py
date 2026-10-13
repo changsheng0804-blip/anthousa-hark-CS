@@ -11,15 +11,18 @@ sc = json.load(open(Q + 'scene.json')); OLD = json.load(open(Q + 'houses.json'))
 late = OLD['late']
 WK = sc['fleet']['walk']; wat = np.array([c == 'w' for c in WK['quay']]).reshape(WK['H'], WK['W'])
 watI = Image.fromarray(wat.astype(np.uint8) * 255).resize((W, H), Image.NEAREST).filter(ImageFilter.MaxFilter(9))
-lmI = Image.new('L', (W, H), 0); dl = ImageDraw.Draw(lmI)
-for k, v in late.items():
-    p = v['p']; cx = sum(x for x, _ in p) / len(p); cy = sum(y for _, y in p) / len(p); dl.polygon([(cx + (x - cx) * 1.08, cy + (y - cy) * 1.08) for x, y in p], fill=255)
-keep = np.maximum(np.asarray(watI), np.asarray(lmI)) > 0      # 水、地标不抹
+def keep_at(K):   # 水、这一年已经盖起来的地标不抹（还没盖的地标地皮上画的是旧房子，照样抹）
+    lmI = Image.new('L', (W, H), 0); dl = ImageDraw.Draw(lmI)
+    for k, v in late.items():
+        if v['built'] > K: continue
+        p = v['p']; cx = sum(x for x, _ in p) / len(p); cy = sum(y for _, y in p) / len(p); dl.polygon([(cx + (x - cx) * 1.08, cy + (y - cy) * 1.08) for x, y in p], fill=255)
+    return np.maximum(np.asarray(watI), np.asarray(lmI)) > 0
+keep = keep_at(0)
 gt = Image.open(Q + 'kits/hill/ground.webp').convert('RGB').resize((48, 48), Image.LANCZOS)
 # 三张画的地面颜色不一样（50 年那张偏暗），统一用一种沙色、一张纹理，免得换年代时地面跳色
 SAND = None
-for K, f, _ in sc['keys']:
-    A = Image.open(Q + f).convert('RGB').resize((W, H)); a = np.asarray(A).astype(float)
+for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:   # ground_0：第一张画把地标也抹掉，给最早那些年用
+    A = Image.open(Q + f).convert('RGB').resize((W, H)); a = np.asarray(A).astype(float); keep = keep_at(K)
     if SAND is None:
         land = a[~keep]; land = land[(land[:, 0] - land[:, 2] < 70) & (land.sum(1) > 420)]; SAND = np.median(land, 0)
     # 整片陆地铺成同一种沙地；留下水、地标、画上的绿（菜园、树）和火烧过的焦土

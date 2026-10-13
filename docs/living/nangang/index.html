@@ -171,7 +171,7 @@ function todayFor(F,Y,per,id){const r=rng(hash(id+':'+Y+':'+per));if(SCENE.id!==
  if(per==='evening'&&F.faith==='尼西亚派'&&Y>=49)a.push('去阿纳斯塔西娅听格里高利讲道');if(per==='day'&&Y>=25)a.push('下午挤进竞技场喊破了嗓子');return pick(r,a)}
 const IM={};const loadIm=f=>{if(!IM[f]){IM[f]=new Image();IM[f].src=f}return IM[f]};
 SCENE.keys.forEach(k=>{loadIm(k[1]);loadIm(k[2])});
-const GRDF=SCENE.street_layout?SCENE.keys.map(k=>SCENE.street_layout.ground.replace('{K}',k[0])):null;if(GRDF)GRDF.forEach(loadIm);   /* cs29 地面：画上底账原位置的小房子抹掉了 */
+const GRDF=SCENE.street_layout?SCENE.keys.map(k=>SCENE.street_layout.ground.replace('{K}',k[0])):null;if(GRDF){GRDF.forEach(loadIm);loadIm(SCENE.street_layout.ground.replace('{K}',0))}   /* cs29 地面：画上底账原位置的小房子抹掉了 */
 const daphImg=new Image(); daphImg.src='daphne.jpg';
 const theoImg=new Image(); theoImg.src='theodoros.jpg';
 await Promise.all([...Object.values(IM),pplImg,daphImg,theoImg].map(i=>i.decode().catch(()=>{})));
@@ -225,7 +225,7 @@ const base=document.createElement('canvas');base.width=W;base.height=H;const bct
 let baseYear=-1;
 function polyPath(ctx,p,s){let cx=0,cy=0;const n=p.length/2;for(let i=0;i<n;i++){cx+=p[2*i];cy+=p[2*i+1]}cx/=n;cy/=n;
   for(let i=0;i<n;i++){const x=cx+(p[2*i]-cx)*s,y=cy+(p[2*i+1]-cy)*s;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
-const KEYS=GRDF?SCENE.keys.map((k,i)=>[k[0],IM[GRDF[i]],i?IM[GRDF[i-1]]:IM[k[2]]]):SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
+const KEYS=GRDF?SCENE.keys.map((k,i)=>[k[0],IM[GRDF[i]],i?IM[GRDF[i-1]]:loadIm(SCENE.street_layout.ground.replace('{K}',0))]):SCENE.keys.map(k=>[k[0],IM[k[1]],IM[k[2]]]);
 const HG=SCENE.hgeom?await fetch(SCENE.hgeom).then(r=>r.json()).catch(()=>null):null;
 function keyFor(Y){for(const k of KEYS)if(Y<=k[0])return k;return KEYS[2]}
 const maskC=document.createElement('canvas');maskC.width=W/2;maskC.height=H/2;const mctx=maskC.getContext('2d');

@@ -3,7 +3,8 @@
 2 不下水、不上栈桥：房子中心不在水格里，不压在栈桥上；
 3 街不下水：街段中点在水里的 ≤ 1%；
 4 分区跟着地块：每户都有分区；40/50/60 年都有货栈长屋（hall）；60 年远看有码头货栈、仓场的街区名，民居不写；
-5 地面图每张关键年画都有。"""
+5 地面图每张关键年画都有；
+6 街上没地方、留在原处的 ≤ 5 户；地标盖起来以后，它的地皮上不再有人家、不再有街。"""
 import json, os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); q = sys.argv[1] if len(sys.argv) > 1 else 'nangang'
 Q = os.path.join(ROOT, 'docs', 'living', q) + '/'; sc = json.load(open(Q + 'scene.json')); SL = sc.get('street_layout')
@@ -38,7 +39,19 @@ L = sc.get('zone_labels') or {}; c60 = {c for _, _, c in L.get('60', [])}
 for c in ('dock', 'horrea'):
     if c not in c60: bad.append(f'60 年远看没有 {c} 的街区名')
 if any(c == 'homes' for _, _, c in sum(L.values(), [])): bad.append('民居也写了街区名')
-for k in sc['keys']:
+HD1 = json.load(open(Q + SL['houses'])); late = HD1['late']
+if len(HD1.get('unplaced', [])) > 5: bad.append(f"{len(HD1['unplaced'])} 户街上没地方")
+def pip(x, y, poly):
+    c = False; n = len(poly)
+    for i in range(n):
+        x1, y1 = poly[i]; x2, y2 = poly[(i + 1) % n]
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1 + 1e-9) + x1: c = not c
+    return c
+onlm = sum(1 for h in HS for k, v in late.items() if h[3] > v['built'] + 0 and h[3] > h[2] + 1 and pip(sum(h[4][0::2]) / 4, sum(h[4][1::2]) / 4, v['p']) and h[3] > v['built'])
+if onlm: bad.append(f'{onlm} 户在地标盖起来以后还住在它的地皮上')
+onst = sum(1 for q in ST for k, v in late.items() if (not q[7] or q[7] > v['built']) and pip((q[0] + q[2]) / 2, (q[1] + q[3]) / 2, v['p']))
+if onst: bad.append(f'{onst} 段街在地标盖起来以后还压在它上面')
+for k in [[0]] + sc['keys']:
     if not os.path.exists(Q + SL['ground'].replace('{K}', str(k[0]))): bad.append(f'缺 {k[0]} 年地面图')
-print('houses', len(L1), 'streets', len(ST), 'in water', nw, 'on piers', npier, 'street segs in water', sw, 'halls 40/50/60', list(hall.values()), 'labels 60', len(L.get('60', [])), ' '.join(bad) or 'ok')
+print('houses', len(L1), 'unplaced', len(HD1.get('unplaced', [])), 'streets', len(ST), 'in water', nw, 'on piers', npier, 'street segs in water', sw, 'halls 40/50/60', list(hall.values()), 'labels 60', len(L.get('60', [])), ' '.join(bad) or 'ok')
 sys.exit(1 if bad else 0)

@@ -49,7 +49,11 @@ _NBP = []
 for k, v in late.items():
     p = v['p']; cx = sum(q[0] for q in p) / len(p); cy = sum(q[1] for q in p) / len(p); _NBP.append([(cx + (q[0] - cx) * 1.15, cy + (q[1] - cy) * 1.15) for q in p])
 NB = []
+_NBP_CUT = [P for k, P in zip(late.keys(), _NBP) if not k.startswith('forum')]
 _PIERS = [r for d_ in SCN['fleet'].get('docks', []) for r in d_['rects']]
+def _nb_land(x, y):   # 只因为是地标才不准盖（不是水、不是栈桥）
+    if _dw(x, y) < 8: return False
+    return not any(r[0] - 10 <= x <= r[0] + r[2] + 10 and r[1] - 10 <= y <= r[1] + r[3] + 10 for r in _PIERS)
 def nobuild(x, y):
     if _dw(x, y) < 8: return True
     if any(r[0] - 10 <= x <= r[0] + r[2] + 10 and r[1] - 10 <= y <= r[1] + r[3] + 10 for r in _PIERS): return True   # 栈桥上不盖
@@ -147,7 +151,7 @@ def _cut_main(pts):
         R_ += [[a[0] + (b[0] - a[0]) * j / n_, a[1] + (b[1] - a[1]) * j / n_] for j in range(n_)]
     R_.append(list(pts[-1])); out = []; cur = []
     for p in R_:
-        if any(pip(p[0], p[1], P) for P in _NBP) or _dw(p[0], p[1]) < 4:
+        if any(pip(p[0], p[1], P) for P in _NBP_CUT) or _dw(p[0], p[1]) < 4:   # 主街到粮仓、水殿跟前停；广场（狄奥多西广场）大道照样穿过
             if len(cur) > 1: out.append(cur)
             cur = []
         else: cur.append(p)
@@ -320,7 +324,8 @@ def rect_mask(poly):
     return x0, y0, np.asarray(im).astype(bool)
 def try_lot(poly, rank, kind, si):
     cx = sum(p[0] for p in poly) / 4; cy = sum(p[1] for p in poly) / 4
-    if not interior(cx, cy, 22) or nobuild(cx, cy): return None
+    if not interior(cx, cy, 22): return None
+    if nobuild(cx, cy) and not (_nb_land(cx, cy) and zone_of(cx, cy)): return None   # 南港：地标的地皮上也切地块，只给地标盖起来以前就住在那里的人家（同一 zone 才能落）
     sh = [(cx + (x - cx) * 0.9, cy + (y - cy) * 0.9) for x, y in poly]
     rm = rect_mask(sh)
     if rm is None: return None
@@ -862,6 +867,10 @@ for _ in range(6):
     if not ch: break
 print('tracks leading their street', ntr, file=sys.stderr)
 json.dump({'si': [q[7] for q in outS if q[6] < 999], 'streets': [dict(k=st['kind'], w=st['w'], pts=[[round(c, 1) for c in p_] for p_ in st['pts']]) for st in streets]}, open(X + 'streets_meta.json', 'w'))
+for q in outS:   # 南港：地标盖起来那年，压在它地皮上的街巷收掉（广场自己就是路面；粮仓、水殿前的街本来就停在跟前）
+    for k, v in late.items():
+        if pip((q[0] + q[2]) / 2, (q[1] + q[3]) / 2, _NBP[list(late.keys()).index(k)]):
+            q[8] = min(q[8], v['built']) if q[8] else v['built']
 outS = [q[:7] + [q[8], q[9]] for q in outS if q[6] < 999]
 # junctions: where two different streets meet; wells, stalls, ovens grow there
 cell = {}
@@ -894,7 +903,7 @@ for h in newH:
     h[8:] = [f, typ, fr, si_, po_]
 print('houses by district', _C(h[8] for h in newH).most_common(), file=sys.stderr)
 print('houses by type', _C(h[9] for h in newH).most_common(), file=sys.stderr)
-D2 = dict(D); D2['houses'] = newH
+D2 = dict(D); D2['houses'] = newH; D2['unplaced'] = far   # 街上实在没地方、留在原处的户
 json.dump(D2, open(X + 'houses_street.json', 'w'), separators=(',', ':'))
 json.dump(outS, open(X + 'streets.json', 'w'), separators=(',', ':'))
 HT_.export(newH, X + 'houses_geom.json')

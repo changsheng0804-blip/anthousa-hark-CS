@@ -290,7 +290,7 @@ def sheet(q, sc):
 def live(q, sc):
     S = '四、线上'
     files = ['index.html', 'scene.json', 'city.json', 'houses.json'] + sorted({f for k in sc['keys'] for f in k[1:]})
-    if sc.get('street_layout'): SL_ = sc['street_layout']; files += [SL_['houses'], SL_['streets'], SL_['junctions'], SL_['hgeom']] + [SL_['ground'].replace('{K}', str(k[0])) for k in sc['keys']]   # cs29
+    if sc.get('street_layout'): SL_ = sc['street_layout']; files += [SL_['houses'], SL_['streets'], SL_['junctions'], SL_['hgeom']] + [SL_['ground'].replace('{K}', str(k[0])) for k in [[0]] + sc['keys']]   # cs29
     for f in files:
         loc = os.path.join(LIV, q, f)
         if not os.path.exists(loc):

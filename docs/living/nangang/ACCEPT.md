@@ -30,12 +30,12 @@
 - ✅ nangang ⇄ xerolophos 来回都能走
 - ✅ 粮脉与底账、敲门卡一致 —— vein cards 1103 bad 0
 - ✅ 心跳的位置和城里的街都是从底账算的（泊位、水路、扛包路线、街） —— heart.py 从底账算（建城 60 年的陆地、港口、粮仓 horrea_theodosius、路、房子）
-- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5206 streets 4997 in water 0 on piers 0 street segs in water 2 halls 40/50/60 [25, 35, 81] labels 60 17 ok
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5206 unplaced 1 streets 5021 in water 0 on piers 0 street segs in water 2 halls 40/50/60 [21, 35, 82] labels 60 15 ok
 - ✅ 没建成的栈桥都盖住了（连同靠在边上的画上的船） —— dock patches 8 / 8, uncovered cells 0
 - ✅ 画上的栈桥人走得上去 —— piers walkable 1065 / 1072
 - ✅ 栈桥上有人站（站位落在栈桥上、来码头的路有一部分终点在栈桥） —— pier spots 8, on pier 8, trails ending on a pier 1567 / 2683
 - ✅ 港口的口子对上画、船进得了港 —— gates on mouth 2 / 2, ships inside 2, ships entering via mouth 2
-- ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1467 bad 0；同句近邻 605/88928
+- ✅ 粮船日与底账一致、邻居不重样 —— fleet cards 1481 bad 0；同句近邻 697/89488
 - ✅ 每种会动的东西都登记并在该在的地方 —— movers 15 kinds; missing none ; off-domain {} ;
 
 ## 定律
@@ -68,7 +68,7 @@
 
 ## 五、假成功
 - ✅ 脉不露面 —— 页面上没有看脉的按钮或图层
-- ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28
+- ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29
 - ✅ cs2 的假成功已补成检查（想法留，但露得太多） —— 敲门卡一眼只露一件事
 - ✅ cs5 的假成功已补成检查（看不懂要干嘛；脉应该是地下管线，不该） —— 脉不露面
 - ✅ cs7 的假成功已补成检查（人从海里走过去：码头人群走直线，水和） —— check_fleet.js 人不下水、船不上岸
