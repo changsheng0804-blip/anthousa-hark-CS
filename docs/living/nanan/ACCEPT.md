@@ -1,6 +1,6 @@
 # nanan 验收
 
-通过 69 / 70
+通过 54 / 54
 
 
 ## 一、拉取
@@ -18,12 +18,12 @@
 - ✅ nanan ⇄ siqiu 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page nanan years 40:884/884 50:1415/1415 60:1534/1534 errors 0
-- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 1846 unplaced 0 streets 635 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 2 ok
-- ✅ 一张网：街区的街都从全城街网裁下来 —— 632/635 段在全城网上
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 1846 unplaced 0 streets 1542 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 2 ok
+- ✅ 一张网：街区的街都从全城街网裁下来 —— 794/800 段在全城网上
 - ✅ 顺着大道：近大道的街和大道平行或垂直 —— 35/35
 - ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
 - ✅ 同分布：框里街的疏密和全城一样（随密度，不随街区） —— 框里 0.237 / 全城 0.230 = 1.03
-- ❌ 接缝：全城网出框的地方，街区的街接得上 —— 8/18 没接上 [(0, 168), (0, 323), (0, 478), (225, 0)]  → 修：改全城规则 city_streets.py（不许改某个街区），再重跑 streets_ng.py
+- ✅ 接缝：全城网出框的地方，街区的街接得上 —— 18/18
 - ✅ 地面颜色在全城色板上 —— 沙地最大 ΔE 1.1（≤4），水面最大 ΔE 4.5（≤6）
 - ✅ 换年代地面不跳色 —— 相邻年份最大 ΔE 1.1（≤5）
 - ✅ 和别的街区是同一座城的颜色 —— 对 ['dongjia', 'gucheng', 'jiaowan', 'jinjiao', 'nangang', 'qiangwai', 'siqiu', 'xipo'] 最大 ΔE 1.1（≤6）
@@ -58,24 +58,6 @@
 - ✅ 60 年 Granary of the Founder 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.82，全街区 0.80
 - ✅ 60 年 Cistern of the Founder 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.76，全街区 0.80
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/nanan_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ na_af40.jpg —— 一致
-- ✅ na_af50.jpg —— 一致
-- ✅ na_af60.jpg —— 一致
-- ✅ houses_street.json —— 一致
-- ✅ streets.json —— 一致
-- ✅ junctions.json —— 一致
-- ✅ houses_geom.json —— 一致
-- ✅ ground_0.jpg —— 一致
-- ✅ ground_40.jpg —— 一致
-- ✅ ground_50.jpg —— 一致
-- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29

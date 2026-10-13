@@ -469,12 +469,12 @@ for i in order_:
     while pq:
         d0, a = heapq.heappop(pq)
         if d0 > dist.get(a, 1e9): continue
-        if conn[a] and outS[a][6] <= Y: tgt = a; break
+        if conn[a] and (outS[a][6] <= Y or (edge(outS[a]) and outS[a][5] != 'm')): tgt = a; break   # cs37：出框的街是通全城的路，没房也算接上（以前要它当年已开，左半边整片街被当孤岛删掉）
         for b2 in nbr[a]:
             q = outS[b2]; L = math.hypot(q[2] - q[0], q[3] - q[1]) * (1 if q[6] <= Y else 3)
             if d0 + L < dist.get(b2, 1e9): dist[b2] = d0 + L; prev[b2] = a; heapq.heappush(pq, (d0 + L, b2))
     if tgt is None: unreach.append(i); continue
-    a = tgt
+    a = tgt; outS[a][6] = min(outS[a][6], Y)
     while a != i: a = prev[a]; outS[a][6] = min(outS[a][6], Y); conn[a] = True
     conn[i] = True; spread(i, Y)
 # ---- audit fix F: no short holes inside a street; a gap under ~45 px between two visible stretches is paved with the later of them

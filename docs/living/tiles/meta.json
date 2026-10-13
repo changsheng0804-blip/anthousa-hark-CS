@@ -67,7 +67,7 @@
   "0": {
    "40": {
     "tiles": 146,
-    "bytes": 2708730,
+    "bytes": 2708994,
     "max_tile": 56434,
     "grid": [
      13,
@@ -76,7 +76,7 @@
    },
    "50": {
     "tiles": 146,
-    "bytes": 3086678,
+    "bytes": 3086874,
     "max_tile": 56794,
     "grid": [
      13,
@@ -85,7 +85,7 @@
    },
    "60": {
     "tiles": 146,
-    "bytes": 3158440,
+    "bytes": 3158678,
     "max_tile": 57888,
     "grid": [
      13,
@@ -96,7 +96,7 @@
   "1": {
    "40": {
     "tiles": 43,
-    "bytes": 814610,
+    "bytes": 814636,
     "max_tile": 57042,
     "grid": [
      7,
@@ -105,7 +105,7 @@
    },
    "50": {
     "tiles": 43,
-    "bytes": 956820,
+    "bytes": 956934,
     "max_tile": 60322,
     "grid": [
      7,
@@ -114,7 +114,7 @@
    },
    "60": {
     "tiles": 43,
-    "bytes": 978630,
+    "bytes": 978688,
     "max_tile": 62096,
     "grid": [
      7,
@@ -125,7 +125,7 @@
   "2": {
    "40": {
     "tiles": 14,
-    "bytes": 230132,
+    "bytes": 230172,
     "max_tile": 47204,
     "grid": [
      4,
@@ -134,7 +134,7 @@
    },
    "50": {
     "tiles": 14,
-    "bytes": 275684,
+    "bytes": 275702,
     "max_tile": 62318,
     "grid": [
      4,
@@ -143,7 +143,7 @@
    },
    "60": {
     "tiles": 14,
-    "bytes": 282048,
+    "bytes": 282092,
     "max_tile": 64244,
     "grid": [
      4,
@@ -154,7 +154,7 @@
   "3": {
    "40": {
     "tiles": 4,
-    "bytes": 67408,
+    "bytes": 67422,
     "max_tile": 35770,
     "grid": [
      2,
@@ -163,7 +163,7 @@
    },
    "50": {
     "tiles": 4,
-    "bytes": 79128,
+    "bytes": 79112,
     "max_tile": 42518,
     "grid": [
      2,
@@ -172,7 +172,7 @@
    },
    "60": {
     "tiles": 4,
-    "bytes": 80586,
+    "bytes": 80598,
     "max_tile": 43718,
     "grid": [
      2,
@@ -183,8 +183,8 @@
   "4": {
    "40": {
     "tiles": 1,
-    "bytes": 17676,
-    "max_tile": 17676,
+    "bytes": 17684,
+    "max_tile": 17684,
     "grid": [
      1,
      1
@@ -201,8 +201,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 20124,
-    "max_tile": 20124,
+    "bytes": 20126,
+    "max_tile": 20126,
     "grid": [
      1,
      1
@@ -231,16 +231,16 @@
  ],
  "time": {
   "40": {
-   "render_s": 6.4,
-   "tiles_s": 5.6
+   "render_s": 6.3,
+   "tiles_s": 6.2
   },
   "50": {
-   "render_s": 6.9,
-   "tiles_s": 5.7
+   "render_s": 7.6,
+   "tiles_s": 6.0
   },
   "60": {
-   "render_s": 7.1,
-   "tiles_s": 5.7
+   "render_s": 7.9,
+   "tiles_s": 6.0
   }
  },
  "psnr": {
@@ -275,7 +275,7 @@
    "xipo": 36.1,
    "qiangwai": 41.7,
    "jiaowan": 38.7,
-   "nanan": 44.2
+   "nanan": 44.3
   }
  },
  "water_cell": 8,
@@ -292,11 +292,11 @@
    "60": 2053136
   },
   "vec_tiles": 132,
-  "vec_bytes": 14960029,
-  "vec_gzip": 2901973,
+  "vec_bytes": 14964905,
+  "vec_gzip": 2903125,
   "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 17.8
+  "seconds": 18.2
  },
- "total_s": 60.4
+ "total_s": 65.6
 }
