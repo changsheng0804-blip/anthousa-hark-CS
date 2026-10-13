@@ -46,7 +46,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
     /* cs18：每座栈桥都有人（人家就近选站位会全挤在最近一座） */
     {const ps=C.pier_spots||[];const wk=out.filter(c=>c.kind==='work');const at=s=>wk.filter(m=>m.pier===s);
       for(const m of wk){let b=null,bd=16;for(const s of ps){const d=dist(m.spot[0],m.spot[1],s[0],s[1]);if(d<bd){bd=d;b=s}}m.pier=b}
-      for(const[want,give]of[[3,4],[2,2]])for(const s of ps){let guard=0;while(at(s).length<want&&guard++<4){const pool=wk.filter(m=>m.pier&&m.pier!==s&&at(m.pier).length>give).sort((a,b)=>dist(a.spot[0],a.spot[1],s[0],s[1])-dist(b.spot[0],b.spot[1],s[0],s[1]));
+      for(const[want,give]of[[3,4],[2,2]])for(const s of ps){let guard=0;while(at(s).length<want&&guard++<4){const pool=wk.filter(m=>m.pier!==s&&(!m.pier||at(m.pier).length>give)).sort((a,b)=>dist(a.spot[0],a.spot[1],s[0],s[1])-dist(b.spot[0],b.spot[1],s[0],s[1]));
         let moved=false;for(const m of pool){const t=[s[0]+(r()-.5)*6,s[1]+(r()-.5)*4];const e=m.spot;const RR=WK.R,gw=Math.ceil(W/RR),key=(a,b)=>b*gw+a;const sa=Math.floor(e[0]/RR),sb=Math.floor(e[1]/RR),ta=Math.floor(t[0]/RR),tb=Math.floor(t[1]/RR);
           const prev=new Map([[key(sa,sb),-1]]);const Q2=[[sa,sb]];let found=false;for(let qi=0;qi<Q2.length&&!found&&qi<40000;qi++){const[a,b]=Q2[qi];for(const[da,db]of[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){const na=a+da,nb=b+db;if(na<0||nb<0||prev.has(key(na,nb)))continue;if(!FLEET_walkable((na+.5)*RR,(nb+.5)*RR))continue;prev.set(key(na,nb),key(a,b));Q2.push([na,nb]);if(na===ta&&nb===tb){found=true;break}}}
           if(found){const seg=[];let k=key(ta,tb);while(k>=0){seg.push([(k%gw+.5)*RR,(Math.floor(k/gw)+.5)*RR]);k=prev.get(k)}seg.reverse();m.path=m.path.concat(seg,[t]);m.spot=t;m.pier=s;moved=true;break}}

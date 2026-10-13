@@ -66,7 +66,7 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
  if(miss.size||tot)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 {const FS=F.FLEET,ps=FS.C.pier_spots||[];const cnt=[];for(const Y of [40,50,57,60]){A.setYear(Y);const Rr=FS.crowd(Y);cnt.push(Rr.crowd.filter(m=>ps.some(s=>Math.hypot(m.spot[0]-s[0],m.spot[1]-s[1])<16)).length)}
- console.log('people standing on piers per year',cnt.join(','),'pier spots',ps.length);/* cs19 暂时放宽：原来要 ≥4 个站位、每年 ≥8 人，其中 3 个站位其实站在船上（查收图抓到）。backlog 1「真栈桥认不全」修好后改回 */ if(ps.length<2||cnt.reduce((a,b)=>a+b,0)<8)bad++;
+ console.log('people standing on piers per year',cnt.join(','),'pier spots',ps.length);/* cs19 暂时放宽：原来要 ≥4 个站位、每年 ≥8 人，其中 3 个站位其实站在船上（查收图抓到）。backlog 1「真栈桥认不全」修好后改回 */ /* cs20：蒙版生成的 60 年画让真栈桥出到 5 个，恢复严格 */ if(ps.length<4||cnt.some(v=>v<8))bad++;
  const lo=[];for(const Y of [50,57,60]){const Rr=FS.crowd(Y);const per=ps.map(s=>Rr.crowd.filter(m=>Math.hypot(m.spot[0]-s[0],m.spot[1]-s[1])<16).length);lo.push(per.join('/'));if(per.some(v=>v<2))bad++}
  console.log('people per pier spot (year 50/57/60, each >=2)',lo.join(' | '))}
 console.log('fleet cards',n,'bad',bad+(dup>pairs*.03?1:0));
