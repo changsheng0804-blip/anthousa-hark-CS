@@ -23,7 +23,9 @@ else: base = A.url.rsplit('/tiles/', 1)[0] + '/'
 url = base + 'tiles/'
 M = json.load(open(os.path.join(ROOT, 'docs/living/tiles/meta.json'))); ox, oy = M['quarters'][A.q][:2]
 sc = json.load(open(os.path.join(ROOT, 'docs/living', A.q, 'scene.json'))); F = sc.get('fleet') or {}
-quay = (F['quay'][0] + ox, F['quay'][1] + oy) if F.get('quay') else (ox + 300, oy + 300)
+if F.get('quay'): quay = (F['quay'][0] + ox, F['quay'][1] + oy)
+else:   # 没有粮船日的块：取九块中心表里的中心点（places.json）
+    _pl = json.load(open(os.path.join(ROOT, 'docs/living/tiles/places.json')))['quarters']; _c = [t for t in _pl if t['q'] == A.q][0]; quay = (_c['x'], _c['y'])
 fails = []; rep = []
 def ck(name, ok, info=''):
     rep.append((name, ok, info)); print(('  ok  ' if ok else ' FAIL ') + name + ('  ' + str(info) if info != '' else ''))
