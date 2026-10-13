@@ -21,15 +21,49 @@ def ok_strict(h):
     sub = [s for s in S if abs((s[0] + s[2]) / 2 - cx) < 140 and abs((s[1] + s[3]) / 2 - cy) < 140
            and (s[8] if len(s) > 8 else s[6]) < e and not (len(s) > 7 and s[7] and s[7] <= b)]
     return not (sub and A.bodyhit(h, sub, A.grid_of(sub)))
-for h in HS:   # reset any earlier placement
-    if isinstance(h[9], str) and h[9].startswith('lm:'): h[9], h[7] = h[13], h[14]; del h[13:]
+for h in HS:   # reset any earlier placement (landmark lots and the neighbours they absorbed)
+    if len(h) > 13 and h[13] == 'merged': h[3] = h[14]; del h[13:]
+    elif isinstance(h[9], str) and h[9].startswith('lm:'):
+        h[9], h[7] = h[13], h[14]
+        if len(h) > 15: h[4] = h[15]
+        del h[13:]
+BYID = {h[0]: h for h in HS}
+PROTECT = set(int(k) for k in json.load(open('stories.json')))
+for sc in json.load(open('scenes.json')):
+    for c in sc.get('cast', []):
+        if len(c) > 3 and c[3]: PROTECT.add(c[3])
+def pts_of(h): p = h[4]; return [(p[i], p[i + 1]) for i in range(0, 8, 2)]
+GRID = {}
+for h in HS:
+    c = ctr(h); GRID.setdefault((int(c[0] // 40), int(c[1] // 40)), []).append(h)
+def merge_options(h):
+    """neighbour lots sharing a side edge with h (not the street side): (neighbour, merged poly8)"""
+    P = pts_of(h); f = h[10] if len(h) > 10 else 2; c = ctr(h); out = []
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            for n in GRID.get((int(c[0] // 40) + dx, int(c[1] // 40) + dy), []):
+                if n is h or n[0] in PROTECT or len(n) < 13 or n[3] < 900 or (n[12] & 1) or str(n[9]).startswith('lm:') or len(n) > 13: continue
+                Q = pts_of(n)
+                for k in range(4):
+                    if k == f: continue
+                    a, b = P[k], P[(k + 1) % 4]
+                    ia = [i for i in range(4) if math.hypot(Q[i][0] - a[0], Q[i][1] - a[1]) < 1.6]
+                    ib = [i for i in range(4) if math.hypot(Q[i][0] - b[0], Q[i][1] - b[1]) < 1.6]
+                    if not ia or not ib: continue
+                    ia, ib = ia[0], ib[0]
+                    if (ia - ib) % 4 not in (1, 3): continue
+                    d = 1 if (ia - ib) % 4 == 3 else -1   # walk away from the shared edge
+                    fa = Q[(ia - d) % 4]; fb = Q[(ib + d) % 4]
+                    R = list(P); R[k] = fa; R[(k + 1) % 4] = fb
+                    out.append((n, [v for q in R for v in q]))
+    return out
 placed = {}
 for sid, sp in LS.SPECS.items():
-    si = sp['siting']; lo, hi = si['lot']; e0 = sp['era'][0]; n = sp['instances']['count'][1]
+    si = sp['siting']; lo, hi = si['lot']; e0 = sp['era'][0]; nmax = sp['instances']['count'][1]
     gap = 300 if sp['size'] == 'small' else 420
     C = []
     for h in HS:
-        if len(h) < 13 or h[3] < 900 or h[2] < e0 or h[2] > 40 or not (lo <= area(h) <= hi) or h[12] & 1: continue
+        if len(h) < 13 or h[3] < 900 or h[2] < e0 or h[2] > (40 if sp['size'] == 'small' else 30) or not ((lo if sp['size'] == 'small' else lo * 0.45) <= area(h) <= hi) or h[12] & 1 or h[0] in PROTECT: continue
         if sid == 'bread_steps':
             if h[8] not in ('market', 'shops') or h[9] not in ('row', 'flat', 'casa'): continue
             fx, fy = front_mid(h)
@@ -41,12 +75,26 @@ for sid, sp in LS.SPECS.items():
         C.append((score, h))
     C.sort(key=lambda c: c[0]); got = []
     for _, h in C:
-        if len(got) >= n: break
+        if len(got) >= nmax: break
         c = ctr(h)
         if any(math.hypot(c[0] - g[0], c[1] - g[1]) < gap for g in got) or any(math.hypot(c[0] - g[0], c[1] - g[1]) < 120 for g in placed.values()): continue
-        old9, old7 = h[9], h[7]
-        h += [old9, old7]; h[9] = 'lm:' + sid; h[7] = LS.height(sp)
-        if ok_strict(h): got.append(c); placed[h[0]] = c; print(sid, h[0], 'built', h[2], 'area', int(area(h)), h[8], [int(v) for v in c])
-        else: h[9], h[7] = old9, old7; del h[13:]
+        old9, old7, old4 = h[9], h[7], h[4]
+        opts = [(None, old4)]
+        if sp['size'] != 'small' and area(h) < lo: opts = [o for o in merge_options(h)]
+        elif sp['size'] != 'small': opts += merge_options(h)
+        for nb, poly in opts:
+            h[4] = poly
+            if area(h) < lo or area(h) > hi * 1.6: continue
+            h += [old9, old7, old4]; h[9] = 'lm:' + sid; h[7] = LS.height(sp)
+            if ok_strict(h):
+                if nb is not None:   # the parish buys the plot next door; that house comes down when the church starts (or is never built)
+                    nb += ['merged', nb[3]]; nb[3] = max(nb[2], h[2])
+                got.append(c); placed[h[0]] = c
+                print(sid, h[0], 'built', h[2], 'area', int(area(h)), h[8], [int(v) for v in c], 'merged', nb[0] if nb else '-')
+                break
+            h[9], h[7] = old9, old7; del h[13:]
+        else:
+            h[4] = old4; continue
+        if h[4] != old4 and len(h) <= 13: h[4] = old4
 json.dump(HD, open('houses.json', 'w'), separators=(',', ':'))
 print('landmarks placed', len(placed))

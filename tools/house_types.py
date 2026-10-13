@@ -209,7 +209,8 @@ def _geom_full(h):
     if isinstance(typ, str) and typ.startswith('lm:'):   # landmark: open typology, see landmark_shapes / gen/landmarks/*.json
         import landmark_shapes as LS
         P = LS.geom(h, h[2], life_end(h))
-        sh = lot + [(x + ht * 0.55 + 1, y + ht * 0.3 + 1) for x, y in lot]
+        core = [(cx + (x - cx) * 0.6, cy + (y - cy) * 0.6) for x, y in pts]   # soft shadow: stages differ in size
+        sh = core + [(x + 3.0, y + 1.8) for x, y in core]
         return max(q[1] for q in pts), P, sh
     parts = []
     # the building's own footprint inside the lot
