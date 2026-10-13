@@ -5,7 +5,7 @@ finds dead ends that nearly touch another road, roads through cisterns/landmarks
 houses sitting on roads, and houses with no road near them. Writes audit.json + audit_YY.jpg overlays."""
 import json, math, sys
 from PIL import Image, ImageDraw
-X = sys.argv[1] if len(sys.argv) > 1 else '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/living/xerolophos/'
+X = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] != 'fixpo' else '/workspace/projects/618d22bb-ba67-4a65-bd41-39bbe9c6f6cd/living/xerolophos/'
 S = json.load(open(X + 'streets.json')); HD = json.load(open(X + 'houses.json')); HS = HD['houses']; late = HD['late']
 city = json.load(open(X + 'city.json')); LM = {l['id']: l for l in city['landmarks']}
 def wall_x(y): return 587 - 0.2357 * y
@@ -38,9 +38,17 @@ def _ss(a, b, c, d):
     if ((cr(c, d, a) > 0) != (cr(c, d, b) > 0)) and ((cr(a, b, c) > 0) != (cr(a, b, d) > 0)): return 0
     f = lambda P, s: sd(P[0], P[1], (s[0][0], s[0][1], s[1][0], s[1][1]))
     return min(f(a, (c, d)), f(b, (c, d)), f(c, (a, b)), f(d, (a, b)))
+def bodies(h):
+    B = [body(h)]
+    po = HT_.portico(h) if len(h) > 12 else None
+    if po: B.append(list(po[0]) + [(x, y - po[1]) for x, y in po[0]])
+    return B
 def bodyhit(h, segs, g):
-    B = body(h); fp, up = B[:4], B[4:]
-    polys = [fp, up] + [[fp[k], fp[(k + 1) % 4], up[(k + 1) % 4], up[k]] for k in range(4)]
+    polys = []
+    for B in bodies(h):
+        fp, up = B[:4], B[4:]
+        polys += [fp, up] + [[fp[k], fp[(k + 1) % 4], up[(k + 1) % 4], up[k]] for k in range(4)]
+    fp = body(h)[:4]
     cx = sum(q[0] for q in fp) / 4; cy = sum(q[1] for q in fp) / 4
     cand = set()
     for dx in (-G, 0, G):
@@ -144,6 +152,12 @@ def audit(Y, draw=None):
         for x, y in noroad: d.rectangle((x - 3, y - 3, x + 3, y + 3), outline=(0, 0, 255), width=2)
         im.resize((im.width // 2, im.height // 2)).save('/tmp/audit_%d.jpg' % Y, quality=85)
     return R
+if __name__ == '__main__' and 'fixpo' in sys.argv:
+    # a colonnade that a later lane runs into is simply not built (the house itself is checked by streets_xero)
+    bad = set(strict_all()); n = 0
+    for h in HS:
+        if h[0] in bad and len(h) > 12 and h[12]: h[12] = 0; n += 1
+    json.dump(HD, open(X + 'houses.json', 'w'), separators=(',', ':')); print('porticos dropped', n); sys.exit()
 if __name__ == '__main__':
     out = [audit(Y, draw=('xero_af%d.jpg' % Y) if Y in (40, 50, 60) else None) for Y in (40, 45, 50, 55, 60)]
     for r in out: print(r)

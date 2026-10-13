@@ -49,6 +49,31 @@ def row_stretch(fp):
     e0 = 0.9 if uy > 0 else 0.3   # end at fp[0]/fp[3] lies north when the edge runs southward
     e1 = 0.3 if uy > 0 else 0.9
     return [(fp[0][0] - ux * e0, fp[0][1] - uy * e0), (fp[1][0] + ux * e1, fp[1][1] + uy * e1), (fp[2][0] + ux * e1, fp[2][1] + uy * e1), (fp[3][0] - ux * e0, fp[3][1] - uy * e0)]
+def has_garden(h):
+    p = h[4]; typ = h[9] if len(h) > 9 else 'casa'
+    if typ != 'casa': return False
+    dep = math.hypot(p[6] - p[0], p[7] - p[1])
+    return dep >= 11 and hsh(h[0], 51) < 0.5 and (h[8] if len(h) > 8 else 'homes') in ('homes', 'water', 'garden', 'garrison')
+def split(pts, front, t0, t1, s=0.96):
+    """part of the lot between depth t0 and t1 (0 = street edge, 1 = back), as a quad whose edge 0-1 faces the street"""
+    cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
+    lot = [(cx + (x - cx) * s, cy + (y - cy) * s) for x, y in pts]; back = (front + 2) % 4
+    fa, fb = lot[front], lot[(front + 1) % 4]; ba, bb = lot[(back + 1) % 4], lot[back]
+    P = lambda t: [_lerp(fa, ba, t), _lerp(fb, bb, t)]
+    q0, q1 = P(t0), P(t1)
+    return [q0[0], q0[1], q1[1], q1[0]]
+SPLIT = {'yard': (0.5, 1.0), 'hut': (0.0, 0.5), 'garden': (0.0, 0.62)}
+def portico(h):
+    """a colonnade in front of a row house: (strip on the ground, roof height, outward normal) or None"""
+    if len(h) < 13 or not h[12]: return None
+    p = h[4]; front = h[10]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
+    cx = sum(q[0] for q in pts) / 4; cy = sum(q[1] for q in pts) / 4
+    a, b = pts[front], pts[(front + 1) % 4]
+    ex, ey = b[0] - a[0], b[1] - a[1]; L = math.hypot(ex, ey) or 1; nx, ny = ey / L, -ex / L
+    mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+    if nx * (mx - cx) + ny * (my - cy) < 0: nx, ny = -nx, -ny
+    D = 2.4
+    return [a, b, (b[0] + nx * D, b[1] + ny * D), (a[0] + nx * D, a[1] + ny * D)], 3.0, (nx, ny)
 def footprint(h):
     """the drawn walls' footprint (what the street audit must keep off the roads)"""
     p = h[4]; typ = h[9] if len(h) > 9 else 'casa'; front = h[10] if len(h) > 10 else 2
@@ -56,18 +81,19 @@ def footprint(h):
     if typ in ('row', 'std'):
         fp = [(cx + (x - cx) * 0.96, cy + (y - cy) * 0.96) for x, y in pts]
         return row_stretch(fp) if typ == 'row' else fp
+    k = 'garden' if has_garden(h) else typ
+    if k in SPLIT: return split(pts, front, *SPLIT[k])
     return [(cx + (x - cx) * 0.92, cy + (y - cy) * 0.92) for x, y in pts]
 def roof_extra(h):
     """how far the roof rises above the wall top (same formulas as geom) - the street audit adds this to h[7]"""
     p = h[4]; typ = h[9] if len(h) > 9 else 'casa'; hid = h[0]
-    pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
-    s = 0.92 if typ not in ('row', 'std') else 0.96
-    Lu = math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]) * s; Lv = math.hypot(pts[3][0] - pts[0][0], pts[3][1] - pts[0][1]) * s
+    fp = footprint(h)
+    Lu = math.hypot(fp[1][0] - fp[0][0], fp[1][1] - fp[0][1]); Lv = math.hypot(fp[3][0] - fp[0][0], fp[3][1] - fp[0][1])
     if typ == 'row': return min(3.6, min(Lv / 2, 6.0) * 0.6)
     if typ in ('std', 'hall'): return min(Lv * 0.32, 4.5)
     if typ == 'casa': return min(Lu, Lv) * (0.32 if hsh(hid, 21) < 0.6 else 0.28)
     if typ == 'insula': return min(Lu, Lv) * 0.12
-    if typ == 'hut': return min(Lu, Lv * 0.5) * 0.34
+    if typ == 'hut': return min(Lu, Lv) * 0.34
     if typ == 'domus': return 1.6
     return 0.0
 def _lerp(a, b, t): return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
@@ -149,6 +175,23 @@ def hip(parts, up, roof, lift_k=0.28):
     parts.append(('edge', 'r', up, shade(roof, 0.62)))
     if r >= 0.3: parts.append(('line', 'r', [r0, r1], shade(roof, 0.7)))
 
+def _portico(parts, po, roof, wall, hid, fn):
+    strip, ph, (nx, ny) = po
+    a, b, c, d = strip   # a-b on the house, d-c along the street
+    L = math.hypot(c[0] - d[0], c[1] - d[1]); n = max(2, int(L / 2.6) + 1)
+    if ny > 0.15 and fn == 'market':   # stalls under the colonnade
+        for j in range(n - 1):
+            if hsh(hid, 60 + j) < 0.5: continue
+            q = _lerp(_lerp(d, c, (j + 0.5) / (n - 1)), _lerp(a, b, (j + 0.5) / (n - 1)), 0.45)
+            col = [(182, 64, 48), (60, 96, 120), (196, 150, 60), (230, 222, 200)][int(hsh(hid, 70 + j) * 4)]
+            parts.append(('fill', 'g', [(q[0] - .7, q[1] + .3), (q[0] + .7, q[1] + .3), (q[0] + .7, q[1] - 1), (q[0] - .7, q[1] - 1)], col))
+    if ny > 0.02:   # columns on the street side
+        for j in range(n):
+            q = _lerp(d, c, j / (n - 1))
+            parts.append(('fill', 'w', [(q[0] - .35, q[1]), (q[0] + .35, q[1]), (q[0] + .35, q[1] - ph), (q[0] - .35, q[1] - ph)], shade(wall, 1.02)))
+    top = [(x, y - ph) for x, y in strip]
+    parts.append(('fill', 'r', top, shade(roof, 1.08 if ny > 0 else 0.9)))
+    parts.append(('line', 'r', [top[3], top[2]], shade(roof, 0.62)))
 def geom(h):
     """h: [id, dd, b, e, poly8, fx, t, ht, fn, typ, front]. Returns (by, parts, shadow_pts)."""
     hid = h[0]; p = h[4]; pts = [(p[i], p[i + 1]) for i in range(0, 8, 2)]
@@ -166,37 +209,39 @@ def geom(h):
     parts = []
     # the building's own footprint inside the lot
     back = (front + 2) % 4   # edge opposite the street
-    if typ in ('yard', 'hut'):
-        # building keeps to the back of the lot; the front is a yard / the plots are behind for a hut
-        if typ == 'yard': t0, t1 = 0.5, 1.0
-        else: t0, t1 = 0.0, 0.5
-        # positions along the depth: edge `front` at 0, edge `back` at 1
-        fa, fb = lot[front], lot[(front + 1) % 4]; ba, bb = lot[(back + 1) % 4], lot[back]
-        P = lambda t: [_lerp(fa, ba, t), _lerp(fb, bb, t)]
-        q0, q1 = P(t0), P(t1)
-        fp = [q0[0], q0[1], q1[1], q1[0]]
-        rest = P(0.0) + P(0.5)[::-1] if typ == 'yard' else P(0.5) + P(1.0)[::-1]
-        rest = [rest[0], rest[1], rest[2], rest[3]]
-        if typ == 'yard':
-            parts.append(('fill', 'g', rest, (176, 152, 112))); parts.append(('edge', 'g', rest, (120, 92, 60)))
-            # stacked jars and timber in the yard, a kiln in one corner
-            for j in range(3):
-                q = _lerp(_lerp(rest[0], rest[1], 0.2 + 0.25 * j), _lerp(rest[3], rest[2], 0.2 + 0.25 * j), 0.5 + 0.2 * (hsh(hid, 40 + j) - .5))
-                parts.append(('fill', 'g', [(q[0] - .8, q[1]), (q[0] + .8, q[1]), (q[0] + .8, q[1] - 1.4), (q[0] - .8, q[1] - 1.4)], (150, 92, 58)))
-            if hsh(hid, 19) < 0.6:
-                k = _lerp(rest[1], rest[2], 0.5); k = (k[0] * 0.8 + cx * 0.2, k[1] * 0.8 + cy * 0.2)
-                parts.append(('fill', 'g', [(k[0] - 1.6, k[1]), (k[0] - 1.1, k[1] - 2.2), (k[0] + 1.1, k[1] - 2.2), (k[0] + 1.6, k[1])], (92, 68, 52)))
-        else:
-            parts.append(('fill', 'g', rest, (128, 150, 76)))
-            for j in range(1, 4):
-                a = _lerp(rest[0], rest[3], j / 4); b = _lerp(rest[1], rest[2], j / 4)
-                parts.append(('line', 'g', [_lerp(a, b, .05), _lerp(a, b, .95)], (96, 118, 56)))
-    else:
-        s = 0.92 if typ not in ('row', 'std') else 0.96   # row houses run wall to wall
-        fp = [(cx + (x - cx) * s, cy + (y - cy) * s) for x, y in pts]
-        if typ == 'row': fp = row_stretch(fp)
-    fr_ = 0 if typ in ('yard', 'hut') else front
-    if typ in ('yard', 'hut'): back = 2
+    fp = footprint(h)
+    gk = 'garden' if has_garden(h) else typ
+    if gk == 'yard':
+        rest = split(pts, front, 0.0, 0.5)
+        parts.append(('fill', 'g', rest, (176, 152, 112))); parts.append(('edge', 'g', rest, (120, 92, 60)))
+        for j in range(3):   # stacked jars and timber in the yard, a kiln in one corner
+            q = _lerp(_lerp(rest[0], rest[1], 0.2 + 0.25 * j), _lerp(rest[3], rest[2], 0.2 + 0.25 * j), 0.5 + 0.2 * (hsh(hid, 40 + j) - .5))
+            parts.append(('fill', 'g', [(q[0] - .8, q[1]), (q[0] + .8, q[1]), (q[0] + .8, q[1] - 1.4), (q[0] - .8, q[1] - 1.4)], (150, 92, 58)))
+        if hsh(hid, 19) < 0.6:
+            k = _lerp(rest[1], rest[2], 0.5); k = (k[0] * 0.8 + cx * 0.2, k[1] * 0.8 + cy * 0.2)
+            parts.append(('fill', 'g', [(k[0] - 1.6, k[1]), (k[0] - 1.1, k[1] - 2.2), (k[0] + 1.1, k[1] - 2.2), (k[0] + 1.6, k[1])], (92, 68, 52)))
+    elif gk in ('hut', 'garden'):
+        rest = split(pts, front, 0.5 if gk == 'hut' else 0.64, 1.0)
+        G = [(128, 150, 76), (140, 156, 82), (118, 140, 70)][int(hsh(hid, 52) * 3)]
+        parts.append(('fill', 'g', rest, G))
+        n = 4 if gk == 'hut' else 3
+        for j in range(1, n):
+            a = _lerp(rest[0], rest[3], j / n); b = _lerp(rest[1], rest[2], j / n)
+            parts.append(('line', 'g', [_lerp(a, b, .06), _lerp(a, b, .94)], shade(G, 0.78)))
+        parts.append(('edge', 'g', rest, (150, 124, 86)))   # low fence / wattle
+        if gk == 'garden' and hsh(hid, 53) < 0.4:   # a fig or olive tree at the back
+            c = _lerp(_lerp(rest[2], rest[3], 0.3 + 0.4 * hsh(hid, 54)), _lerp(rest[1], rest[0], 0.5), 0.25); rr = 1.6
+            parts.append(('fill', 'g', [(c[0] + rr * math.cos(t) + .8, c[1] + .9 + rr * .5 * math.sin(t)) for t in [i * math.pi / 4 for i in range(8)]], (110, 92, 60)))
+            parts.append(('fill', 'g', [(c[0] + rr * math.cos(t), c[1] - 1.6 + rr * .85 * math.sin(t)) for t in [i * math.pi / 4 for i in range(8)]], (78, 108, 56)))
+    if typ == 'domus':   # garden wall round the whole lot
+        wl = [(cx + (x - cx) * 0.99, cy + (y - cy) * 0.99) for x, y in pts]
+        parts.append(('fill', 'g', wl, (196, 184, 150))); parts.append(('edge', 'g', wl, shade(wall, 0.7)))
+    po = portico(h)
+    if po:
+        parts.append(('fill', 'g', po[0], (206, 196, 176)))
+        if po[2][1] < 0: _portico(parts, po, roof, wall, hid, fn)   # colonnade behind the house: drawn first
+    fr_ = 0 if gk in ('yard', 'hut', 'garden') else front
+    if gk in ('yard', 'hut', 'garden'): back = 2
     up = _up(fp, ht)
     fcx = sum(q[0] for q in fp) / 4; fcy = sum(q[1] for q in fp) / 4
     shadow = fp + [(x + ht * 0.55 + 1, y + ht * 0.3 + 1) for x, y in fp]
@@ -216,7 +261,11 @@ def geom(h):
     elif typ == 'insula':
         hip(parts, up, roof, 0.12)
     elif typ == 'flat':
-        parts.append(('fill', 'r', up, shade(wall, 1.04))); parts.append(('edge', 'r', up, shade(wall, 0.7)))
+        # flat terrace roof: plaster with a darker parapet and a little roof hatch
+        parts.append(('fill', 'r', up, shade(wall, 0.9))); parts.append(('edge', 'r', up, shade(wall, 0.6)))
+        inn = [(fcx + (x - fcx) * 0.8, fcy - ht + (y - fcy) * 0.8) for x, y in fp]
+        parts.append(('edge', 'r', inn, shade(wall, 0.78)))
+        q = _lerp(inn[0], inn[2], 0.3); parts.append(('fill', 'r', [(q[0] - .7, q[1] - .4), (q[0] + .7, q[1] - .4), (q[0] + .7, q[1] + .5), (q[0] - .7, q[1] + .5)], (96, 78, 60)))
     elif typ == 'yard':   # lean shed: one slope down toward the yard
         hi = [up[(back) % 4], up[(back + 1) % 4]]
         parts.append(('fill', 'r', up, shade(roof, 0.95))); parts.append(('edge', 'r', up, shade(roof, 0.62)))
@@ -245,7 +294,9 @@ def geom(h):
         for poly, (nx, ny) in faces:
             parts.append(('fill', 'r', poly, shade(roof, 0.92 - 0.2 * (-nx * LX - ny * LY))))
         parts.append(('edge', 'r', outer, shade(roof, 0.6))); parts.append(('edge', 'r', inner, shade(roof, 0.55)))
+    if po and po[2][1] >= 0: _portico(parts, po, roof, wall, hid, fn)
     by = max(q[1] for q in pts)
+    if po: by = max(by, max(q[1] for q in po[0]))
     return by, parts, shadow
 
 def export(HS, path):

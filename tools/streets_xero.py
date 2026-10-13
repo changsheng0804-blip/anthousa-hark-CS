@@ -615,7 +615,7 @@ def forbidden(vol, b, e):
     return False
 HT = {}
 newIdx = {h[0]: i for i, h in enumerate(newH)}
-moved = dropped_seg = lowered = stuck = 0
+moved = dropped_seg = lowered = stuck = porticos = 0
 import house_types as HT_
 def front_edge(l):
     P = l['p']; best = (99, 2)
@@ -635,7 +635,7 @@ def lot_type(l, hid):
     P = l['p']; area = math.hypot(P[1][0] - P[0][0], P[1][1] - P[0][1]) * math.hypot(P[3][0] - P[0][0], P[3][1] - P[0][1])
     typ = HT_.pick_type(f, l['rank'], area, l['kind'] == 'main', hid)
     if 'front' not in l: l['front'] = front_edge(l)
-    HTYP[hid] = (f, typ, l['front'], l['si'])
+    HTYP[hid] = (f, typ, l['front'], l['si'], 0)
     return HT_.type_height(typ, f, l['rank'])
 def want_h(l, hid=None): return lot_type(l, hid)
 for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
@@ -668,18 +668,23 @@ for hid, li in sorted(assigned.items(), key=lambda kv: HB[kv[0]][2]):
             if clashes(fp, hb, he): stuck += 1
     hgt = want_h(l, hid)
     def _row(hg_):
-        f_, t_, fr_, si_ = HTYP[hid]
-        return [hid, 0, 0, 0, [c for p_ in l['p'] for c in p_], 0, 0, hg_, f_, t_, fr_, si_]
+        f_, t_, fr_, si_, po_ = HTYP[hid]
+        return [hid, 0, 0, 0, [c for p_ in l['p'] for c in p_], 0, 0, hg_, f_, t_, fr_, si_, po_]
     def _ex(hg_): return HT_.roof_extra(_row(hg_))
     fpd = HT_.footprint(_row(hgt))
     if HTYP[hid][1] == 'row' and (clashes(fpd, hb, he, 0.6) or forbidden(fpd, hb, he)):   # no room to run wall to wall here
-        f_, t_, fr_, si_ = HTYP[hid]; HTYP[hid] = (f_, 'casa', fr_, si_); hgt = HT_.type_height('casa', f_, l['rank']); fpd = HT_.footprint(_row(hgt))
+        f_, t_, fr_, si_, po_ = HTYP[hid]; HTYP[hid] = (f_, 'casa', fr_, si_, 0); hgt = HT_.type_height('casa', f_, l['rank']); fpd = HT_.footprint(_row(hgt))
     while hgt > 0 and clashes(volume(fpd, hgt + _ex(hgt)), hb, he, 0.6): hgt -= 0.5
     if hgt <= 1.5 and HTYP[hid][1] not in ('flat', 'yard'):   # no room for a pitched roof here: a low flat-roofed house instead
-        f_, t_, fr_, si_ = HTYP[hid]; HTYP[hid] = (f_, 'flat', fr_, si_); hgt = 4
+        f_, t_, fr_, si_, po_ = HTYP[hid]; HTYP[hid] = (f_, 'flat', fr_, si_, 0); hgt = 4
         fpd = HT_.footprint(_row(hgt))
         while hgt > 0 and clashes(volume(fpd, hgt), hb, he, 0.6): hgt -= 0.5
     if hgt < HT_.type_height(HTYP[hid][1], HTYP[hid][0], l['rank']): lowered += 1
+    if HTYP[hid][1] == 'row' and (HTYP[hid][0] == 'market' or HT_.hsh(hid, 81) < 0.55):   # a colonnade along the street, if it clears the road
+        f_, t_, fr_, si_, po_ = HTYP[hid]; HTYP[hid] = (f_, t_, fr_, si_, 1)
+        po = HT_.portico(_row(hgt))
+        if clashes(volume(list(po[0]), po[1]), hb, he, 0.6) or forbidden(list(po[0]), hb, he): HTYP[hid] = (f_, t_, fr_, si_, 0)
+        else: porticos += 1
     hgt = max(0, hgt)
     HT[hid] = hgt
 for h in newH:
@@ -712,7 +717,7 @@ for h in newH:
     while len(h) < 7: h.append(0)
     h[7:] = [4]
 print('kept outside moved', kept_moved, file=sys.stderr)
-print('fixH moved', moved, 'roads gave way', dropped_seg, 'lowered', lowered, 'stuck', stuck, 'wall', wall_moved, file=sys.stderr)
+print('fixH moved', moved, 'roads gave way', dropped_seg, 'lowered', lowered, 'stuck', stuck, 'wall', wall_moved, 'porticos', porticos, file=sys.stderr)
 # ---- roads grow: a trodden track is walked in a few years before a street is laid (streets 3, lanes 2),
 # only where no standing house is in the way, and never earlier than the track it branches from.
 LEAD = {'s': 3, 'c': 2, 'l': 2}
@@ -826,8 +831,8 @@ print('junctions', len(JU), file=sys.stderr)
 # each house takes the character of the district its lot was cut for (the new quarter only after the fire)
 for h in newH:
     while len(h) < 8: h.append(4)
-    f, typ, fr, si_ = HTYP.get(h[0], ('homes', 'casa', 2, -1))
-    h[8:] = [f, typ, fr, si_]
+    f, typ, fr, si_, po_ = HTYP.get(h[0], ('homes', 'casa', 2, -1, 0))
+    h[8:] = [f, typ, fr, si_, po_]
 print('houses by district', _C(h[8] for h in newH).most_common(), file=sys.stderr)
 print('houses by type', _C(h[9] for h in newH).most_common(), file=sys.stderr)
 D2 = dict(D); D2['houses'] = newH
