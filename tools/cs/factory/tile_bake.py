@@ -31,6 +31,28 @@ def owns(q, x, y):
     return 0 <= y < OWN.shape[0] and 0 <= x < OWN.shape[1] and OWN[y, x] == QS.index(q)
 def own_mask(q, ox, oy, w, h): return Image.fromarray(((OWN[oy:oy + h, ox:ox + w] == QS.index(q)) * 255).astype(np.uint8))
 stat['owner_order'] = QS
+
+# /goal 2 · 2a 补洞：街区框没盖严的角落（例：南港底边、墙外右边、南岸左边三块之间）在拼图里是透明的，
+# 放大缩小时透明洞会漏出底色——整格补成「最近的已画像素」再柔化，只补有内容的瓦片格里的洞；世界外的整格空瓦片不动。
+from scipy import ndimage as ndi
+def fill_holes(im):
+    a = np.asarray(im).copy(); al = a[..., 3] > 0; H_, W_ = al.shape; todo = []
+    for ty in range(math.ceil(H_ / TP)):
+        for tx in range(math.ceil(W_ / TP)):
+            c = al[ty * TP:(ty + 1) * TP, tx * TP:(tx + 1) * TP]
+            if c.any() and not c.all(): todo.append((tx, ty))
+    n = 0
+    for tx, ty in todo:
+        x0, y0 = max(0, (tx - 1) * TP), max(0, (ty - 1) * TP); x1, y1 = min(W_, (tx + 2) * TP), min(H_, (ty + 2) * TP)
+        cr = a[y0:y1, x0:x1]; v = cr[..., 3] > 0
+        if not v.any(): continue
+        d, (iy, ix) = ndi.distance_transform_edt(~v, return_indices=True)
+        near = cr[iy, ix].astype(np.float32); blur = np.stack([ndi.gaussian_filter(near[..., k], 28) for k in range(3)], -1)
+        w = np.clip(d / 24.0, 0, 1)[..., None]; out = near[..., :3] * (1 - w) + blur * w
+        cx0, cy0, cx1, cy1 = tx * TP - x0, ty * TP - y0, min(W_, (tx + 1) * TP) - x0, min(H_, (ty + 1) * TP) - y0
+        m = ~v; m[:cy0] = False; m[cy1:] = False; m[:, :cx0] = False; m[:, cx1:] = False
+        cr[..., :3][m] = np.clip(out, 0, 255).astype(np.uint8)[m]; cr[..., 3][m] = 255; n += int(m.sum())
+    return Image.fromarray(a), n
 t_all = time.time()
 for Y in YS:
     t0 = time.time()
@@ -42,6 +64,7 @@ for Y in YS:
         f = FR[q]; ox, oy = round((f[0] - X0) * S), round((f[1] - Y0) * S)
         mos.paste(im, (ox, oy), own_mask(q, ox, oy, im.width, im.height))
         stat['quarters'][q] = [ox, oy, im.width, im.height]
+    mos, nfill = fill_holes(mos); stat.setdefault('filled_px', {})[str(Y)] = nfill
     t_render = time.time() - t0
     # 金字塔
     lvl = 0; cur = mos; t1 = time.time()
@@ -83,7 +106,7 @@ for K in GK:
     mos = Image.new('RGBA', (NX * TP, NY * TP), (0, 0, 0, 0))
     for q in QS:
         ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy), own_mask(q, ox, oy, w, h))
-    a = np.asarray(mos).astype(np.int16); WM[K] = (a[..., 3] > 0) & ((a[..., 1] - a[..., 0]) > 15)
+    mos, _ = fill_holes(mos); a = np.asarray(mos).astype(np.int16); WM[K] = (a[..., 3] > 0) & ((a[..., 1] - a[..., 0]) > 15)
     d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = a[..., 3]; nb = 0
     for ty in range(NY):
         for tx in range(NX):

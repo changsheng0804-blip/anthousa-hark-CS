@@ -67,7 +67,7 @@
   "0": {
    "40": {
     "tiles": 146,
-    "bytes": 2713440,
+    "bytes": 2713698,
     "max_tile": 56434,
     "grid": [
      13,
@@ -76,7 +76,7 @@
    },
    "50": {
     "tiles": 146,
-    "bytes": 3093248,
+    "bytes": 3095112,
     "max_tile": 56794,
     "grid": [
      13,
@@ -85,7 +85,7 @@
    },
    "60": {
     "tiles": 146,
-    "bytes": 3165448,
+    "bytes": 3168994,
     "max_tile": 57888,
     "grid": [
      13,
@@ -96,7 +96,7 @@
   "1": {
    "40": {
     "tiles": 43,
-    "bytes": 816512,
+    "bytes": 811474,
     "max_tile": 57042,
     "grid": [
      7,
@@ -105,7 +105,7 @@
    },
    "50": {
     "tiles": 43,
-    "bytes": 959574,
+    "bytes": 954310,
     "max_tile": 60682,
     "grid": [
      7,
@@ -114,7 +114,7 @@
    },
    "60": {
     "tiles": 43,
-    "bytes": 982456,
+    "bytes": 977150,
     "max_tile": 62096,
     "grid": [
      7,
@@ -125,7 +125,7 @@
   "2": {
    "40": {
     "tiles": 14,
-    "bytes": 230364,
+    "bytes": 228658,
     "max_tile": 47606,
     "grid": [
      4,
@@ -134,8 +134,8 @@
    },
    "50": {
     "tiles": 14,
-    "bytes": 276286,
-    "max_tile": 62318,
+    "bytes": 274790,
+    "max_tile": 61396,
     "grid": [
      4,
      4
@@ -143,8 +143,8 @@
    },
    "60": {
     "tiles": 14,
-    "bytes": 282962,
-    "max_tile": 64244,
+    "bytes": 281544,
+    "max_tile": 63984,
     "grid": [
      4,
      4
@@ -154,8 +154,8 @@
   "3": {
    "40": {
     "tiles": 4,
-    "bytes": 67644,
-    "max_tile": 35906,
+    "bytes": 65334,
+    "max_tile": 34822,
     "grid": [
      2,
      2
@@ -163,8 +163,8 @@
    },
    "50": {
     "tiles": 4,
-    "bytes": 79204,
-    "max_tile": 42598,
+    "bytes": 77276,
+    "max_tile": 41798,
     "grid": [
      2,
      2
@@ -172,8 +172,8 @@
    },
    "60": {
     "tiles": 4,
-    "bytes": 80950,
-    "max_tile": 43812,
+    "bytes": 78430,
+    "max_tile": 42572,
     "grid": [
      2,
      2
@@ -183,8 +183,8 @@
   "4": {
    "40": {
     "tiles": 1,
-    "bytes": 17802,
-    "max_tile": 17802,
+    "bytes": 16672,
+    "max_tile": 16672,
     "grid": [
      1,
      1
@@ -192,8 +192,8 @@
    },
    "50": {
     "tiles": 1,
-    "bytes": 19980,
-    "max_tile": 19980,
+    "bytes": 18602,
+    "max_tile": 18602,
     "grid": [
      1,
      1
@@ -201,8 +201,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 20168,
-    "max_tile": 20168,
+    "bytes": 18930,
+    "max_tile": 18930,
     "grid": [
      1,
      1
@@ -229,17 +229,22 @@
   "jiaowan",
   "nanan"
  ],
+ "filled_px": {
+  "40": 4157798,
+  "50": 4157798,
+  "60": 4157798
+ },
  "time": {
   "40": {
-   "render_s": 6.4,
-   "tiles_s": 5.5
+   "render_s": 52.5,
+   "tiles_s": 6.1
   },
   "50": {
-   "render_s": 6.9,
-   "tiles_s": 5.8
+   "render_s": 51.1,
+   "tiles_s": 5.7
   },
   "60": {
-   "render_s": 7.1,
+   "render_s": 51.1,
    "tiles_s": 5.8
   }
  },
@@ -249,33 +254,33 @@
    "jinjiao": 37.9,
    "gucheng": 35.4,
    "siqiu": 35.6,
-   "dongjia": 41.8,
+   "dongjia": 41.9,
    "xipo": 37.5,
-   "qiangwai": 42.9,
+   "qiangwai": 43.0,
    "jiaowan": 38.8,
-   "nanan": 44.9
+   "nanan": 45.0
   },
   "50": {
    "nangang": 35.9,
    "jinjiao": 37.1,
    "gucheng": 35.1,
    "siqiu": 35.0,
-   "dongjia": 41.6,
+   "dongjia": 41.7,
    "xipo": 36.3,
-   "qiangwai": 41.9,
+   "qiangwai": 42.0,
    "jiaowan": 38.7,
-   "nanan": 44.3
+   "nanan": 44.4
   },
   "60": {
    "nangang": 35.7,
    "jinjiao": 37.0,
    "gucheng": 35.0,
    "siqiu": 34.9,
-   "dongjia": 41.6,
+   "dongjia": 41.7,
    "xipo": 36.1,
-   "qiangwai": 41.7,
+   "qiangwai": 41.9,
    "jiaowan": 38.7,
-   "nanan": 44.2
+   "nanan": 44.4
   }
  },
  "water_cell": 8,
@@ -287,16 +292,16 @@
    60
   ],
   "ground_bytes": {
-   "40": 2052698,
-   "50": 2083392,
-   "60": 2061902
+   "40": 2057906,
+   "50": 2088836,
+   "60": 2066944
   },
   "vec_tiles": 132,
   "vec_bytes": 14964905,
-  "vec_gzip": 2903085,
+  "vec_gzip": 2903312,
   "vec_max_gzip": 73906,
   "max_houses_tile": 518,
-  "seconds": 17.9
+  "seconds": 146.3
  },
- "total_s": 61.3
+ "total_s": 324.2
 }
