@@ -43,3 +43,4 @@
 
 - [cs36 遗留] 港池（狄奥多西港除外）在拼图法里画成带沙边的方块水，像贴上去的（普罗斯福里翁、尤利安港）。应该给 harbor 也画一张地标图或按岸线规则生成码头。
 - [cs36 遗留] 街巷级横穿全城时帧率掉到 ~31（最差一帧 100ms）：矢量块 JSON 解析和图片解码都在主线程。改：矢量块预切成二进制 / Worker 解析，图片 createImageBitmap。
+- [低配机] 推近后若仍卡：省力模式（限 devicePixelRatio、减行人、关倾斜精灵），按 deviceMemory/hardwareConcurrency 自动开。b5fec41 已修开局九块全载。
