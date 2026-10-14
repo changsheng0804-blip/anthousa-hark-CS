@@ -1,6 +1,6 @@
 # jinjiao 验收
 
-通过 63 / 64
+通过 48 / 48
 
 
 ## 一、拉取
@@ -21,7 +21,8 @@
 - ✅ jinjiao ⇄ gucheng 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page jinjiao years 40:1307/1307 50:2579/2579 60:2834/2834 errors 0
-- ❌ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— placed 0 streets 2883 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 4 重排后户数/年份和底账不一致（底账 3179，重排 3180，不同 4）  → 修：--fix 跑 districts.py
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— ed_cs/epic_cleared）
+houses 3180 unplaced 0 streets 2883 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 4 ok
 - ✅ 一张网：街区的街都从全城街网裁下来 —— 800/800 段在全城网上
 - ✅ 顺着大道：近大道的街和大道平行或垂直 —— 124/127
 - ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
@@ -52,24 +53,6 @@
 - ✅ 60 年 Church of the Holy Apostles 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.81，全街区 0.83
 - ✅ 60 年 Market of the Embers 旁的房子没被吞掉 —— 旁边屋顶覆盖 0.83，全街区 0.83
 - ✅ 公共建筑目检表 —— /workspace/work/ah/tools/cs/factory/out/jinjiao_landmarks.jpg（青框=已建，紫框=未建；要看：已建的完好、未建的那里没有）
-
-## 四、线上
-- ✅ index.html —— 一致
-- ✅ scene.json —— 一致
-- ✅ city.json —— 一致
-- ✅ houses.json —— 一致
-- ✅ bare.jpg —— 一致
-- ✅ ji_af40.jpg —— 一致
-- ✅ ji_af50.jpg —— 一致
-- ✅ ji_af60.jpg —— 一致
-- ✅ houses_street.json —— 一致
-- ✅ streets.json —— 一致
-- ✅ junctions.json —— 一致
-- ✅ houses_geom.json —— 一致
-- ✅ ground_0.jpg —— 一致
-- ✅ ground_40.jpg —— 一致
-- ✅ ground_50.jpg —— 一致
-- ✅ ground_60.jpg —— 一致
 
 ## 五、假成功
 - ✅ 假成功率 5/23 = 22% —— 待评：cs3、cs6、cs25、cs26、cs28、cs29

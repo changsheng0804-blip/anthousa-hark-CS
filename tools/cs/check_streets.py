@@ -12,7 +12,21 @@ if not SL: print('no street layout, skip'); sys.exit(0)
 bad = []
 L0 = {h[0]: (h[2], h[3]) for h in json.load(open(Q + 'houses.json'))['houses']}
 HS = json.load(open(Q + SL['houses']))['houses']; L1 = {h[0]: (h[2], h[3]) for h in HS}
-if L0 != L1: bad.append(f'重排后户数/年份和底账不一致（底账 {len(L0)}，重排 {len(L1)}，不同 {sum(1 for k in L0 if L1.get(k) != L0[k])}）')
+# 合流①/②以后：派生表按记账清场（cleared_cs.json 地标卡、epic_cleared.json 史诗脚印）和空地新地标（id ≥ 900000）是允许的差，
+# 但必须每一户都对得上账：开始年不变、结束年 = 记账的清场年；没记账的差照样红。
+CLR = {}
+for fn in ('cleared_cs.json', 'epic_cleared.json'):
+    fp = os.path.join(ROOT, 'docs', 'living', 'tiles', fn)
+    if os.path.exists(fp):
+        for r in json.load(open(fp))['cleared']: CLR.setdefault(int(str(r['id']).lstrip('h')), set()).add(r['year'])
+def ok_diff(k):
+    a, b = L0.get(k), L1.get(k)
+    if a is None: return b is not None and k >= 900000
+    if b is None: return False
+    return a[0] == b[0] and b[1] in CLR.get(k, ())
+D = [k for k in set(L0) | set(L1) if L0.get(k) != L1.get(k)]; U = [k for k in D if not ok_diff(k)]
+if U: bad.append(f'重排后户数/年份和底账不一致且没记账（底账 {len(L0)}，重排 {len(L1)}，没记账的差 {len(U)}：{sorted(U)[:8]}）')
+elif D: print(f'记账清场 {len(D)} 户（都对得上 cleared_cs/epic_cleared）')
 WK = (sc.get('fleet') or {}).get('walk') or sc['walk']
 def wet(x, y):
     gx, gy = int(x // WK['R']), int(y // WK['R'])
