@@ -193,6 +193,9 @@ def reset(HS):
 def main():
     D = {q: json.load(open(os.path.join(LIV, q, 'houses_street.json'))) for q in QS}
     for q in QS: reset(D[q]['houses'])
+    import road_sweep   # G5：先撤终扫的接线/收线记号（地标按未经终扫的街选址，放置才与之前一字不变）
+    for q in QS:
+        _sp = os.path.join(LIV, q, 'streets.json'); _st = json.load(open(_sp)); road_sweep.undo(_st); json.dump(_st, open(_sp, 'w'), separators=(',', ':'))
     placed_w = []   # 全城：(种类, 世界 x, 世界 y)
     for q in QS:   # 其它种类已有的地标（谭线 v30 的教堂、面包台阶……若以后进来）也算间距
         for h in D[q]['houses']:
@@ -281,4 +284,5 @@ def main():
     json.dump({'src': 'tools/cs/factory/landmarks_city.py（谭线 v31 地标卡）', 'cleared': cleared, 'placed': log}, open(os.path.join(OUT, 'cleared_cs.json'), 'w'), ensure_ascii=False, indent=0)
     print('\n'.join(log)); print('放置', len(log), '并入拆除', len(cleared))
     import epic_clear; epic_clear.main()   # G3：地标放完后，史诗脚印下的房清场
+    road_sweep.main()   # G5：道路终扫（孤岛先接后收），房子都放完了再扫
 if __name__ == '__main__': main()
