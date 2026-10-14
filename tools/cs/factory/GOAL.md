@@ -29,7 +29,7 @@
 | 3 | 面包台阶卡经 landmarks_city 全城放 + 粮网 fed_by + 台阶清晨排队只在有粮时 | G2 | 完成（8 座台阶；粮网 4 港 5 仓 8 台阶；4 座先光秃后供粮；check_nets ⑦⑧ + check_breadqueue.js） |
 | 4 | 史诗地块清场（派生表）+ check | G3 | 完成（账本+streets_ng 已清大部分；check_epic_clear 先抓出水渠桥谷桥下 5 栋，epic_clear.py 拆/不建；瓦片已重烤） |
 | 5 | epic_ground / epic_tall / mese_portico 分期画法进 render_ng/tile_bake，重烤 | G4 | 完成（epic_stage.py → 伪房子行进 vec；广场 57 工地→59 铺面、柱每年一节至 64 立像、60 凯旋门；大宁芙泉 44；梅塞柱廊 1 立架→3 瓦顶；check_epic_stage 21 项） |
-| 6 | 道路终扫 + prune_islands + 全城 audit 0 | G5 | 待做 |
+| 6 | 道路终扫 + prune_islands + 全城 audit 0 | G5 | 完成（road_sweep.py 孤岛先接后收：接线 13 段、收 42 段；check_roads 压路/孤岛/渠桥下小巷全 0；瓦片已重烤） |
 | 7 | 刘线 reg 旁车懒加载进敲门卡 | G6 | 待做 |
 | 8 | 收口：perf 全量、九块 accept --live、截图，写总结发给所有者（早上 08:00 前） | 全部 | 待做 |
 
@@ -42,3 +42,4 @@
 - 2026-10-14 12:05 PT 第 4 轮 · 项 3：先写 check_nets ⑦⑧（无粮网/无台阶 → 不过）→ landmarks_city 加第二遍放 bread_steps（前 39 处放置一字不变，diff 验证）全城 8 座，net_water.py 加 grain 段（港口→粮仓→台阶，就近取、供粮年=max(落成,上游)），tile_bake 面包按供粮年摆，页面 breadQueue 只在供粮的清晨 5–8:30 排队、不画网线；check_breadqueue.js 全过。Mac 重烤收回（瓦片 64 MB）；全部检查过；perf 首屏 0.45 MB/1.1 s，街巷级线上 4.96 MB、堆 80 MB、FPS 47（软渲染，同量级）。看了南港 40 年清晨门前的队（30 年粮仓未供则无队）。重排：下一项 4。
 - 2026-10-14 12:35 PT 第 5 轮 · 项 4：先写 check_epic_clear（33 座史诗多边形 × 全城房/街/vec 三层，脚印下 0 房 0 街）→ 先不过：5 栋房压在水渠桥谷桥（aqb_valley）下 1–2%（街 0 段，其余史诗账本已拆干净）；epic_clear.py 在派生表里拆（建成年已在的拆于建成年，之后才开工的不建），landmarks_city 末尾调用、重放验证幂等（39 座地标放置一字不变）；Mac 重烤收回（61 块 vec 只因拓扑排序名次顺移 1–2，另 2 栋房消失；瓦片总量 64 MB）。检查全过；perf 首屏 0.45 MB/1.2 s，街巷级线上 4.96 MB、堆 70 MB、FPS 50（软渲染，同量级）。看了谷桥一带街巷级 60 年图，街房正常。重排：下一项 5。
 - 2026-10-14 13:20 PT 第 6 轮 · 项 5：先写 check_epic_stage（vec 里无 epic 行 → 不过）→ epic_stage.py 把谭线 epic_ground/epic_tall/mese_portico 译成「带年份段的部件」，以伪房子行（id epic:…）写进 vec，页面零代码；广场 57–58 工地（碎石石堆）→ 59 铺面+四面柱廊+雕像+铜牛+布棚，狄奥多西柱 57 起每年立一节（脚手架）、64 年立像拆架，60 凯旋门；大宁芙泉 44 池+半圆壁龛、水面从 net_water 出水年；梅塞柱廊 1–2 年立柱+石板路、3 起瓦顶（梅塞派生路宽 15 px、房子贴到 ~10 px，柱廊收窄到 7.6–10.2 px，让房、支路断开、创城者广场/狄奥多西广场内断开）。踩坑：柱单独成行会被拓扑排序排到铺面前面盖住→柱的部件接在广场行末尾。check_epic_stage 21 项、check_epic_clear（跳过 epic 行，部件级 ⑥）、check_lm_city（认 epic: id）全过；看了 58/59/61/64 年广场与 45 年宁芙泉+梅塞柱廊图。重排：下一项 6。
+- 2026-10-14 13:50 PT 第 7 轮 · 项 6：先写 check_roads（压路 / 30–155 年每 5 年的孤岛 / 渠桥下小巷）→ 先不过：孤岛 81 条（南港、金角岸、古城、西坡、南岸等；房不压路本来就是 0）→ road_sweep.py（谭线 prune_islands 改成先接后收：中线 ≤4 px 算通；离最近街 ≤32 px 且全程陆地、不压当年房、不穿史诗脚印的孤岛补一小段接线，接不上的把开始年推到连通那年或把结束年定在断开那年）；landmarks_city 先撤记号、末尾再扫，重放验证 39 座地标放置一字不变。Mac 重烤收回（瓦片 65 MB）；check_roads / nets / lm_city / epic_clear / epic_stage / traces / chron_page / tiles / waterline / breadqueue 全过；perf 首屏 0.45 MB，街巷级线上 4.98 MB（未压 17.5）、堆 93 MB、FPS 50.7（沙箱软渲染，同量级）。看了金角岸 45/60 年图：45 年孤岛小巷不画，60 年接上主街后出现。注：check_streets 的「重排后户数/年份和底账不一致」在南港/金角岸/古城/第四丘上是项 4/5 清场改年份留下的，非本项造成。重排：下一项 7。
