@@ -119,6 +119,40 @@ def main():
         nm = [SN[int(sidx[j])]['n'] for j in np.argsort(np.where(m, d2, np.inf))[:6] if m[j]]
         J.append([x, y, yr, kind, list(dict.fromkeys(nm))[:2]])
     json.dump({'src': sha, 'junctions': J}, open(os.path.join(OUT, 'junctions_named.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    # landmark spec cards (upstream v27–v30: tools/landmarks/*.json is the single source for special buildings);
+    # copied whole, read-only; each fixed instance also gets its nearest named streets (year 60)
+    LM = {}
+    names = git('ls-tree', '--name-only', sha, 'tools/landmarks/').decode().split()
+    for f in names:
+        if f.endswith('.json'):
+            sp = json.loads(git('show', f'{sha}:{f}'))
+            LM[sp.get('id', os.path.basename(f)[:-5])] = sp
+    FX = []
+    for sid, sp in sorted(LM.items()):
+        for it in sp.get('instances', {}).get('fixed', []):
+            if it.get('quarter', 'xerolophos') != 'xerolophos' or 'xy' not in it: continue
+            x, y = it['xy']
+            t = np.clip(((x - ax) * dx + (y - ay) * dy) / L2, 0, 1)
+            d2 = (x - ax - t * dx) ** 2 + (y - ay - t * dy) ** 2
+            m = live[60][sidx] & (d2 < (MAXD * 3) ** 2)
+            nm = [SN[int(sidx[j])]['n'] for j in np.argsort(np.where(m, d2, np.inf))[:12] if m[j]]
+            FX.append({'spec': sid, 'key': it['key'], 'name': it.get('name_zh', sp.get('name_zh')), 'category': sp.get('category'),
+                       'xy': it['xy'], 'built': it.get('built', sp.get('era', [0])[0]), 'until': it.get('until'),
+                       'historic': sp.get('historic', False), 'streets_60': list(dict.fromkeys(nm))[:3]})
+    # generated instances (church, bread steps, fountain, horrea, inn …) sit on house lots: column 10 = 'lm:<spec>'
+    GX = []
+    for h in HU:
+        if len(h) > 9 and isinstance(h[9], str) and h[9].startswith('lm:'):
+            poly = h[4]; x = sum(poly[0::2]) / (len(poly) // 2); y = sum(poly[1::2]) / (len(poly) // 2)
+            sp = LM.get(h[9][3:], {})
+            t = np.clip(((x - ax) * dx + (y - ay) * dy) / L2, 0, 1)
+            d2 = (x - ax - t * dx) ** 2 + (y - ay - t * dy) ** 2
+            m = live[60][sidx] & (d2 < MAXD * MAXD)
+            nm = [SN[int(sidx[j])]['n'] for j in np.argsort(np.where(m, d2, np.inf))[:6] if m[j]]
+            GX.append({'house': h[0], 'spec': h[9][3:], 'name': sp.get('name_zh'), 'category': sp.get('category'),
+                       'xy': [round(x, 1), round(y, 1)], 'built': h[2], 'destroyed': h[3], 'district': h[8], 'streets_60': list(dict.fromkeys(nm))[:2]})
+    json.dump({'src': sha, 'fixed_xerolophos': FX, 'generated_xerolophos': GX, 'specs': LM}, open(os.path.join(OUT, 'landmarks.json'), 'w', encoding='utf-8'),
+              ensure_ascii=False, separators=(',', ':'))
     log = git('log', '-1', '--format=%H %ad %s', '--date=short', sha).decode().strip()
     open(os.path.join(OUT, 'SOURCE.md'), 'w', encoding='utf-8').write(f"""# facts_upstream · 谭线空间事实（只读）
 
@@ -132,6 +166,7 @@ def main():
 | blocks.json | v21 blocks_xero（每年的街区及功能） | 功能中文名表 `fn` |
 | junctions.json | v14/v16 路口的井、炉、摊 | `junctions_named.json`：每个路口设施挂到街名上，供写闲话参考 |
 | addr.json | 刘线推演（tools/facts_from_upstream.py） | 页面人家卡片、街坊在说什么、相遇的街名 |
+| landmarks.json | v27–v30 tools/landmarks/*.json 地标规格卡（蓄水池、浴场、兵营、城门、水渠桥、聚会所、教堂、面包台阶、泉亭、粮仓、客栈） | `fixed_xerolophos`：干山固定地标的位置/建成年/近旁街名；`generated_xerolophos`：落在房屋地块上的生成地标（上游 houses.json 第 10 栏 `lm:类型`）；`specs` 原样；供户籍挂设施、写闲话参考 |
 
 刘线不引用上游的画法：页面仍画刘线自己的底图和房子，不画街道线、街名标注、街区色块。
 复现：`python3 tools/facts_from_upstream.py {sha[:7]}`。
