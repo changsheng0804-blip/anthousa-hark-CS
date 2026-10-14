@@ -23,7 +23,7 @@ nid = miss = 0
 for f in glob.glob(os.path.join(L.OUT, 'vec', '*.json')):
     for r in json.load(open(f))['h']:
         nid += 1
-        if len(r) < 6 or (r[5] not in W and not str(r[5]).startswith('cs:lm')): miss += 1
+        if len(r) < 6 or (r[5] not in W and not str(r[5]).startswith('cs:lm') and not str(r[5]).startswith('epic:')): miss += 1
 if miss: bad.append(f'vec 缺 id {miss}/{nid}')
 print(f'地标 {n} 座，并入 {len(C)} 栋，vec {nid} 栋带 id')
 print('\n'.join('❌ ' + b for b in bad) or '✅ 全过'); sys.exit(1 if bad else 0)

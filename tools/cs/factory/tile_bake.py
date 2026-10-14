@@ -164,6 +164,13 @@ for q in QS:
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
         if not owns(q, cx, cy): continue
         put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P, LID(hh)])   # 第 6 字段：底账 id（刘线 inbox/TO_CS.md A：旁车按 id 精确对上）
+# /goal 4 项 5（G4）：史诗分期部件（狄奥多西广场/柱/凯旋门、大宁芙泉、梅塞柱廊）——伪房子行，id 'epic:…'，部件带年份段；来源 epic_stage.py（谭线画法）
+_ES = os.path.join(OUT, 'epic_stage.json')
+if os.path.exists(_ES):
+    for r in json.load(open(_ES))['rows']:
+        sh = r['shadow']; cx = sum(sh[0:8:2]) / 4; cy = sum(sh[1:8:2]) / 4
+        if not (0 <= int(cy) < COV.shape[0] and 0 <= int(cx) < COV.shape[1] and COV[int(cy), int(cx)]): continue
+        put(int(cx // TP), int(cy // TP), 'h', [r['built'], r['end'], r['by'], sh, r['parts'], r['id']])
 # 定律 2：船只在水格里走——每块瓦片按 8 像素格记水格（格里 ≥95% 是水才算），每个关键年一串 0/1
 WC = 8; NC = math.ceil(TP / WC); nwater = 0
 for ty in range(NY):

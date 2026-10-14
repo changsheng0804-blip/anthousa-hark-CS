@@ -34,7 +34,7 @@ for q in L.QS:
 nv = 0
 for f in glob.glob(os.path.join(L.OUT, 'vec', '*.json')):
     for r in json.load(open(f))['h']:
-        if r[1] <= r[0]: continue
+        if r[1] <= r[0] or str(r[5]).startswith('epic:'): continue   # 'epic:' 行是史诗自己的分期部件（check_epic_stage.py ⑥ 按部件年份查）
         nv += 1; i = r[5]
         Q = Polygon([(L.X0 + r[3][k] / L.S, L.Y0 + r[3][k + 1] / L.S) for k in range(0, len(r[3]) - 1, 2)][:4]).buffer(0)   # vec 里的底面四边形（全城瓦片像素）→ 世界坐标
         for e, P, eb, ee in PE:
