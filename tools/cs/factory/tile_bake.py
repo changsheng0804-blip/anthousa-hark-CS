@@ -120,7 +120,7 @@ R = lambda v: round(v * 2) / 2
 vec = {}
 def put(tx, ty, k, item): vec.setdefault((tx, ty), {'s': [], 'h': []})[k].append(item)
 KC = {'fill': 0, 'edge': 1, 'line': 2}
-LID = lambda hh: ('h%d' % hh[0]) if isinstance(hh[0], int) else str(hh[0])
+LID = lambda hh: (('cs:lm%d' % hh[0]) if hh[0] >= 900001 else ('h%d' % hh[0])) if isinstance(hh[0], int) else str(hh[0])   # ≥900001：CS 在空地上新立的地标，底账没有
 for q in QS:
     ox, oy, w, h = stat['quarters'][q]; Q = os.path.join(LIV, q) + '/'
     for st in json.load(open(Q + 'streets.json')):

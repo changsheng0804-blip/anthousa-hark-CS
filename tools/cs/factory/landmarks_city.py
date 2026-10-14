@@ -22,7 +22,8 @@ CITY_ADAPT = {'kiln': {'near_wall': 22}}
 # 放大一档（主人 10-14「先放大一档看看」）：只在 CS 侧覆盖谭线卡的并地参数，卡本身不改
 # 谭线的并地要求邻居共用顶点；CS 的地块之间有缝，所以并不进来。改用「放大脚印」：选中后把地块按中心放大（线长 ×GROW，
 # 试不过就退一档），仍须严格不压路；脚印里的房子（任何街区）在开工年拆掉，晚于开工年才建的就不再建——都记 cleared。
-GROW = {'macellum': [1.9, 1.7, 1.5, 1.3], 'kiln': [1.7, 1.5, 1.3], 'cemetery': [2.4, 2.1, 1.8, 1.5]}
+GROW = {'macellum': [1.9, 1.7, 1.5, 1.3], 'kiln': [1.7, 1.5, 1.3], 'cemetery': [3.2, 2.8, 2.4, 2.1, 1.8, 1.5]}
+ROOMY = {'cemetery'}   # 主人 10-14「墓地可以放到墙外的地方去」：墙外所有候选里挑空地最大的（能放最大、压房最少）
 M = json.load(open(os.path.join(OUT, 'meta.json'))); TP = M['tile_px']; S = M['scale']; X0, Y0 = M['origin']; NX, NY = M['grid']
 QS = M['owner_order']
 FR = {q: json.load(open(os.path.join(LIV, q, 'frame.json')))['frame'] for q in QS}
@@ -116,6 +117,58 @@ def hits_protected(q, h, D, P):
             if n is h or n[0] not in P.get(q2, ()): continue
             if L.intersects(wpoly(q2, n[4])): return True
     return False
+def count_under(q, h, D):
+    L = wpoly(q, h[4]).buffer(0); b = h[2]; e = h[3]; k = 0
+    for q2 in QS:
+        for n in D[q2]['houses']:
+            if n is h or str(n[9]).startswith('lm:') or n[3] <= b or n[2] >= e: continue
+            P = wpoly(q2, n[4])
+            if L.intersects(P) and L.intersection(P).area >= 0.3 * P.area: k += 1
+    return k
+def room_of(q, h, sp, ST, D):
+    """候选地块能放多大：试 GROW 各档，过严格不压路、不碰护着的房，压房 ≤2 栋；返回放大后的面积"""
+    old = list(h[4]), h[9], h[7]; h += [h[9], h[7], list(h[4])]; h[9] = 'lm:cemetery'; h[7] = LS.height(sp); best = 0
+    cx0, cy0 = ctr(h); base = old[0]
+    for g in GROW['cemetery']:
+        h[4] = [cx0 + (base[i] - cx0) * g if i % 2 == 0 else cy0 + (base[i] - cy0) * g for i in range(8)]
+        if ok_strict(h, ST) and not hits_protected(q, h, D, PROT_ALL) and count_under(q, h, D) <= 2: best = area(h); break
+    h[4], h[9], h[7] = old; del h[13:]
+    return best
+FREE_ID0 = 900001   # 空地上新立的地标没有底账房号：CS 侧编号 ≥900001，vec 里写作 'cs:lm<号>'
+def free_site(sid, D, placed_w):
+    """主人 10-14「墓地可以放到墙外的地方去」：不占房子地块，在创城者城墙外的空地上找最大的一块——
+    陆地（地面画上不是水）、本街区拥有、全程不压路、底下没房、离路 ≤12 px（墓沿城外的路排开）。从大到小试几种尺寸。"""
+    from PIL import Image
+    sp = LS.SPECS[sid]; b = 1
+    for (w, hgt) in [(130, 80), (110, 70), (90, 60), (70, 48)]:
+        best = None
+        for q in QS:
+            ST = json.load(open(os.path.join(LIV, q, 'streets.json')))
+            gk = sorted(int(f[7:-4]) for f in os.listdir(os.path.join(LIV, q)) if f.startswith('ground_') and f[7:-4].lstrip('-').isdigit())
+            G = np.asarray(Image.open(os.path.join(LIV, q, f'ground_{gk[-1]}.jpg')).convert('RGB')).astype(int)
+            land = lambda x, y: 0 <= int(y) < G.shape[0] and 0 <= int(x) < G.shape[1] and (G[int(y), int(x), 1] - G[int(y), int(x), 0]) <= 15
+            f = FR[q]; Wd, Hd = round(f[2] * S), round(f[3] * S)
+            for cy in range(hgt, Hd - hgt, 12):
+                for cx in range(w, Wd - w, 12):
+                    wx, wy = to_world(q, cx, cy)
+                    if wx > wall_world_x(wy) - 1 or not owned(q, cx, cy): continue
+                    pts = [(cx - w / 2, cy - hgt / 2), (cx + w / 2, cy - hgt / 2), (cx + w / 2, cy + hgt / 2), (cx - w / 2, cy + hgt / 2)]
+                    M_ = 14   # 离海岸至少 14 px（不贴着水边）
+                    ring_ = [(cx + dx * (w / 2 + M_), cy + dy * (hgt / 2 + M_)) for dx in (-1, 0, 1) for dy in (-1, 0, 1)]
+                    if not all(land(x, y) for x, y in ring_): continue
+                    if not all(land(x, y) and owned(q, x, y) and to_world(q, x, y)[0] < wall_world_x(to_world(q, x, y)[1]) for x, y in pts + [(cx, cy)]): continue
+                    if any(math.hypot((wx - p[1]) * S, (wy - p[2]) * S) < 120 for p in placed_w): continue
+                    # 墓沿城外的路排开：要一条离墓地 ≤12 px 的路；墓地和这条路同年开（路越早越好）
+                    near = [(s_[6], sd(cx, cy, s_) - s_[4] / 2 - min(w, hgt) / 2) for s_ in ST if not s_[7]]
+                    near = [n_ for n_ in near if n_[1] <= 12]
+                    if not near: continue
+                    ry, dr = min(near); b = max(1, ry)
+                    h = [FREE_ID0, 0, b, 9999, [c for xy in pts for c in xy], 0, 1, LS.height(sp), 'garden', 'lm:' + sid, 2, 0, 0, 'casa', 4.6, None]
+                    if not ok_strict(h, ST) or count_under(q, h, D) > 0: continue
+                    sc = (b, dr)
+                    if best is None or sc < best[0]: best = (sc, q, h)
+        if best: return best[1], best[2]
+    return None, None
 def clear_under(q, h, D, sid):
     """脚印下的房子：开工年 b 时还在的 → 拆于 b；b 之后才建、地标在时会建的 → 不建（拆毁年=建成年）。"""
     L = wpoly(q, h[4]).buffer(0); b = h[2]; e = h[3]; out = []
@@ -127,6 +180,7 @@ def clear_under(q, h, D, sid):
             n += ['merged', n[3], sid, q2]; n[3] = max(n[2], b); out.append(n)
     return out
 def reset(HS):
+    HS[:] = [h for h in HS if not (isinstance(h[0], int) and h[0] >= FREE_ID0)]
     for h in HS:
         if len(h) > 13 and h[13] == 'merged' and len(h) > 15 and h[15] in KINDS: h[3] = h[14]; del h[13:]
         elif isinstance(h[9], str) and h[9][3:] in KINDS:
@@ -172,6 +226,7 @@ def main():
                 pf = si.get('prefer_fn', []); rank = pf.index(h[8]) if h[8] in pf else len(pf)
                 score = (rank, -area(h) * (0.6 + 0.4 * HT.hsh(h[0], 301)) if si.get('prefer') == 'large' else HT.hsh(h[0], 300))
                 C.append((score, h))
+            if sid in ROOMY: continue   # 放到下面全城空地选址
             C.sort(key=lambda c: c[0]); got = 0
             for _, h in C:
                 if got >= nmax: break
@@ -211,6 +266,11 @@ def main():
                 else:
                     h[4] = old4; continue
                 if h[4] != old4 and len(h) <= 13: h[4] = old4
+    for sid in sorted(ROOMY):
+        q, h = free_site(sid, D, placed_w)
+        if h:
+            D[q]['houses'].append(h); wc = to_world(q, *ctr(h)); placed_w.append((sid,) + wc)
+            log.append(f"{q} {sid} cs:lm{h[0]} 建于 {h[2]} 面积 {int(area(h))} 墙外空地 世界({wc[0]:.0f},{wc[1]:.0f})")
     for q in QS: json.dump(D[q], open(os.path.join(LIV, q, 'houses_street.json'), 'w'), separators=(',', ':'))
     json.dump({'src': 'tools/cs/factory/landmarks_city.py（谭线 v31 地标卡）', 'cleared': cleared, 'placed': log}, open(os.path.join(OUT, 'cleared_cs.json'), 'w'), ensure_ascii=False, indent=0)
     print('\n'.join(log)); print('放置', len(log), '并入拆除', len(cleared))
