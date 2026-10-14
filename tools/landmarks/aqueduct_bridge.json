@@ -1,0 +1,54 @@
+{
+ "id": "aqueduct_bridge",
+ "name_zh": "水渠桥",
+ "name_la": "aquaeductus",
+ "category": "water",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": true,
+ "render": "terrain",
+ "note": "Aqueduct of Valens, completed c. 373 AD",
+ "clear_radius": 40,
+ "line": [
+  [
+   760,
+   0
+  ],
+  [
+   1820,
+   515
+  ]
+ ],
+ "influence": [
+  {
+   "fn": "workshop",
+   "line_r": 55,
+   "order": 2
+  }
+ ],
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "aqb_valley",
+    "quarter": "xerolophos",
+    "xy": [
+     1490,
+     370
+    ],
+    "name_zh": "水渠桥",
+    "story": "建城 11 年修成的水渠桥，把色雷斯山里的水送进城。",
+    "now": {
+     "day": "桥洞下有人卖瓜",
+     "night": "桥上的水声很响"
+    },
+    "built": 11
+   }
+  ]
+ },
+ "size": "large",
+ "clear_rank": 3,
+ "clear_interior": false
+}

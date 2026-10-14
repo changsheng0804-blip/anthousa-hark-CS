@@ -1,0 +1,111 @@
+{
+ "id": "cistern",
+ "name_zh": "蓄水池",
+ "name_la": "cisterna",
+ "category": "water",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": true,
+ "note": "open-air reservoirs fed by the aqueduct; Cistern of Modestus c. 369 AD",
+ "render": "overlay",
+ "clear": "poly",
+ "closes_roads": true,
+ "influence": [
+  {
+   "fn": "water",
+   "r": 130,
+   "order": 0,
+   "from_built": true
+  }
+ ],
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "cistern_modestus",
+    "quarter": "xerolophos",
+    "xy": [
+     668,
+     100
+    ],
+    "name_zh": "莫德斯图斯蓄水池",
+    "story": "瓦伦斯的长官莫德斯图斯修的露天蓄水池。建城 41 年第一次注满，干山从此有了水。",
+    "now": {
+     "morning": "运水人排队灌罐子",
+     "day": "孩子们趴在池边看自己的倒影",
+     "night": "池水映着月亮"
+    },
+    "poly": [
+     [
+      604,
+      50
+     ],
+     [
+      732,
+      50
+     ],
+     [
+      732,
+      149
+     ],
+     [
+      604,
+      149
+     ]
+    ],
+    "built": 41,
+    "overlay": {
+     "f": "ov_cistern_modestus.webp",
+     "x": 575,
+     "y": 21,
+     "a": 41,
+     "b": 999
+    }
+   },
+   {
+    "key": "cistern_carriers",
+    "quarter": "xerolophos",
+    "xy": [
+     455,
+     1352
+    ],
+    "name_zh": "运水人蓄水池",
+    "story": "建城 54 年，干山上的运水人凑铜板修的蓄水池。第一稿放在山坡正中间，没有路通得到，引擎驳回；挪到坡下，紧挨中央大道和城门。",
+    "now": {
+     "morning": "运水人在池边排队，驴背上驮着两只罐子",
+     "day": "女人们在池边洗衣服、说闲话",
+     "night": "池边睡着一个没地方去的运水人"
+    },
+    "poly": [
+     [
+      405,
+      1329
+     ],
+     [
+      505,
+      1329
+     ],
+     [
+      505,
+      1401
+     ],
+     [
+      405,
+      1401
+     ]
+    ],
+    "built": 54,
+    "overlay": {
+     "f": "ov_cistern_carriers.webp",
+     "x": 380,
+     "y": 1304,
+     "a": 54,
+     "b": 999
+    }
+   }
+  ]
+ },
+ "size": "large"
+}

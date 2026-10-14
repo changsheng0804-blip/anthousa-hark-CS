@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安托萨 · 3D 历史漫游与分支预演 (Anthousa 3D)</title>
+<style>
+:root{--ink:#3b2a1a;--paper:#f3e7c9;--deep:#16191f;--gold:#e6c27a;--accent:#c98f4e;--panel:rgba(20,24,30,0.88);--border:#3a4250}
+html,body{margin:0;height:100%;background:var(--deep);color:#e2e8f0;font-family:"PingFang SC","Microsoft YaHei","Songti SC",serif;overflow:hidden;user-select:none}
+#bar{position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;gap:12px;padding:0 16px;background:rgba(22,25,32,0.95);border-bottom:1px solid var(--border);z-index:10;font-size:14px}
+#bar h1{font-size:16px;margin:0;letter-spacing:0.1em;color:var(--gold);font-weight:600}
+#bar .sub{font-size:12px;opacity:0.65;font-style:italic}
+.btn{background:#2a313d;border:1px solid #4a5568;color:#e2e8f0;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s}
+.btn:hover{background:#3b4556;border-color:var(--gold)}
+.btn.active{background:#b87d3b;border-color:var(--gold);color:#fff;font-weight:bold}
+.btn.gold{background:#9e782f;border-color:var(--gold);color:#fff}
+#stage{position:absolute;top:48px;left:0;right:0;bottom:0}
+canvas{width:100%;height:100%;display:block}
+
+/* 侧边信息面板 */
+#panel-side{position:absolute;top:60px;right:16px;width:340px;max-height:calc(100% - 140px);background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;backdrop-filter:blur(8px);z-index:9;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+#panel-side h2{margin:0;font-size:18px;color:var(--gold);font-weight:500;display:flex;justify-content:space-between;align-items:baseline}
+.stats-grid{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;font-size:12px;align-items:center;background:rgba(0,0,0,0.25);padding:10px;border-radius:6px}
+.bar{height:6px;background:#2d3748;border-radius:3px;overflow:hidden;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:#d69e2e;border-radius:3px}
+.bar.w i{background:#3182ce}
+.chron-box{font-size:13px;line-height:1.7;color:#cbd5e0;background:rgba(0,0,0,0.2);padding:10px;border-radius:6px;border-left:3px solid var(--gold);max-height:220px;overflow-y:auto}
+
+/* 分支预演工具箱 */
+#panel-sandbox{position:absolute;top:60px;left:16px;width:290px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;backdrop-filter:blur(8px);z-index:9;display:flex;flex-direction:column;gap:10px}
+#panel-sandbox h3{margin:0;font-size:15px;color:var(--gold);display:flex;align-items:center;gap:6px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12px}
+.field select, .field input{background:#1a202c;border:1px solid #4a5568;color:#fff;padding:6px;border-radius:4px;font-size:12px}
+.rules-audit{background:rgba(0,0,0,0.3);padding:8px 10px;border-radius:6px;font-size:12px;display:flex;flex-direction:column;gap:4px}
+.audit-item{display:flex;align-items:center;gap:6px}
+.audit-item.ok{color:#48bb78}
+.audit-item.warn{color:#ecc94b}
+.audit-item.err{color:#f56565}
+
+/* 底部时间轴控制 */
+#timeline{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:min(680px,90%);background:var(--panel);border:1px solid var(--border);border-radius:30px;padding:10px 24px;backdrop-filter:blur(8px);z-index:10;display:flex;align-items:center;gap:16px}
+#timeline input[type=range]{flex:1;accent-color:var(--gold);cursor:pointer}
+#era-label{font-size:14px;color:var(--gold);font-weight:600;min-width:120px;text-align:center}
+
+/* 悬浮提示框 */
+#tooltip{position:absolute;pointer-events:none;background:rgba(15,18,24,0.95);border:1px solid var(--gold);color:#fff;padding:6px 12px;border-radius:4px;font-size:12px;display:none;z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
+#tooltip .name{color:var(--gold);font-weight:bold;font-size:13px}
+#tooltip .desc{color:#a0aec0;font-size:11px;margin-top:2px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <h1>ANTHOUSA 3D · 安托萨</h1>
+  <span class="sub">博斯普鲁斯地形 · 3D 历史生长与分支预演</span>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button class="btn" id="btn-reset-cam">🎥 重置视角</button>
+    <button class="btn" id="btn-toggle-houses">🏘️ 显隐民居</button>
+    <button class="btn active" id="btn-mode-sandbox">🧪 分支预演模式</button>
+    <a href="index.html" class="btn" style="text-decoration:none">📜 返回 2D 铜版画时间轴</a>
+  </div>
+</div>
+
+<div id="stage"><canvas id="c3d"></canvas></div>
+
+<!-- 侧边历史面板 -->
+<div id="panel-side">
+  <h2><span id="era-title">引水入城</span> <small style="font-size:12px;color:#a0aec0;" id="era-years">AF 11–20</small></h2>
+  <div class="stats-grid">
+    <span>人口</span><div class="bar"><i id="bar-pop" style="width:28%"></i></div><span id="val-pop">44,757</span>
+    <span>粮食</span><div class="bar"><i id="bar-food" style="width:66%"></i></div><span id="val-food">105,000</span>
+    <span>供水</span><div class="bar w"><i id="bar-water" style="width:100%"></i></div><span id="val-water">158,000</span>
+    <span>房屋</span><div></div><span id="val-houses">4,973 栋</span>
+  </div>
+  <div class="chron-box" id="chron-text">
+    历史编年加载中...
+  </div>
+</div>
+
+<!-- 分支预演工具箱 -->
+<div id="panel-sandbox">
+  <h3><span>🧪</span> 决策分支预演 (What-If)</h3>
+  <div style="font-size:12px;color:#a0aec0;line-height:1.5;">
+    在真实 3D 地形上点击预选位置，测试不同派系提案在下一纪元（AF 21-30）的可行性。
+  </div>
+  <div class="field">
+    <label>提案派系</label>
+    <select id="sel-faction">
+      <option value="emperor">皇帝 (Emperor) · 宏伟奇观/宫殿</option>
+      <option value="church">教会 (Church) · 圣巴西利卡/修道院</option>
+      <option value="merchants">商人 (Merchants) · 深水新码头/货栈</option>
+      <option value="people">竞技场平民 (People) · 凯旋纪念柱/广场</option>
+      <option value="army">近卫军 (Army) · 外城防线/军营</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>建筑原型 (DNA 母题)</label>
+    <select id="sel-motif">
+      <option value="church_basilica">巴西利卡十字大教堂 (Basilica)</option>
+      <option value="cistern_open">拱柱露天大蓄水池 (Cistern)</option>
+      <option value="harbor_quay">海峡石砌深水码头 (Harbor)</option>
+      <option value="hippodrome_ext">赛马竞技场扩建看台 (Stands)</option>
+      <option value="column_monument">斑岩凯旋胜利柱 (Monument)</option>
+      <option value="wall_tower">狄奥多西外防线方塔 (Wall Tower)</option>
+      <option value="granary_hall">中央拱券大粮仓 (Granary)</option>
+    </select>
+  </div>
+  <div class="rules-audit">
+    <div style="font-weight:600;margin-bottom:2px;color:var(--gold);">实时硬规则检验 (Rules Audit)</div>
+    <div class="audit-item ok" id="rule-land">✓ 位于博斯普鲁斯陆地</div>
+    <div class="audit-item ok" id="rule-road">✓ 距离主干道 &lt; 25 格</div>
+    <div class="audit-item ok" id="rule-overlap">✓ 无重叠既有建筑</div>
+    <div class="audit-item ok" id="rule-slope">✓ 坡度适宜 (&lt; 12%)</div>
+  </div>
+  <button class="btn gold" id="btn-export-proposal" style="width:100%;justify-content:center;margin-top:4px;">
+    📋 导出安托萨提案 JSON
+  </button>
+</div>
+
+<!-- 时间轴控制器 -->
+<div id="timeline">
+  <button class="btn" id="btn-play">▶ 播放</button>
+  <input type="range" id="era-slider" min="0" max="3" value="3" step="1">
+  <div id="era-label">建城 20 年 (AF 20)</div>
+</div>
+
+<div id="tooltip">
+  <div class="name" id="tip-name"></div>
+  <div class="desc" id="tip-desc"></div>
+</div>
+
+<script>
+'use strict';
+let WORLD = null, gl = null, prog = null, loc = {}, vbo = null, ibo = null, idxCount = 0;
+let objVbo = null, objCount = 0;
+let showHouses = true, curEraIdx = 3, isSandbox = true;
+let candidateBuilding = null; // 预演候选建筑
+
+const canvas = document.getElementById('c3d');
+const cam = { yaw: -0.78, pitch: 0.42, dist: 380, target: [480, 20, 420] };
+let isDragging = false, lastMouse = [0,0];
+
+// 色彩定义 (仿古典铜版画与地中海色泽)
+const PAL = {
+  sea: [36/255, 68/255, 96/255],
+  beach: [198/255, 185/255, 150/255],
+  landLow: [142/255, 156/255, 120/255],
+  landHigh: [186/255, 172/255, 142/255],
+  palace: [217/255, 180/255, 90/255],
+  church: [175/255, 65/255, 52/255],
+  hippodrome: [225/255, 210/255, 168/255],
+  wall: [120/255, 114/255, 105/255],
+  road: [205/255, 192/255, 162/255],
+  house: [188/255, 170/255, 138/255],
+  roof: [168/255, 78/255, 58/255],
+  waterObj: [95/255, 130/255, 150/255],
+  candidate: [255/255, 215/255, 0/255]
+};
+
+// 初始化 WebGL
+function initGL() {
+  gl = canvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: true });
+  if (!gl) { alert('您的浏览器不支持 WebGL'); return; }
+  
+  const vs = `
+    attribute vec3 aPos;
+    attribute vec3 aNrm;
+    attribute vec3 aCol;
+    uniform mat4 uMVP;
+    varying vec3 vN;
+    varying vec3 vC;
+    varying vec3 vP;
+    void main(){
+      vN = aNrm;
+      vC = aCol;
+      vP = aPos;
+      gl_Position = uMVP * vec4(aPos, 1.0);
+    }
+  `;
+  const fs = `
+    precision mediump float;
+    varying vec3 vN;
+    varying vec3 vC;
+    varying vec3 vP;
+    uniform vec3 uSun;
+    uniform vec3 uEye;
+    void main(){
+      vec3 n = normalize(vN);
+      float d = max(dot(n, uSun), 0.0);
+      vec3 col = vC * (0.42 + 0.68 * d);
+      // 大气淡薄雾
+      float dist = length(vP - uEye);
+      float fog = clamp((dist - 150.0) / 750.0, 0.0, 0.45);
+      col = mix(col, vec3(0.55, 0.62, 0.72), fog);
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+  function compile(t, s){
+    const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(sh));
+    return sh;
+  }
+  prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  
+  loc.aPos = gl.getAttribLocation(prog, 'aPos');
+  loc.aNrm = gl.getAttribLocation(prog, 'aNrm');
+  loc.aCol = gl.getAttribLocation(prog, 'aCol');
+  loc.uMVP = gl.getUniformLocation(prog, 'uMVP');
+  loc.uSun = gl.getUniformLocation(prog, 'uSun');
+  loc.uEye = gl.getUniformLocation(prog, 'uEye');
+  
+  vbo = gl.createBuffer();
+  ibo = gl.createBuffer();
+  objVbo = gl.createBuffer();
+  gl.enable(gl.DEPTH_TEST);
+}
+
+// 矩阵计算
+function lookAt(eye, center, up) {
+  let z0 = eye[0]-center[0], z1 = eye[1]-center[1], z2 = eye[2]-center[2];
+  let len = Math.hypot(z0, z1, z2) || 1; z0 /= len; z1 /= len; z2 /= len;
+  let x0 = up[1]*z2 - up[2]*z1, x1 = up[2]*z0 - up[0]*z2, x2 = up[0]*z1 - up[1]*z0;
+  len = Math.hypot(x0, x1, x2) || 1; x0 /= len; x1 /= len; x2 /= len;
+  let y0 = z1*x2 - z2*x1, y1 = z2*x0 - z0*x2, y2 = z0*x1 - z1*x0;
+  return [
+    x0, y0, z0, 0,
+    x1, y1, z1, 0,
+    x2, y2, z2, 0,
+    -(x0*eye[0] + x1*eye[1] + x2*eye[2]),
+    -(y0*eye[0] + y1*eye[1] + y2*eye[2]),
+    -(z0*eye[0] + z1*eye[1] + z2*eye[2]), 1
+  ];
+}
+function perspective(fovy, aspect, near, far) {
+  const f = 1.0 / Math.tan(fovy / 2), nf = 1 / (near - far);
+  return [
+    f / aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far + near) * nf, -1,
+    0, 0, 2 * far * near * nf, 0
+  ];
+}
+function multiply(a, b) {
+  const out = new Float32Array(16);
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      let sum = 0;
+      for (let k = 0; k < 4; k++) sum += a[k * 4 + j] * b[i * 4 + k];
+      out[i * 4 + j] = sum;
+    }
+  }
+  return out;
+}
+
+// 构建博斯普鲁斯地形网格
+function buildTerrain() {
+  const g = WORLD.grid, nx = g.nx, nz = g.nz;
+  const verts = new Float32Array(nx * nz * 9);
+  
+  for (let j = 0; j < nz; j++) {
+    for (let i = 0; i < nx; i++) {
+      const idx = j * nx + i;
+      const x = g.x0 + i * g.step;
+      const z = g.z0 + j * g.step;
+      const isWater = g.water[idx] === 1;
+      const h = isWater ? -0.8 : (g.heights[idx] * 0.16); // 高程适度拉伸显现七座山丘
+      
+      // 法线简单采样
+      let hL = i > 0 ? (g.heights[idx-1]*0.16) : h;
+      let hR = i < nx-1 ? (g.heights[idx+1]*0.16) : h;
+      let hD = j > 0 ? (g.heights[idx-nx]*0.16) : h;
+      let hU = j < nz-1 ? (g.heights[idx+nx]*0.16) : h;
+      let nx_ = (hL - hR) / (2 * g.step), nz_ = (hD - hU) / (2 * g.step), ny_ = 1.0;
+      let len = Math.hypot(nx_, ny_, nz_) || 1;
+      nx_ /= len; ny_ /= len; nz_ /= len;
+      
+      let col = isWater ? PAL.sea : (h < 2.0 ? PAL.beach : (h > 9.0 ? PAL.landHigh : PAL.landLow));
+      const off = idx * 9;
+      verts.set([x, h, z, nx_, ny_, nz_, col[0], col[1], col[2]], off);
+    }
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+  
+  // 索引
+  const indices = new Uint16Array((nx - 1) * (nz - 1) * 6);
+  let k = 0;
+  for (let j = 0; j < nz - 1; j++) {
+    for (let i = 0; i < nx - 1; i++) {
+      const a = j * nx + i, b = a + 1, c = a + nx, d = c + 1;
+      indices[k++] = a; indices[k++] = c; indices[k++] = b;
+      indices[k++] = b; indices[k++] = c; indices[k++] = d;
+    }
+  }
+  idxCount = k;
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+}
+
+// 辅助几何生成 (Box & Extrusion)
+function pushTri(out, a, b, c, n, col) {
+  for (const v of [a, b, c]) out.push(v[0], v[1], v[2], n[0], n[1], n[2], col[0], col[1], col[2]);
+}
+function pushBox(out, x, z, w, d, y0, y1, yaw, colSide, colTop) {
+  const cos = Math.cos(yaw), sin = Math.sin(yaw);
+  const hw = w / 2, hd = d / 2;
+  const p = [[-hw,-hd],[hw,-hd],[hw,hd],[-hw,hd]].map(([u,v]) => [x + u*cos - v*sin, z + u*sin + v*cos]);
+  const b = p.map(pt => [pt[0], y0, pt[1]]), t = p.map(pt => [pt[0], y1, pt[1]]);
+  
+  // 顶面
+  pushTri(out, t[0], t[2], t[1], [0,1,0], colTop);
+  pushTri(out, t[0], t[3], t[2], [0,1,0], colTop);
+  // 4 个侧面
+  for (let i = 0; i < 4; i++) {
+    let next = (i + 1) % 4;
+    let mx = (p[i][0] + p[next][0])/2 - x, mz = (p[i][1] + p[next][1])/2 - z;
+    let l = Math.hypot(mx, mz) || 1;
+    let n = [mx/l, 0, mz/l];
+    pushTri(out, b[i], b[next], t[next], n, colSide);
+    pushTri(out, b[i], t[next], t[i], n, colSide);
+  }
+}
+
+// 构建 3D 建筑与街道对象
+function build3DObjects() {
+  if (!WORLD) return;
+  const out = [];
+  const curYear = WORLD.years[curEraIdx];
+  
+  // 1. 公共与标志性建筑
+  for (const s of WORLD.structures) {
+    if (s.built > curYear) continue;
+    if (s.destroyed != null && s.destroyed <= curYear) continue; // 已拆除/被烧
+    if (s.type === 'district') continue; // 区域不作为实体挤出
+    
+    let baseH = s.base_h * 0.16;
+    let stype = s.type;
+    let colSide = PAL.wall, colTop = PAL.roof;
+    
+    if (stype === 'palace') { colSide = PAL.palace; colTop = PAL.palace; }
+    else if (stype === 'church') { colSide = PAL.church; colTop = [0.8, 0.4, 0.3]; }
+    else if (stype === 'hippodrome') { colSide = PAL.hippodrome; colTop = [0.85, 0.75, 0.5]; }
+    else if (stype === 'wall' || stype === 'gate') { colSide = PAL.wall; colTop = [0.4, 0.4, 0.4]; }
+    else if (stype === 'cistern') { colSide = PAL.waterObj; colTop = [0.2, 0.4, 0.6]; }
+    
+    // 多边形轮廓
+    if (s.geom_type === 'polygon' && s.coords.length >= 3) {
+      let xs = s.coords.map(p=>p[0]), zs = s.coords.map(p=>p[1]);
+      let w = Math.max(...xs) - Math.min(...xs);
+      let d = Math.max(...zs) - Math.min(...zs);
+      let h = (stype === 'palace' || stype === 'church') ? 6.5 : (stype === 'hippodrome' ? 4.5 : 4.0);
+      pushBox(out, s.cx, s.cz, Math.max(w, 4), Math.max(d, 4), baseH, baseH + h, 0, colSide, colTop);
+      
+      // 特别修饰：大教堂顶上的半圆穹顶
+      if (stype === 'church') {
+        pushBox(out, s.cx, s.cz, Math.max(w*0.5, 3), Math.max(d*0.5, 3), baseH + h, baseH + h + 3.2, 0, [0.85,0.7,0.3], [0.9,0.75,0.35]);
+      }
+      // 竞技场看台柱列
+      if (stype === 'hippodrome') {
+        pushBox(out, s.cx, s.cz, Math.max(w*0.8, 4), Math.max(d*0.2, 2), baseH + h, baseH + h + 1.5, 0, [0.9,0.85,0.7], [0.9,0.85,0.7]);
+      }
+    } else if (s.geom_type === 'line' && s.coords.length >= 2) {
+      // 城墙 / 水渠 / 道路
+      for (let i = 0; i < s.coords.length - 1; i++) {
+        let p0 = s.coords[i], p1 = s.coords[i+1];
+        let mx = (p0[0] + p1[0]) / 2, mz = (p0[1] + p1[1]) / 2;
+        let len = Math.hypot(p1[0]-p0[0], p1[1]-p0[1]);
+        let yaw = Math.atan2(p1[1]-p0[1], p1[0]-p0[0]);
+        let isAqueduct = stype.includes('aqueduct');
+        let wallH = isAqueduct ? 5.5 : (stype === 'wall' ? 4.5 : 0.4);
+        let wallW = isAqueduct ? 1.8 : (stype === 'wall' ? 2.2 : 3.0);
+        let col = isAqueduct ? [0.8, 0.75, 0.65] : (stype === 'wall' ? PAL.wall : PAL.road);
+        pushBox(out, mx, mz, len, wallW, baseH, baseH + wallH, yaw, col, col);
+        
+        // 沿墙方塔 (Towers)
+        if (stype === 'wall') {
+          pushBox(out, p0[0], p0[1], 3.2, 3.2, baseH, baseH + wallH + 1.8, 0, [0.45,0.42,0.38], [0.35,0.32,0.28]);
+        }
+      }
+    }
+  }
+  
+  // 2. 密集民居街道
+  if (showHouses && WORLD.houses) {
+    for (const h of WORLD.houses) {
+      if (h.built > curYear) continue;
+      if (h.destroyed != null && h.destroyed <= curYear) continue;
+      
+      let baseH = h.base_h * 0.16;
+      let w = 2.4, d = 2.8, wallH = 2.4;
+      pushBox(out, h.cx, h.cz, w, d, baseH, baseH + wallH, 0.2, PAL.house, PAL.roof);
+      // 双坡屋脊金字塔
+      let topH = baseH + wallH + 1.2;
+      let hw = w/2, hd = d/2;
+      pushTri(out, [h.cx-hw, baseH+wallH, h.cz-hd], [h.cx+hw, baseH+wallH, h.cz-hd], [h.cx, topH, h.cz], [0,0.8,-0.5], PAL.roof);
+      pushTri(out, [h.cx+hw, baseH+wallH, h.cz+hd], [h.cx-hw, baseH+wallH, h.cz+hd], [h.cx, topH, h.cz], [0,0.8,0.5], PAL.roof);
+    }
+  }
+  
+  // 3. 分支预演候选建筑高亮
+  if (candidateBuilding) {
+    let cb = candidateBuilding;
+    let h = 8.0;
+    pushBox(out, cb.x, cb.z, cb.w, cb.d, cb.baseH, cb.baseH + h, 0, PAL.candidate, [1, 0.9, 0.3]);
+    // 候选标记光柱
+    pushBox(out, cb.x, cb.z, 0.8, 0.8, cb.baseH + h, cb.baseH + h + 24, 0, [1, 1, 0], [1, 1, 0]);
+  }
+  
+  objCount = out.length / 9;
+  gl.bindBuffer(gl.ARRAY_BUFFER, objVbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(out), gl.DYNAMIC_DRAW);
+}
+
+// 渲染循环
+function render() {
+  if (!gl) return;
+  canvas.width = canvas.clientWidth * window.devicePixelRatio;
+  canvas.height = canvas.clientHeight * window.devicePixelRatio;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(165/255, 192/255, 218/255, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  
+  gl.useProgram(prog);
+  
+  const aspect = canvas.width / canvas.height;
+  const proj = perspective(42 * Math.PI / 180, aspect, 5.0, 2400.0);
+  
+  const eye = [
+    cam.target[0] + cam.dist * Math.cos(cam.pitch) * Math.sin(cam.yaw),
+    cam.target[1] + cam.dist * Math.sin(cam.pitch),
+    cam.target[2] + cam.dist * Math.cos(cam.pitch) * Math.cos(cam.yaw)
+  ];
+  const view = lookAt(eye, cam.target, [0, 1, 0]);
+  const mvp = multiply(proj, view);
+  
+  gl.uniformMatrix4fv(loc.uMVP, false, mvp);
+  gl.uniform3f(loc.uSun, 0.58, 0.72, 0.38);
+  gl.uniform3f(loc.uEye, eye[0], eye[1], eye[2]);
+  
+  // 1. 绘制博斯普鲁斯地形
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, 36, 0);
+  gl.enableVertexAttribArray(loc.aPos);
+  gl.vertexAttribPointer(loc.aNrm, 3, gl.FLOAT, false, 36, 12);
+  gl.enableVertexAttribArray(loc.aNrm);
+  gl.vertexAttribPointer(loc.aCol, 3, gl.FLOAT, false, 36, 24);
+  gl.enableVertexAttribArray(loc.aCol);
+  
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  gl.drawElements(gl.TRIANGLES, idxCount, gl.UNSIGNED_SHORT, 0);
+  
+  // 2. 绘制 3D 建筑与城墙
+  if (objCount > 0) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, objVbo);
+    gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, 36, 0);
+    gl.enableVertexAttribArray(loc.aPos);
+    gl.vertexAttribPointer(loc.aNrm, 3, gl.FLOAT, false, 36, 12);
+    gl.enableVertexAttribArray(loc.aNrm);
+    gl.vertexAttribPointer(loc.aCol, 3, gl.FLOAT, false, 36, 24);
+    gl.enableVertexAttribArray(loc.aCol);
+    gl.drawArrays(gl.TRIANGLES, 0, objCount);
+  }
+}
+
+// 更新年代面板数据
+function updateEraUI(idx) {
+  curEraIdx = Math.max(0, Math.min(WORLD.years.length - 1, idx));
+  const eraIdx = Math.max(0, Math.min(WORLD.eras.length - 1, curEraIdx > 0 ? curEraIdx - 1 : 0));
+  const era = WORLD.eras[eraIdx] || {};
+  const year = WORLD.years[curEraIdx];
+  document.getElementById('era-title').textContent = era.title || '安托萨纪元';
+  document.getElementById('era-years').textContent = year <= 0 ? (year < 0 ? `前 ${-year} 年` : '建城前夕') : `AF ${year}`;
+  document.getElementById('era-label').textContent = year <= 0 ? (year < 0 ? `公元前 ${-year}` : '奠基前夕') : `建城 ${year} 年 (AF ${year})`;
+  
+  const st = era.stats || {};
+  document.getElementById('val-pop').textContent = (st.population || 0).toLocaleString();
+  document.getElementById('val-food').textContent = (st.food || 0).toLocaleString();
+  document.getElementById('val-water').textContent = (st.water || 0).toLocaleString();
+  document.getElementById('val-houses').textContent = `${(st.houses || 0).toLocaleString()} 栋`;
+  
+  const maxVal = Math.max(st.food || 1, st.water || 1, st.population || 1);
+  document.getElementById('bar-pop').style.width = `${((st.population||0)/maxVal)*100}%`;
+  document.getElementById('bar-food').style.width = `${((st.food||0)/maxVal)*100}%`;
+  document.getElementById('bar-water').style.width = `${((st.water||0)/maxVal)*100}%`;
+  
+  // 简述
+  const chronicles = {
+    0: "麦加拉移民听从神谕，在博斯普鲁斯岬角最高处筑起拜扎斯卫城，开出普罗斯福里昂海湾，建立希腊城邦殖民地。",
+    1: "君士坦丁大帝在此重新奠基新罗马。划定奠基者长墙，开辟梅塞柱廊大道与圆形大广场，立起帝国第一座圣和平大教堂。",
+    2: "人口激增至三万余，老城墙内已难容纳。市民沿梅塞大道向西筑屋，大皇宫与赛马场看台初具规模，金角湾码头商船云集。",
+    3: "引水入城：西北瓦伦斯大水渠跨越山谷而至，修筑巨大蓄水池，圣使徒教堂耸立在第四山岗。第19年大火烧毁街区，重建正蓄势待发！"
+  };
+  document.getElementById('chron-text').innerHTML = `<p>${chronicles[curEraIdx] || '年代记录整理中...'}</p>`;
+  
+  build3DObjects();
+}
+
+// 射线与地面相交（点击测试与放置候选）
+function pickTerrain(mouseX, mouseY) {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((mouseX - rect.left) / rect.width) * 2 - 1;
+  const y = -(((mouseY - rect.top) / rect.height) * 2 - 1);
+  
+  // 简化地平面相交测试
+  const g = WORLD.grid;
+  // 粗略映射到中央半岛 (X: 300..650, Z: 350..500)
+  const wx = cam.target[0] + x * (cam.dist * 0.4);
+  const wz = cam.target[2] - y * (cam.dist * 0.4);
+  return [Math.max(g.x0, Math.min(g.x1, wx)), Math.max(g.z0, Math.min(g.z1, wz))];
+}
+
+// 分支预演硬规则校验
+function auditCandidate(x, z, motif) {
+  const g = WORLD.grid;
+  // 1. 陆地检查
+  const i = Math.round((x - g.x0) / g.step);
+  const j = Math.round((z - g.z0) / g.step);
+  const idx = j * g.nx + i;
+  const isLand = (idx >= 0 && idx < g.water.length) ? (g.water[idx] === 0) : false;
+  const elev = (idx >= 0 && idx < g.heights.length) ? g.heights[idx] : 0;
+  
+  const elLand = document.getElementById('rule-land');
+  if (isLand) {
+    elLand.className = 'audit-item ok';
+    elLand.textContent = '✓ 位于博斯普鲁斯陆地 (高程: ' + elev.toFixed(1) + 'm)';
+  } else {
+    elLand.className = 'audit-item err';
+    elLand.textContent = '✕ 违背：不可建于海峡深水中 (除非深水码头)';
+  }
+  
+  // 2. 道路连通检查 (25 格 = 300米)
+  let minDist = 999;
+  for (const s of WORLD.structures) {
+    if (s.type === 'road' && s.coords) {
+      for (const p of s.coords) {
+        let d = Math.hypot(p[0] - x, p[1] - z);
+        if (d < minDist) minDist = d;
+      }
+    }
+  }
+  const elRoad = document.getElementById('rule-road');
+  if (minDist <= 28) {
+    elRoad.className = 'audit-item ok';
+    elRoad.textContent = `✓ 距现有干道 ${(minDist*12).toFixed(0)}m (符合 ≤300m 要求)`;
+  } else {
+    elRoad.className = 'audit-item warn';
+    elRoad.textContent = `⚠ 孤立：距道路 ${(minDist*12).toFixed(0)}m (需配套修筑支路)`;
+  }
+  
+  // 3. 碰撞检查
+  let overlap = false;
+  for (const s of WORLD.structures) {
+    if (s.built <= WORLD.years[curEraIdx] && (s.destroyed == null || s.destroyed > WORLD.years[curEraIdx])) {
+      if (Math.hypot(s.cx - x, s.cz - z) < 14) { overlap = true; break; }
+    }
+  }
+  const elOverlap = document.getElementById('rule-overlap');
+  if (!overlap) {
+    elOverlap.className = 'audit-item ok';
+    elOverlap.textContent = '✓ 无重叠：净空良好';
+  } else {
+    elOverlap.className = 'audit-item err';
+    elOverlap.textContent = '✕ 冲突：压占既有公共建筑地基';
+  }
+  
+  return { isLand, elev, minDist, overlap };
+}
+
+// 事件监听与交互
+window.addEventListener('resize', () => render());
+
+canvas.addEventListener('mousedown', e => {
+  isDragging = true;
+  lastMouse = [e.clientX, e.clientY];
+});
+window.addEventListener('mouseup', () => isDragging = false);
+
+canvas.addEventListener('mousemove', e => {
+  if (isDragging) {
+    const dx = e.clientX - lastMouse[0], dy = e.clientY - lastMouse[1];
+    if (e.buttons === 1) { // 左键旋转
+      cam.yaw -= dx * 0.005;
+      cam.pitch = Math.max(0.08, Math.min(1.4, cam.pitch + dy * 0.005));
+    } else if (e.buttons === 2) { // 右键平移
+      cam.target[0] -= (dx * Math.cos(cam.yaw) - dy * Math.sin(cam.yaw)) * 0.4;
+      cam.target[2] -= (dx * Math.sin(cam.yaw) + dy * Math.cos(cam.yaw)) * 0.4;
+    }
+    lastMouse = [e.clientX, e.clientY];
+    render();
+  }
+});
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.dist = Math.max(60, Math.min(900, cam.dist * (e.deltaY > 0 ? 1.08 : 0.92)));
+  render();
+}, { passive: false });
+
+// 点击地块放置预演建筑
+canvas.addEventListener('click', e => {
+  if (!isSandbox) return;
+  const [wx, wz] = pickTerrain(e.clientX, e.clientY);
+  const motif = document.getElementById('sel-motif').value;
+  const faction = document.getElementById('sel-faction').value;
+  
+  const audit = auditCandidate(wx, wz, motif);
+  candidateBuilding = {
+    x: wx, z: wz,
+    w: motif.includes('church') ? 16 : (motif.includes('cistern') ? 22 : 12),
+    d: motif.includes('church') ? 24 : (motif.includes('cistern') ? 22 : 12),
+    baseH: audit.elev * 0.16,
+    motif, faction
+  };
+  build3DObjects();
+  render();
+});
+
+// UI 控制绑定
+document.getElementById('era-slider').addEventListener('input', e => {
+  updateEraUI(parseInt(e.target.value));
+});
+
+document.getElementById('btn-reset-cam').onclick = () => {
+  cam.yaw = -0.78; cam.pitch = 0.42; cam.dist = 380; cam.target = [480, 20, 420];
+  render();
+};
+
+document.getElementById('btn-toggle-houses').onclick = e => {
+  showHouses = !showHouses;
+  e.target.classList.toggle('active', showHouses);
+  build3DObjects();
+  render();
+};
+
+document.getElementById('btn-export-proposal').onclick = () => {
+  if (!candidateBuilding) {
+    alert('请先在 3D 地图上点击任意位置，选择一个预选地块！');
+    return;
+  }
+  const cb = candidateBuilding;
+  const proposal = {
+    faction: cb.faction,
+    op: "build",
+    id: `${cb.motif}_yr30`,
+    name: document.getElementById('sel-motif').selectedOptions[0].text.split(' ')[0],
+    motif: cb.motif,
+    coords: [
+      [+(cb.x - cb.w/2).toFixed(1), +(cb.z - cb.d/2).toFixed(1)],
+      [+(cb.x + cb.w/2).toFixed(1), +(cb.z - cb.d/2).toFixed(1)],
+      [+(cb.x + cb.w/2).toFixed(1), +(cb.z + cb.d/2).toFixed(1)],
+      [+(cb.x - cb.w/2).toFixed(1), +(cb.z + cb.d/2).toFixed(1)]
+    ],
+    why: `预演选址于博斯普鲁斯第三山缓坡，连接梅塞大道支路，提升城市综合声望。`
+  };
+  const jsonStr = JSON.stringify(proposal, null, 2);
+  navigator.clipboard.writeText(jsonStr).then(() => {
+    alert("✅ 提案 JSON 已复制到剪贴板！可以直接写入 proposals/era_0030.json：\n\n" + jsonStr);
+  }).catch(() => {
+    prompt("提案 JSON 生成成功，请复制：", jsonStr);
+  });
+};
+
+// 自动播放
+let isPlaying = false, playTimer = null;
+document.getElementById('btn-play').onclick = function() {
+  isPlaying = !isPlaying;
+  this.textContent = isPlaying ? "❚❚ 暂停" : "▶ 播放";
+  if (isPlaying) {
+    playTimer = setInterval(() => {
+      let next = (curEraIdx + 1) % WORLD.eras.length;
+      document.getElementById('era-slider').value = next;
+      updateEraUI(next);
+    }, 2400);
+  } else {
+    clearInterval(playTimer);
+  }
+};
+
+// 渲染主循环 (60 FPS 顺滑漫游)
+function loop() {
+  render();
+  requestAnimationFrame(loop);
+}
+
+// 加载数据启动
+initGL();
+loop();
+fetch('anthousa_world3d.json')
+  .then(r => r.json())
+  .then(data => {
+    WORLD = data;
+    buildTerrain();
+    updateEraUI(3);
+  })
+  .catch(err => {
+    console.error('加载 Anthousa 3D 数据失败:', err);
+  });
+</script>
+</body>
+</html>

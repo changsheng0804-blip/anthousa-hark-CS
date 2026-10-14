@@ -1,0 +1,42 @@
+{
+ "id": "barracks",
+ "name_zh": "兵营",
+ "name_la": "castra",
+ "category": "military",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": false,
+ "render": "terrain",
+ "clear_radius": 70,
+ "influence": [
+  {
+   "fn": "garrison",
+   "r": 300,
+   "order": 1
+  }
+ ],
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "barracks_gate",
+    "quarter": "xerolophos",
+    "xy": [
+     398,
+     1777
+    ],
+    "name_zh": "城门兵营",
+    "story": "守城门的兵住在这里。",
+    "now": {
+     "day": "士兵在院子里操练",
+     "night": "有人在吹笛子"
+    }
+   }
+  ]
+ },
+ "size": "large",
+ "clear_rank": 1,
+ "clear_interior": true
+}

@@ -1,0 +1,89 @@
+{
+ "id": "bread_steps",
+ "name_zh": "面包台阶",
+ "name_la": "gradus panis",
+ "category": "food",
+ "era": [
+  2,
+  9999
+ ],
+ "historic": false,
+ "note": "Constantine's bread dole distributed from steps (panes gradiles)",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   2
+  ]
+ },
+ "siting": {
+  "street": [
+   "m",
+   "s"
+  ],
+  "near": {
+   "market": 170
+  },
+  "lot": [
+   100,
+   260
+  ],
+  "face": "street",
+  "fn": [
+   "market",
+   "shops"
+  ],
+  "typ": [
+   "row",
+   "flat",
+   "casa"
+  ],
+  "front_on": "m",
+  "front_dist": 6,
+  "prefer_fn": [
+   "market"
+  ],
+  "built_by": 40
+ },
+ "footprint": {
+  "shape": "steps",
+  "treads": 5,
+  "store": true
+ },
+ "palette": {
+  "wall": [
+   226,
+   214,
+   190
+  ],
+  "roof": [
+   178,
+   96,
+   60
+  ],
+  "accent": [
+   238,
+   234,
+   224
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "site"
+  },
+  {
+   "from": 1,
+   "shape": "frame"
+  },
+  {
+   "from": 2,
+   "shape": "full"
+  }
+ ],
+ "function": "market",
+ "scenes": [
+  "queue_morning"
+ ],
+ "size": "small"
+}

@@ -1,0 +1,44 @@
+{
+ "id": "baths",
+ "name_zh": "浴场",
+ "name_la": "thermae",
+ "category": "civic",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": true,
+ "render": "terrain",
+ "clear_radius": 62,
+ "clear_mask_radius": 46,
+ "influence": [
+  {
+   "fn": "fine",
+   "r": 330,
+   "order": 3
+  }
+ ],
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "baths_constantius",
+    "quarter": "xerolophos",
+    "xy": [
+     683,
+     313
+    ],
+    "name_zh": "君士坦提乌斯浴场",
+    "story": "建城 25 年的浴场，干山上的人走下坡来洗澡。",
+    "now": {
+     "day": "澡堂里的人比集市还吵",
+     "night": "炉工在添柴"
+    },
+    "built": 25
+   }
+  ]
+ },
+ "size": "large",
+ "clear_rank": 0,
+ "clear_interior": true
+}

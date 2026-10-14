@@ -1,0 +1,44 @@
+{
+ "id": "city_gate",
+ "name_zh": "城门",
+ "name_la": "porta",
+ "category": "military",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": true,
+ "render": "terrain",
+ "note": "gate in the Constantinian (founder's) wall",
+ "clear_radius": 55,
+ "influence": [
+  {
+   "fn": "workshop",
+   "r": 280,
+   "order": 2
+  }
+ ],
+ "instances": {
+  "rule": "fixed",
+  "fixed": [
+   {
+    "key": "gate_founder",
+    "quarter": "xerolophos",
+    "xy": [
+     183,
+     1605
+    ],
+    "name_zh": "奠基者城门",
+    "story": "奠基者城墙上的大门，出了门就是菜园和墓地。",
+    "now": {
+     "morning": "赶菜车的农民排队进城",
+     "day": "税吏在门洞里收过路钱",
+     "night": "城门关了"
+    }
+   }
+  ]
+ },
+ "size": "large",
+ "clear_rank": 2,
+ "clear_interior": false
+}
