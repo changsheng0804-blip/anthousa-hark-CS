@@ -16,7 +16,7 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'tools'))
 import numpy as np
 import house_types as HT, landmark_shapes as LS
 LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
-KINDS = ['macellum', 'kiln', 'cemetery']   # 本轮只收这三种（主人定的顺序第 1 项）
+KINDS = ['macellum', 'kiln', 'cemetery', 'fountain']   # 合流①三种 + /goal 4 G1 喷泉（谭线 v29 fountain 卡，放在最后，不动前三种的选址）
 # 全城版补充：谭线的砖窑卡写着「城墙边」，在干山里自然成立（整块地挨着墙）；放到全城要明说——离创城者城墙 ≤ near_wall 世界单位
 CITY_ADAPT = {'kiln': {'near_wall': 22}}
 # 放大一档（主人 10-14「先放大一档看看」）：只在 CS 侧覆盖谭线卡的并地参数，卡本身不改

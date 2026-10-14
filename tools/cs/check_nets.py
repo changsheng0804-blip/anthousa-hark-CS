@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""/goal 4 G1/G2 检查：公共设施网（谭线 notes/epic-system.md 的「网络」类）。
+水网 tiles/net_water.json：水渠 → 蓄水池/宁芙泉 → 街角喷泉。
+ ① 每个蓄水池、宁芙泉、喷泉都有 fed_by，且指向网里存在的上游节点；
+ ② 底账节点（world.json 结构）的建成年一字不差读 world.json，不自编；喷泉的建成年 = 它所在房的开工年（houses_street.json）；
+ ③ 出水年 wet = max(自己建成, 上游出水)，上游出水 ≤ 下游出水（上游没建，下游不出水）；
+ ④ 网里的喷泉 = 全城 houses_street 里 lm:fountain 的房，一一对应；喷泉 ≥ 1。
+ ⑤ 脉不露面：网不带画线用的几何（节点只有点），页面不画网线。
+——Hark（CS线）"""
+import json, os, sys, glob
+HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(HERE))
+LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
+W = {s['id']: s for s in json.load(open(os.path.join(ROOT, 'world.json')))['structures']}
+bad = []
+def need(c, m):
+    if not c: bad.append(m)
+p = os.path.join(OUT, 'net_water.json')
+if not os.path.exists(p): print('❌ 没有 tiles/net_water.json'); sys.exit(1)
+N = json.load(open(p)); nodes = {n['id']: n for n in N['nodes']}
+M = json.load(open(os.path.join(OUT, 'meta.json'))); QS = M['owner_order']
+for n in N['nodes']:
+    k = n['kind']
+    if n.get('src') == 'world':
+        s = W.get(n['id']); need(s is not None, f"{n['id']} 不在 world.json")
+        if s: need(n['built'] == s['built'], f"{n['id']} 建成年 {n['built']} ≠ world.json {s['built']}")
+    if k in ('cistern', 'nymphaeum', 'fountain', 'bridge'):
+        need(n.get('fed_by') in nodes, f"{n['id']} 没有上游 fed_by")
+    if n.get('fed_by') in nodes:
+        u = nodes[n['fed_by']]
+        need(u['wet'] <= n['wet'], f"{n['id']} 出水 {n['wet']} 早于上游 {u['id']} {u['wet']}")
+        need(n['wet'] == max(n['built'], u['wet']), f"{n['id']} 出水年 {n['wet']} ≠ max(建成 {n['built']}, 上游 {u['wet']})")
+    need(set(n) <= {'id', 'kind', 'src', 'name', 'built', 'wet', 'fed_by', 'q', 'h', 'xy', 'end'}, f"{n['id']} 带了多余字段 {set(n)}")
+    need(not isinstance(n.get('xy'), list) or len(n['xy']) == 2, f"{n['id']} 带了几何线")
+F = {}
+for q in QS:
+    for h in json.load(open(os.path.join(LIV, q, 'houses_street.json')))['houses']:
+        if h[9] == 'lm:fountain': F[(q, h[0])] = h[2]
+NF = {(n['q'], n['h']): n for n in N['nodes'] if n['kind'] == 'fountain'}
+need(len(F) >= 1, '全城没有喷泉')
+need(set(F) == set(NF), f'喷泉对不上：页面有 {len(F)}，网里 {len(NF)}')
+for k, b in F.items():
+    if k in NF: need(NF[k]['built'] == b, f'喷泉 {k} 建成年 {NF[k]["built"]} ≠ 房开工 {b}')
+html = open(os.path.join(OUT, 'index.html')).read()
+need('net_water' not in html or 'NETLINE' not in html, '页面画了水网线')
+kinds = {}
+for n in N['nodes']: kinds[n['kind']] = kinds.get(n['kind'], 0) + 1
+print('水网', kinds, '干着的喷泉年数', sum(n['wet'] - n['built'] for n in N['nodes'] if n['kind'] == 'fountain'))
+print('\n'.join('❌ ' + b for b in bad) or '✅ 全过'); sys.exit(1 if bad else 0)
