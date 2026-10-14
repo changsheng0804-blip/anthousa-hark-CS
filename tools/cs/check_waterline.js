@@ -2,7 +2,7 @@
 // 离泉近且已出水 → 一句「水从X来」；泉池已建未出水 → 一句「水还没来」；泉还没建 / 太远 / 无中文名 → 空串；只一句（一个 div）。
 const fs = require('fs'), path = require('path'); const AH = process.env.AH || '/workspace/work/ah';
 const html = fs.readFileSync(path.join(AH, 'docs/living/tiles/index.html'), 'utf8');
-const a = html.indexOf('var NETW=null;'), b = html.indexOf('function heartTap(');
+const a = html.indexOf('var NETW=null'), b = html.indexOf('function heartTap(');
 if (a < 0 || b < 0) { console.log('❌ 页面里没有 waterLine'); process.exit(1) }
 const N = JSON.parse(fs.readFileSync(path.join(AH, 'docs/living/tiles/net_water.json'), 'utf8')).nodes;
 const code = 'var fetch=()=>new Promise(()=>{});' + html.slice(a, b);

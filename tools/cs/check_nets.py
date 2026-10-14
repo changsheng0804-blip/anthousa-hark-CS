@@ -63,6 +63,52 @@ for n in N['nodes']:
 print('干湿 ⑥：有干着年头的喷泉', ndry)
 html = open(os.path.join(OUT, 'index.html')).read()
 need('net_water' not in html or 'NETLINE' not in html, '页面画了水网线')
+
+# ───── G2 粮网（项 3）：港口 → 粮仓 → 面包台阶（tiles/net_water.json 的 grain 段）
+# ⑦ 粮网：港口/粮仓是 world.json 结构、建成年一字不差；台阶 = 全城 houses_street 里 lm:bread_steps 的房，一一对应（≥1）；
+#    粮仓 fed_by 港口、台阶 fed_by 粮仓；供粮年 supply = max(自己建成(台阶落成=开工+2), 上游 supply)，上游 ≤ 下游；节点不带线几何
+# ⑧ 效果：台阶上摆的面包（谭线 steps 卡的 5 个面包块）只从供粮年起画；页面只在 供粮年 ≤ 当年 < 台阶存续止 且清晨才画排队（breadQueue），
+#    供粮年晚于落成的台阶，粮仓没建成之前光秃秃、不排队
+G = (N.get('grain') or {}).get('nodes')
+need(G is not None and len(G) > 0, '粮网：net_water.json 没有 grain 段')
+G = G or []; gn = {n['id']: n for n in G}
+GOK = {'id', 'kind', 'src', 'name', 'zh', 'built', 'supply', 'fed_by', 'q', 'h', 'xy', 'end', 'px', 'fx', 'fy'}
+for n in G:
+    k = n['kind']; need(k in ('harbor', 'granary', 'steps'), f"粮网 {n['id']} 种类 {k} 不认识")
+    need(set(n) <= GOK, f"粮网 {n['id']} 带了多余字段 {set(n) - GOK}")
+    if n.get('src') == 'world':
+        s_ = W.get(n['id']); need(s_ is not None, f"粮网 {n['id']} 不在 world.json")
+        if s_: need(n['built'] == s_['built'], f"粮网 {n['id']} 建成年 {n['built']} ≠ world.json {s_['built']}")
+    if k == 'harbor': need(n['supply'] == n['built'] and not n.get('fed_by'), f"港口 {n['id']} 供粮年不对")
+    if k in ('granary', 'steps'):
+        u = gn.get(n.get('fed_by')); need(u is not None, f"粮网 {n['id']} 没有上游 fed_by")
+        need(u is None or u['kind'] == ({'granary': 'harbor', 'steps': 'granary'}[k]), f"粮网 {n['id']} 上游种类不对")
+        if u:
+            need(u['supply'] <= n['supply'], f"粮网 {n['id']} 供粮 {n['supply']} 早于上游 {u['id']} {u['supply']}")
+            own = n['built'] + (2 if k == 'steps' else 0)
+            need(n['supply'] == max(own, u['supply']), f"粮网 {n['id']} 供粮年 {n['supply']} ≠ max(落成 {own}, 上游 {u['supply']})")
+    need(not isinstance(n.get('xy'), list) or len(n['xy']) == 2, f"粮网 {n['id']} 带了几何线")
+BS = {}
+for q in QS:
+    for h in json.load(open(os.path.join(LIV, q, 'houses_street.json')))['houses']:
+        if h[9] == 'lm:bread_steps': BS[(q, h[0])] = h[2]
+GS = {(n['q'], n['h']): n for n in G if n['kind'] == 'steps'}
+need(len(BS) >= 1, '全城没有面包台阶')
+need(set(BS) == set(GS), f'台阶对不上：页面有 {len(BS)}，粮网里 {len(GS)}')
+for k, b in BS.items():
+    if k in GS: need(GS[k]['built'] == b, f'台阶 {k} 建成年 {GS[k]["built"]} ≠ 房开工 {b}')
+LOAF = '%02x%02x%02x' % (176, 122, 64); nbare = 0
+for n in G:
+    if n['kind'] != 'steps': continue
+    hs = [x for x in vecs.get('h%d' % n['h'], []) if any(p[2] == LOAF for p in x[4])]
+    need(len(hs) == 1, f"{n['id']} 瓦片里的台阶记录 {len(hs)} 条")
+    if not hs: continue
+    loaves = [p for p in hs[0][4] if p[2] == LOAF]
+    need(bool(loaves) and all(p[3] >= n['supply'] for p in loaves), f"{n['id']} 供粮年 {n['supply']} 以前台阶上摆着面包")
+    if n['supply'] > n['built'] + 2: nbare += 1
+print('粮网 ⑦⑧：台阶', len(GS), '座，其中供粮晚于落成（先光秃）', nbare)
+need('breadQueue' in html, '页面没有清晨排队效果（breadQueue）')
+need('NETGLINE' not in html, '页面画了粮网线')
 kinds = {}
 for n in N['nodes']: kinds[n['kind']] = kinds.get(n['kind'], 0) + 1
 print('水网', kinds, '干着的喷泉年数', sum(n['wet'] - n['built'] for n in N['nodes'] if n['kind'] == 'fountain'))

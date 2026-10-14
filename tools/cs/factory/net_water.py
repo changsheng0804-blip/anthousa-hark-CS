@@ -12,6 +12,7 @@
 import json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
+GREACH = 70   # 面包台阶从多远的粮仓取粮（世界单位）
 REACH = 45   # 世界单位（≈ 640 页面 px）：一口喷泉最远从多远的池子引水
 M = json.load(open(os.path.join(OUT, 'meta.json'))); S = M['scale']; QS = M['owner_order']
 W = json.load(open(os.path.join(ROOT, 'world.json')))['structures']
@@ -51,7 +52,36 @@ def main():
             u = min(near or SRC, key=d)
             nodes.append({'id': f'{q}:h{h[0]}', 'kind': 'fountain', 'src': 'houses_street', 'q': q, 'h': h[0], 'built': h[2],
                           'wet': max(h[2], u['wet']), 'fed_by': u['id'], 'xy': [round(p[0], 1), round(p[1], 1)], 'px': [round(M['quarters'][q][0] + cx), round(M['quarters'][q][1] + cy)], 'end': h[3] if h[3] < 9000 else None})
-    json.dump({'src': 'tools/cs/factory/net_water.py（设计：谭线 notes/epic-system.md；年份：world.json、houses_street.json）', 'reach': REACH, 'nodes': nodes},
+    grain = grain_net()
+    json.dump({'src': 'tools/cs/factory/net_water.py（设计：谭线 notes/epic-system.md；年份：world.json、houses_street.json）', 'reach': REACH, 'nodes': nodes, 'grain_reach': GREACH, 'grain': {'nodes': grain}},
               open(os.path.join(OUT, 'net_water.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
     for n in nodes: print(n['kind'], n['id'], n['built'], '→出水', n['wet'], '←', n['fed_by'])
+def grain_net():
+    """G2 粮网：港口（world harbor）→ 粮仓（world granary + 「Horrea of the Horn」仓库）→ 面包台阶（全城 lm:bread_steps 的房）。
+    供粮年 supply：港口 = 建成；粮仓 = max(建成, 取粮港口 supply)；台阶 = max(落成=开工+2, 取粮粮仓 supply)。就近取，GREACH 世界单位内、台阶落成时已供粮的最近粮仓优先，否则取最近的、等它供粮。
+    台阶带 px（地标中心）与 fx/fy（门前街口）两个点，只给页面画清晨排队用；网本身不带线。"""
+    HB = [s for s in W if s['type'] == 'harbor']; GR = [s for s in W if s['type'] == 'granary' or s['id'] == 'warehouse_horn']
+    g = []
+    for s in HB: g.append({'id': s['id'], 'kind': 'harbor', 'src': 'world', 'name': s['name'], 'zh': NZ.get(s['id']), 'built': s['built'], 'supply': s['built'], 'fed_by': None, 'xy': [round(v, 1) for v in cen(s)], 'end': end(s)})
+    by = {n['id']: n for n in g}
+    for s in GR:
+        p = cen(s); early = [n for n in g if n['kind'] == 'harbor' and n['built'] <= s['built']] or [n for n in g if n['kind'] == 'harbor']
+        u = min(early, key=lambda n: math.hypot(p[0] - n['xy'][0], p[1] - n['xy'][1]))
+        n = {'id': s['id'], 'kind': 'granary', 'src': 'world', 'name': s['name'], 'zh': NZ.get(s['id']), 'built': s['built'], 'supply': max(s['built'], u['supply']), 'fed_by': u['id'], 'xy': [round(p[0], 1), round(p[1], 1)], 'end': end(s)}
+        g.append(n); by[n['id']] = n
+    GN = [n for n in g if n['kind'] == 'granary']
+    for q in QS:
+        f = json.load(open(os.path.join(LIV, q, 'frame.json')))['frame']
+        for h in json.load(open(os.path.join(LIV, q, 'houses_street.json')))['houses']:
+            if h[9] != 'lm:bread_steps': continue
+            P = h[4]; cx = sum(P[0::2]) / 4; cy = sum(P[1::2]) / 4; fi = h[10] if len(h) > 10 else 2
+            fx = (P[2 * fi] + P[(2 * fi + 2) % 8]) / 2; fy = (P[2 * fi + 1] + P[(2 * fi + 3) % 8]) / 2
+            p = (f[0] + cx / S, f[1] + cy / S); d = lambda n: math.hypot(p[0] - n['xy'][0], p[1] - n['xy'][1]); own = h[2] + 2
+            near = [n for n in GN if d(n) <= GREACH and n['supply'] <= own]
+            u = min(near or GN, key=d)
+            ox, oy = M['quarters'][q][0], M['quarters'][q][1]
+            g.append({'id': f'{q}:h{h[0]}', 'kind': 'steps', 'src': 'houses_street', 'q': q, 'h': h[0], 'built': h[2], 'supply': max(own, u['supply']), 'fed_by': u['id'],
+                      'xy': [round(p[0], 1), round(p[1], 1)], 'px': [round(ox + cx), round(oy + cy)], 'fx': round(ox + fx), 'fy': round(oy + fy), 'end': h[3] if h[3] < 9000 else None})
+    for n in g: print(n['kind'], n['id'], n['built'], '→供粮', n['supply'], '←', n['fed_by'])
+    return g
 if __name__ == '__main__': main()

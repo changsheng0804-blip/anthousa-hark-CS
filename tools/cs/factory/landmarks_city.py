@@ -16,7 +16,8 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'tools'))
 import numpy as np
 import house_types as HT, landmark_shapes as LS
 LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
-KINDS = ['macellum', 'kiln', 'cemetery', 'fountain']   # 合流①三种 + /goal 4 G1 喷泉（谭线 v29 fountain 卡，放在最后，不动前三种的选址）
+KINDS = ['macellum', 'kiln', 'cemetery', 'fountain', 'bread_steps']   # 合流①三种 + /goal 4 G1 喷泉（谭线 v29 fountain 卡）+ G2 面包台阶（谭线 bread_steps 卡）；新种类只往后加，放在第二遍（墓地之后），不动前面种类的选址
+PHASE1 = ['macellum', 'kiln', 'cemetery', 'fountain']; PHASE2 = ['bread_steps']
 # 全城版补充：谭线的砖窑卡写着「城墙边」，在干山里自然成立（整块地挨着墙）；放到全城要明说——离创城者城墙 ≤ near_wall 世界单位
 CITY_ADAPT = {'kiln': {'near_wall': 22}}
 # 放大一档（主人 10-14「先放大一档看看」）：只在 CS 侧覆盖谭线卡的并地参数，卡本身不改
@@ -198,14 +199,15 @@ def main():
         sp_ = os.path.join(LIV, q, 'stories.json')
         PROT_ALL[q] = {int(k) for k in json.load(open(sp_)) if str(k).isdigit()} if os.path.exists(sp_) else set()
     cleared = []; log = []
-    for q in QS:
+    def place_pass(KS):
+      for q in QS:
         HS = D[q]['houses']; ST = json.load(open(os.path.join(LIV, q, 'streets.json')))
         PROTECT = set()
         sp_ = os.path.join(LIV, q, 'stories.json')
         if os.path.exists(sp_): PROTECT |= {int(k) for k in json.load(open(sp_)) if str(k).isdigit()}
         GRID = {}
         for h in HS: c = ctr(h); GRID.setdefault((int(c[0] // 40), int(c[1] // 40)), []).append(h)
-        for sid in KINDS:
+        for sid in KS:
             sp = LS.SPECS[sid]; si = sp['siting']; lo, hi = si['lot']; e0 = sp['era'][0]; nmax = sp['instances']['count'][1]
             gap = si.get('gap', 300 if sp['size'] == 'small' else 420)
             C = []
@@ -266,11 +268,13 @@ def main():
                 else:
                     h[4] = old4; continue
                 if h[4] != old4 and len(h) <= 13: h[4] = old4
+    place_pass(PHASE1)
     for sid in sorted(ROOMY):
         q, h = free_site(sid, D, placed_w)
         if h:
             D[q]['houses'].append(h); wc = to_world(q, *ctr(h)); placed_w.append((sid,) + wc)
             log.append(f"{q} {sid} cs:lm{h[0]} 建于 {h[2]} 面积 {int(area(h))} 墙外空地 世界({wc[0]:.0f},{wc[1]:.0f})")
+    place_pass(PHASE2)
     for q in QS: json.dump(D[q], open(os.path.join(LIV, q, 'houses_street.json'), 'w'), separators=(',', ':'))
     json.dump({'src': 'tools/cs/factory/landmarks_city.py（谭线 v31 地标卡）', 'cleared': cleared, 'placed': log}, open(os.path.join(OUT, 'cleared_cs.json'), 'w'), ensure_ascii=False, indent=0)
     print('\n'.join(log)); print('放置', len(log), '并入拆除', len(cleared))

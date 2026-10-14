@@ -224,6 +224,41 @@
 "lm": "h11566",
 "year": 50,
 "q": "nangang"
+},
+{
+"id": "h5207",
+"for": "bread_steps",
+"lm": "h3508",
+"year": 17,
+"q": "siqiu"
+},
+{
+"id": "h5207",
+"for": "bread_steps",
+"lm": "h3508",
+"year": 17,
+"q": "xipo"
+},
+{
+"id": "h2704",
+"for": "bread_steps",
+"lm": "h4809",
+"year": 13,
+"q": "xipo"
+},
+{
+"id": "h4565",
+"for": "bread_steps",
+"lm": "h6329",
+"year": 26,
+"q": "xipo"
+},
+{
+"id": "h2885",
+"for": "bread_steps",
+"lm": "h8062",
+"year": 39,
+"q": "xipo"
 }
 ],
 "placed": [
@@ -257,6 +292,14 @@
 "jiaowan fountain h8262 建于 33 面积 151 ×1.0 homes 世界(581,354) 并入 0",
 "nanan fountain h15384 建于 42 面积 149 ×1.0 homes 世界(629,519) 并入 0",
 "nanan fountain h15708 建于 42 面积 156 ×1.0 homes 世界(603,518) 并入 0",
-"jinjiao cemetery cs:lm900001 建于 44 面积 3360 墙外空地 世界(456,237)"
+"jinjiao cemetery cs:lm900001 建于 44 面积 3360 墙外空地 世界(456,237)",
+"nangang bread_steps h3508 建于 6 面积 106 ×1.0 market 世界(533,473) 并入 2",
+"nangang bread_steps h4809 建于 13 面积 119 ×1.0 market 世界(488,443) 并入 1",
+"jinjiao bread_steps h6102 建于 21 面积 116 ×1.0 market 世界(549,341) 并入 0",
+"jinjiao bread_steps h2952 建于 2 面积 156 ×1.0 shops 世界(490,334) 并入 0",
+"gucheng bread_steps h3093 建于 8 面积 123 ×1.0 market 世界(580,444) 并入 0",
+"gucheng bread_steps h3849 建于 20 面积 134 ×1.0 market 世界(660,458) 并入 0",
+"siqiu bread_steps h6329 建于 26 面积 157 ×1.0 market 世界(490,408) 并入 1",
+"siqiu bread_steps h8062 建于 39 面积 134 ×1.0 shops 世界(488,375) 并入 1"
 ]
 }
