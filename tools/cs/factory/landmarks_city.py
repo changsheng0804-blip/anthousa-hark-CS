@@ -182,6 +182,8 @@ def clear_under(q, h, D, sid):
     return out
 def reset(HS):
     HS[:] = [h for h in HS if not (isinstance(h[0], int) and h[0] >= FREE_ID0)]
+    for h in HS:   # G3：先撤 epic_clear.py 的记号（史诗清场在地标放完之后重做）
+        if len(h) > 13 and h[13] == 'epic': h[3] = h[14]; del h[13:]
     for h in HS:
         if len(h) > 13 and h[13] == 'merged' and len(h) > 15 and h[15] in KINDS: h[3] = h[14]; del h[13:]
         elif isinstance(h[9], str) and h[9][3:] in KINDS:
@@ -278,4 +280,5 @@ def main():
     for q in QS: json.dump(D[q], open(os.path.join(LIV, q, 'houses_street.json'), 'w'), separators=(',', ':'))
     json.dump({'src': 'tools/cs/factory/landmarks_city.py（谭线 v31 地标卡）', 'cleared': cleared, 'placed': log}, open(os.path.join(OUT, 'cleared_cs.json'), 'w'), ensure_ascii=False, indent=0)
     print('\n'.join(log)); print('放置', len(log), '并入拆除', len(cleared))
+    import epic_clear; epic_clear.main()   # G3：地标放完后，史诗脚印下的房清场
 if __name__ == '__main__': main()
