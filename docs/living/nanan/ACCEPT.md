@@ -18,7 +18,7 @@
 - ✅ nanan ⇄ siqiu 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
 - ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page nanan years 40:884/884 50:1415/1415 60:1534/1534 errors 0
-- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 1846 unplaced 0 streets 1542 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 2 ok
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 1846 unplaced 0 streets 1544 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 0, 0] labels 60 2 ok
 - ✅ 一张网：街区的街都从全城街网裁下来 —— 794/800 段在全城网上
 - ✅ 顺着大道：近大道的街和大道平行或垂直 —— 35/35
 - ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
