@@ -84,7 +84,7 @@
    },
    "-400": {
     "tiles": 146,
-    "bytes": 1826240,
+    "bytes": 1826552,
     "max_tile": 46626,
     "grid": [
      13,
@@ -93,7 +93,7 @@
    },
    "-200": {
     "tiles": 146,
-    "bytes": 1890630,
+    "bytes": 1890592,
     "max_tile": 50662,
     "grid": [
      13,
@@ -102,7 +102,7 @@
    },
    "0": {
     "tiles": 146,
-    "bytes": 1968772,
+    "bytes": 1968768,
     "max_tile": 55076,
     "grid": [
      13,
@@ -111,7 +111,7 @@
    },
    "10": {
     "tiles": 146,
-    "bytes": 2098926,
+    "bytes": 2099002,
     "max_tile": 54866,
     "grid": [
      13,
@@ -120,7 +120,7 @@
    },
    "20": {
     "tiles": 146,
-    "bytes": 2227930,
+    "bytes": 2227850,
     "max_tile": 55186,
     "grid": [
      13,
@@ -129,7 +129,7 @@
    },
    "30": {
     "tiles": 146,
-    "bytes": 2437192,
+    "bytes": 2437410,
     "max_tile": 55640,
     "grid": [
      13,
@@ -138,7 +138,7 @@
    },
    "40": {
     "tiles": 146,
-    "bytes": 2706582,
+    "bytes": 2706798,
     "max_tile": 56842,
     "grid": [
      13,
@@ -147,7 +147,7 @@
    },
    "50": {
     "tiles": 146,
-    "bytes": 3087842,
+    "bytes": 3087594,
     "max_tile": 57372,
     "grid": [
      13,
@@ -156,7 +156,7 @@
    },
    "60": {
     "tiles": 146,
-    "bytes": 3195398,
+    "bytes": 3195632,
     "max_tile": 58294,
     "grid": [
      13,
@@ -165,7 +165,7 @@
    },
    "70": {
     "tiles": 146,
-    "bytes": 3247034,
+    "bytes": 3247154,
     "max_tile": 58558,
     "grid": [
      13,
@@ -185,8 +185,8 @@
    },
    "-400": {
     "tiles": 43,
-    "bytes": 460658,
-    "max_tile": 37686,
+    "bytes": 460682,
+    "max_tile": 37710,
     "grid": [
      7,
      7
@@ -194,8 +194,8 @@
    },
    "-200": {
     "tiles": 43,
-    "bytes": 485092,
-    "max_tile": 44858,
+    "bytes": 485096,
+    "max_tile": 44862,
     "grid": [
      7,
      7
@@ -203,8 +203,8 @@
    },
    "0": {
     "tiles": 43,
-    "bytes": 516332,
-    "max_tile": 52072,
+    "bytes": 516316,
+    "max_tile": 52054,
     "grid": [
      7,
      7
@@ -212,8 +212,8 @@
    },
    "10": {
     "tiles": 43,
-    "bytes": 566004,
-    "max_tile": 52120,
+    "bytes": 565904,
+    "max_tile": 52028,
     "grid": [
      7,
      7
@@ -221,8 +221,8 @@
    },
    "20": {
     "tiles": 43,
-    "bytes": 617456,
-    "max_tile": 52150,
+    "bytes": 617296,
+    "max_tile": 52192,
     "grid": [
      7,
      7
@@ -230,8 +230,8 @@
    },
    "30": {
     "tiles": 43,
-    "bytes": 700078,
-    "max_tile": 52454,
+    "bytes": 700230,
+    "max_tile": 52466,
     "grid": [
      7,
      7
@@ -239,7 +239,7 @@
    },
    "40": {
     "tiles": 43,
-    "bytes": 804238,
+    "bytes": 804336,
     "max_tile": 56040,
     "grid": [
      7,
@@ -248,7 +248,7 @@
    },
    "50": {
     "tiles": 43,
-    "bytes": 943948,
+    "bytes": 944370,
     "max_tile": 60298,
     "grid": [
      7,
@@ -257,7 +257,7 @@
    },
    "60": {
     "tiles": 43,
-    "bytes": 977410,
+    "bytes": 976916,
     "max_tile": 62124,
     "grid": [
      7,
@@ -266,7 +266,7 @@
    },
    "70": {
     "tiles": 43,
-    "bytes": 995800,
+    "bytes": 995944,
     "max_tile": 63128,
     "grid": [
      7,
@@ -286,7 +286,7 @@
    },
    "-400": {
     "tiles": 14,
-    "bytes": 115374,
+    "bytes": 115372,
     "max_tile": 17600,
     "grid": [
      4,
@@ -295,7 +295,7 @@
    },
    "-200": {
     "tiles": 14,
-    "bytes": 122826,
+    "bytes": 122818,
     "max_tile": 19442,
     "grid": [
      4,
@@ -304,7 +304,7 @@
    },
    "0": {
     "tiles": 14,
-    "bytes": 133558,
+    "bytes": 133512,
     "max_tile": 23408,
     "grid": [
      4,
@@ -313,7 +313,7 @@
    },
    "10": {
     "tiles": 14,
-    "bytes": 149404,
+    "bytes": 149392,
     "max_tile": 26878,
     "grid": [
      4,
@@ -322,8 +322,8 @@
    },
    "20": {
     "tiles": 14,
-    "bytes": 166628,
-    "max_tile": 31820,
+    "bytes": 166646,
+    "max_tile": 31830,
     "grid": [
      4,
      4
@@ -331,8 +331,8 @@
    },
    "30": {
     "tiles": 14,
-    "bytes": 192402,
-    "max_tile": 39152,
+    "bytes": 192410,
+    "max_tile": 39172,
     "grid": [
      4,
      4
@@ -340,8 +340,8 @@
    },
    "40": {
     "tiles": 14,
-    "bytes": 225826,
-    "max_tile": 46838,
+    "bytes": 225796,
+    "max_tile": 46864,
     "grid": [
      4,
      4
@@ -349,8 +349,8 @@
    },
    "50": {
     "tiles": 14,
-    "bytes": 270400,
-    "max_tile": 59882,
+    "bytes": 269872,
+    "max_tile": 59278,
     "grid": [
      4,
      4
@@ -358,8 +358,8 @@
    },
    "60": {
     "tiles": 14,
-    "bytes": 280916,
-    "max_tile": 63618,
+    "bytes": 280948,
+    "max_tile": 63732,
     "grid": [
      4,
      4
@@ -367,8 +367,8 @@
    },
    "70": {
     "tiles": 14,
-    "bytes": 285150,
-    "max_tile": 64928,
+    "bytes": 284976,
+    "max_tile": 64828,
     "grid": [
      4,
      4
@@ -387,7 +387,7 @@
    },
    "-400": {
     "tiles": 4,
-    "bytes": 32486,
+    "bytes": 32496,
     "max_tile": 14924,
     "grid": [
      2,
@@ -405,7 +405,7 @@
    },
    "0": {
     "tiles": 4,
-    "bytes": 37446,
+    "bytes": 37448,
     "max_tile": 16202,
     "grid": [
      2,
@@ -414,8 +414,8 @@
    },
    "10": {
     "tiles": 4,
-    "bytes": 42856,
-    "max_tile": 19638,
+    "bytes": 42860,
+    "max_tile": 19640,
     "grid": [
      2,
      2
@@ -423,8 +423,8 @@
    },
    "20": {
     "tiles": 4,
-    "bytes": 47798,
-    "max_tile": 22540,
+    "bytes": 47786,
+    "max_tile": 22530,
     "grid": [
      2,
      2
@@ -432,8 +432,8 @@
    },
    "30": {
     "tiles": 4,
-    "bytes": 56058,
-    "max_tile": 28522,
+    "bytes": 56080,
+    "max_tile": 28546,
     "grid": [
      2,
      2
@@ -441,8 +441,8 @@
    },
    "40": {
     "tiles": 4,
-    "bytes": 64576,
-    "max_tile": 34382,
+    "bytes": 64572,
+    "max_tile": 34376,
     "grid": [
      2,
      2
@@ -450,8 +450,8 @@
    },
    "50": {
     "tiles": 4,
-    "bytes": 76266,
-    "max_tile": 41148,
+    "bytes": 76216,
+    "max_tile": 41096,
     "grid": [
      2,
      2
@@ -459,8 +459,8 @@
    },
    "60": {
     "tiles": 4,
-    "bytes": 78546,
-    "max_tile": 42694,
+    "bytes": 78540,
+    "max_tile": 42704,
     "grid": [
      2,
      2
@@ -468,8 +468,8 @@
    },
    "70": {
     "tiles": 4,
-    "bytes": 79206,
-    "max_tile": 43038,
+    "bytes": 79112,
+    "max_tile": 42986,
     "grid": [
      2,
      2
@@ -488,8 +488,8 @@
    },
    "-400": {
     "tiles": 1,
-    "bytes": 9614,
-    "max_tile": 9614,
+    "bytes": 9608,
+    "max_tile": 9608,
     "grid": [
      1,
      1
@@ -506,8 +506,8 @@
    },
    "0": {
     "tiles": 1,
-    "bytes": 10598,
-    "max_tile": 10598,
+    "bytes": 10588,
+    "max_tile": 10588,
     "grid": [
      1,
      1
@@ -524,8 +524,8 @@
    },
    "20": {
     "tiles": 1,
-    "bytes": 13392,
-    "max_tile": 13392,
+    "bytes": 13372,
+    "max_tile": 13372,
     "grid": [
      1,
      1
@@ -533,8 +533,8 @@
    },
    "30": {
     "tiles": 1,
-    "bytes": 14942,
-    "max_tile": 14942,
+    "bytes": 14954,
+    "max_tile": 14954,
     "grid": [
      1,
      1
@@ -542,8 +542,8 @@
    },
    "40": {
     "tiles": 1,
-    "bytes": 16492,
-    "max_tile": 16492,
+    "bytes": 16480,
+    "max_tile": 16480,
     "grid": [
      1,
      1
@@ -551,8 +551,8 @@
    },
    "50": {
     "tiles": 1,
-    "bytes": 18458,
-    "max_tile": 18458,
+    "bytes": 18506,
+    "max_tile": 18506,
     "grid": [
      1,
      1
@@ -560,8 +560,8 @@
    },
    "60": {
     "tiles": 1,
-    "bytes": 18948,
-    "max_tile": 18948,
+    "bytes": 18900,
+    "max_tile": 18900,
     "grid": [
      1,
      1
@@ -569,8 +569,8 @@
    },
    "70": {
     "tiles": 1,
-    "bytes": 18986,
-    "max_tile": 18986,
+    "bytes": 19004,
+    "max_tile": 19004,
     "grid": [
      1,
      1
@@ -612,48 +612,48 @@
  },
  "time": {
   "-657": {
-   "render_s": 50.2,
-   "tiles_s": 5.4
+   "render_s": 169.1,
+   "tiles_s": 2.7
   },
   "-400": {
-   "render_s": 49.1,
-   "tiles_s": 5.5
+   "render_s": 26.7,
+   "tiles_s": 2.5
   },
   "-200": {
-   "render_s": 49.3,
-   "tiles_s": 5.4
+   "render_s": 26.6,
+   "tiles_s": 2.6
   },
   "0": {
-   "render_s": 49.0,
-   "tiles_s": 5.4
+   "render_s": 26.8,
+   "tiles_s": 2.7
   },
   "10": {
-   "render_s": 50.0,
-   "tiles_s": 5.7
+   "render_s": 25.6,
+   "tiles_s": 2.5
   },
   "20": {
-   "render_s": 49.5,
-   "tiles_s": 5.8
+   "render_s": 25.1,
+   "tiles_s": 2.5
   },
   "30": {
-   "render_s": 49.9,
-   "tiles_s": 5.6
+   "render_s": 25.4,
+   "tiles_s": 2.5
   },
   "40": {
-   "render_s": 50.8,
-   "tiles_s": 5.5
+   "render_s": 26.8,
+   "tiles_s": 2.5
   },
   "50": {
-   "render_s": 52.6,
-   "tiles_s": 5.9
+   "render_s": 26.8,
+   "tiles_s": 2.5
   },
   "60": {
-   "render_s": 52.5,
-   "tiles_s": 5.7
+   "render_s": 26.5,
+   "tiles_s": 2.6
   },
   "70": {
-   "render_s": 52.6,
-   "tiles_s": 5.8
+   "render_s": 26.6,
+   "tiles_s": 2.6
   }
  },
  "psnr": {
@@ -735,7 +735,7 @@
    "nanan": 45.0
   },
   "40": {
-   "nangang": 36.3,
+   "nangang": 36.4,
    "jinjiao": 37.9,
    "gucheng": 35.4,
    "siqiu": 35.7,
@@ -749,7 +749,7 @@
    "nangang": 35.9,
    "jinjiao": 37.2,
    "gucheng": 35.1,
-   "siqiu": 35.0,
+   "siqiu": 35.1,
    "dongjia": 41.7,
    "xipo": 36.4,
    "qiangwai": 42.2,
@@ -3373,7 +3373,7 @@
    "9_9": "g/60"
   }
  },
- "dedupe_saved_bytes": 25475402,
+ "dedupe_saved_bytes": 25475364,
  "street": {
   "ground_keys": [
    -657,
@@ -3402,11 +3402,11 @@
    "70": 2066794
   },
   "vec_tiles": 132,
-  "vec_bytes": 31915423,
-  "vec_gzip": 5391879,
-  "vec_max_gzip": 145403,
+  "vec_bytes": 32090716,
+  "vec_gzip": 5472779,
+  "vec_max_gzip": 147592,
   "max_houses_tile": 518,
-  "seconds": 527.5
+  "seconds": 264.3
  },
- "total_s": 1162.8
+ "total_s": 738.3
 }
