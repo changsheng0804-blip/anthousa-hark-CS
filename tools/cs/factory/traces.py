@@ -64,6 +64,16 @@ def build():
             T.append(dict(kind='spolia', id=s['id'] + '<' + f, name=zh(s['id']) + '的旧石', since=s['built'], x=cx, y=cy, text=c and c['text'],
                           from_name=zh(f), from_built=o['built'], from_destroyed=o.get('destroyed'), back=o['built'],
                           src=f"world.json structures/{s['id']} spolia_from={f}"))
+    # ④ cleared 为建地标拆掉的房子（houses[].cause = 'cleared for <结构英文名>'）：落成起在地标上标一个点，卡上说拆了几栋，可回到落成前一年看原来的街坊
+    BYN = {t['name']: t for t in W['structures']}; CL = {}
+    for h in W['houses']:
+        c = h.get('cause') or ''
+        if c.startswith('cleared for ') and c[12:] in BYN: CL.setdefault(c[12:], []).append(h)
+    for nm, hs in sorted(CL.items(), key=lambda kv: -len(kv[1])):
+        if len(hs) < 10: continue
+        t = BYN[nm]; c = find(t['id'], t['built']); cx, cy = CE.place(t['geom'])[:2]
+        T.append(dict(kind='cleared', id='cleared<' + t['id'], name=zh(t['id']) + '下的旧街坊', since=t['built'], x=cx, y=cy + 6, n=len(hs), text=c and c['text'],
+                      back=t['built'] - 1, src=f"world.json houses cause='cleared for {nm}' ×{len(hs)}"))
     V = []
     for fn in glob.glob(os.path.join(VD, '*.json')):
         for h in json.load(open(fn)).get('h', []):

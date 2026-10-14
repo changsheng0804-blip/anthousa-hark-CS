@@ -23,7 +23,7 @@ const ST=Object.fromEntries(WJ.structures.map(s=>[s.id,s]));const CH=fs.readdirS
 const sub=t=>t.replace(/\{\{([a-z_0-9]+)\}\}/g,(m,k)=>NZ[k]||(ST[k]&&ST[k].name)||k);const CHZ=sub(CH);
 (async()=>{await sleep(700);const T=w.__TILES,TR=w.__TRACE;if(!T||!TR){console.log('❌ 页面没起来',errs);process.exit(1)}
  const TJ=JSON.parse(fs.readFileSync(D+'traces.json','utf8')).traces;
- const srcBad=TJ.filter(t=>{if(t.kind==='ruin'){const s=ST[t.id];return !s||s.destroyed!==t.since}if(t.kind==='spolia'){const [a,b]=t.id.split('<');return !ST[a]||!(ST[a].spolia_from||[]).includes(b)||ST[a].built!==t.since}if(t.kind==='fire'){return !WJ.eras.some(e=>(e.events||[]).some(v=>v.type==='fire'&&v.year===t.since))}return true}).map(t=>t.name);
+ const srcBad=TJ.filter(t=>{if(t.kind==='ruin'){const s=ST[t.id];return !s||s.destroyed!==t.since}if(t.kind==='spolia'){const [a,b]=t.id.split('<');return !ST[a]||!(ST[a].spolia_from||[]).includes(b)||ST[a].built!==t.since}if(t.kind==='cleared'){const L=WJ.structures.find(x=>'cleared<'+x.id===t.id);return !L||L.built!==t.since||WJ.houses.filter(h=>h.cause==='cleared for '+L.name).length!==t.n}if(t.kind==='fire'){return !WJ.eras.some(e=>(e.events||[]).some(v=>v.type==='fire'&&v.year===t.since))}return true}).map(t=>t.name);
  chk(TJ.length>0&&!srcBad.length,`${TJ.length} 条痕迹都有底账出处`+(srcBad.length?'；查不到：'+srcBad.join('、'):''));
  const txtBad=TJ.filter(t=>!t.text||t.text.split(/(?<=[。！？])/).some(x=>x.trim()&&!CHZ.includes(x.replace(/。$/,'').slice(0,12)))).map(t=>t.name);
  chk(!txtBad.length,'文案都是编年史原句'+(txtBad.length?'；对不上：'+txtBad.join('、'):''));

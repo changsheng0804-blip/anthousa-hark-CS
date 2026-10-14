@@ -431,7 +431,7 @@ function traceDraw(Y){if(!TRACES.length)return;
   for(const t of TRACES){if(Y<t.since)continue;
     if(t.kind==='ruin'&&t.line.length>1){ctx.save();ctx.strokeStyle='rgba(92,66,38,.5)';ctx.lineWidth=Math.max(3,2.2/cam.z);ctx.setLineDash([Math.max(9,7/cam.z),Math.max(6,5/cam.z)]);ctx.beginPath();ctx.moveTo(t.line[0][0],t.line[0][1]);for(let i=1;i<t.line.length;i++)ctx.lineTo(t.line[i][0],t.line[i][1]);if(t.closed)ctx.closePath();ctx.stroke();ctx.restore()}
     else if(t.kind==='fire'){const age=Y-t.since;if(age<8){ctx.fillStyle='rgba(44,28,18,'+(0.62*(1-age/8)).toFixed(3)+')';ctx.beginPath();for(const P of t.polys){ctx.moveTo(P[0],P[1]);for(let j=2;j<P.length;j+=2)ctx.lineTo(P[j],P[j+1]);ctx.closePath()}ctx.fill()}}}}
-function showTrace(t){const head={ruin:'旧址',spolia:'旧石',fire:'火场'}[t.kind];let extra='';
+function showTrace(t){const head={ruin:'旧址',spolia:'旧石',fire:'火场',cleared:'旧街坊'}[t.kind];let extra='';if(t.kind==='cleared')extra='建它时拆掉了 '+t.n+' 栋房子；回到落成前一年，还能看见原来的街坊';
   if(t.kind==='spolia')extra='石料来自'+t.from_name+'（'+yrFmt(t.from_built)+'建'+(t.from_destroyed!=null?'，'+yrFmt(t.from_destroyed)+'拆':'')+'）';
   if(t.kind==='ruin')extra=yrFmt(t.built)+'建，'+yrFmt(t.since)+'拆';
   if(t.kind==='fire')extra=t.later.length?'火场上后来建起：'+t.later.map(l=>l.name+'（'+yrFmt(l.year)+'）').join('、'):'火场上没有再起公共建筑，烧掉的地块慢慢又盖满了房子';
