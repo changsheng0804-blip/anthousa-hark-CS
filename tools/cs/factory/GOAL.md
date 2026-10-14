@@ -18,7 +18,8 @@
 ## 清单（每轮开工先重排，做最上面那条没卡住的）
 | # | 项 | 对应 | 状态 |
 |---|---|---|---|
-| 1 | 并上游：git merge origin/main，冲突逐一处理（xerolophos/scene.json 保留 next 链路；index.html 两边的块都留）；九块 accept、check_tiles 全过 | H1 | 待做 |
+| 1 | 并上游：git merge origin/main，冲突逐一处理（xerolophos/scene.json 保留 next 链路；index.html 两边的块都留）；九块 accept、check_tiles 全过 | H1 | 完成（第 1 轮） |
+| 1b | check_lives.js 在干山页上抛 `null.hid`（并之前的 HEAD 就抛，不是合并引起）：查清再修 | H1 | 待做 |
 | 2 | 写 check_landmark_src，先在现状上跑出「不过」（列出 CS 线和上游对不上的地标） | H2 | 待做 |
 | 3 | landmarks.py / tile_bake.py 改成读上游 registry 和规格卡，重烤地标层；CS 线多出来的地标列「待上游收录」 | H2 | 待做 |
 | 4 | 矢量房子吃上游 houses_geom（P1 户型）和房子一生阶段（P3），以及柱廊和菜园（P2） | H2 | 待做 |
@@ -30,3 +31,4 @@
 
 ## 轮次（每轮一行：时间、项、结果、重排）
 - 2026-10-13 20:56 PT 立项（会话里），清单 9 项。
+- 2026-10-13 21:10 PT 第 1 轮 · 项 1 · 完成：先用现成不过的检查——九块 accept.py 都红着「上游底账落后」。git merge origin/main（8 个提交 aafed1c…c72b1f3，v24–v30 房子 P1–P3、地标规格卡 tools/landmarks/*.json + landmark_registry.py、3D 管线）；world.json 上游没动。冲突只有 1 处：xerolophos/scene.json——上游改成多行并加了 hgeom，取上游整份、补回 next→南港（理由：底账以上游为准，链路是 CS 线的）；xerolophos/index.html 自动合并（上游加 geomHG/阶段年份，CS 线块和 id="next" 按钮都在）。九块 accept 全过且「底账落后」转绿（nangang 72、jinjiao 48、gucheng 120、siqiu 67、dongjia 41、xipo 68、qiangwai 51、jiaowan 41、nanan 54 项，0 红；注意九块并行跑会同时重写 world.json 读到半截 JSON，要串着跑）；check_tiles errors 0；干山页 check_talk、check_card 过（1123 张卡 0 坏）。查出 check_lives 抛 null.hid，开工前的 HEAD 就抛，不是合并引起。重排：加 1b（check_lives），放在 2 前面——H1 要干山页照样能打开，先确认它只是检查过时还是页面真坏。
