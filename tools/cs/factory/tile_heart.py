@@ -22,7 +22,8 @@ has_fleet = 'SCENE.fleet' in FL
 _h = "FLEET.crowd=function(Y){if(FLEET.cache[Y])return FLEET.cache[Y];const r="
 assert _h in FL and "for(const h of hs){const hh=household(h);" in FL and "for(const m of pool){const t=" in FL and "FLEET.cache[Y]=R;return R};" in FL, 'fleet_day 原文变了，tile_heart 要跟着改'
 FL = FL.replace(_h, "FLEET.crowdGen=function*(Y){if(FLEET.cache[Y])return FLEET.cache[Y];const r=")
-FL = FL.replace("for(const h of hs){const hh=household(h);", "for(const h of hs){yield;const hh=household(h);")
+# 2026-10-14：MAXY 之后才建的房子没有家户（household 里 fams 为空，读 fams[0].B 抛错，整个 rAF 循环停住）；跟 csIncoming 一样跳过
+FL = FL.replace("for(const h of hs){const hh=household(h);", "for(const h of hs){yield;if(h.built>MAXY)continue;const hh=household(h);")
 FL = FL.replace("for(const m of pool){const t=", "for(const m of pool){yield;const t=")
 _b = "for(let qi=0;qi<Q2.length&&!found&&qi<40000;qi++){const[a,b]=Q2[qi];"
 assert _b in FL

@@ -135,7 +135,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   // 这一年来码头的人：都是底账里的人家
   FLEET.crowdGen=function*(Y){if(FLEET.cache[Y])return FLEET.cache[Y];const r=rng(hash('fleet'+Y));const out=[];
     const hs=houses.filter(h=>ok(h,Y)&&dQ(h.cx,h.cy)<C.reach).sort((a,b)=>dQ(a.cx,a.cy)-dQ(b.cx,b.cy));
-    for(const h of hs){yield;const hh=household(h);const F=famAt(hh,Y);const al=aliveAt(hh,Y);if(!al.length)continue;
+    for(const h of hs){yield;if(h.built>MAXY)continue;const hh=household(h);const F=famAt(hh,Y);const al=aliveAt(hh,Y);if(!al.length)continue;
       if(SPR[F.trade]&&out.filter(c=>c.kind==='work').length<Math.round(C.max*FLEET.shipN(Y)/ships.length)){const P=trail(WK.quay,h.cx,h.cy);if(P){const e=P[P.length-1];
         out.push({kind:'work',trade:F.trade,h,sp:sp(SPR[F.trade]),home:[h.cx,h.cy],path:P,spot:[e[0]+(r()-.5)*6,e[1]+(r()-.5)*4],go:7.4+r()*1.8,back:[16.8,17.3,17.8][out.filter(c=>c.kind==='work').length%3]+r()*.2,ph:r()})}}
       const kid=al.find(p=>Y-p.b>=6&&Y-p.b<=13);
