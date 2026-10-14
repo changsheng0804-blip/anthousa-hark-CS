@@ -1,0 +1,1009 @@
+{
+ "grid_size": 12,
+ "n_all_hit": 0,
+ "all_hit": [],
+ "n_all_hit_alt_dunbar3": 0,
+ "all_hit_alt_dunbar3": [],
+ "best": "g11",
+ "miss_counts_over_50_60_70": {
+  "dunbar_cum_3": 36,
+  "dunbar_cum_68": 31,
+  "assort_faith": 11
+ },
+ "table": [
+  {
+   "id": "g11",
+   "j": 11,
+   "group_size": 25,
+   "cross_x": 0.05,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 36,
+   "dist_sum": 0.219,
+   "per": {
+    "50": {
+     "n_hit": 12,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3"
+     ],
+     "miss_alt": [],
+     "dist": 0.0556
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "assort_faith"
+     ],
+     "dist": 0.0665
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "assort_faith"
+     ],
+     "dist": 0.0969
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     50.0
+    ],
+    "clustering": 0.18565145560591542,
+    "avg_path": 3.205799115245009,
+    "modularity": 0.6745726924942895,
+    "assort_faith": 0.8644733102169662,
+    "closure_share": 0.20570144684005162,
+    "office_strength_ratio": 1.5578404355377333,
+    "office_betw_ratio": 2.4844683971210166,
+    "latent_max_over_median": 6.901960784313726,
+    "market_share": 0.4731,
+    "cap_share": 0.05633474946167724,
+    "mean_degree": 49.86184994045256
+   },
+   "survival_70": 0.842922687056153,
+   "clustering_by_year": {
+    "50": 0.2253785184503229,
+    "60": 0.1985486991564199,
+    "70": 0.18565145560591542
+   },
+   "group_size_70": {
+    "n_groups": 929,
+    "size_median": 28.0,
+    "size_mean": 27.86652314316469,
+    "size_p10": 14.0,
+    "size_p90": 40.0,
+    "size_max": 50
+   }
+  },
+  {
+   "id": "g9",
+   "j": 9,
+   "group_size": 25,
+   "cross_x": 0.0,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 35,
+   "dist_sum": 0.3101,
+   "per": {
+    "50": {
+     "n_hit": 12,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3"
+     ],
+     "miss_alt": [],
+     "dist": 0.0556
+    },
+    "60": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.1256
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "assort_faith"
+     ],
+     "dist": 0.1289
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     48.0
+    ],
+    "clustering": 0.20439001009589375,
+    "avg_path": 3.259300325166364,
+    "modularity": 0.6963126126838028,
+    "assort_faith": 0.8756870729003082,
+    "closure_share": 0.21196922002217164,
+    "office_strength_ratio": 1.5615989789487048,
+    "office_betw_ratio": 2.831414640926543,
+    "latent_max_over_median": 6.795918367346939,
+    "market_share": 0.4564,
+    "cap_share": 0.04917651166850957,
+    "mean_degree": 48.29251970736687
+   },
+   "survival_70": 0.8457465851998852,
+   "clustering_by_year": {
+    "50": 0.24862567637136376,
+    "60": 0.21849232963159895,
+    "70": 0.20439001009589375
+   },
+   "group_size_70": {
+    "n_groups": 929,
+    "size_median": 28.0,
+    "size_mean": 27.86652314316469,
+    "size_p10": 14.0,
+    "size_p90": 40.0,
+    "size_max": 50
+   }
+  },
+  {
+   "id": "g1",
+   "j": 1,
+   "group_size": 8,
+   "cross_x": 0.0,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 35,
+   "dist_sum": 2.4118,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.7712
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     33.0
+    ],
+    "clustering": 0.1521933300107403,
+    "avg_path": 3.429218655474894,
+    "modularity": 0.6401143238898025,
+    "assort_faith": 0.8497563665978263,
+    "closure_share": 0.3114740797143963,
+    "office_strength_ratio": 1.5961215390952768,
+    "office_betw_ratio": 3.506706473047711,
+    "latent_max_over_median": 10.030303030303031,
+    "market_share": 0.208,
+    "cap_share": 0.014432869696793343,
+    "mean_degree": 34.549651222140305
+   },
+   "survival_70": 0.8485260425128397,
+   "clustering_by_year": {
+    "50": 0.17789729519821545,
+    "60": 0.16093113353143568,
+    "70": 0.1521933300107403
+   },
+   "group_size_70": {
+    "n_groups": 2920,
+    "size_median": 9.0,
+    "size_mean": 8.865753424657534,
+    "size_p10": 4.0,
+    "size_p90": 13.0,
+    "size_max": 16
+   }
+  },
+  {
+   "id": "g3",
+   "j": 3,
+   "group_size": 8,
+   "cross_x": 0.05,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 35,
+   "dist_sum": 2.4118,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.7712
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     33.0
+    ],
+    "clustering": 0.14592043251421796,
+    "avg_path": 3.4005945629159107,
+    "modularity": 0.6349482951258069,
+    "assort_faith": 0.8462119824450355,
+    "closure_share": 0.30569994292692804,
+    "office_strength_ratio": 1.6074111269333962,
+    "office_betw_ratio": 3.078092184651194,
+    "latent_max_over_median": 9.969696969696969,
+    "market_share": 0.2222,
+    "cap_share": 0.015771401967060467,
+    "mean_degree": 35.177111098508476
+   },
+   "survival_70": 0.8474537059664969,
+   "clustering_by_year": {
+    "50": 0.17035239350390136,
+    "60": 0.1550556905296863,
+    "70": 0.14592043251421796
+   },
+   "group_size_70": {
+    "n_groups": 2920,
+    "size_median": 9.0,
+    "size_mean": 8.865753424657534,
+    "size_p10": 4.0,
+    "size_p90": 13.0,
+    "size_max": 16
+   }
+  },
+  {
+   "id": "g2",
+   "j": 2,
+   "group_size": 8,
+   "cross_x": 0.05,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 35,
+   "dist_sum": 2.5589,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8693
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8693
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     32.0
+    ],
+    "clustering": 0.14378952949563012,
+    "avg_path": 3.4201603145795523,
+    "modularity": 0.6382528842435159,
+    "assort_faith": 0.845238190168439,
+    "closure_share": 0.3158006021320777,
+    "office_strength_ratio": 1.5958966649116,
+    "office_betw_ratio": 3.306862347427153,
+    "latent_max_over_median": 9.848484848484848,
+    "market_share": 0.1979,
+    "cap_share": 0.013676307978816271,
+    "mean_degree": 34.30510973742415
+   },
+   "survival_70": 0.8466405805825892,
+   "clustering_by_year": {
+    "50": 0.16478361917996434,
+    "60": 0.1520831502256929,
+    "70": 0.14378952949563012
+   },
+   "group_size_70": {
+    "n_groups": 2920,
+    "size_median": 9.0,
+    "size_mean": 8.865753424657534,
+    "size_p10": 4.0,
+    "size_p90": 13.0,
+    "size_max": 16
+   }
+  },
+  {
+   "id": "g0",
+   "j": 0,
+   "group_size": 8,
+   "cross_x": 0.0,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 35,
+   "dist_sum": 2.6079,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.9183
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8693
+    },
+    "70": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.8203
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     32.0
+    ],
+    "clustering": 0.14874913797157513,
+    "avg_path": 3.442462568058076,
+    "modularity": 0.6374382848977752,
+    "assort_faith": 0.8470264649556133,
+    "closure_share": 0.3197073637376289,
+    "office_strength_ratio": 1.6019655043579035,
+    "office_betw_ratio": 3.3800196029470504,
+    "latent_max_over_median": 9.84375,
+    "market_share": 0.1863,
+    "cap_share": 0.014141884420648315,
+    "mean_degree": 33.699994328815286
+   },
+   "survival_70": 0.8477095143251111,
+   "clustering_by_year": {
+    "50": 0.17200409473655964,
+    "60": 0.15721855464078502,
+    "70": 0.14874913797157513
+   },
+   "group_size_70": {
+    "n_groups": 2920,
+    "size_median": 9.0,
+    "size_mean": 8.865753424657534,
+    "size_p10": 4.0,
+    "size_p90": 13.0,
+    "size_max": 16
+   }
+  },
+  {
+   "id": "g10",
+   "j": 10,
+   "group_size": 25,
+   "cross_x": 0.05,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 34,
+   "dist_sum": 0.3476,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.085
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.134
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.1286
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     47.0
+    ],
+    "clustering": 0.17283705113057113,
+    "avg_path": 3.2303832047791894,
+    "modularity": 0.6698224449534096,
+    "assort_faith": 0.8652625828849456,
+    "closure_share": 0.2173910150045697,
+    "office_strength_ratio": 1.5770208195670898,
+    "office_betw_ratio": 2.806680376585456,
+    "latent_max_over_median": 7.5,
+    "market_share": 0.444,
+    "cap_share": 0.04871093522667753,
+    "mean_degree": 47.64158112629728
+   },
+   "survival_70": 0.8413905303403512,
+   "clustering_by_year": {
+    "50": 0.20691030200758684,
+    "60": 0.18406489173830184,
+    "70": 0.17283705113057113
+   },
+   "group_size_70": {
+    "n_groups": 929,
+    "size_median": 28.0,
+    "size_mean": 27.86652314316469,
+    "size_p10": 14.0,
+    "size_p90": 40.0,
+    "size_max": 50
+   }
+  },
+  {
+   "id": "g7",
+   "j": 7,
+   "group_size": 15,
+   "cross_x": 0.05,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 34,
+   "dist_sum": 1.3205,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.3791
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.4771
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.4643
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     40.0
+    ],
+    "clustering": 0.1612795001179539,
+    "avg_path": 3.283613127646703,
+    "modularity": 0.6548195304317785,
+    "assort_faith": 0.8626625051225786,
+    "closure_share": 0.25321875286706014,
+    "office_strength_ratio": 1.5807669832778835,
+    "office_betw_ratio": 2.912923117006395,
+    "latent_max_over_median": 8.292682926829269,
+    "market_share": 0.355,
+    "cap_share": 0.02968049816679276,
+    "mean_degree": 41.777122440877896
+   },
+   "survival_70": 0.8461287751597433,
+   "clustering_by_year": {
+    "50": 0.1956479256699134,
+    "60": 0.17180498204912834,
+    "70": 0.1612795001179539
+   },
+   "group_size_70": {
+    "n_groups": 1551,
+    "size_median": 17.0,
+    "size_mean": 16.691166989039328,
+    "size_p10": 8.0,
+    "size_p90": 24.0,
+    "size_max": 30
+   }
+  },
+  {
+   "id": "g5",
+   "j": 5,
+   "group_size": 15,
+   "cross_x": 0.0,
+   "p_in": 1.0,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 34,
+   "dist_sum": 1.5324,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.4771
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.5261
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.5292
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     39.0
+    ],
+    "clustering": 0.1723763127996262,
+    "avg_path": 3.3480206442831215,
+    "modularity": 0.668351986909585,
+    "assort_faith": 0.8682396328099508,
+    "closure_share": 0.26027709451547754,
+    "office_strength_ratio": 1.5796381743336882,
+    "office_betw_ratio": 3.0911500434096437,
+    "latent_max_over_median": 8.564102564102564,
+    "market_share": 0.3372,
+    "cap_share": 0.024209974975266252,
+    "mean_degree": 40.57244938467646
+   },
+   "survival_70": 0.8486221833420343,
+   "clustering_by_year": {
+    "50": 0.21004269508651618,
+    "60": 0.18394507879086988,
+    "70": 0.1723763127996262
+   },
+   "group_size_70": {
+    "n_groups": 1551,
+    "size_median": 17.0,
+    "size_mean": 16.691166989039328,
+    "size_p10": 8.0,
+    "size_p90": 24.0,
+    "size_max": 30
+   }
+  },
+  {
+   "id": "g6",
+   "j": 6,
+   "group_size": 15,
+   "cross_x": 0.05,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 34,
+   "dist_sum": 1.6492,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.5261
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.5752
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.5479
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     38.0
+    ],
+    "clustering": 0.15293870050395095,
+    "avg_path": 3.314498260738052,
+    "modularity": 0.6490836571228861,
+    "assort_faith": 0.857606989725068,
+    "closure_share": 0.2642742931704787,
+    "office_strength_ratio": 1.595729039083523,
+    "office_betw_ratio": 2.7739526417852924,
+    "latent_max_over_median": 8.666666666666666,
+    "market_share": 0.3255,
+    "cap_share": 0.02374439853343421,
+    "mean_degree": 39.98786366471956
+   },
+   "survival_70": 0.8444724481613014,
+   "clustering_by_year": {
+    "50": 0.18176178262405687,
+    "60": 0.16310920281039493,
+    "70": 0.15293870050395095
+   },
+   "group_size_70": {
+    "n_groups": 1551,
+    "size_median": 17.0,
+    "size_mean": 16.691166989039328,
+    "size_p10": 8.0,
+    "size_p90": 24.0,
+    "size_max": 30
+   }
+  },
+  {
+   "id": "g4",
+   "j": 4,
+   "group_size": 15,
+   "cross_x": 0.0,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 34,
+   "dist_sum": 1.817,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.5752
+    },
+    "60": {
+     "n_hit": 12,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.6242
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.6176
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     37.0
+    ],
+    "clustering": 0.16205532924153043,
+    "avg_path": 3.362881881427707,
+    "modularity": 0.663346380123094,
+    "assort_faith": 0.8648471611068232,
+    "closure_share": 0.27127572331445315,
+    "office_strength_ratio": 1.6071674875842,
+    "office_betw_ratio": 3.0278613690419056,
+    "latent_max_over_median": 8.736842105263158,
+    "market_share": 0.3085,
+    "cap_share": 0.02106733399289996,
+    "mean_degree": 39.08705268530596
+   },
+   "survival_70": 0.846274679897661,
+   "clustering_by_year": {
+    "50": 0.19268999783811508,
+    "60": 0.17240260184144884,
+    "70": 0.16205532924153043
+   },
+   "group_size_70": {
+    "n_groups": 1551,
+    "size_median": 17.0,
+    "size_mean": 16.691166989039328,
+    "size_p10": 8.0,
+    "size_p90": 24.0,
+    "size_max": 30
+   }
+  },
+  {
+   "id": "g8",
+   "j": 8,
+   "group_size": 25,
+   "cross_x": 0.0,
+   "p_in": 0.8,
+   "all_hit_50_60_70": false,
+   "all_hit_alt_dunbar3": false,
+   "hits_sum": 33,
+   "dist_sum": 0.6383,
+   "per": {
+    "50": {
+     "n_hit": 11,
+     "n_eval": 13,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68"
+     ],
+     "dist": 0.134
+    },
+    "60": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.2556
+    },
+    "70": {
+     "n_hit": 11,
+     "n_eval": 14,
+     "miss": [
+      "dunbar_cum_3",
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "miss_alt": [
+      "dunbar_cum_68",
+      "assort_faith"
+     ],
+     "dist": 0.2487
+    }
+   },
+   "m70": {
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     45.0
+    ],
+    "clustering": 0.18701422520530453,
+    "avg_path": 3.2772582047791894,
+    "modularity": 0.6821713601991127,
+    "assort_faith": 0.8729777410129713,
+    "closure_share": 0.22391365907575383,
+    "office_strength_ratio": 1.5652581319476548,
+    "office_betw_ratio": 2.7592531225486816,
+    "latent_max_over_median": 7.565217391304348,
+    "market_share": 0.4272,
+    "cap_share": 0.04161089448873887,
+    "mean_degree": 46.177281234049794
+   },
+   "survival_70": 0.8430717697659208,
+   "clustering_by_year": {
+    "50": 0.22477319127353257,
+    "60": 0.19957254748817208,
+    "70": 0.18701422520530453
+   },
+   "group_size_70": {
+    "n_groups": 929,
+    "size_median": 28.0,
+    "size_mean": 27.86652314316469,
+    "size_p10": 14.0,
+    "size_p90": 40.0,
+    "size_max": 50
+   }
+  }
+ ]
+}
