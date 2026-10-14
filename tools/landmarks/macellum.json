@@ -1,0 +1,83 @@
+{
+ "id": "macellum",
+ "name_zh": "肉鱼市",
+ "name_la": "macellum",
+ "category": "trade",
+ "era": [
+  10,
+  9999
+ ],
+ "historic": false,
+ "note": "market hall for meat and fish: a square ringed by shops with a round tholos in the middle",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   1
+  ]
+ },
+ "siting": {
+  "fn": [
+   "market",
+   "shops"
+  ],
+  "typ": [
+   "row",
+   "flat",
+   "casa",
+   "std",
+   "yard"
+  ],
+  "front_on": "m",
+  "front_dist": 7,
+  "prefer_fn": [
+   "market"
+  ],
+  "prefer": "large",
+  "lot": [
+   300,
+   2400
+  ],
+  "built_by": 45,
+  "gap": 600,
+  "merge_max": 5,
+  "target": 800
+ },
+ "footprint": {
+  "shape": "macellum"
+ },
+ "palette": {
+  "wall": [
+   230,
+   220,
+   198
+  ],
+  "roof": [
+   172,
+   92,
+   62
+  ],
+  "accent": [
+   120,
+   90,
+   64
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "stalls",
+   "name_zh": "露天肉鱼摊"
+  },
+  {
+   "from": 8,
+   "shape": "full",
+   "name_zh": "肉鱼市"
+  }
+ ],
+ "function": "market",
+ "scenes": [
+  "market_morning"
+ ],
+ "size": "medium"
+}

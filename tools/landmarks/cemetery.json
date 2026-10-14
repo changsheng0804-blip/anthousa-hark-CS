@@ -1,0 +1,63 @@
+{
+ "id": "cemetery",
+ "name_zh": "城外墓地",
+ "name_la": "coemeterium",
+ "category": "burial",
+ "era": [
+  0,
+  9999
+ ],
+ "historic": false,
+ "note": "Roman law kept burials outside the walls; graves line the road beyond the founder's gate",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   1
+  ]
+ },
+ "siting": {
+  "outside_wall": true,
+  "typ": [
+   "casa",
+   "row",
+   "yard",
+   "std"
+  ],
+  "prefer": "large",
+  "lot": [
+   200,
+   2400
+  ],
+  "gap": 400,
+  "prefer_merge": true
+ },
+ "footprint": {
+  "shape": "cemetery"
+ },
+ "palette": {
+  "wall": [
+   214,
+   202,
+   180
+  ],
+  "roof": [
+   168,
+   100,
+   70
+  ],
+  "accent": [
+   226,
+   220,
+   206
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "full"
+  }
+ ],
+ "function": "garden",
+ "size": "medium"
+}

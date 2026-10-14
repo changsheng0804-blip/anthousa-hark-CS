@@ -1,6 +1,6 @@
 """Shared shape vocabulary for landmarks (open typology). A landmark house has h[9] = 'lm:<spec id>';
 house_types._geom_full hands it here. Every part carries its own year range so a spec's stages grow the building.
-Shapes: steps, rect, atrium, basilica (nave + aisles + apse + atrium). Add new primitives here; new types are JSON specs."""
+Shapes: steps, rect, atrium, basilica (nave + aisles + apse + atrium), fountain, granary, inn, macellum (tholos), kiln, cemetery. Add new primitives here; new types are JSON specs."""
 import json, math, os
 import house_types as HT
 from house_types import shade, _lerp, _ny, walls, gable, hsh, split
@@ -149,9 +149,105 @@ def build_inn(h, sp, b, E):
         x, y = M(.4 + .12 * j, .5 + .08 * (j - 1))
         out.append(('fill', 'g', [(x - .9, y - .3), (x + .9, y - .3), (x + .9, y + .5), (x - .9, y + .5)], (190, 160, 90) if j else (120, 84, 56), R))
     return out
-BUILD = {'basilica': build_church, 'steps': build_steps, 'fountain': build_fountain, 'granary': build_granary, 'inn': build_inn}
+
+def ring(c, rx, ry, n=16): return [(c[0] + rx * math.cos(2 * math.pi * i / n), c[1] + ry * math.sin(2 * math.pi * i / n)) for i in range(n)]
+def drum(c, rx, ht, wall, roof, cone=0.0, top=None):
+    """round building seen from above-south: front-facing wall strips, then a cone / flat roof"""
+    ry = rx * 0.62; base = ring(c, rx, ry); P = []
+    for i in range(16):
+        a, b = base[i], base[(i + 1) % 16]
+        if (a[1] + b[1]) / 2 >= c[1] - ry * 0.2:   # the half facing the viewer
+            k = 0.78 + 0.2 * (0.5 - 0.5 * math.cos(2 * math.pi * (i + .5) / 16 + 0.9))
+            P.append(('fill', 'w', [a, b, (b[0], b[1] - ht), (a[0], a[1] - ht)], shade(wall, k)))
+    up = [(x, y - ht) for x, y in base]
+    if cone:
+        apex = (c[0], c[1] - ht - cone)
+        for i in range(16):
+            a, b = up[i], up[(i + 1) % 16]
+            k = 0.8 + 0.22 * (0.5 - 0.5 * math.cos(2 * math.pi * (i + .5) / 16 + 0.9))
+            P.append(('fill', 'r', [a, b, apex], shade(roof, k)))
+    else:
+        P.append(('fill', 'r', up, top or shade(roof, 0.95)))
+    P.append(('line', 'r', up + [up[0]], shade(roof, 0.6)))
+    return P, c[1]
+
+def build_macellum(h, sp, b, E):
+    """macellum: a paved square ringed by shop rows, a round tholos for the fish and meat sellers in the middle.
+    Stage 0: open square with awning stalls; later the shop rows and the tholos."""
+    hid = h[0]; M, _ = frame_of(h); pal = sp['palette']; wall = tuple(pal['wall']); roof = tuple(pal['roof']); acc = tuple(pal['accent'])
+    y1 = b + 2 + sp['stages'][1]['from']; out = []
+    pave = [('fill', 'g', box(M, .04, .96, .06, .94), (206, 194, 170)), ('edge', 'g', box(M, .04, .96, .06, .94), shade(wall, .7))]
+    out.extend(tag(pave, (b + 2, E)))
+    if y1 > b + 2:   # first years: awnings over trestle stalls
+        R = (b + 2, min(y1, E))
+        for i in range(3):
+            for j in range(3):
+                s0 = .14 + .27 * i; t0 = .16 + .26 * j
+                q = box(M, s0, s0 + .16, t0, t0 + .14)
+                out.append(('fill', 'w', [q[2], q[3], (q[3][0], q[3][1] - 1.6), (q[2][0], q[2][1] - 1.6)], shade(acc, .7), R))
+                cl = (196, 160, 96) if (i + j) % 2 else (176, 86, 60)
+                out.append(('fill', 'r', [(x, y - 1.8) for x, y in q], cl, R))
+    if y1 < E:
+        R = (y1, E); comps = []
+        comps.append(lean(M, .04, .96, .06, .24, 3.6, wall, roof, hid))     # shops along the north side
+        comps.append(lean(M, .04, .2, .24, .94, 3.6, wall, roof, hid))      # west side
+        comps.append(lean(M, .8, .96, .24, .94, 3.6, wall, roof, hid))      # east side
+        Ls = math.dist(M(0, .5), M(1, .5)); Lt = math.dist(M(.5, 0), M(.5, 1)); rx = 0.2 * min(Ls, Lt)
+        comps.append(drum(M(.5, .6), rx, 3.4, shade(wall, 1.05), roof, cone=3.2))   # tholos
+        for P, key in sorted(comps, key=lambda c: c[1]): out.extend(tag(P, R))
+        c = M(.5, .6)   # columns of the tholos porch
+        for i in range(8):
+            a = math.pi * (0.1 + 0.8 * i / 7)
+            x, y = c[0] + rx * 1.28 * math.cos(a), c[1] + rx * 1.28 * 0.62 * math.sin(a)
+            out.append(('fill', 'w', [(x - .3, y), (x + .3, y), (x + .3, y - 3.4), (x - .3, y - 3.4)], shade(wall, 1.08), R))
+    return out
+
+def build_kiln(h, sp, b, E):
+    """brick and pot kilns: round domed kilns with a dark fire mouth, a drying shed, stacks of bricks; a second kiln later"""
+    hid = h[0]; M, _ = frame_of(h); pal = sp['palette']; wall = tuple(pal['wall']); roof = tuple(pal['roof']); acc = tuple(pal['accent'])
+    y1 = b + 2 + sp['stages'][1]['from']; R0 = (b + 2, E); out = []
+    out.extend(tag([('fill', 'g', box(M, .04, .96, .08, .92), (170, 140, 104))], R0))
+    def kiln(s, t, R):
+        Ls = math.dist(M(0, .5), M(1, .5)); Lt = math.dist(M(.5, 0), M(.5, 1)); rk = min(6.2, 0.16 * min(Ls * 1.6, Lt))
+        c = M(s, t); P, _ = drum(c, rk, 3.0, wall, shade(wall, .82), top=shade(wall, .7))
+        P.append(('fill', 'r', ring((c[0], c[1] - 3.0), 2.2, 1.4, 10), (60, 44, 36)))     # open top / flue
+        P.append(('fill', 'w', [(c[0] - 1.1, c[1] + 3.8), (c[0] + 1.1, c[1] + 3.8), (c[0] + 1.1, c[1] + 2.0), (c[0] - 1.1, c[1] + 2.0)], (40, 26, 20)))   # fire mouth
+        out.extend(tag(P, R))
+    kiln(.3, .45, R0)
+    if y1 < E: kiln(.56, .5, (y1, E))
+    P, _ = lean(M, .74, .96, .14, .86, 2.6, shade(wall, .95), roof, hid); out.extend(tag(P, R0))   # drying shed
+    for j in range(4):   # stacks of fired bricks
+        x, y = M(.12 + .14 * j, .82)
+        for k in range(3):
+            out.append(('fill', 'w', [(x - 1.2, y - .5 * k), (x + 1.2, y - .5 * k), (x + 1.2, y - .5 * (k + 1)), (x - 1.2, y - .5 * (k + 1))], shade(acc, .85 + .08 * (k % 2)), R0))
+    return out
+
+def build_cemetery(h, sp, b, E):
+    """burial ground outside the walls: a low enclosure, rows of stelae that fill in year by year, a small tomb house, cypresses"""
+    hid = h[0]; M, _ = frame_of(h); pal = sp['palette']; wall = tuple(pal['wall']); roof = tuple(pal['roof']); acc = tuple(pal['accent'])
+    R0 = (b + 2, E); out = []
+    fp = box(M, .03, .97, .05, .95)
+    out.append(('fill', 'g', fp, (150, 150, 104), R0)); out.append(('edge', 'g', fp, shade(wall, .6), R0))
+    for k in range(4):   # low enclosure wall, front-facing sides only
+        a, c = fp[k], fp[(k + 1) % 4]; nx, ny = _ny(a, c, _lerp(fp[0], fp[2], .5))
+        if ny > .02: out.append(('fill', 'w', [a, c, (c[0], c[1] - .9), (a[0], a[1] - .9)], shade(wall, .8 + .15 * ny), R0))
+    P, _ = hall(M, .72, .92, .14, .4, 3.2, wall, roof, hid, 1.4); out.extend(tag(P, R0))   # family tomb house
+    n = 0; span = max(4, min(E, 9999) - b - 4) if E < 9999 else 60
+    for row in range(5):
+        for i in range(9):
+            if row < 2 and i > 5: continue   # leave room for the tomb house
+            s = .08 + .085 * i; t = .2 + .15 * row
+            x, y = M(s, t); y0 = b + 2 + int(span * HT.hsh(hid * 31 + n, 77) * 0.9)   # each grave its own year
+            out.append(('fill', 'w', [(x - .35, y), (x + .35, y), (x + .35, y - 1.3), (x - .35, y - 1.3)], shade(acc, .9 + .1 * HT.hsh(n, 78)), (y0, E)))
+            n += 1
+    for (s, t) in ((.06, .1), (.5, .12), (.62, .9), (.95, .7)):   # cypresses
+        x, y = M(s, t)
+        out.append(('fill', 'w', [(x, y - 7.5), (x + 1.2, y - 3.5), (x + .8, y), (x - .8, y), (x - 1.2, y - 3.5)], (52, 78, 50), R0))
+    return out
+BUILD = {'basilica': build_church, 'steps': build_steps, 'fountain': build_fountain, 'granary': build_granary, 'inn': build_inn,
+         'macellum': build_macellum, 'kiln': build_kiln, 'cemetery': build_cemetery}
 def spec_of(h): return SPECS[h[9][3:]]
 def geom(h, b, E):
     sp = spec_of(h)
     return BUILD[sp['footprint']['shape']](h, sp, b, E)
-def height(sp): return {'basilica': 8.4, 'steps': 6.4, 'fountain': 5.0, 'granary': 6.0, 'inn': 6.8}[sp['footprint']['shape']]
+def height(sp): return {'basilica': 8.4, 'steps': 6.4, 'fountain': 5.0, 'granary': 6.0, 'inn': 6.8, 'macellum': 6.6, 'kiln': 4.0, 'cemetery': 4.0}[sp['footprint']['shape']]

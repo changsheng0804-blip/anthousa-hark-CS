@@ -120,6 +120,7 @@ R = lambda v: round(v * 2) / 2
 vec = {}
 def put(tx, ty, k, item): vec.setdefault((tx, ty), {'s': [], 'h': []})[k].append(item)
 KC = {'fill': 0, 'edge': 1, 'line': 2}
+LID = lambda hh: ('h%d' % hh[0]) if isinstance(hh[0], int) else str(hh[0])
 for q in QS:
     ox, oy, w, h = stat['quarters'][q]; Q = os.path.join(LIV, q) + '/'
     for st in json.load(open(Q + 'streets.json')):
@@ -143,7 +144,7 @@ for q in QS:
         sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
         if not owns(q, cx, cy): continue
-        put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P])
+        put(int(cx // TP), int(cy // TP), 'h', [hh[2], hh[3], R(by + oy), sh, P, LID(hh)])   # 第 6 字段：底账 id（刘线 inbox/TO_CS.md A：旁车按 id 精确对上）
 # 定律 2：船只在水格里走——每块瓦片按 8 像素格记水格（格里 ≥95% 是水才算），每个关键年一串 0/1
 WC = 8; NC = math.ceil(TP / WC); nwater = 0
 for ty in range(NY):

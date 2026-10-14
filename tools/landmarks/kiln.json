@@ -1,0 +1,75 @@
+{
+ "id": "kiln",
+ "name_zh": "砖窑",
+ "name_la": "figlina",
+ "category": "trade",
+ "era": [
+  3,
+  9999
+ ],
+ "historic": false,
+ "note": "brick and pot kilns near the wall, where the smoke and the fire risk bother fewer people",
+ "instances": {
+  "rule": "per_quarter",
+  "count": [
+   1,
+   2
+  ]
+ },
+ "siting": {
+  "fn": [
+   "workshop",
+   "homes"
+  ],
+  "typ": [
+   "yard",
+   "casa",
+   "std",
+   "hall"
+  ],
+  "prefer_fn": [
+   "workshop"
+  ],
+  "prefer": "large",
+  "lot": [
+   260,
+   1600
+  ],
+  "built_by": 45,
+  "gap": 450
+ },
+ "footprint": {
+  "shape": "kiln"
+ },
+ "palette": {
+  "wall": [
+   176,
+   104,
+   72
+  ],
+  "roof": [
+   140,
+   96,
+   64
+  ],
+  "accent": [
+   168,
+   84,
+   58
+  ]
+ },
+ "stages": [
+  {
+   "from": 0,
+   "shape": "one",
+   "name_zh": "砖窑"
+  },
+  {
+   "from": 6,
+   "shape": "two",
+   "name_zh": "砖窑（两座窑）"
+  }
+ ],
+ "function": "workshop",
+ "size": "medium"
+}

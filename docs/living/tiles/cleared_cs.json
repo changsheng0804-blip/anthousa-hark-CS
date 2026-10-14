@@ -1,0 +1,79 @@
+{
+"src": "tools/cs/factory/landmarks_city.py（谭线 v31 地标卡）",
+"cleared": [
+{
+"id": "h4280",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "nangang"
+},
+{
+"id": "h4603",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "nangang"
+},
+{
+"id": "h14652",
+"for": "kiln",
+"lm": "h15701",
+"year": 45,
+"q": "jinjiao"
+},
+{
+"id": "h11390",
+"for": "kiln",
+"lm": "h10138",
+"year": 36,
+"q": "jinjiao"
+},
+{
+"id": "h4777",
+"for": "macellum",
+"lm": "h4670",
+"year": 14,
+"q": "gucheng"
+},
+{
+"id": "h4271",
+"for": "macellum",
+"lm": "h5420",
+"year": 17,
+"q": "siqiu"
+},
+{
+"id": "h11011",
+"for": "kiln",
+"lm": "h11525",
+"year": 37,
+"q": "siqiu"
+},
+{
+"id": "h13158",
+"for": "macellum",
+"lm": "h11735",
+"year": 44,
+"q": "xipo"
+},
+{
+"id": "h13196",
+"for": "kiln",
+"lm": "h13004",
+"year": 44,
+"q": "xipo"
+}
+],
+"placed": [
+"nangang macellum h5117 建于 12 面积 446 market 世界(535,439) 并入 2",
+"jinjiao kiln h15701 建于 45 面积 416 homes 世界(473,276) 并入 1",
+"jinjiao kiln h10138 建于 36 面积 377 homes 世界(468,320) 并入 1",
+"jinjiao cemetery h16428 建于 43 面积 211 homes 世界(456,247) 并入 0",
+"gucheng macellum h4670 建于 13 面积 316 shops 世界(600,373) 并入 1",
+"siqiu macellum h5420 建于 17 面积 332 shops 世界(469,370) 并入 1",
+"siqiu kiln h11525 建于 37 面积 334 homes 世界(453,384) 并入 1",
+"xipo macellum h11735 建于 44 面积 319 shops 世界(429,464) 并入 1",
+"xipo kiln h13004 建于 44 面积 339 homes 世界(432,441) 并入 1"
+]
+}
