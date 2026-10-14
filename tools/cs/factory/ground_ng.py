@@ -98,7 +98,12 @@ def water_proc(img):
 gt = Image.open(Q + 'kits/hill/ground.webp').convert('RGB').resize((48, 48), Image.LANCZOS)
 # 三张画的地面颜色不一样（50 年那张偏暗），统一用一种沙色、一张纹理，免得换年代时地面跳色
 SAND = None
-for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:   # ground_0：第一张画把地标也抹掉，给最早那些年用
+import tile_years as TY
+_KEYS = [tuple(k) for k in sc['keys']]
+def _src_of(Y): return min([k for k in _KEYS if Y <= k[0]] or [_KEYS[-1]], key=lambda k: k[0])[1]
+# /goal 3 项 6：年份轴上不是关键年的年份（-657、-400、-200、10、20、30、70）也要一张地面（地标只留当年已建成的）——存在 out/ground_y/，不进 docs（体积）
+_EXTRA = [(Y, _src_of(Y), None) for Y in TY.TILE_YEARS if Y != 0 and Y not in [k[0] for k in _KEYS]]
+for K, f, _ in [(0, sc['keys'][0][1], None)] + _KEYS + _EXTRA:   # ground_0：第一张画把地标也抹掉，给最早那些年用
     A = Image.open(Q + f).convert('RGB').resize((W, H)); a = np.asarray(A).astype(float); keep = keep_at(K)
     if SAND is None:
         SAND = np.array(PAL['sand_rgb'], float)   # cs32：全城一种沙色，不再取各自画上的
@@ -137,4 +142,4 @@ for K, f, _ in [(0, sc['keys'][0][1], None)] + [tuple(k) for k in sc['keys']]:  
     ga = ga * 0.5 + sand * 0.5 + (noise - 128) * 0.08
     G = Image.composite(Image.fromarray(np.clip(ga, 0, 255).astype(np.uint8)), A, m)
     G = water_proc(G)
-    G.save(Q + f'ground_{K}.jpg', quality=88); print('ground', K, 'sand', sand.round())
+    G.save(TY.ground_file(q, K, write=True), quality=88); print('ground', K, 'sand', sand.round())

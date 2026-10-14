@@ -71,6 +71,23 @@ chk(not badyear, '文案里写的「第 N 年」和事件年一致' + (f'；{"�
 lo, hi = E['years']; chk(lo <= -657 + 0 and hi >= 65 and all(-657 <= v['year'] <= 70 for v in E['events']), f'事件年份 {lo} 到 {hi}，都在编年史时段（-657 到 70）里')
 allera = [(e['from'], e['to']) for e in W['eras'] if os.path.exists(os.path.join(ROOT, 'chronicle', f"{e['from']}_{e['to']}.md"))]
 chk(all(eras_seen.get(k) for k in allera), f'{len(allera)} 个时代每个都至少一件事件（' + '、'.join(f'{a}–{b}:{eras_seen.get((a, b), 0)}' for a, b in allera) + '）')
+# 8 年份轴（/goal 3 项 6）：烤好的年份覆盖 -657 到 70——0 年以后每 10 年一套，0 年以前间隔 ≤260 年；每个时代里至少有一个烤好的年份；
+#   每个年份的级 0、级 1 瓦片数都对得上 meta（落地的文件 + 指到别年的别名），瓦片总体积 ≤ 80 MB
+Y_ = M['years']; AL = M.get('alias', {})
+gaps_ = [b - a for a, b in zip(Y_, Y_[1:])]
+chk(Y_ == sorted(set(Y_)) and Y_[0] <= -657 and Y_[-1] >= 70 and all(g <= (10 if a >= 0 else 260) for a, g in zip(Y_, gaps_)), f'年份轴 {Y_[0]} 到 {Y_[-1]}，共 {len(Y_)} 个年份，0 年后每 10 年、0 年前 ≤260 年一个（建城年 -657 单算一档）')
+noyr = [f"{e['from']}–{e['to']}" for e in W['eras'] if not any(e['from'] <= y <= e['to'] for y in Y_)]
+chk(not noyr, '每个时代里至少有一个烤好的年份' + (f'；缺：{"、".join(noyr)}' if noyr else ''))
+bad_ = []
+for y in Y_:
+    for l in ('0', '1'):
+        n = M['levels'][l].get(str(y), {}).get('tiles', -1)
+        have = len([f for f in os.listdir(os.path.join(L, str(y), l))]) if os.path.isdir(os.path.join(L, str(y), l)) else 0
+        al = len(AL.get(f'{y}/{l}', {}))
+        if have + al != n: bad_.append(f'{y} 年级 {l}：meta {n} 块，落地 {have} + 别名 {al}')
+chk(not bad_, '每个年份级 0、级 1 的瓦片都在（落地文件 + 别名 = meta 块数）' + (f'；{"；".join(bad_[:4])}' if bad_ else ''))
+tot_ = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(L) for f in fs)
+chk(tot_ <= 80 * 1024 * 1024, f'瓦片总体积 {tot_ / 1048576:.1f} MB ≤ 80 MB')
 print('\n'.join(lines))
 print(f"— 偏出画布、落点收到边上的 {len(offs)} 件（要所有者定画布要不要往西扩）：" + '、'.join(f'{i}({y}年，偏 {o}px)' for i, y, o in offs))
 print(f"— 没法定位的 {len(E['unlocated'])} 条（带年份、没有地点）：")

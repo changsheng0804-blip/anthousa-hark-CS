@@ -10,7 +10,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.pat
 LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
 TU = 32; S = 1820 / 128.0; TP = round(TU * S)   # 455 px
 QS = [q for q in sorted(os.listdir(LIV)) if os.path.exists(os.path.join(LIV, q, 'scene.json')) and json.load(open(os.path.join(LIV, q, 'scene.json'))).get('street_layout')]
-YS = [int(y) for y in sys.argv[1:]] or [40, 50, 60]
+sys.path.insert(0, HERE); import tile_years as TY
+YS = [int(y) for y in sys.argv[1:]] or TY.TILE_YEARS   # 年份轴整套一起烤（去重要看全部年份）
 stat = {'tile_units': TU, 'tile_px': TP, 'scale': S, 'quarters': {}, 'years': YS, 'levels': {}}
 # 世界范围（所有街区框的并集，对齐到 32 单位网格）
 FR = {q: json.load(open(os.path.join(LIV, q, 'frame.json')))['frame'] for q in QS}
@@ -100,12 +101,12 @@ for Y in YS:
     print(Y, stat['time'][str(Y)], psnr, flush=True)
 # ── 街巷级：地面瓦片（不含街和房子）+ 每块矢量数据（街 + 房子几何，带建成/拆毁年，换年份不用重下）
 t2 = time.time(); sys.path.insert(0, HERE); import house_types as HT
-GK = sorted({min([k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'] if Y <= k[0]] or [max(k[0] for k in json.load(open(os.path.join(LIV, q, 'scene.json')))['keys'])]) for q in QS for Y in YS})
+GK = sorted({TY.ground_year(q, Y) for q in QS for Y in YS})
 gb = {}; WM = {}   # 每个关键年的水面蒙版（地面画上：绿蓝压过红 = 水）
 for K in GK:
     mos = Image.new('RGBA', (NX * TP, NY * TP), (0, 0, 0, 0))
     for q in QS:
-        ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(os.path.join(LIV, q, f'ground_{K}.jpg')).convert('RGBA').resize((w, h)), (ox, oy), own_mask(q, ox, oy, w, h))
+        ox, oy, w, h = stat['quarters'][q]; mos.paste(Image.open(TY.ground_file(q, K)).convert('RGBA').resize((w, h)), (ox, oy), own_mask(q, ox, oy, w, h))
     mos, _ = fill_holes(mos); a = np.asarray(mos).astype(np.int16); WM[K] = (a[..., 3] > 0) & ((a[..., 1] - a[..., 0]) > 15)
     d = os.path.join(OUT, 'g', str(K)); os.makedirs(d, exist_ok=True); A = a[..., 3]; nb = 0
     for ty in range(NY):
@@ -159,6 +160,28 @@ d = os.path.join(OUT, 'vec'); os.makedirs(d, exist_ok=True); import gzip; vb = [
 for (tx, ty), v in vec.items():
     v['h'].sort(key=lambda x: x[2]); b = json.dumps(v, separators=(',', ':')).encode()
     open(os.path.join(d, f'{tx}_{ty}.json'), 'wb').write(b); vb.append(len(b)); vg.append(len(gzip.compress(b))); nh.append(len(v['h']))
+# /goal 3 项 6 内容哈希去重：同一位置、同一级、字节全同的瓦片只留最早那份，后面的年份在 meta.alias 里指过去
+# alias[<年>/<级>][x_y] = 根年份；alias['g/<关键年>'][x_y] = 'g/<根关键年>'；页面按别名换成根文件的地址（内存里也只存一份）
+import hashlib
+def dedupe(dirs, sub):   # dirs: [(键, 目录)] 按时间升序；sub: 级 或 ''
+    al = {}; prev = {}; saved = 0
+    for key, base in dirs:
+        d = os.path.join(base, sub) if sub != '' else base
+        if not os.path.isdir(d): continue
+        m = {}
+        for fn in sorted(os.listdir(d)):
+            if not fn.endswith('.webp'): continue
+            b = open(os.path.join(d, fn), 'rb').read(); h = hashlib.md5(b).hexdigest(); xy = fn[:-5]
+            if xy in prev and prev[xy][0] == h:
+                m[xy] = prev[xy][1]; saved += len(b); os.remove(os.path.join(d, fn))
+            else: prev[xy] = (h, key)
+        if m: al[key + ('/' + sub if sub != '' else '')] = m
+    return al, saved
+ALIAS = {}; SAVED = 0
+for lvl in sorted(stat['levels'], key=int):
+    a, sv = dedupe([(str(Y), os.path.join(OUT, str(Y))) for Y in sorted(YS)], lvl); ALIAS.update(a); SAVED += sv
+a, sv = dedupe([(f'g/{K}', os.path.join(OUT, 'g', str(K))) for K in GK], ''); ALIAS.update(a); SAVED += sv
+stat['alias'] = ALIAS; stat['dedupe_saved_bytes'] = SAVED
 stat['street'] = {'ground_keys': GK, 'ground_bytes': gb, 'vec_tiles': len(vb), 'vec_bytes': sum(vb), 'vec_gzip': sum(vg), 'vec_max_gzip': max(vg), 'max_houses_tile': max(nh), 'seconds': round(time.time() - t2, 1)}
 print('street', stat['street'])
 stat['total_s'] = round(time.time() - t_all, 1)

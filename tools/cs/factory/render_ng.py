@@ -1,14 +1,16 @@
 """CS 线 · cs29 预览：照页面的画法（地面 + 街 + houses_geom）在 Python 里画一张某年的全图，验收和审图用。
 python3 render_ng.py nangang 60 [x0 y0 x1 y1] → out/<q>_render_<年>.jpg"""
-import json, os, sys
+import json, os, sys, subprocess
 from PIL import Image, ImageDraw, ImageFilter
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 sys.path.insert(0, HERE); import house_types as HT
 q = sys.argv[1]; Y = int(sys.argv[2]); Q = os.path.join(ROOT, 'docs', 'living', q) + '/'
 W, H = 1820, 2048; S = 2
 sc = json.load(open(Q + 'scene.json')); D = json.load(open(Q + 'houses_street.json')); ST = json.load(open(Q + 'streets.json'))
-K = min([k for k in sc['keys'] if Y <= k[0]] or [sc['keys'][-1]], key=lambda k: k[0])[0]
-G = Image.open(Q + f'ground_{K}.jpg').convert('RGB').resize((W * S, H * S), Image.BICUBIC)
+import tile_years as TY
+K = TY.ground_year(q, Y)
+if not os.path.exists(TY.ground_file(q, K)): subprocess.run([sys.executable, os.path.join(HERE, 'ground_ng.py'), q], check=True, capture_output=True)
+G = Image.open(TY.ground_file(q, K)).convert('RGB').resize((W * S, H * S), Image.BICUBIC)
 L = Image.new('RGBA', (W * S, H * S), (0, 0, 0, 0)); d = ImageDraw.Draw(L)
 STY = {'m': ((118, 104, 86, 190), (174, 163, 144, 255)), 's': ((140, 118, 88, 110), (200, 182, 146, 215)), 'c': ((140, 118, 88, 90), (203, 186, 150, 190)), 'l': (None, (205, 189, 154, 165))}
 for q_ in ST:
