@@ -160,7 +160,14 @@ const PAL = {
 // 初始化 WebGL
 function initGL() {
   gl = canvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: true });
-  if (!gl) { alert('您的浏览器不支持 WebGL'); return; }
+  if (!gl) {
+    const n = document.createElement('div');
+    n.id = 'nogl';
+    n.style.cssText = 'position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);color:#e8dcc0;font:16px serif;background:rgba(0,0,0,.6);padding:14px 20px;border-radius:6px;z-index:99';
+    n.textContent = '这台浏览器没有 WebGL，3D 城市画不出来（换一台有显卡的电脑或开启硬件加速）';
+    document.body.appendChild(n);
+    return;
+  }
   
   const vs = `
     attribute vec3 aPos;
@@ -326,7 +333,7 @@ function pushBox(out, x, z, w, d, y0, y1, yaw, colSide, colTop) {
 
 // 构建 3D 建筑与街道对象
 function build3DObjects() {
-  if (!WORLD) return;
+  if (!WORLD || !gl) return;
   const out = [];
   const curYear = WORLD.years[curEraIdx];
   
@@ -493,7 +500,7 @@ function updateEraUI(idx) {
     2: "人口激增至三万余，老城墙内已难容纳。市民沿梅塞大道向西筑屋，大皇宫与赛马场看台初具规模，金角湾码头商船云集。",
     3: "引水入城：西北瓦伦斯大水渠跨越山谷而至，修筑巨大蓄水池，圣使徒教堂耸立在第四山岗。第19年大火烧毁街区，重建正蓄势待发！"
   };
-  document.getElementById('chron-text').innerHTML = `<p>${chronicles[curEraIdx] || '年代记录整理中...'}</p>`;
+  document.getElementById('chron-text').innerHTML = `<p>${chronicles[curEraIdx] || era.chronicle || '年代记录整理中...'}</p>`;
   
   build3DObjects();
 }
@@ -671,7 +678,7 @@ document.getElementById('btn-play').onclick = function() {
   this.textContent = isPlaying ? "❚❚ 暂停" : "▶ 播放";
   if (isPlaying) {
     playTimer = setInterval(() => {
-      let next = (curEraIdx + 1) % WORLD.eras.length;
+      let next = (curEraIdx + 1) % WORLD.years.length;
       document.getElementById('era-slider').value = next;
       updateEraUI(next);
     }, 2400);
@@ -682,6 +689,7 @@ document.getElementById('btn-play').onclick = function() {
 
 // 渲染主循环 (60 FPS 顺滑漫游)
 function loop() {
+  if (!gl) return;
   render();
   requestAnimationFrame(loop);
 }
@@ -693,8 +701,10 @@ fetch('anthousa_world3d.json')
   .then(r => r.json())
   .then(data => {
     WORLD = data;
-    buildTerrain();
-    updateEraUI(3);
+    if (gl) buildTerrain();
+    const sl = document.getElementById('era-slider');
+    sl.max = WORLD.years.length - 1; sl.value = sl.max;
+    updateEraUI(WORLD.years.length - 1);
   })
   .catch(err => {
     console.error('加载 Anthousa 3D 数据失败:', err);
