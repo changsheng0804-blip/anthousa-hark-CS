@@ -11,6 +11,7 @@
 6. 【海鸥圈】海鸥的圈心是抄干山的固定坐标（1300,1600 / 900,160），要核对在南港是不是绕在水面和港上；先写检查：圈心落在水里或码头边。
 
 ## 已修
+- /goal 3 第 5 轮 项 7：事件落点接进瓦片页（按年淡入淡出、点了飞过去并切年、出卡、能拖的年份轴）；检查 check_chron_page.js（经 check_chronicle.py 调用）；flyTo 遇 0 年不切年的小毛病顺手修了。
 - /goal 3 第 4 轮 · 年份轴 -657 到 70（tile_years.py；check_chronicle 第 8 段四条检查）+ 瓦片内容哈希去重（meta.alias），49 MB。
 - /goal 3 第 3 轮 项 5：编年史事件落点。新检查 check_chronicle.py（events.json 不存在时红）；chron_events.py 生成 events.json，58 件有落点、13 件偏出画布（收到西缘，待所有者定）、4 条没地点。——Hark（CS线）
 - /goal 3 第 2 轮 项 1b+2+3：check_lives 的 null.hid 是检查挑错例子（页面没坏）；新检查 check_landmark_src.py（修前 7 条不过，修后 0）；lm_src.py 让街区 city.json 和 places.json 的地标名字/位置/建成年/到期年读上游规格；标记按建成年亮。——Hark（CS线）

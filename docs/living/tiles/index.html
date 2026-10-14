@@ -332,6 +332,10 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
   ctx=ctx0;requestAnimationFrame(frame)}
 const ui=document.getElementById('ui');
 for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.dataset.y=Y;b.textContent=Y+' 年';b.onclick=()=>setYear(Y);ui.appendChild(b)}
+/* 年份轴：一根能拖的 range，一格一个烤好的年份；拖动切年，按钮、点事件切年也带动它 */
+const yrR=document.createElement('input');yrR.type='range';yrR.id='yrs';yrR.min=0;yrR.max=M.years.length-1;yrR.step=1;yrR.value=M.years.indexOf(YEAR);yrR.style.cssText='flex:1 1 100%;order:1;max-width:min(560px,80vw);accent-color:#d4a85a';yrR.oninput=()=>setYear(M.years[+yrR.value]);
+function yrSync(){if(+yrR.value!==M.years.indexOf(YEAR))yrR.value=M.years.indexOf(YEAR)}
+ui.appendChild(yrR);
 /* 拖、滚轮、双指 */
 let drag=null,pts=new Map();
 c.addEventListener('pointerdown',e=>{cancelFly();ZT=null;c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
@@ -353,10 +357,10 @@ function vwPath(x0,y0,z0,x1,y1,z1){const w0=W/z0,w1=W/z1,dx=x1-x0,dy=y1-y0,d=Mat
   return {S,at:s=>{const u=(w0/r2)*(Math.cosh(q0)*Math.tanh(RHO*s+q0)-Math.sinh(q0)),w=w0*Math.cosh(q0)/Math.cosh(RHO*s+q0),f=u/d;return {x:x0+dx*f,y:y0+dy*f,z:W/w}}}}
 /* 弧线拉得最高也不超过「全城刚好装下」再退 25%：不飞出世界去看空白 */
 function zLow(){return Math.min(W/WW,H/WH)*0.95*0.75}
-function setYear(Y){try{if(CARDQ&&!CARDLOCK){const HT=HEART[CARDQ];HT.yo=null;if(HT.m)cardRun(HT,()=>HT.m.renderCard())}}catch(e){}if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)})}
+function setYear(Y){try{if(CARDQ&&!CARDLOCK){const HT=HEART[CARDQ];HT.yo=null;if(HT.m)cardRun(HT,()=>HT.m.renderCard())}}catch(e){}if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)});yrSync()}
 function cancelFly(){if(FLY){const F=FLY;FLY=null;F.res({cancelled:true,dur:F.dur,hold:0})}}
 function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z));if(z>=STREET_Z*0.35)for(const q of HEARTS){const [bx,by,bw,bh]=heartBox(q);if(x>bx&&x<bx+bw&&y>by&&y<by+bh){heartEnsure(q);break}}   /* 飞向街巷：起飞就预载落点那块，落地时人已经在 */
-  return new Promise(res=>{if(o.year)setYear(o.year);
+  return new Promise(res=>{if(o.year!=null)setYear(o.year);
     const p=vwPath(cam.x,cam.y,cam.z,x,y,z);if(p.S<0.02){cam.x=x;cam.y=y;cam.z=z;dirty=true;res({dur:0,hold:0});return}
     const dur=o.dur||Math.max(1.5,Math.min(3.2,0.7+0.5*p.S));FLY={p,dur,x1:x,y1:y,z1:z,t0:null,res,tEnd:null};prefetchCam(x,y,z,true)})}
 function prefetchCam(x,y,z,st){const sv=[cam.x,cam.y,cam.z,H];cam.x=x;cam.y=y;cam.z=z;H=Hv/Math.cos(tiltOf(z));
@@ -385,16 +389,23 @@ function flyStep(now){const F=FLY;if(!F)return;if(F.t0==null)F.t0=now;const e=u=
   if(hold>0.1&&pending()===0||hold>=1){FLY=null;F.res({dur:F.dur,hold:Math.round(hold*100)/100,pending:pending()})}}
 function zoomStep(dt){if(!ZT)return;const r=Math.log(ZT.z/cam.z);if(Math.abs(r)<0.002){zoomAt(ZT.sx,ZT.sy,ZT.z/cam.z);ZT=null;return}zoomAt(ZT.sx,ZT.sy,Math.exp(r*(1-Math.exp(-dt*12))))}
 /* 落点：九块中心、地标、事件 → 下拉菜单 + 地图上的点（点一下飞过去） */
-function markList(){return [...PLACES.landmarks.filter(l=>(l.built==null||YEAR>=l.built)&&(l.until==null||YEAR<l.until)).map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l'})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e'}))]}
+/* 事件落点（/goal 3 项 7）：编年史事件（events.json → places.json 的 events）按年淡入淡出——show_year（烤好的年份里 ≥ 事件年的第一个）亮满，之后每过一年淡一截，20 年后灭；发生以前不亮。切年时两年的亮度交叉淡入淡出（和瓦片同一个 fade） */
+function evAlpha(e,Y){if(Y<e.show_year)return 0;return Math.max(0,1-(Y-e.show_year)/20)}
+function evAlphaNow(e){const a=evAlpha(e,YEAR);return fade>0&&prevYear!=null?evAlpha(e,prevYear)*fade+a*(1-fade):a}
+function markList(){return [...PLACES.landmarks.filter(l=>(l.built==null||YEAR>=l.built)&&(l.until==null||YEAR<l.until)).map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l',a:1})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e',a:evAlphaNow(v),ev:v})).filter(m=>m.a>0.03)]}
 function drawMarks(){const r=4/cam.z;ctx.lineWidth=1.5/cam.z;ctx.font=(13/cam.z)+'px serif';
-  for(const m of markList()){if(Math.abs(m.x-cam.x)>W/2/cam.z+60/cam.z||Math.abs(m.y-cam.y)>H/2/cam.z+60/cam.z)continue;ctx.fillStyle=m.k==='e'?'#c0392b':'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,r,0,6.283);ctx.fill();ctx.stroke();
-    if(cam.z>=0.3){ctx.fillStyle='#2a1c0c';ctx.fillText(m.name,m.x+r*1.8,m.y+r*0.6)}}}
-function markHit(sx,sy){if(cam.z*dpr>=SZ0)return false;let best=null,bd=14*14;for(const m of markList()){const dx=(m.x-cam.x)*cam.z+W/2-sx,dy=(m.y-cam.y)*cam.z+H/2-sy,d=dx*dx+dy*dy;if(d<bd){bd=d;best=m}}
-  if(best){flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
+  for(const m of markList()){if(Math.abs(m.x-cam.x)>W/2/cam.z+60/cam.z||Math.abs(m.y-cam.y)>H/2/cam.z+60/cam.z)continue;ctx.globalAlpha=m.a;ctx.fillStyle=m.k==='e'?(m.ev.kind==='fire'?'#e8731f':'#c0392b'):'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,m.k==='e'?r*(1+0.9*m.a):r,0,6.283);ctx.fill();ctx.stroke();
+    if(cam.z>=0.3&&m.a>0.3){ctx.fillStyle='#2a1c0c';ctx.fillText(m.name,m.x+r*1.8,m.y+r*0.6)}}ctx.globalAlpha=1}
+function markHit(sx,sy){if(cam.z*dpr>=SZ0)return false;let best=null,bd=14*14;for(const m of markList()){if(m.k==='e'&&m.a<0.3)continue;const dx=(m.x-cam.x)*cam.z+W/2-sx,dy=(m.y-cam.y)*cam.z+H/2-sy,d=(dx*dx+dy*dy)*(m.k==='e'?0.5:1)-(m.k==='e'?0.01+0.01*m.a:0);   /* 同一处叠着几件事，亮得多的先 */if(d<bd){bd=d;best=m}}   /* 事件和同一处的地标叠着时，点中事件（亮着的事件优先） */
+  if(best){if(best.ev){const g=markList().filter(m=>m.ev&&m!==best&&m.a>=0.3&&Math.hypot(m.x-best.x,m.y-best.y)*cam.z<6).map(m=>m.ev);evGo(best.ev,g)}else flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
+/* 事件卡：年 · 名字 + 编年史原文一句（不编故事）；飞过去的时候出，14 秒后收，或点 × */
+const evEl=document.createElement('div');evEl.id='evcard';evEl.style.cssText='position:fixed;left:12px;bottom:44px;max-width:min(360px,70vw);background:rgba(26,20,12,.9);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.5;display:none';document.body.appendChild(evEl);let evT=0;
+function showEv(e,more){evEl.innerHTML='<div style="color:#d4a85a;font-size:12px">'+(e.year<0?'前 '+(-e.year):'第 '+e.year)+' 年 · '+(e.kind==='fire'?'火灾':'落成')+(e.off?' · 在画布以西，落点收在边上':'')+'</div><div style="font-weight:600">'+e.name+'<span id="evx" style="float:right;cursor:pointer;opacity:.6;padding-left:12px">×</span></div><div>'+e.text+'</div>'+(more||[]).map(o=>'<div style="margin-top:6px;border-top:1px solid rgba(212,168,90,.25);padding-top:4px"><span style="color:#d4a85a;font-size:12px">同一处 · '+(o.year<0?'前 '+(-o.year):'第 '+o.year)+' 年 · </span><b>'+o.name+'</b><br>'+o.text+'</div>').join('');evEl.style.display='block';document.getElementById('evx').onclick=()=>{evEl.style.display='none'};clearTimeout(evT);evT=setTimeout(()=>{evEl.style.display='none'},14000)}
+function evGo(e,more){showEv(e,more);return flyTo(e.x,e.y,e.z,{year:e.show_year})}
 fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q of j.quarters)NAMES[q.q]=q.name;const sel=document.createElement('select');sel.className='b';
   sel.innerHTML='<option value="">飞去…</option>';const grp=(t,items)=>{const g=document.createElement('optgroup');g.label=t;for(const [v,n] of items){const o=document.createElement('option');o.value=v;o.textContent=n;g.appendChild(o)}sel.appendChild(g)};
-  grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件',j.events.map((v,i)=>['e'+i,v.name]));
-  sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else flyTo(j.events[i].x,j.events[i].y,j.events[i].z,{year:j.events[i].show_year})};
+  grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件（编年史）',j.events.map((v,i)=>['e'+i,(v.year<0?'前'+(-v.year):v.year)+' 年 · '+v.name]));
+  sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else evGo(j.events[i])};
   document.getElementById('ui').appendChild(sel)}).catch(()=>{});
 const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},buildMsOf(q){return HEART[q]&&HEART[q].buildMs},mod(q){const H=HEART[q||'nangang'];return H&&H.m},card:{open(id,q,yo){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return false;if(CARDQ&&CARDQ!==q)cardClose();CARDQ=q;HT.yo=yo??null;cardRun(HT,()=>HT.m.openHouse(id));dirty=true;return true},close:cardClose,get shown(){return cardEl.style.display==='block'},get q(){return CARDQ},
     houses(q){q=q||'nangang';const HT=HEART[q];return HT&&HT.ready?HT.m.houses.filter(h=>h.built<=YEAR&&h.destroyed>YEAR).map(h=>[h.id,h.cx+HT.ox,h.cy+HT.oy]):[]},
@@ -405,6 +416,6 @@ const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},build
     if(c>=18.6&&c<23.6)R.tav.forEach(h=>F.tavPeople(h).forEach(([x,y])=>o.people.push([x+HT.ox,y+HT.oy,'tav'])));
     for(const s of F.ships){if(c<s.t0)continue;const r=F.shipPos(s,c);o.ships.push([r[0]+HT.ox,r[1]+HT.oy])}return o},
   smokes(h,q){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return {n:0,str:0,pts:[]};const per=heartPer(h);return {n:heartSmokes(HT,YEAR).length,str:per==='morning'||per==='evening'?1:.55,pts:heartSmokes(HT,YEAR).map(s=>[s.x+HT.ox,s.y+HT.oy])}}};
-LW=mkLW();rs();frame();window.__TILES={LWP,get LW(){return LW},M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
+LW=mkLW();rs();frame();window.__TILES={LWP,get events(){return PLACES.events},evAlpha,evAlphaNow,markHit,get FLY(){return FLY},get LW(){return LW},M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>

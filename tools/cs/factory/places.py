@@ -42,9 +42,14 @@ def heart_of(q):
         pts.append((x, y))
     mx, my = statistics.median(a for a, _ in pts), statistics.median(b for _, b in pts)
     x, y = min(pts, key=lambda t: (t[0] - mx) ** 2 + (t[1] - my) ** 2); return round(x), round(y)
+# /goal 3 项 7：事件 = chron_events.py 从编年史生成的 events.json（58 件），show_year = 烤好的年份里 ≥ 事件年的第一个（48 年火灾 → 看 50 年那张）
+EVS = []
+for v in json.load(open(os.path.join(L, 'tiles', 'events.json')))['events']:
+    sy = next((y for y in M['years'] if y >= v['year']), M['years'][-1])
+    EVS.append(dict(id=v['id'], name=v['name'], kind=v['kind'], year=v['year'], show_year=sy, x=v['x'], y=v['y'], z=v['z'], text=v['text'], off=v['off']))
 out = dict(landmarks=list(lm.values()),
            quarters=[dict(q=q, name=QN[q], x=heart_of(q)[0], y=heart_of(q)[1]) for q in M['owner_order']],
-           events=[dict(id='fire48', name='48 年南港大火', year=48, show_year=50, x=lm['fire_ruins']['x'], y=lm['fire_ruins']['y'], z=1.6)])
+           events=EVS)
 json.dump(out, open(os.path.join(L, 'tiles', 'places.json'), 'w'), ensure_ascii=False, indent=0)
 print(len(out['landmarks']), '座地标', len(out['quarters']), '块中心', len(out['events']), '件事', '坐标不一致:', bad)
 sys.exit(1 if bad else 0)

@@ -88,6 +88,16 @@ for y in Y_:
 chk(not bad_, '每个年份级 0、级 1 的瓦片都在（落地文件 + 别名 = meta 块数）' + (f'；{"；".join(bad_[:4])}' if bad_ else ''))
 tot_ = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(L) for f in fs)
 chk(tot_ <= 80 * 1024 * 1024, f'瓦片总体积 {tot_ / 1048576:.1f} MB ≤ 80 MB')
+# 9 页面那头（/goal 3 项 7）：check_chron_page.js 在 jsdom 里跑瓦片页——事件全载入、按年淡入淡出、点一下飞过去并切年、出卡、年份轴能拖
+import subprocess
+_js = os.path.join(HERE, 'check_chron_page.js')
+if os.path.isdir('/workspace/work/csjs/node_modules'):
+    r_ = subprocess.run(['node', _js], capture_output=True, text=True, env=dict(os.environ, NODE_PATH='/workspace/work/csjs/node_modules', AH=ROOT), timeout=300)
+    pl_ = [l for l in r_.stdout.splitlines() if l[:1] in '✅❌']
+    for l in pl_: lines.append('页面 · ' + l)
+    red += sum(l.startswith('❌') for l in pl_) + (1 if r_.returncode and not any(l.startswith('❌') for l in pl_) else 0)
+else:
+    chk(False, '页面那头没法查：/workspace/work/csjs/node_modules（jsdom）不在')
 print('\n'.join(lines))
 print(f"— 偏出画布、落点收到边上的 {len(offs)} 件（要所有者定画布要不要往西扩）：" + '、'.join(f'{i}({y}年，偏 {o}px)' for i, y, o in offs))
 print(f"— 没法定位的 {len(E['unlocated'])} 条（带年份、没有地点）：")
