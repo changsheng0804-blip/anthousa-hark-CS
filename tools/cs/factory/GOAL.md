@@ -26,7 +26,7 @@
 | 1 | 写 check_nets.py（先跑出不过）+ net_water.py：从 world.json 抽水渠/蓄水池/宁芙泉/喷泉，连 fed_by | G1 | 完成（喷泉 22 座经 landmarks_city 放，网 33 节点；瓦片已重烤） |
 | 1b | 查街巷级下载超线：perf 街巷级最密处 17.3 MB > 12 MB（重烤前的 HEAD 基线同样 17.3 MB，不是项 1 造成；perf.json 旧值 10.7 MB）——找出哪批瓦片变重、压回 12 MB | G7 | 完成（不是瓦片变重：vec JSON 未压 12.7 MB，Pages 实发 gzip 后 ≈2.2 MB；perf 测量改按 gzip 线上字节记，mb_raw 另记） |
 | 2 | 喷泉干/湿效果进瓦片页（街巷级），敲门卡一句水源 | G1 | 完成（tile_bake 按出水年分干池/水池段，check_nets ⑥；敲门卡一句水源，check_waterline.js） |
-| 3 | 面包台阶卡经 landmarks_city 全城放 + 粮网 fed_by + 台阶清晨排队只在有粮时 | G2 | 待做 |
+| 3 | 面包台阶卡经 landmarks_city 全城放 + 粮网 fed_by + 台阶清晨排队只在有粮时 | G2 | 完成（8 座台阶；粮网 4 港 5 仓 8 台阶；4 座先光秃后供粮；check_nets ⑦⑧ + check_breadqueue.js） |
 | 4 | 史诗地块清场（派生表）+ check | G3 | 待做 |
 | 5 | epic_ground / epic_tall / mese_portico 分期画法进 render_ng/tile_bake，重烤 | G4 | 待做 |
 | 6 | 道路终扫 + prune_islands + 全城 audit 0 | G5 | 待做 |
@@ -39,3 +39,4 @@
 - 2026-10-14 10:35 PT 第 1 轮续 · 项 1 重烤收回（Mac，瓦片总量 64 MB，字节几乎不变）；检查全过。perf：首屏 0.54 MB / 1.0–1.3 s，街巷级 17.3 MB **超 12 MB**、堆 77 MB、57 FPS——同轮用重烤前 HEAD 基线复测也是 17.3 MB，超线早于本项。重排：插入 1b 查超线，排在项 2 前。项 2 计划：在 tile_bake 里把喷泉水池部件按 net_water 出水年拆成干/湿两段（部件自带年份段，页面零代码零负担）。
 - 2026-10-14 10:55 PT 第 2 轮 · 项 1b：街巷级 17.3 MB 的拆账——vec 37 块 12.7 MB（未压）、栅格 ≈3.9 MB；curl 线上实测 GitHub Pages 对 json 发 gzip（vec/1_9.json 794501→154591 字节，全部 vec 32.1→5.6 MB）。perf_tiles.py 本地服务器改成同样 gzip，记 mb（线上）和 mb_raw（未压，管解析/堆）。复测：首屏 0.45 MB / 1.0 s；街巷级线上 **4.95 MB**（未压 17.3）、堆 54 MB、FPS 52（沙箱软渲染，上轮同机 57，有波动）；横穿后累计线上 9.0 MB；瓦片总量 64 MB。口径变了请所有者知悉（收口总结里写明）。检查全过，看了街巷级截图（南港 60 年，街、房、门前小树正常）。重排：下一项 2。
 - 2026-10-14 11:50 PT 第 3 轮 · 项 2：先写 check_nets ⑥（出水年前不许画水）→ 跑出 10 口喷泉不过；tile_bake 把池面按 net_water 出水年拆成干池（灰褐）[落成,wet) / 水 [wet,∞)，水柱只从 wet 起画；Mac 重烤收回，只有 10 块 vec 变（栅格字节全同，总量 64 MB）。页面加敲门卡一句水源（离这家 ≤420 px 的已建街角泉；出水「水从X来」、未出水「水还没来」；net_water.json 点上加 zh、px，仍不画线），check_waterline.js 全过。全部检查过；perf 首屏 0.45 MB、街巷级线上 4.96 MB（未压 17.3）、堆 53 MB、FPS 43–52（沙箱软渲染，与上轮同量级）。看了 nangang 门口 40/70 年对照：40 年灰干池，70 年蓝水。重排：下一项 3。
+- 2026-10-14 12:05 PT 第 4 轮 · 项 3：先写 check_nets ⑦⑧（无粮网/无台阶 → 不过）→ landmarks_city 加第二遍放 bread_steps（前 39 处放置一字不变，diff 验证）全城 8 座，net_water.py 加 grain 段（港口→粮仓→台阶，就近取、供粮年=max(落成,上游)），tile_bake 面包按供粮年摆，页面 breadQueue 只在供粮的清晨 5–8:30 排队、不画网线；check_breadqueue.js 全过。Mac 重烤收回（瓦片 64 MB）；全部检查过；perf 首屏 0.45 MB/1.1 s，街巷级线上 4.96 MB、堆 80 MB、FPS 47（软渲染，同量级）。看了南港 40 年清晨门前的队（30 年粮仓未供则无队）。重排：下一项 4。
