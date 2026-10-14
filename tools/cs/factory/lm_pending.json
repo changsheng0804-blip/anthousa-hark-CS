@@ -6,5 +6,23 @@
  "off_canvas": {
   "gate_founder": "奠基者城门：规格点在世界格 x≈411，瓦片画布从 x=416 起（为的是正好盖住全部 17,819 栋房子），落在画布外 44 像素。",
   "arian_meeting": "阿里乌派城外聚会所：规格点 x≈405，画布外 150 像素。要不要把画布往西扩 16 格（会改全部瓦片的坐标）？"
+ },
+ "off_canvas_events": {
+  "说明": "编年史事件在画布外（画布从世界格 x=416 起），落点收到画布西缘；要不要把画布往西扩，收口时问所有者。",
+  "ids": [
+   "aq_hadrian(-657年,偏188px)",
+   "gate_founder(1年,偏68px)",
+   "aq_great(11年,偏640px)",
+   "aqb_outer(11年,偏1181px)",
+   "r_egnatia(31年,偏1603px)",
+   "field_north(32年,偏1542px)",
+   "field_south(32年,偏1071px)",
+   "church_mocius(35年,偏564px)",
+   "r_mocius(35年,偏614px)",
+   "arian_meeting(52年,偏209px)",
+   "d_exokionion(63年,偏519px)",
+   "r_exo(63年,偏360px)",
+   "church_arian_brick(64年,偏337px)"
+  ]
  }
 }

@@ -11,6 +11,7 @@
 6. 【海鸥圈】海鸥的圈心是抄干山的固定坐标（1300,1600 / 900,160），要核对在南港是不是绕在水面和港上；先写检查：圈心落在水里或码头边。
 
 ## 已修
+- /goal 3 第 3 轮 项 5：编年史事件落点。新检查 check_chronicle.py（events.json 不存在时红）；chron_events.py 生成 events.json，58 件有落点、13 件偏出画布（收到西缘，待所有者定）、4 条没地点。——Hark（CS线）
 - /goal 3 第 2 轮 项 1b+2+3：check_lives 的 null.hid 是检查挑错例子（页面没坏）；新检查 check_landmark_src.py（修前 7 条不过，修后 0）；lm_src.py 让街区 city.json 和 places.json 的地标名字/位置/建成年/到期年读上游规格；标记按建成年亮。——Hark（CS线）
 - /goal 3 第 1 轮 项 1：并上游 v24–v30 + 3D 管线；冲突 1 处（xerolophos/scene.json 取上游 + 补 next）；九块 accept 全过（底账落后转绿）、check_tiles 0 错。——Hark（CS线）
 - /goal 2 第 10 轮（项 7a）：perf_tiles.py 三个新场景（飞行×2、倾斜带平移）；飞行冷启 33/24→42/39 FPS、最差帧 183/117→67 ms（拉伸旧层、瓦片预解码、载入排队、预取节流）；未达 ≥50/≤50，7b 接着做。

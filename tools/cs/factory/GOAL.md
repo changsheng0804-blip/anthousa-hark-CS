@@ -24,9 +24,9 @@
 | 3 | 地标的名字、位置、建成年、到期年改成读上游 registry（lm_src.py → scene_auto / places）；CS 线多出来的列「待上游收录」（lm_pending.json） | H2 | 部分完成（第 2 轮：7 座规格固定地标 5 座全对、2 座画布外已登记；轮廓和阶段留给 3b） |
 | 3b | 规格的轮廓（poly）和阶段表进瓦片：上游 stages（立架→换瓦→长苔→塌顶）、固定地标的 overlay；check_landmark_src 加轮廓 IoU 和阶段年份检查 | H2 | 待做 |
 | 4 | 矢量房子吃上游 houses_geom（P1 户型）和房子一生阶段（P3），以及柱廊和菜园（P2） | H2 | 待做 |
-| 5 | 写 check_chronicle：把编年史事件解析成「年份、地点、一句话」，定位到世界坐标（地名词典、地标、街区） | H3 | 待做 |
-| 6 | 年份轴扩到 -657 到 70，级 0–1 每 10 年一套；体积先算清楚再烤 | H3 | 待做 |
-| 7 | 事件落点：跟着年份淡入淡出，点一下飞过去并切年 | H3 | 待做 |
+| 5 | 写 check_chronicle：把编年史事件解析成「年份、地点、一句话」，定位到世界坐标（地名词典、地标、街区） | H3 | 完成（第 3 轮：chron_events.py + check_chronicle.py，58 件有落点，4 条没地点） |
+| 6 | 年份轴扩到 -657 到 70，级 0–1 每 10 年一套；体积先算清楚再烤。做法：按内容哈希去重（相同的瓦片只存一份，每年一张清单指到哈希文件；40/50 年 0 级就有 63/146 块逐字节相同），先量 -657–0 的体积，再定烤哪些年 | H3 | 待做 |
+| 7 | 事件落点：events.json 接进页面（places.json 的 events 换成它），跟着年份淡入淡出，点一下飞过去并切年；check_chronicle 加页面那头（每件都能 flyTo、年切对） | H3 | 待做 |
 | 8 | perf 复测和优化，体积记账 | H4 | 待做 |
 | 9 | 收口：九块 --live、perf、截图，写总结 | 全部 | 待做 |
 
@@ -34,3 +34,4 @@
 - 2026-10-13 20:56 PT 立项（会话里），清单 9 项。
 - 2026-10-13 21:10 PT 第 1 轮 · 项 1 · 完成：先用现成不过的检查——九块 accept.py 都红着「上游底账落后」。git merge origin/main（8 个提交 aafed1c…c72b1f3，v24–v30 房子 P1–P3、地标规格卡 tools/landmarks/*.json + landmark_registry.py、3D 管线）；world.json 上游没动。冲突只有 1 处：xerolophos/scene.json——上游改成多行并加了 hgeom，取上游整份、补回 next→南港（理由：底账以上游为准，链路是 CS 线的）；xerolophos/index.html 自动合并（上游加 geomHG/阶段年份，CS 线块和 id="next" 按钮都在）。九块 accept 全过且「底账落后」转绿（nangang 72、jinjiao 48、gucheng 120、siqiu 67、dongjia 41、xipo 68、qiangwai 51、jiaowan 41、nanan 54 项，0 红；注意九块并行跑会同时重写 world.json 读到半截 JSON，要串着跑）；check_tiles errors 0；干山页 check_talk、check_card 过（1123 张卡 0 坏）。查出 check_lives 抛 null.hid，开工前的 HEAD 就抛，不是合并引起。重排：加 1b（check_lives），放在 2 前面——H1 要干山页照样能打开，先确认它只是检查过时还是页面真坏。 线上复验（768f83e 部署后）：九块 accept --live 全过 0 红（nangang 88、jinjiao 64、gucheng 136、siqiu 83、dongjia 57、xipo 84、qiangwai 67、jiaowan 57、nanan 70）。
 - 2026-10-13 21:40 PT 第 2 轮 · 项 1b + 2 + 3（前半）· 完成：① check_lives 的 null.hid 是检查自己挑错例子（挑中嫁到别的街区的女儿，csSpouse 为空），改成挑嫁到本街区的、找不到就明说；页面没坏，输出 3 条一生都在。② 新写 tools/cs/check_landmark_src.py：规格固定地标换算到瓦片像素（干山页框 = 世界格 (400,356)，瓦片原点 (416,192)，同一个 14.21875 像素/格），查有没有、位置差 ≤ 8、建成年、到期年、名字；瓦片多出来的分「只有底账」25 座和「CS 线自己的」fire_ruins；修前 7 条不过（水渠桥位置差 113 像素且名字写成「大水道桥」，运水人蓄水池差 13，三座没带建成年）。③ 新 lm_src.py 一处读上游规格；scene_auto（街区 city.json 的名字、故事、此刻、位置、到期年）和 places.py（地标位置、名字、built/until）改读它；names_zh.json 里 7 条规格已有的名字删掉，只剩底账有、规格没有的。规格没写建成年的（兵营）用底账的。修后规格固定地标 5 座全对，奠基者城门和阿里乌聚会所落在画布外 44、150 像素（画布 x 从世界格 416 起，正好盖住全部房子），登记进 lm_pending.json 等所有者定；fire_ruins（底账里没有这座建筑）也登记待收录。④ 瓦片页标记按 built/until 亮（亚历山大粮仓 55 年才亮）。⑤ accept：规格故事不写年份不算错（写了得对）。check_tiles errors 0；siqiu、xipo accept 本地 0 红。重排：3 拆成 3（名字/位置/年份，已做）和 3b（轮廓、阶段）；因为上游规格固定地标只有 7 座、全在干山页框里，原来「重烤地标层」不需要——地标图是按底账地基贴的，规格 poly 和底账地基是同一个多边形（莫德斯图斯蓄水池规格 poly 对得上）。 线上复验（9b48f8b 部署后）：siqiu、xipo accept --live 0 红。
+- 2026-10-13 22:00 PT 第 3 轮 · 项 5 · 完成：先写 tools/cs/check_chronicle.py，events.json 不存在时红；再写 tools/cs/factory/chron_events.py，从上游编年史（chronicle/*.md）和底账（world.json 的 eras[].accepted、eras[].events、structures 几何）生成 docs/living/tiles/events.json：编年史里写了、且是这个时代新建的结构 + 底账里的火灾，共 58 件有落点（-657 到 65 年；文案是编年史原文一句，占位符换成上游 docs/data.json 的中文名）。8 个时代每个都有（-657–0 有 6、1–10 有 12、11–20 有 11、21–30 有 5、31–40 有 8、41–50 有 6、51–60 有 4、61–70 有 6）。13 件在画布外（水渠、城外田野、莫基乌斯小路、阿里乌聚会所等，偏出 68–1603 px），落点收到画布西缘，登记进 lm_pending.json 等所有者定要不要往西扩；4 条带年份没地点的（大教堂祝圣、第三十年人口、51 年下诏、52 年大公会议）列在 unlocated。check_chronicle 7 条全过。重排：6 加上「内容哈希去重」做法，7 写明要把 events.json 接进页面并给 check_chronicle 补页面那头。
