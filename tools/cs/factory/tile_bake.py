@@ -117,6 +117,7 @@ for K in GK:
     gb[str(K)] = nb
 COV = A > 0
 R = lambda v: round(v * 2) / 2
+NETW = {n['id']: n['wet'] for n in json.load(open(os.path.join(OUT, 'net_water.json')))['nodes'] if n['kind'] == 'fountain'}
 vec = {}
 def put(tx, ty, k, item): vec.setdefault((tx, ty), {'s': [], 'h': []})[k].append(item)
 KC = {'fill': 0, 'edge': 1, 'line': 2}
@@ -140,6 +141,15 @@ for q in QS:
     for hh in json.load(open(Q + 'houses_street.json'))['houses']:
         if hh[3] <= hh[2] + 1: continue
         by, parts, shadow = HT.geom(hh)
+        if hh[9] == 'lm:fountain' and (q + ':h%d' % hh[0]) in NETW:   # /goal 4 项 2：喷泉干/湿——水色池面和水柱只从出水年 wet 起画，之前画干池（页面零代码；年份读 net_water.json）
+            wet = NETW[q + ':h%d' % hh[0]]; np_ = []
+            for pt in parts:
+                if len(pt) > 4 and wet > pt[4][0] and wet < pt[4][1]:
+                    if tuple(pt[3][:3]) == (96, 150, 176):   # 池面
+                        np_.append((pt[0], pt[1], pt[2], (138, 130, 114), (pt[4][0], wet))); np_.append((pt[0], pt[1], pt[2], pt[3], (wet, pt[4][1]))); continue
+                    if tuple(pt[3][:3]) == (150, 196, 214): np_.append((pt[0], pt[1], pt[2], pt[3], (wet, pt[4][1]))); continue
+                np_.append(pt)
+            parts = np_
         P = [[KC[q[0]], [c for xy in q[2] for c in (R(xy[0] + ox), R(xy[1] + oy))], '%02x%02x%02x' % tuple(q[3][:3])] + ([min(q[4][0], 9999), min(q[4][1], 9999)] if len(q) > 4 else []) for q in parts]
         sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)

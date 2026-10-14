@@ -6,6 +6,8 @@
  ③ 出水年 wet = max(自己建成, 上游出水)，上游出水 ≤ 下游出水（上游没建，下游不出水）；
  ④ 网里的喷泉 = 全城 houses_street 里 lm:fountain 的房，一一对应；喷泉 ≥ 1。
  ⑤ 脉不露面：网不带画线用的几何（节点只有点），页面不画网线。
+ ⑥ 干湿效果（项 2）：烤进瓦片的矢量里，每口出水年 wet 晚于落成（开工+2）的喷泉，水色的池面和水柱只从 wet 年起出现，
+    wet 之前画干池（池底色）；出水年读网、不另写。每个 wet 之前的年份，画面里一滴水也没有。
 ——Hark（CS线）"""
 import json, os, sys, glob
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -40,6 +42,25 @@ need(len(F) >= 1, '全城没有喷泉')
 need(set(F) == set(NF), f'喷泉对不上：页面有 {len(F)}，网里 {len(NF)}')
 for k, b in F.items():
     if k in NF: need(NF[k]['built'] == b, f'喷泉 {k} 建成年 {NF[k]["built"]} ≠ 房开工 {b}')
+# ⑥ 干湿：瓦片 vec 里按底账 id 找这栋喷泉的部件
+WATER = {'6096b0', '96c4d6'}; DRY = '8a8272'; vecs = {}
+for f in glob.glob(os.path.join(OUT, 'vec', '*.json')):
+    for h in json.load(open(f))['h']:
+        if isinstance(h[5], str) and h[5].startswith('h'): vecs.setdefault(h[5], []).append(h)
+ndry = 0
+for n in N['nodes']:
+    if n['kind'] != 'fountain': continue
+    hs = vecs.get('h%d' % n['h']); need(bool(hs), f"{n['id']} 瓦片里找不到这栋喷泉")
+    if not hs: continue
+    hs = [x for x in hs if any(p[2] in WATER or p[2] == DRY for p in x[4])]; need(len(hs) == 1, f"{n['id']} 瓦片里的喷泉记录 {len(hs)} 条")
+    if not hs: continue
+    h = hs[0]; start = n['built'] + 2
+    if n['wet'] > start:
+        ndry += 1
+        wet = [p for p in h[4] if p[2] in WATER]; dry = [p for p in h[4] if p[2] == DRY]
+        need(bool(wet) and all(p[3] >= n['wet'] for p in wet), f"{n['id']} 出水年 {n['wet']} 以前画着水（水色部件最早 {min([p[3] for p in wet] or [None])}）")
+        need(bool(dry) and all(p[3] <= start and p[4] == n['wet'] for p in dry), f"{n['id']} 没有干池段 [{start},{n['wet']})")
+print('干湿 ⑥：有干着年头的喷泉', ndry)
 html = open(os.path.join(OUT, 'index.html')).read()
 need('net_water' not in html or 'NETLINE' not in html, '页面画了水网线')
 kinds = {}
