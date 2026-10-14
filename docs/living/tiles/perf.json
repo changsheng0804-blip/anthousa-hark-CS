@@ -1,11 +1,11 @@
 {
- "url": "http://127.0.0.1:36497/tiles/",
+ "url": "http://127.0.0.1:59021/tiles/",
  "steps": [
   {
-   "step": "全城一屏（首屏 1.1s）",
-   "fps": 60,
+   "step": "全城一屏（首屏 1.0s）",
+   "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 1,
+   "heap_mb": 1.4,
    "drawn": 14,
    "houses": 0,
    "walkers": 0,
@@ -13,13 +13,13 @@
    "cache": 53,
    "vtiles": 0,
    "requests": 25,
-   "mb": 0.42
+   "mb": 0.48
   },
   {
    "step": "街巷级最密处",
-   "fps": 59.5,
+   "fps": 59.4,
    "worst_ms": 50,
-   "heap_mb": 75.7,
+   "heap_mb": 100,
    "drawn": 9,
    "houses": 2748,
    "walkers": 288,
@@ -27,108 +27,102 @@
    "cache": 87,
    "vtiles": 25,
    "requests": 122,
-   "mb": 10.36
+   "mb": 10.69
   },
   {
    "step": "街巷级横穿全城 10 秒",
-   "fps": 55.8,
+   "fps": 55.5,
    "worst_ms": 50,
-   "heap_mb": 42.3,
+   "heap_mb": 43.1,
    "cache": 147,
    "vtiles": 54,
    "walkers": 22,
    "requests": 277,
-   "mb": 19.6
+   "mb": 21.18
   },
   {
    "step": "换到 40 年",
    "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 39.2,
+   "heap_mb": 39.9,
    "drawn": 12,
    "houses": 147,
    "walkers": 19,
    "ships": 44,
-   "cache": 177,
+   "cache": 157,
    "vtiles": 54,
-   "requests": 301,
-   "mb": 19.66
+   "requests": 281,
+   "mb": 21.21
   },
   {
    "step": "拉回全城",
-   "fps": 60.1,
+   "fps": 60.2,
    "worst_ms": 17,
-   "heap_mb": 39.4,
+   "heap_mb": 40.1,
    "drawn": 4,
    "houses": 0,
    "walkers": 0,
    "ships": 0,
-   "cache": 210,
+   "cache": 190,
    "vtiles": 54,
-   "requests": 306,
-   "mb": 19.74
+   "requests": 286,
+   "mb": 21.29
   },
   {
    "step": "飞行：全城→南港门口（z=4.5 倾斜）",
-   "fps": 53.4,
-   "worst_ms": 83,
-   "p99_ms": 50,
-   "dur": 2.1840911923908024,
-   "hold": 0.62,
-   "frames": 151,
-   "big": [
-    [
-     2023,
-     50,
-     4.19
-    ],
-    [
-     2607,
-     83,
-     4.5
-    ]
-   ],
+   "fps": 56.4,
+   "worst_ms": 34,
+   "p99_ms": 33,
+   "dur": 2.1840772542303926,
+   "hold": 0.53,
+   "frames": 155,
+   "big": [],
    "tilt_deg": 33,
-   "heap_mb": 50.7,
+   "heap_mb": 55.8,
    "houses": 198,
    "walkers": 220,
-   "cache": 166,
+   "cache": 168,
    "vtiles": 45,
-   "requests": 474,
-   "mb": 29.81
+   "requests": 458,
+   "mb": 31.7
   },
   {
    "step": "飞行：南港门口→第四丘门口（z=4.5）",
-   "fps": 54.2,
+   "fps": 54.8,
    "worst_ms": 50,
-   "p99_ms": 33,
+   "p99_ms": 50,
    "dur": 2.151770409833859,
-   "hold": 0.47,
-   "frames": 144,
+   "hold": 0.48,
+   "frames": 146,
    "big": [
     [
-     1620,
+     86,
      50,
-     2.47
+     4.42
+    ],
+    [
+     470,
+     50,
+     2.81
     ]
    ],
    "tilt_deg": 33,
-   "heap_mb": 70.6,
+   "heap_mb": 71.9,
    "houses": 199,
    "walkers": 329,
-   "cache": 179,
+   "cache": 181,
    "vtiles": 57,
-   "requests": 511,
-   "mb": 35.87
+   "requests": 494,
+   "mb": 37.64
   },
   {
    "step": "倾斜带平移 6 秒（z=4.5）",
-   "fps": 59.5,
-   "worst_ms": 50,
+   "fps": 60.2,
+   "worst_ms": 17,
    "tilt_deg": 33,
    "houses": 216,
-   "requests": 511,
-   "mb": 35.87
+   "requests": 494,
+   "mb": 37.64
   }
  ]
 }
