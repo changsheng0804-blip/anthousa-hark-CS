@@ -36,13 +36,16 @@ canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;dis
 (async()=>{
 const M=await fetch('meta.json').then(r=>r.json());const TP=M.tile_px,NL=Object.keys(M.levels).length;
 const NAMES={nangang:'南港',jinjiao:'金角岸'};
-const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,Hv,dpr=Math.min(2,window.devicePixelRatio||1);
+const c=document.getElementById('c'),ctx0=c.getContext('2d');let ctx=ctx0;
+/* 俯仰改在画布里做（审核意见 2026-10-14）：原来画「摊平」的 H 行再用 CSS scaleY(Hv/H) 压回屏幕，整张图被合成器重采样，细横线闪、字发虚。
+   现在画布就是屏幕的 Hv 行、1:1 点对点；主画布的每个 setTransform 在输出端左乘 diag(1, Hv/H)，摊平坐标系和其它代码一字不改。离屏 octx 不受影响。 */
+{const st0=ctx0.setTransform.bind(ctx0);ctx0.setTransform=function(a,b,c_,d,e,f){if(typeof a==='object')return st0(a);const s=Hv/H;return st0(a,b*s,c_,d*s,e,f*s)}}const off=document.createElement('canvas'),octx=off.getContext('2d');let W,H,Hv,dpr=Math.min(2,window.devicePixelRatio||1);
 /* ── 微倾（/goal 2 项 6）：H 是「摊平的视野高」。倾角 a>0 时画布画 H=Hv/cos a 行，再用 CSS scaleY(cos a) 压回 Hv 行，就是一个绕屏幕中心的俯仰；
    画布和离屏一直按最大倾角分配，所以倾角随缩放连续变，不重新分配。指针的 y 一律先从屏幕坐标换成摊平坐标（y·H/Hv）。 */
 const AMAX=36*Math.PI/180,TZ0=2.3,TZ1=5.2;/* 倾角是 log z 的平滑步函数：z 每放大 1%，倾角最多变 0.7° */
 function tiltOf(z){const t=Math.max(0,Math.min(1,Math.log(Math.max(z*dpr,1e-6)/TZ0)/Math.log(TZ1/TZ0)));return AMAX*t*t*(3-2*t)}
-function rs(){W=innerWidth;Hv=innerHeight;const Hm=Math.ceil(Hv/Math.cos(AMAX));H=Hv/Math.cos(tiltOf(cam.z));c.width=W*dpr;c.height=Math.ceil(Hm*dpr);off.width=Math.ceil(W*PCK*dpr);off.height=Math.ceil(Hm*PCK*dpr);c.style.width=W+'px';c.style.height=Hm+'px';c.style.transformOrigin='0 0';c.style.transform=`scaleY(${Hv/H})`;dirty=true;cver++}
-function tiltStep(){const nh=Hv/Math.cos(tiltOf(cam.z));if(Math.abs(nh-H)>1e-6){H=nh;c.style.transform=`scaleY(${Hv/H})`;dirty=true}}
+function rs(){W=innerWidth;Hv=innerHeight;const Hm=Math.ceil(Hv/Math.cos(AMAX));H=Hv/Math.cos(tiltOf(cam.z));c.width=W*dpr;c.height=Math.ceil(Hv*dpr);off.width=Math.ceil(W*PCK*dpr);off.height=Math.ceil(Hm*PCK*dpr);c.style.width=W+'px';c.style.height=Hv+'px';c.style.transform='';dirty=true;cver++}
+function tiltStep(){const nh=Hv/Math.cos(tiltOf(cam.z));if(Math.abs(nh-H)>1e-6){H=nh;dirty=true}}
 let dirty=true,cver=0;const PCK=1.6,pc={ok:false};addEventListener('resize',rs);
 const WW=M.grid[0]*TP,WH=M.grid[1]*TP;   /* 级 0 像素坐标 */
 const cam={x:WW/2,y:WH/2,z:Math.min(innerWidth/WW,innerHeight/WH)*0.95};
@@ -227,7 +230,7 @@ function zrOf(zm){let zr=Math.min(ZR_MAX,STREET_Z*2**Math.ceil(Math.log2(Math.ma
 let psMemo='';
 function prepStreet(Y,zm,pk){zm=zm||1;pk=pk||PCK;const mk=Y+'|'+zm+'|'+pk+'|'+Math.round(cam.x/(TP/8))+'|'+Math.round(cam.y/(TP/8))+'|'+Math.round(Math.log2(cam.z)*8)+'|'+cver+'|'+layBudgetTick;if(mk===psMemo)return false;const r=prepStreet0(Y,zm,pk);psMemo=r?'':mk;return r}
 function prepStreet0(Y,zm,pk){const x0=cam.x-W*pk/2/cam.z,y0=cam.y-H*pk/2/cam.z,x1=cam.x+W*pk/2/cam.z,y1=cam.y+H*pk/2/cam.z,K=gkey(Y);
-  const zr=zrOf(zm);let wait=false;const miss=[];
+  const zr=zrOf(zm);let wait=false;const miss=[];if(zm===1)layPass++;/* 每次为当前视野备层都是新的一遍：只保护这一遍要用的层，镜头挪走后旧位置的层就能淘汰 */
   for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){
     const g=tile('g/'+K,0,tx,ty,true);let gim=null,wt=false;if(g&&g.ok)gim=g.im;else{const t=tile(Y,0,tx,ty);if(t&&t.ok)gim=t.im;else wt=(g&&!g.miss)||(t&&!t.miss)}
     if(!gim){if(wt)wait=true;continue}/* 这块的地面还在路上（换年份时尤其）：等，别把空地画进离屏层 */
@@ -355,7 +358,7 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
 c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY*H/Hv-H/2)/cam.z;if(markHit(e.clientX,e.clientY*H/Hv)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
 /* 缩放绕光标：光标下的世界点缩放后仍在光标下。倾角随 z 变，所以新的摊平视野高 H' 要先算出来（并立刻生效），不然光标会随倾角漂 */
-function zoomAt(sx,sy,k){const fy=sy*H/Hv,wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(fy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));H=Hv/Math.cos(tiltOf(cam.z));c.style.transform=`scaleY(${Hv/H})`;const fy2=sy*H/Hv;cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(fy2-H/2)/cam.z;dirty=true}
+function zoomAt(sx,sy,k){const fy=sy*H/Hv,wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(fy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));H=Hv/Math.cos(tiltOf(cam.z));const fy2=sy*H/Hv;cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(fy2-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
 /* ── 相机动画器 + 弧线飞行（/goal 2 项 3）：flyTo 走 van Wijk & Nuij 的「先拉高再俯冲」曲线（w=视野宽，ρ=1.42）；
    飞的路上提前（0.14 的进度）取前方的瓦片、矢量街和层，落地那一帧再等一等本级瓦片/矢量层全到（至多 1 秒）。滚轮缩放走同一个动画器，带缓动。 */
