@@ -28,7 +28,7 @@
 | 2 | 喷泉干/湿效果进瓦片页（街巷级），敲门卡一句水源 | G1 | 完成（tile_bake 按出水年分干池/水池段，check_nets ⑥；敲门卡一句水源，check_waterline.js） |
 | 3 | 面包台阶卡经 landmarks_city 全城放 + 粮网 fed_by + 台阶清晨排队只在有粮时 | G2 | 完成（8 座台阶；粮网 4 港 5 仓 8 台阶；4 座先光秃后供粮；check_nets ⑦⑧ + check_breadqueue.js） |
 | 4 | 史诗地块清场（派生表）+ check | G3 | 完成（账本+streets_ng 已清大部分；check_epic_clear 先抓出水渠桥谷桥下 5 栋，epic_clear.py 拆/不建；瓦片已重烤） |
-| 5 | epic_ground / epic_tall / mese_portico 分期画法进 render_ng/tile_bake，重烤 | G4 | 待做 |
+| 5 | epic_ground / epic_tall / mese_portico 分期画法进 render_ng/tile_bake，重烤 | G4 | 完成（epic_stage.py → 伪房子行进 vec；广场 57 工地→59 铺面、柱每年一节至 64 立像、60 凯旋门；大宁芙泉 44；梅塞柱廊 1 立架→3 瓦顶；check_epic_stage 21 项） |
 | 6 | 道路终扫 + prune_islands + 全城 audit 0 | G5 | 待做 |
 | 7 | 刘线 reg 旁车懒加载进敲门卡 | G6 | 待做 |
 | 8 | 收口：perf 全量、九块 accept --live、截图，写总结发给所有者（早上 08:00 前） | 全部 | 待做 |
@@ -41,3 +41,4 @@
 - 2026-10-14 11:50 PT 第 3 轮 · 项 2：先写 check_nets ⑥（出水年前不许画水）→ 跑出 10 口喷泉不过；tile_bake 把池面按 net_water 出水年拆成干池（灰褐）[落成,wet) / 水 [wet,∞)，水柱只从 wet 起画；Mac 重烤收回，只有 10 块 vec 变（栅格字节全同，总量 64 MB）。页面加敲门卡一句水源（离这家 ≤420 px 的已建街角泉；出水「水从X来」、未出水「水还没来」；net_water.json 点上加 zh、px，仍不画线），check_waterline.js 全过。全部检查过；perf 首屏 0.45 MB、街巷级线上 4.96 MB（未压 17.3）、堆 53 MB、FPS 43–52（沙箱软渲染，与上轮同量级）。看了 nangang 门口 40/70 年对照：40 年灰干池，70 年蓝水。重排：下一项 3。
 - 2026-10-14 12:05 PT 第 4 轮 · 项 3：先写 check_nets ⑦⑧（无粮网/无台阶 → 不过）→ landmarks_city 加第二遍放 bread_steps（前 39 处放置一字不变，diff 验证）全城 8 座，net_water.py 加 grain 段（港口→粮仓→台阶，就近取、供粮年=max(落成,上游)），tile_bake 面包按供粮年摆，页面 breadQueue 只在供粮的清晨 5–8:30 排队、不画网线；check_breadqueue.js 全过。Mac 重烤收回（瓦片 64 MB）；全部检查过；perf 首屏 0.45 MB/1.1 s，街巷级线上 4.96 MB、堆 80 MB、FPS 47（软渲染，同量级）。看了南港 40 年清晨门前的队（30 年粮仓未供则无队）。重排：下一项 4。
 - 2026-10-14 12:35 PT 第 5 轮 · 项 4：先写 check_epic_clear（33 座史诗多边形 × 全城房/街/vec 三层，脚印下 0 房 0 街）→ 先不过：5 栋房压在水渠桥谷桥（aqb_valley）下 1–2%（街 0 段，其余史诗账本已拆干净）；epic_clear.py 在派生表里拆（建成年已在的拆于建成年，之后才开工的不建），landmarks_city 末尾调用、重放验证幂等（39 座地标放置一字不变）；Mac 重烤收回（61 块 vec 只因拓扑排序名次顺移 1–2，另 2 栋房消失；瓦片总量 64 MB）。检查全过；perf 首屏 0.45 MB/1.2 s，街巷级线上 4.96 MB、堆 70 MB、FPS 50（软渲染，同量级）。看了谷桥一带街巷级 60 年图，街房正常。重排：下一项 5。
+- 2026-10-14 13:20 PT 第 6 轮 · 项 5：先写 check_epic_stage（vec 里无 epic 行 → 不过）→ epic_stage.py 把谭线 epic_ground/epic_tall/mese_portico 译成「带年份段的部件」，以伪房子行（id epic:…）写进 vec，页面零代码；广场 57–58 工地（碎石石堆）→ 59 铺面+四面柱廊+雕像+铜牛+布棚，狄奥多西柱 57 起每年立一节（脚手架）、64 年立像拆架，60 凯旋门；大宁芙泉 44 池+半圆壁龛、水面从 net_water 出水年；梅塞柱廊 1–2 年立柱+石板路、3 起瓦顶（梅塞派生路宽 15 px、房子贴到 ~10 px，柱廊收窄到 7.6–10.2 px，让房、支路断开、创城者广场/狄奥多西广场内断开）。踩坑：柱单独成行会被拓扑排序排到铺面前面盖住→柱的部件接在广场行末尾。check_epic_stage 21 项、check_epic_clear（跳过 epic 行，部件级 ⑥）、check_lm_city（认 epic: id）全过；看了 58/59/61/64 年广场与 45 年宁芙泉+梅塞柱廊图。重排：下一项 6。
