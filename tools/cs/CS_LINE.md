@@ -24,3 +24,6 @@ perf_tiles.py 加「全城→南港门口」「南港门口→第四丘门口」
 ## /goal 3 第 5 轮（项 7 事件落点接进瓦片页）
 编年史事件（events.json，58 件）经 places.py 进 places.json，每件带 show_year；瓦片页里事件跟年份淡入淡出、点一下 flyTo 并切年、出卡（编年史原文）；年份轴 #yrs 是能拖的 range。检查 tools/cs/check_chron_page.js，由 check_chronicle.py 调。
 
+
+### /goal 3 第 6 轮 · 项 3b：轮廓和阶段
+check_landmark_src.py 加两段：规格 poly 与底账地基 IoU ≥ 0.9、建成年前后地基里瓦片画面要变（读烤好的级 0 瓦片）。现状全过，没改画面。同时查明瓦片房子用的是 cs29 分叉的老 house_types.py，不是上游 v24–v30——项 4 的真正缺口。——Hark（CS线）
