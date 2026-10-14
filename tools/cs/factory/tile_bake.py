@@ -160,6 +160,8 @@ d = os.path.join(OUT, 'vec'); os.makedirs(d, exist_ok=True); import gzip; vb = [
 for (tx, ty), v in vec.items():
     v['h'].sort(key=lambda x: x[2]); b = json.dumps(v, separators=(',', ':')).encode()
     open(os.path.join(d, f'{tx}_{ty}.json'), 'wb').write(b); vb.append(len(b)); vg.append(len(gzip.compress(b))); nh.append(len(v['h']))
+# 立面前后次序：全城拓扑排序写回 h[2]（见 zsort.py；原来的单键 Y 排序有 137 对立面盖错）
+subprocess.run([sys.executable, os.path.join(HERE, 'zsort.py'), d], check=True)
 # /goal 3 项 6 内容哈希去重：同一位置、同一级、字节全同的瓦片只留最早那份，后面的年份在 meta.alias 里指过去
 # alias[<年>/<级>][x_y] = 根年份；alias['g/<关键年>'][x_y] = 'g/<根关键年>'；页面按别名换成根文件的地址（内存里也只存一份）
 import hashlib
