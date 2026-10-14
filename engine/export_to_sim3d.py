@@ -2,10 +2,10 @@
 """Export Anthousa world data to 3D pipeline format.
 Outputs:
 - Terrain elevation grid + water mask on the Bosporus peninsula (SRTM 30m + OSM coastline)
-- Monumental structures, walls, roads, and houses across all eras (-657 .. AF 20)
+- Monumental structures, walls, roads, and houses across all eras (-657 .. latest era)
 - Bounding geometry and elevations for real-time WebGL instancing and Blender CLI
 """
-import json, math, os, sys
+import json, math, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -97,6 +97,17 @@ for h in w.get("houses", []):
             "poly": p
         })
 
+def _chron(a, b):
+    """First paragraph of chronicle/<a>_<b>.md, {{id}} tokens replaced by names."""
+    fp = os.path.join(os.path.dirname(__file__), "..", "chronicle", f"{a}_{b}.md")
+    if not os.path.exists(fp):
+        return ""
+    paras = [x.strip() for x in open(fp, encoding="utf-8").read().split("\n\n")]
+    paras = [x for x in paras if x and not x.startswith("#")]
+    t = paras[0] if paras else ""
+    t = re.sub(r"\{\{(\w+)\}\}", lambda m: names_zh.get(m.group(1), m.group(1)), t)
+    return t[:220] + ("…" if len(t) > 220 else "")
+
 eras = []
 for era in w.get("eras", []):
     eras.append({
@@ -104,7 +115,8 @@ for era in w.get("eras", []):
         "to": era.get("to"),
         "title": era.get("title"),
         "title_en": era.get("title_en"),
-        "stats": era.get("stats", {})
+        "stats": era.get("stats", {}),
+        "chronicle": _chron(era.get("from"), era.get("to"))
     })
 
 export_data = {
@@ -117,7 +129,7 @@ export_data = {
         "water": water_mask
     },
     "eras": eras,
-    "years": w.get("meta", {}).get("years", [-657, 0, 10, 20]),
+    "years": sorted({-657, 0} | {e.get("to") for e in w.get("eras", []) if e.get("to") is not None}),
     "structures": structures_3d,
     "houses": houses_3d
 }
