@@ -189,7 +189,7 @@ function paintStreets(g,d,Y){g.lineCap='round';
 function paintHouses(g,d,Y){const hs=d.h.filter(h=>h[0]<=Y&&Y<h[1]);hs.sort((a,b)=>a[2]-b[2]);
   g.fillStyle='rgba(50,32,14,.27)';for(const h of hs){const s=h[3];g.beginPath();g.moveTo(s[0],s[1]);for(let i=2;i<s.length;i+=2)g.lineTo(s[i],s[i+1]);g.fill()}
   g.lineWidth=0.5;g.lineCap='butt';
-  for(const h of hs)for(const [kd,p,c] of h[4]){if(p.length<4)continue;g.beginPath();g.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)g.lineTo(p[i],p[i+1]);
+  for(const h of hs)for(const [kd,p,c,y0,y1] of h[4]){if(p.length<4||(y0!==undefined&&(Y<y0||Y>=y1)))continue;g.beginPath();g.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)g.lineTo(p[i],p[i+1]);
     if(kd===0){if(p.length>=6){g.fillStyle='#'+c;g.fill()}}else{if(kd===1)g.closePath();g.strokeStyle='#'+c;g.stroke()}}
   return hs.length}
 function layer(kind,tx,ty,Y,v,zr,gim){const k=kind+tx+'_'+ty+'_'+Y+'_'+zr;let L=LAY.get(k);if(L){LAY.delete(k);LAY.set(k,L);return L}
@@ -270,11 +270,12 @@ function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0
 const UPR={n:0,of:0,miss:1e9};let SKIPH=false;const SPR=4,SPRL=new Map();let sprBudget=0,sprBuilt=0;
 function hbox(h){const a=[1e9,1e9,-1e9,-1e9];const add=(P)=>{for(let i=0;i<P.length;i+=2){if(P[i]<a[0])a[0]=P[i];if(P[i]>a[2])a[2]=P[i];if(P[i+1]<a[1])a[1]=P[i+1];if(P[i+1]>a[3])a[3]=P[i+1]}};
   add(h[3]);for(const q of h[4])add(q[1]);const s=h[3];let ay=-1e9,sx=0;for(let i=0;i<s.length;i+=2){if(s[i+1]>ay)ay=s[i+1];sx+=s[i]}return {x0:a[0]-1,y0:a[1]-1,x1:a[2]+1,y1:a[3]+1,ay,ax:sx/(s.length/2)}}
-function sprOf(tx,ty,i,h,hb){const k=tx+'_'+ty+'_'+i;let r=SPRL.get(k);if(r){SPRL.delete(k);SPRL.set(k,r);return r}
+function stageSig(h,Y){let s='';for(const q of h[4])if(q[3]!==undefined)s+=(Y>=q[3]&&Y<q[4])?1:0;return s}
+function sprOf(tx,ty,i,h,hb,Y){const k=tx+'_'+ty+'_'+i+'_'+stageSig(h,Y);let r=SPRL.get(k);if(r){SPRL.delete(k);SPRL.set(k,r);return r}
   if(sprBudget<=0)return null;const t0=performance.now();
   const w=hb.x1-hb.x0,hh=hb.y1-hb.y0,cv=document.createElement('canvas');cv.width=Math.ceil(w*SPR);cv.height=Math.ceil(hh*SPR);const g=cv.getContext('2d');g.setTransform(cv.width/w,0,0,cv.height/hh,-hb.x0*cv.width/w,-hb.y0*cv.height/hh);
   g.lineWidth=0.5;g.lineCap='butt';
-  for(const [kd,P,c] of h[4]){if(P.length<4)continue;g.beginPath();g.moveTo(P[0],P[1]);for(let j=2;j<P.length;j+=2)g.lineTo(P[j],P[j+1]);
+  for(const [kd,P,c,y0,y1] of h[4]){if(P.length<4||(y0!==undefined&&(Y<y0||Y>=y1)))continue;g.beginPath();g.moveTo(P[0],P[1]);for(let j=2;j<P.length;j+=2)g.lineTo(P[j],P[j+1]);
     if(kd===0){if(P.length>=6){g.fillStyle='#'+c;g.fill()}}else{if(kd===1)g.closePath();g.strokeStyle='#'+c;g.stroke()}}
   r={cv,w,hh,x0:hb.x0,y0:hb.y0,ay:hb.ay};SPRL.set(k,r);while(SPRL.size>1800)SPRL.delete(SPRL.keys().next().value);sprBuilt++;sprBudget-=performance.now()-t0;return r}
 /* 视口（外扩 m 个世界像素）里这一年站着的房子，按南北次序（先画北边的） */
@@ -286,13 +287,13 @@ function visHouses(Y,m){const x0=cam.x-W/2/cam.z-m,y0=cam.y-H/2/cam.z-m,x1=cam.x
 function tiltK(){const a=tiltOf(cam.z),ca=Math.cos(a);return (1/ca)*(1+0.5*(1-ca))}
 function drawUpright(Y,budgetMs){sprBudget=budgetMs;const k=tiltK(),L=visHouses(Y,30);
   ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));let n=0;if(pc.sk){ctx.fillStyle='rgba(50,32,14,.27)';ctx.beginPath();for(const e of L){const q=e[4][3];ctx.moveTo(q[0],q[1]);for(let j=2;j<q.length;j+=2)ctx.lineTo(q[j],q[j+1]);ctx.closePath()}ctx.fill()}
-  for(const [,tx,ty,i,h,hb] of L){const r=sprOf(tx,ty,i,h,hb);if(!r)continue;ctx.drawImage(r.cv,r.x0,r.ay+(r.y0-r.ay)*k,r.w,r.hh*k);n++}
+  for(const [,tx,ty,i,h,hb] of L){const r=sprOf(tx,ty,i,h,hb,Y);if(!r)continue;ctx.drawImage(r.cv,r.x0,r.ay+(r.y0-r.ay)*k,r.w,r.hh*k);n++}
   ctx.setTransform(1,0,0,1,0,0);UPR.miss=L.length-n;if(pc.sk)hdrawn=n;return [n,L.length]}
 let warmKey='';
-function warmUpright(Y,budgetMs){if(!(cam.z*dpr>=1.5))return;const key=Y+'|'+Math.round(cam.x/20)+'|'+Math.round(cam.y/20)+'|'+Math.round(cam.z*50)+'|'+cver;if(key===warmKey)return;sprBudget=budgetMs;let miss=0;for(const [,tx,ty,i,h,hb] of visHouses(Y,60)){if(sprBudget<=0){miss++;break}sprOf(tx,ty,i,h,hb)}if(!miss)warmKey=key}
+function warmUpright(Y,budgetMs){if(!(cam.z*dpr>=1.5))return;const key=Y+'|'+Math.round(cam.x/20)+'|'+Math.round(cam.y/20)+'|'+Math.round(cam.z*50)+'|'+cver;if(key===warmKey)return;sprBudget=budgetMs;let miss=0;for(const [,tx,ty,i,h,hb] of visHouses(Y,60)){if(sprBudget<=0){miss++;break}sprOf(tx,ty,i,h,hb,Y)}if(!miss)warmKey=key}
 /* 点在立起来的房子上：从最前面（最南）往后找贴图里不透明的那一栋，返回它脚印的中心（世界坐标） */
 function uprightAt(wx,wy){const k=tiltK(),L=visHouses(YEAR,30);
-  for(let n=L.length-1;n>=0;n--){const [,tx,ty,i,h,hb]=L[n],r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;
+  for(let n=L.length-1;n>=0;n--){const [,tx,ty,i,h,hb]=L[n],r=SPRL.get(tx+'_'+ty+'_'+i+'_'+stageSig(h,YEAR));if(!r)continue;
     const top=r.ay+(r.y0-r.ay)*k,bot=r.ay+(r.y0+r.hh-r.ay)*k;if(wx<r.x0||wx>r.x0+r.w||wy<top||wy>bot)continue;
     const u=Math.floor((wx-r.x0)/r.w*r.cv.width),v=Math.floor((wy-top)/(bot-top)*r.cv.height);
     if(u<0||v<0||u>=r.cv.width||v>=r.cv.height)continue;
@@ -416,6 +417,6 @@ const HEARTAPI={get buildMs(){return HEART.nangang&&HEART.nangang.buildMs},build
     if(c>=18.6&&c<23.6)R.tav.forEach(h=>F.tavPeople(h).forEach(([x,y])=>o.people.push([x+HT.ox,y+HT.oy,'tav'])));
     for(const s of F.ships){if(c<s.t0)continue;const r=F.shipPos(s,c);o.ships.push([r[0]+HT.ox,r[1]+HT.oy])}return o},
   smokes(h,q){q=q||'nangang';const HT=HEART[q];if(!HT||!HT.ready)return {n:0,str:0,pts:[]};const per=heartPer(h);return {n:heartSmokes(HT,YEAR).length,str:per==='morning'||per==='evening'?1:.55,pts:heartSmokes(HT,YEAR).map(s=>[s.x+HT.ox,s.y+HT.oy])}}};
-LW=mkLW();rs();frame();window.__TILES={LWP,get events(){return PLACES.events},evAlpha,evAlphaNow,markHit,get FLY(){return FLY},get LW(){return LW},M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i);if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
+LW=mkLW();rs();frame();window.__TILES={LWP,get events(){return PLACES.events},evAlpha,evAlphaNow,markHit,get FLY(){return FLY},get LW(){return LW},M,cam,tiltOf,roofPts(n){const k=tiltK(),L=visHouses(YEAR,0),cx=cam.x,cy=cam.y;L.sort((a,b)=>(a[5].ax-cx)**2+(a[5].ay-cy)**2-(b[5].ax-cx)**2-(b[5].ay-cy)**2);const o=[];for(const [,tx,ty,i,h,hb] of L){const r=SPRL.get(tx+'_'+ty+'_'+i+'_'+stageSig(h,YEAR));if(!r)continue;const wx=hb.ax,wy=r.ay+(r.y0+r.hh*0.3-r.ay)*k;o.push([wx,wy,(W/2+(wx-cam.x)*cam.z),(H/2+(wy-cam.y)*cam.z)*Hv/H]);if(o.length>=n)break}return o},UPR,SPRL,get sprBuilt(){return sprBuilt},get tilt(){return tiltOf(cam.z)},get H(){return H},get Hv(){return Hv},cache,level,levelF,get drawn(){return drawn},get loads(){return loads},get hdrawn(){return hdrawn},LIFE,get vtiles(){return vcache},get vloads(){return vloads},STREET_Z,SZ0,SZ1,streetAlpha,zoomAt,get curYear(){return YEAR},setYear,flyTo,cancelFly,pending,get heart(){return HEARTAPI},get flying(){return !!FLY},vwPath};
 })();
 </script></body></html>

@@ -26,13 +26,13 @@ for pas in (0, 1):
             d.ellipse([q_[2] * S - r, q_[3] * S - r, q_[2] * S + r, q_[3] * S + r], fill=col)
 G.paste(L, (0, 0), L)
 hs = [h for h in D['houses'] if h[2] <= Y < h[3] and h[3] > h[2] + 1]
-geo = [HT.geom(h) for h in hs]
+geo = [(lambda g: (g[0], HT.at(g[1], Y), g[2]))(HT.geom(h)) for h in hs]
 sh = Image.new('L', (W * S, H * S), 0); ds = ImageDraw.Draw(sh)
 for by, parts, shadow in geo: ds.polygon([(x * S, y * S) for x, y in shadow], fill=70)
 G.paste((50, 32, 14), (0, 0), sh)
 d = ImageDraw.Draw(G)
 for by, parts, shadow in sorted(geo, key=lambda g: g[0]):
-    for kind, lay, poly, col in parts:
+    for kind, lay, poly, col, *_ in parts:
         P = [(x * S, y * S) for x, y in poly]
         if kind == 'fill' and len(P) >= 3: d.polygon(P, fill=tuple(col))
         elif kind == 'edge': d.line(P + [P[0]], fill=tuple(col), width=1)

@@ -139,7 +139,7 @@ for q in QS:
     for hh in json.load(open(Q + 'houses_street.json'))['houses']:
         if hh[3] <= hh[2] + 1: continue
         by, parts, shadow = HT.geom(hh)
-        P = [[KC[k], [c for xy in poly for c in (R(xy[0] + ox), R(xy[1] + oy))], '%02x%02x%02x' % tuple(col[:3])] for k, lay, poly, col in parts]
+        P = [[KC[q[0]], [c for xy in q[2] for c in (R(xy[0] + ox), R(xy[1] + oy))], '%02x%02x%02x' % tuple(q[3][:3])] + ([min(q[4][0], 9999), min(q[4][1], 9999)] if len(q) > 4 else []) for q in parts]
         sh = [c for xy in shadow for c in (R(xy[0] + ox), R(xy[1] + oy))]
         cx = sum(sh[0::2]) / (len(sh) / 2); cy = sum(sh[1::2]) / (len(sh) / 2)
         if not owns(q, cx, cy): continue
