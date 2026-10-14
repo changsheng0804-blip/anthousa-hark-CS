@@ -10,8 +10,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 url = sys.argv[1] if len(sys.argv) > 1 else None
 if not url:
     H = functools.partial(http.server.SimpleHTTPRequestHandler, directory=os.path.join(ROOT, 'docs', 'living'))
+    import gzip, io
     class Q(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *a): pass
+        # /goal 4 项 1b：GitHub Pages 对 json/js/html 发 gzip（实测 vec/1_9.json 794501→154591 字节），本地服务器也照样压，
+        # 才量得出用户真实下载；未压的原始体积另记 mb_raw（解析/堆的压力看原始体积）
+        def send_head(self):
+            path = self.translate_path(self.path)
+            if os.path.isfile(path) and path.endswith(('.json', '.js', '.html')) and 'gzip' in self.headers.get('Accept-Encoding', ''):
+                data = gzip.compress(open(path, 'rb').read(), 6)
+                self.send_response(200); self.send_header('Content-Type', self.guess_type(path)); self.send_header('Content-Encoding', 'gzip')
+                self.send_header('Content-Length', str(len(data))); self.end_headers(); return io.BytesIO(data)
+            return super().send_head()
     srv = socketserver.ThreadingTCPServer(('127.0.0.1', 0), functools.partial(Q, directory=os.path.join(ROOT, 'docs', 'living')))
     threading.Thread(target=srv.serve_forever, daemon=True).start(); url = f'http://127.0.0.1:{srv.server_address[1]}/tiles/'
 FPS_JS = """ms=>new Promise(r=>{let n=0,t0=performance.now(),worst=0,last=t0;function f(t){n++;worst=Math.max(worst,t-last);last=t;if(t-t0<ms)requestAnimationFrame(f);else r({fps:+(n*1000/(t-t0)).toFixed(1),worst_ms:+worst.toFixed(0)})}requestAnimationFrame(f)})"""
@@ -19,18 +29,20 @@ out = {'url': url, 'steps': []}
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--enable-precise-memory-info', '--no-sandbox'])
     pg = b.new_page(viewport={'width': 1440, 'height': 900})
-    net = {'n': 0, 'bytes': 0}
+    net = {'n': 0, 'bytes': 0, 'raw': 0}
     def onresp(r):
-        try: l = int(r.headers.get('content-length') or 0) or len(r.body())
-        except Exception: l = 0
-        net['n'] += 1; net['bytes'] += l
+        try:
+            l = int(r.headers.get('content-length') or 0) or len(r.body())
+            raw = len(r.body()) if r.headers.get('content-encoding') == 'gzip' else l
+        except Exception: l = raw = 0
+        net['n'] += 1; net['bytes'] += l; net['raw'] += raw
     pg.on('response', onresp)
     t0 = time.time(); pg.goto(url, wait_until='networkidle'); first = time.time() - t0
     def step(name, ms=3000):
         pg.wait_for_timeout(800)
         f = pg.evaluate(FPS_JS, ms)
         m = pg.evaluate("()=>({heap_mb:+(performance.memory.usedJSHeapSize/1048576).toFixed(1),drawn:__TILES.drawn,houses:__TILES.hdrawn,walkers:__TILES.LIFE.walkers,ships:__TILES.LIFE.ships,cache:__TILES.cache.size,vtiles:__TILES.vtiles.size})")
-        r = dict(step=name, **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
+        r = dict(step=name, **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2), mb_raw=round(net['raw'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
     step('全城一屏（首屏 %.1fs）' % first)
     # 推到街巷级：选房子最多的矢量块
     M = pg.evaluate("()=>__TILES.M")
@@ -44,7 +56,7 @@ with sync_playwright() as p:
     pg.evaluate("""([W0])=>{const T=__TILES;window.__pan=true;const t0=performance.now(),x0=W0*0.1,x1=W0*0.9;(function f(){if(!window.__pan)return;const k=Math.min(1,(performance.now()-t0)/10000);T.cam.x=x0+(x1-x0)*k;T.zoomAt(innerWidth/2,innerHeight/2,1);if(k<1)requestAnimationFrame(f)})()}""", [W0])
     pg.wait_for_timeout(200); f = pg.evaluate(FPS_JS, 9500)
     m = pg.evaluate("()=>({heap_mb:+(performance.memory.usedJSHeapSize/1048576).toFixed(1),cache:__TILES.cache.size,vtiles:__TILES.vtiles.size,walkers:__TILES.LIFE.walkers})")
-    r = dict(step='街巷级横穿全城 10 秒', **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False))
+    r = dict(step='街巷级横穿全城 10 秒', **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2), mb_raw=round(net['raw'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False))
     pg.evaluate("()=>{window.__pan=false;__TILES.setYear(40)}"); step('换到 40 年')
     pg.evaluate("()=>{const T=__TILES;T.cam.z=0.08;T.zoomAt(innerWidth/2,innerHeight/2,1)}"); step('拉回全城')
     # ── /goal 2 项 7：飞行场景。FPS 只量飞行期间；落地后的等待（hold）另记
@@ -57,13 +69,13 @@ with sync_playwright() as p:
         c = QC[q]; pg.wait_for_timeout(800)
         f = pg.evaluate(FLY_JS, [c['x'], c['y'], z, 60])
         m = pg.evaluate("()=>({heap_mb:+(performance.memory.usedJSHeapSize/1048576).toFixed(1),houses:__TILES.hdrawn,walkers:__TILES.LIFE.walkers,cache:__TILES.cache.size,vtiles:__TILES.vtiles.size})")
-        r = dict(step=name, **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
+        r = dict(step=name, **f, **m, requests=net['n'], mb=round(net['bytes'] / 1048576, 2), mb_raw=round(net['raw'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
     pg.evaluate("()=>{const T=__TILES;T.cam.z=0.08;T.zoomAt(innerWidth/2,innerHeight/2,1);T.setYear(60)}"); pg.wait_for_timeout(1500)
     fly('飞行：全城→南港门口（z=4.5 倾斜）', 'nangang')
     fly('飞行：南港门口→第四丘门口（z=4.5）', 'siqiu')
     pg.wait_for_timeout(800)
     pg.evaluate("""()=>{const T=__TILES;window.__pan=true;const t0=performance.now(),x0=T.cam.x,y0=T.cam.y;(function f(){if(!window.__pan)return;const k=Math.min(1,(performance.now()-t0)/6000);T.cam.x=x0+450*k;T.cam.y=y0-120*k;T.zoomAt(innerWidth/2,innerHeight/2,1);if(k<1)requestAnimationFrame(f)})()}""")
     pg.wait_for_timeout(200); f = pg.evaluate(FPS_JS, 5600); pg.evaluate("()=>{window.__pan=false}")
-    r = dict(step='倾斜带平移 6 秒（z=4.5）', **f, tilt_deg=pg.evaluate("()=>+(__TILES.tilt*57.2958).toFixed(1)"), houses=pg.evaluate("()=>__TILES.hdrawn"), requests=net['n'], mb=round(net['bytes'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
+    r = dict(step='倾斜带平移 6 秒（z=4.5）', **f, tilt_deg=pg.evaluate("()=>+(__TILES.tilt*57.2958).toFixed(1)"), houses=pg.evaluate("()=>__TILES.hdrawn"), requests=net['n'], mb=round(net['bytes'] / 1048576, 2), mb_raw=round(net['raw'] / 1048576, 2)); out['steps'].append(r); print(json.dumps(r, ensure_ascii=False), flush=True)
     b.close()
 json.dump(out, open(os.path.join(ROOT, 'docs', 'living', 'tiles', 'perf.json'), 'w'), ensure_ascii=False, indent=1)
