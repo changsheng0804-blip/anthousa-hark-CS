@@ -122,6 +122,13 @@ function cardRun(HT,fn){const m=HT.m;m.YEAR=HT.yo!=null?HT.yo:YEAR;try{fn()}fina
 function cardClose(){if(CARDQ){const HT=HEART[CARDQ];if(HT&&HT.m){HT.m.closeCard();HT.yo=null}}CARDQ=null;cardEl.style.display='none';dirty=true}
 document.getElementById('cardx').onclick=cardClose;
 cardEl.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-q],[data-sp],[data-go],[data-p],[data-pf],[data-step]');if(!t||!CARDQ)return;e.preventDefault();const HT=HEART[CARDQ];cardRun(HT,()=>HT.m.cardClick(t));dirty=true});
+/* /goal 4 项 2：敲门卡多一句水源（只一句）。net_water.json 只有点和年份（脉在地下，页面不画网线）；这家离最近的、那一年已建的街角泉 ≤420 px 才有这一句 */
+var NETW=null;function netWater(){if(!NETW){NETW=[];fetch('net_water.json').then(r=>r.ok?r.json():null).then(j=>{if(j)NETW=j.nodes}).catch(()=>{})}return NETW}
+function waterLine(HT){try{const sel=HT.m&&HT.m.sel;if(!sel||sel.kind!=='house')return'';const h=sel.hh.h,Y=HT.yo!=null?HT.yo:YEAR,x=h.cx+HT.ox,y=h.cy+HT.oy,N=netWater();let best=null,bd=420;
+  const by={};for(const n of N)by[n.id]=n;
+  for(const n of N){if(n.kind!=='fountain'||!n.px||n.built>Y||(n.end!=null&&n.end<=Y))continue;const d=Math.hypot(n.px[0]-x,n.px[1]-y);if(d<bd){bd=d;best=n}}
+  if(!best)return'';const src=by[best.fed_by],zh=src&&src.zh;if(!zh)return'';
+  return '<div class="obj"><b>水</b>'+(best.wet<=Y?'这家到街角的泉打水，水从'+zh+'来。':'街角的泉池修好了，水还没来——'+zh+'没出水，这家得去别处担水。')+'</div>'}catch(e){return''}}
 function heartTap(wx,wy){if(streetAlpha()<.5)return false;
   if(tiltOf(cam.z)>0.02){const u=uprightAt(wx,wy);if(u){wx=u[0];wy=u[1]}}/* 倾斜里房子立起来了：点在屋顶上，就当点了那栋房子的脚印中心 */
   for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;const [x,y,w,h]=heartBox(q);if(!(wx>x&&wx<x+w&&wy>y&&wy<y+h))continue;
@@ -149,7 +156,7 @@ function heartEnsure(q){let HT=HEART[q];if(HT)return HT;HT=HEART[q]={ready:false
     fetch(B+'stories.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.STORIES,j)});
     fetch(B+'voices.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.VOICES,j);if(CARDQ===q)cardRun(HT,()=>HT.m.renderCard())});
     const tb=performance.now();HT.m=window.__HEART[q]({city,HD,SCENE,PPL,pplImg,cam,ctx:()=>ctx,$:HENV_$,STORIES:HT.STORIES,VOICES:HT.VOICES,
-      showCard:html=>{cardBody.innerHTML=html;cardEl.style.display='block'},
+      showCard:html=>{cardBody.innerHTML=html+waterLine(HT);cardEl.style.display='block'},
       flyTo:(x,y,z)=>flyTo(x+ox,y+oy,z),
       setYear:y=>{CARDLOCK=true;try{setYear(keyYearFor(y))}finally{CARDLOCK=false}HT.yo=y;cardRun(HT,()=>HT.m.renderCard())}});
     HT.buildMs=performance.now()-tb;HT.incDone=false;

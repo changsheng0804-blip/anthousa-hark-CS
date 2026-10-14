@@ -31,7 +31,7 @@ for n in N['nodes']:
         u = nodes[n['fed_by']]
         need(u['wet'] <= n['wet'], f"{n['id']} 出水 {n['wet']} 早于上游 {u['id']} {u['wet']}")
         need(n['wet'] == max(n['built'], u['wet']), f"{n['id']} 出水年 {n['wet']} ≠ max(建成 {n['built']}, 上游 {u['wet']})")
-    need(set(n) <= {'id', 'kind', 'src', 'name', 'built', 'wet', 'fed_by', 'q', 'h', 'xy', 'end'}, f"{n['id']} 带了多余字段 {set(n)}")
+    need(set(n) <= {'id', 'kind', 'src', 'name', 'built', 'wet', 'fed_by', 'q', 'h', 'xy', 'end', 'zh', 'px'}, f"{n['id']} 带了多余字段 {set(n)}")
     need(not isinstance(n.get('xy'), list) or len(n['xy']) == 2, f"{n['id']} 带了几何线")
 F = {}
 for q in QS:

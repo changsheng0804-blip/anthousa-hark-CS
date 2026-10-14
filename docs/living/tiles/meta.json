@@ -612,8 +612,8 @@
  },
  "time": {
   "-657": {
-   "render_s": 23.8,
-   "tiles_s": 2.4
+   "render_s": 23.9,
+   "tiles_s": 2.3
   },
   "-400": {
    "render_s": 23.9,
@@ -632,28 +632,28 @@
    "tiles_s": 2.3
   },
   "20": {
-   "render_s": 24.2,
+   "render_s": 24.3,
    "tiles_s": 2.4
   },
   "30": {
-   "render_s": 24.7,
+   "render_s": 24.6,
    "tiles_s": 2.4
   },
   "40": {
-   "render_s": 25.3,
-   "tiles_s": 2.4
+   "render_s": 25.2,
+   "tiles_s": 2.5
   },
   "50": {
-   "render_s": 25.8,
-   "tiles_s": 2.5
+   "render_s": 26.9,
+   "tiles_s": 2.6
   },
   "60": {
-   "render_s": 26.0,
-   "tiles_s": 2.5
+   "render_s": 27.4,
+   "tiles_s": 2.6
   },
   "70": {
-   "render_s": 26.2,
-   "tiles_s": 2.5
+   "render_s": 27.8,
+   "tiles_s": 2.6
   }
  },
  "psnr": {
@@ -3404,11 +3404,11 @@
    "70": 2066794
   },
   "vec_tiles": 132,
-  "vec_bytes": 32101525,
-  "vec_gzip": 5475452,
+  "vec_bytes": 32102267,
+  "vec_gzip": 5475598,
   "vec_max_gzip": 147592,
   "max_houses_tile": 518,
-  "seconds": 255.9
+  "seconds": 255.6
  },
- "total_s": 566.2
+ "total_s": 570.6
 }

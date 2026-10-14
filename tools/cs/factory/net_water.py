@@ -15,6 +15,7 @@ LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
 REACH = 45   # 世界单位（≈ 640 页面 px）：一口喷泉最远从多远的池子引水
 M = json.load(open(os.path.join(OUT, 'meta.json'))); S = M['scale']; QS = M['owner_order']
 W = json.load(open(os.path.join(ROOT, 'world.json')))['structures']
+NZ = json.load(open(os.path.join(ROOT, 'docs', 'data.json')))['names_zh']   # 敲门卡那一句水源用中文名（上游 names_zh）
 def cen(s):
     c = s['geom']['coords']; return (sum(p[0] for p in c) / len(c), sum(p[1] for p in c) / len(c))
 def dseg(p, a, b):
@@ -25,7 +26,7 @@ def end(s): return s.get('destroyed') or None
 def main():
     nodes = []; AQ = [s for s in W if s['type'] == 'aqueduct']
     for s in AQ:
-        nodes.append({'id': s['id'], 'kind': 'aqueduct', 'src': 'world', 'name': s['name'], 'built': s['built'], 'wet': s['built'], 'fed_by': None, 'end': end(s)})
+        nodes.append({'id': s['id'], 'kind': 'aqueduct', 'src': 'world', 'name': s['name'], 'zh': NZ.get(s['id']), 'built': s['built'], 'wet': s['built'], 'fed_by': None, 'end': end(s)})
     by = {n['id']: n for n in nodes}
     def best_aq(p, yr):
         early = [a for a in AQ if a['built'] <= yr]
@@ -36,7 +37,7 @@ def main():
         elif s['id'].startswith('nymphaeum'): k = 'nymphaeum'
         else: continue
         p = cen(s); a = best_aq(p, s['built']); u = by[a['id']]
-        n = {'id': s['id'], 'kind': k, 'src': 'world', 'name': s['name'], 'built': s['built'], 'wet': max(s['built'], u['wet']), 'fed_by': a['id'],
+        n = {'id': s['id'], 'kind': k, 'src': 'world', 'name': s['name'], 'zh': NZ.get(s['id']), 'built': s['built'], 'wet': max(s['built'], u['wet']), 'fed_by': a['id'],
              'xy': [round(p[0], 1), round(p[1], 1)], 'end': end(s)}
         nodes.append(n); by[n['id']] = n
     SRC = [n for n in nodes if n['kind'] in ('cistern', 'nymphaeum')]
@@ -49,7 +50,7 @@ def main():
             near = [n for n in SRC if d(n) <= REACH and n['wet'] <= h[2]]
             u = min(near or SRC, key=d)
             nodes.append({'id': f'{q}:h{h[0]}', 'kind': 'fountain', 'src': 'houses_street', 'q': q, 'h': h[0], 'built': h[2],
-                          'wet': max(h[2], u['wet']), 'fed_by': u['id'], 'xy': [round(p[0], 1), round(p[1], 1)], 'end': h[3] if h[3] < 9000 else None})
+                          'wet': max(h[2], u['wet']), 'fed_by': u['id'], 'xy': [round(p[0], 1), round(p[1], 1)], 'px': [round(M['quarters'][q][0] + cx), round(M['quarters'][q][1] + cy)], 'end': h[3] if h[3] < 9000 else None})
     json.dump({'src': 'tools/cs/factory/net_water.py（设计：谭线 notes/epic-system.md；年份：world.json、houses_street.json）', 'reach': REACH, 'nodes': nodes},
               open(os.path.join(OUT, 'net_water.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
     for n in nodes: print(n['kind'], n['id'], n['built'], '→出水', n['wet'], '←', n['fed_by'])
