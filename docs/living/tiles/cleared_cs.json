@@ -16,6 +16,55 @@
 "q": "nangang"
 },
 {
+"id": "h2719",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "siqiu"
+},
+{
+"id": "h2816",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "siqiu"
+},
+{
+"id": "h4603",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "siqiu"
+},
+{
+"id": "h18493",
+"for": "macellum",
+"lm": "h5117",
+"year": 65,
+"q": "siqiu"
+},
+{
+"id": "h2815",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "xipo"
+},
+{
+"id": "h2987",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "xipo"
+},
+{
+"id": "h3312",
+"for": "macellum",
+"lm": "h5117",
+"year": 12,
+"q": "xipo"
+},
+{
 "id": "h14652",
 "for": "kiln",
 "lm": "h15701",
@@ -23,7 +72,21 @@
 "q": "jinjiao"
 },
 {
+"id": "h14513",
+"for": "kiln",
+"lm": "h15701",
+"year": 45,
+"q": "jinjiao"
+},
+{
 "id": "h11390",
+"for": "kiln",
+"lm": "h10138",
+"year": 36,
+"q": "jinjiao"
+},
+{
+"id": "h10748",
 "for": "kiln",
 "lm": "h10138",
 "year": 36,
@@ -44,11 +107,39 @@
 "q": "siqiu"
 },
 {
+"id": "h4271",
+"for": "macellum",
+"lm": "h5420",
+"year": 17,
+"q": "xipo"
+},
+{
+"id": "h4845",
+"for": "macellum",
+"lm": "h5420",
+"year": 17,
+"q": "xipo"
+},
+{
 "id": "h11011",
 "for": "kiln",
 "lm": "h11525",
 "year": 37,
 "q": "siqiu"
+},
+{
+"id": "h9467",
+"for": "kiln",
+"lm": "h11525",
+"year": 37,
+"q": "xipo"
+},
+{
+"id": "h11226",
+"for": "kiln",
+"lm": "h11525",
+"year": 37,
+"q": "xipo"
 },
 {
 "id": "h13158",
@@ -63,17 +154,24 @@
 "lm": "h13004",
 "year": 44,
 "q": "xipo"
+},
+{
+"id": "h12551",
+"for": "kiln",
+"lm": "h13004",
+"year": 44,
+"q": "xipo"
 }
 ],
 "placed": [
-"nangang macellum h5117 建于 12 面积 446 market 世界(535,439) 并入 2",
-"jinjiao kiln h15701 建于 45 面积 416 homes 世界(473,276) 并入 1",
-"jinjiao kiln h10138 建于 36 面积 377 homes 世界(468,320) 并入 1",
-"jinjiao cemetery h16428 建于 43 面积 211 homes 世界(456,247) 并入 0",
-"gucheng macellum h4670 建于 13 面积 316 shops 世界(600,373) 并入 1",
-"siqiu macellum h5420 建于 17 面积 332 shops 世界(469,370) 并入 1",
-"siqiu kiln h11525 建于 37 面积 334 homes 世界(453,384) 并入 1",
-"xipo macellum h11735 建于 44 面积 319 shops 世界(429,464) 并入 1",
-"xipo kiln h13004 建于 44 面积 339 homes 世界(432,441) 并入 1"
+"nangang macellum h5117 建于 12 面积 754 ×1.3 market 世界(535,439) 并入 9",
+"jinjiao kiln h15701 建于 45 面积 937 ×1.5 homes 世界(473,276) 并入 2",
+"jinjiao kiln h10138 建于 36 面积 849 ×1.5 homes 世界(468,320) 并入 2",
+"jinjiao cemetery h16428 建于 43 面积 476 ×1.5 homes 世界(456,247) 并入 0",
+"gucheng macellum h4670 建于 13 面积 535 ×1.3 shops 世界(600,373) 并入 1",
+"siqiu macellum h5420 建于 17 面积 562 ×1.3 shops 世界(469,370) 并入 3",
+"siqiu kiln h11525 建于 37 面积 751 ×1.5 homes 世界(453,384) 并入 3",
+"xipo macellum h11735 建于 44 面积 539 ×1.3 shops 世界(429,464) 并入 1",
+"xipo kiln h13004 建于 44 面积 763 ×1.5 homes 世界(432,441) 并入 2"
 ]
 }

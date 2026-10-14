@@ -19,6 +19,10 @@ LIV = os.path.join(ROOT, 'docs', 'living'); OUT = os.path.join(LIV, 'tiles')
 KINDS = ['macellum', 'kiln', 'cemetery']   # 本轮只收这三种（主人定的顺序第 1 项）
 # 全城版补充：谭线的砖窑卡写着「城墙边」，在干山里自然成立（整块地挨着墙）；放到全城要明说——离创城者城墙 ≤ near_wall 世界单位
 CITY_ADAPT = {'kiln': {'near_wall': 22}}
+# 放大一档（主人 10-14「先放大一档看看」）：只在 CS 侧覆盖谭线卡的并地参数，卡本身不改
+# 谭线的并地要求邻居共用顶点；CS 的地块之间有缝，所以并不进来。改用「放大脚印」：选中后把地块按中心放大（线长 ×GROW，
+# 试不过就退一档），仍须严格不压路；脚印里的房子（任何街区）在开工年拆掉，晚于开工年才建的就不再建——都记 cleared。
+GROW = {'macellum': [1.9, 1.7, 1.5, 1.3], 'kiln': [1.7, 1.5, 1.3], 'cemetery': [2.4, 2.1, 1.8, 1.5]}
 M = json.load(open(os.path.join(OUT, 'meta.json'))); TP = M['tile_px']; S = M['scale']; X0, Y0 = M['origin']; NX, NY = M['grid']
 QS = M['owner_order']
 FR = {q: json.load(open(os.path.join(LIV, q, 'frame.json')))['frame'] for q in QS}
@@ -72,6 +76,7 @@ def ok_strict(h, ST):
     return True
 # ── 谭线 landmarks.py 的选址（逐行对照，见文件头）
 def area(h): p = h[4]; return abs(sum(p[2 * i] * p[(2 * i + 3) % 8] - p[(2 * i + 2) % 8] * p[2 * i + 1] for i in range(4))) / 2
+def area_of(p): return abs(sum(p[2 * i] * p[(2 * i + 3) % 8] - p[(2 * i + 2) % 8] * p[2 * i + 1] for i in range(4))) / 2
 def ctr(h): p = h[4]; return ((p[0] + p[2] + p[4] + p[6]) / 4, (p[1] + p[3] + p[5] + p[7]) / 4)
 def front_mid(h):
     p = h[4]; f = h[10] if len(h) > 10 else 2; a = (p[2 * f], p[2 * f + 1]); b = (p[(2 * f + 2) % 8], p[(2 * f + 3) % 8]); return ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
@@ -101,6 +106,26 @@ def merge_options(h, GRID, PROTECT):
                     R = list(P); R[k] = fa; R[(k + 1) % 4] = fb
                     out.append((n, [v for qq in R for v in qq]))
     return out
+from shapely.geometry import Polygon
+def wpoly(q, p): return Polygon([to_world(q, p[i], p[i + 1]) for i in range(0, 8, 2)])
+PROT_ALL = {}
+def hits_protected(q, h, D, P):
+    L = wpoly(q, h[4]).buffer(0)
+    for q2 in QS:
+        for n in D[q2]['houses']:
+            if n is h or n[0] not in P.get(q2, ()): continue
+            if L.intersects(wpoly(q2, n[4])): return True
+    return False
+def clear_under(q, h, D, sid):
+    """脚印下的房子：开工年 b 时还在的 → 拆于 b；b 之后才建、地标在时会建的 → 不建（拆毁年=建成年）。"""
+    L = wpoly(q, h[4]).buffer(0); b = h[2]; e = h[3]; out = []
+    for q2 in QS:
+        for n in D[q2]['houses']:
+            if n is h or len(n) > 13 or str(n[9]).startswith('lm:') or n[3] <= b or n[2] >= e: continue
+            P = wpoly(q2, n[4])
+            if not L.intersects(P) or L.intersection(P).area < 0.3 * P.area: continue
+            n += ['merged', n[3], sid, q2]; n[3] = max(n[2], b); out.append(n)
+    return out
 def reset(HS):
     for h in HS:
         if len(h) > 13 and h[13] == 'merged' and len(h) > 15 and h[15] in KINDS: h[3] = h[14]; del h[13:]
@@ -115,6 +140,9 @@ def main():
     for q in QS:   # 其它种类已有的地标（谭线 v30 的教堂、面包台阶……若以后进来）也算间距
         for h in D[q]['houses']:
             if isinstance(h[9], str) and h[9].startswith('lm:'): c = ctr(h); placed_w.append((h[9][3:],) + to_world(q, *c))
+    for q in QS:
+        sp_ = os.path.join(LIV, q, 'stories.json')
+        PROT_ALL[q] = {int(k) for k in json.load(open(sp_)) if str(k).isdigit()} if os.path.exists(sp_) else set()
     cleared = []; log = []
     for q in QS:
         HS = D[q]['houses']; ST = json.load(open(os.path.join(LIV, q, 'streets.json')))
@@ -169,9 +197,15 @@ def main():
                                         nb2 += ['merged', nb2[3], sid]; nb2[3] = max(nb2[2], h[2]); mg.append(nb2); break
                                     h[4] = keep
                                 else: break
+                        base = h[4]; cx0, cy0 = ctr(h)
+                        for g in GROW.get(sid, []):
+                            h[4] = [cx0 + (base[i] - cx0) * g if i % 2 == 0 else cy0 + (base[i] - cy0) * g for i in range(8)]
+                            if ok_strict(h, ST) and not hits_protected(q, h, D, PROT_ALL): break
+                        else: h[4] = base
+                        mg += clear_under(q, h, D, sid)
                         got += 1; placed_w.append((sid,) + wc)
-                        for n in mg: cleared.append({'id': 'h%d' % n[0], 'for': sid, 'lm': 'h%d' % h[0], 'year': n[3], 'q': q})
-                        log.append(f"{q} {sid} h{h[0]} 建于 {h[2]} 面积 {int(area(h))} {h[8]} 世界({wc[0]:.0f},{wc[1]:.0f}) 并入 {len(mg)}")
+                        for n in mg: cleared.append({'id': 'h%d' % n[0], 'for': sid, 'lm': 'h%d' % h[0], 'year': n[3], 'q': n[-1] if isinstance(n[-1], str) and n[-1] in QS else q})
+                        log.append(f"{q} {sid} h{h[0]} 建于 {h[2]} 面积 {int(area(h))} ×{(area(h) / area_of(base)) ** .5:.1f} {h[8]} 世界({wc[0]:.0f},{wc[1]:.0f}) 并入 {len(mg)}")
                         break
                     h[9], h[7] = old9, old7; del h[13:]
                 else:
