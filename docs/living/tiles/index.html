@@ -129,6 +129,19 @@ function waterLine(HT){try{const sel=HT.m&&HT.m.sel;if(!sel||sel.kind!=='house')
   for(const n of N){if(n.kind!=='fountain'||!n.px||n.built>Y||(n.end!=null&&n.end<=Y))continue;const d=Math.hypot(n.px[0]-x,n.px[1]-y);if(d<bd){bd=d;best=n}}
   if(!best)return'';const src=by[best.fed_by],zh=src&&src.zh;if(!zh)return'';
   return '<div class="obj"><b>水</b>'+(best.wet<=Y?'这家到街角的泉打水，水从'+zh+'来。':'街角的泉池修好了，水还没来——'+zh+'没出水，这家得去别处担水。')+'</div>'}catch(e){return''}}
+/* /goal 4 项 7（G6）：敲门卡多一行户籍「门牌 · 区 · 坊 · 教区」——刘线 city_system v6 的户籍旁车（来源见 reg/SOURCE.md），**点开卡才取**：
+   按这户所在的瓦片只取一个文件 reg/{40|50|60}/{tx}_{ty}.json（离卡年份最近的一档先取，那一年这户不在世再取次近的），在里面按底账 id 找；
+   找不到（新立地标、旁车没对上、没有这个文件）就不加这一行。同一块同一年只取一次。坊、职务是刘线的模型假设，卡上只写「第 N 坊」，任职户另加一个「坊长/区长…」 */
+var REGC=new Map(),REGY=[40,50,60],REGD={d_byzas:'老拜占斯区',d_forum:'广场区',d_harbor:'港区',d_xerolophos:'干山区'},
+  REGP={church_apostles:'圣使徒教堂',church_anastasia:'圣安娜斯塔西娅教堂',church_peace:'圣和平教堂',church_megale:'大教堂',church_mocius:'圣莫基乌斯教堂',arian_meeting:'阿里乌会堂'};
+function regLoad(Y,tx,ty){const k=Y+'/'+tx+'_'+ty;let p=REGC.get(k);if(!p){p=fetch('reg/'+k+'.json').then(r=>r.ok?r.json():null).then(j=>{const m=new Map();if(j)for(const r of j.h)if(r&&r.length>1)m.set(r[0],r);return m}).catch(()=>new Map());REGC.set(k,p)}return p}
+function regText(id,r){const par=Array.isArray(r[3])?r[3]:[r[3]],fn=/#f(\d+)/.exec(r[2]||''),off=Array.isArray(r[7])?r[7][0]:'';
+  return '门牌 '+String(id).replace(/^h/,'')+' 号 · '+(REGD[r[1]]||'')+(fn?'第 '+(+fn[1]+1)+' 坊':'')+' · '+(REGP[par[0]]||'')+'教区'+(par[1]&&REGP[par[1]]?'（'+REGP[par[1]]+'）':'')+(off?' · 户主任'+off:'')}
+async function regFill(HT){try{const sel=HT.m&&HT.m.sel;if(!sel||sel.kind!=='house')return;const h=sel.hh.h,id=h.id;if(typeof id!=='number'||id>=900001)return;
+  const Y=HT.yo!=null?HT.yo:YEAR,tx=Math.floor((h.cx+HT.ox)/M.tile_px),ty=Math.floor((h.cy+HT.oy)/M.tile_px),lid='h'+id;
+  for(const ry of REGY.slice().sort((a,b)=>Math.abs(a-Y)-Math.abs(b-Y))){const r=(await regLoad(ry,tx,ty)).get(lid);
+    if(CARDQ!==HT.q||!HT.m.sel||HT.m.sel.kind!=='house'||HT.m.sel.hh.h.id!==id)return;   /* 卡已关或换了房子：旧请求不乱插 */
+    if(r){if(!/obj reg/.test(cardBody.innerHTML))cardBody.insertAdjacentHTML('beforeend','<div class="obj reg" title="户籍旁车：刘线 city_system v6（坊、职务为模型假设）"><b>户籍</b>'+regText(lid,r).replace(/"/g,'')+'</div>');return}}}catch(e){}}
 function heartTap(wx,wy){if(streetAlpha()<.5)return false;
   if(tiltOf(cam.z)>0.02){const u=uprightAt(wx,wy);if(u){wx=u[0];wy=u[1]}}/* 倾斜里房子立起来了：点在屋顶上，就当点了那栋房子的脚印中心 */
   for(const q of HEARTS){const HT=HEART[q];if(!HT||!HT.ready)continue;const [x,y,w,h]=heartBox(q);if(!(wx>x&&wx<x+w&&wy>y&&wy<y+h))continue;
@@ -156,7 +169,7 @@ function heartEnsure(q){let HT=HEART[q];if(HT)return HT;HT=HEART[q]={ready:false
     fetch(B+'stories.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.STORIES,j)});
     fetch(B+'voices.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{Object.assign(HT.VOICES,j);if(CARDQ===q)cardRun(HT,()=>HT.m.renderCard())});
     const tb=performance.now();HT.m=window.__HEART[q]({city,HD,SCENE,PPL,pplImg,cam,ctx:()=>ctx,$:HENV_$,STORIES:HT.STORIES,VOICES:HT.VOICES,
-      showCard:html=>{cardBody.innerHTML=html+waterLine(HT);cardEl.style.display='block'},
+      showCard:html=>{cardBody.innerHTML=html+waterLine(HT);cardEl.style.display='block';regFill(HT)},
       flyTo:(x,y,z)=>flyTo(x+ox,y+oy,z),
       setYear:y=>{CARDLOCK=true;try{setYear(keyYearFor(y))}finally{CARDLOCK=false}HT.yo=y;cardRun(HT,()=>HT.m.renderCard())}});
     HT.buildMs=performance.now()-tb;HT.incDone=false;
