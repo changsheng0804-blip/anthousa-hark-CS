@@ -127,7 +127,8 @@ function heartTap(wx,wy){if(streetAlpha()<.5)return false;
 function heartBox(q){return M.quarters[q]}
 let heartLast=0;
 /* 载入排队：一次只载一块（离镜头中心最近的先），载完隔 120 ms 再载下一块——四块交界处同时载四块会在一帧里挤 40 ms 的活 */
-function heartPump(){if(HEARTS.some(q=>HEART[q]&&HEART[q].loading))return;const now=performance.now();if(now-heartLast<120)return;let best=null,bd=1e18;
+/* HEART_Z=STREET_Z*0.35： 活人层只在推近到街区级以后才载：全城一屏时九块都在视野里，不能开局就把九块全载一遍（低配机开局慢的根源） */
+function heartPump(){if(cam.z<STREET_Z*0.35)return;if(HEARTS.some(q=>HEART[q]&&HEART[q].loading))return;const now=performance.now();if(now-heartLast<120)return;let best=null,bd=1e18;
   for(const q of HEARTS){if(HEART[q]||!heartNear(q))continue;const [x,y,w,h]=heartBox(q),d=Math.hypot(cam.x-(x+w/2),cam.y-(y+h/2));if(d<bd){bd=d;best=q}}
   if(best)heartEnsure(best)}
 function heartEarlier(HT,x,y){{const [bx,by,bw,bh]=heartBox(HT.q);if(!(x>bx&&x<bx+bw&&y>by&&y<by+bh))return true}for(const e of HEARTS){if(e===HT.q)return false;const [bx,by,bw,bh]=heartBox(e);if(x>bx&&x<bx+bw&&y>by&&y<by+bh)return true}return false}   /* 炊烟只由「房子落在自己框里、且不在先到的块框里」的那块画一次（框重叠带归先到的；房子中心在框外的归别的块） */
@@ -352,7 +353,7 @@ function vwPath(x0,y0,z0,x1,y1,z1){const w0=W/z0,w1=W/z1,dx=x1-x0,dy=y1-y0,d=Mat
 function zLow(){return Math.min(W/WW,H/WH)*0.95*0.75}
 function setYear(Y){try{if(CARDQ&&!CARDLOCK){const HT=HEART[CARDQ];HT.yo=null;if(HT.m)cardRun(HT,()=>HT.m.renderCard())}}catch(e){}if(Y===YEAR)return;prevYear=YEAR;YEAR=Y;fade=1;dirty=true;[...ui.children].forEach(x=>{if(x.dataset.y)x.classList.toggle('on',+x.dataset.y===Y)})}
 function cancelFly(){if(FLY){const F=FLY;FLY=null;F.res({cancelled:true,dur:F.dur,hold:0})}}
-function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z));
+function flyTo(x,y,z,o){o=o||{};ZT=null;cancelFly();z=Math.max(0.03,Math.min(6,z));if(z>=STREET_Z*0.35)for(const q of HEARTS){const [bx,by,bw,bh]=heartBox(q);if(x>bx&&x<bx+bw&&y>by&&y<by+bh){heartEnsure(q);break}}   /* 飞向街巷：起飞就预载落点那块，落地时人已经在 */
   return new Promise(res=>{if(o.year)setYear(o.year);
     const p=vwPath(cam.x,cam.y,cam.z,x,y,z);if(p.S<0.02){cam.x=x;cam.y=y;cam.z=z;dirty=true;res({dur:0,hold:0});return}
     const dur=o.dur||Math.max(1.5,Math.min(3.2,0.7+0.5*p.S));FLY={p,dur,x1:x,y1:y,z1:z,t0:null,res,tEnd:null};prefetchCam(x,y,z,true)})}
