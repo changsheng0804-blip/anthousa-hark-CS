@@ -1,44 +1,36 @@
-# CS 线 · /goal 3：同一座安托萨（时间轴接编年史 + 吃上游地标规格）
+# CS 线 · /goal 4：三线合流（瓦片主线吃谭线、刘线成果，守页面负担）
 
-所有者 2026-10-13 20:54 PT 说「可以」开跑。方向是他定的：瓦片是「镜头」，上游安托萨是「内容」。瓦片页要变成同一座城的入口，不能是另立的第二座城。上一个 goal（全城推到门口，13 轮全部达标，所有者说「效果已经很不错了」）归档在 GOAL_v2.md，再上一个在 GOAL_v1.md。心跳 199cc52e 是兜底：/goal 跑的时候暂停，停了以后恢复。
+所有者 2026-10-14 09:36 PT：「你先按 /goal 命令模式持续推进修改完善，然后用心跳机制来唤醒兜底（每小时检查修改一次，然后上线），我需要去睡觉了」。
+方向（所有者 10-14 定）：瓦片页是主线；谭线（tanxinhao2026-netizen/anthousa，交接 origin/handoff-cs 19b633d docs/handoff-cs/HANDOFF.md）和刘线（liu/main 6f7048e inbox/TO_CS.md）的有效成果并进来；**页面负担是硬约束**。上一个 goal 归档在 GOAL_v3.md。
 
-页面：docs/living/tiles/index.html。
+页面：docs/living/tiles/index.html。重活（tile_bake 全量重烤约 20 分钟）放所有者的 Mac：/workspace/tools/ssh/up.sh 起隧道，mac.py changsheng "<命令>"；Mac 上 ~/cs-merge 是 worktree（git fetch origin main && git checkout --detach FETCH_HEAD），Mac 推不了 GitHub，烤完照 /workspace/work/bake_pull.sh 打包拉回沙箱再提交。
 
 ## 目标（全部达标才算完）
-- H1 并上游：合并 origin/main 上新的 8 个提交（v24–v30 房子系统 P1–P3、地标规格卡、3D 管线 c72b1f3）。底账以上游为准；CS 线的块和页面都保留；冲突一处一处解，每处写一行理由，记进 CS_LINE.md。并完以后，九块 accept.py 全过（底账落后上游那一条也转绿），check_tiles.js errors 0，xerolophos 页（干山）照样能打开、链路通。
-- H2 地标只有一个来源：瓦片的地标位置、轮廓、建成年和阶段，一律从上游 tools/landmark_registry.py 和 tools/landmarks/*.json 读，CS 线这边不再自己维护一份清单。AI 只负责画风格精灵。写 check_landmark_src：上游规格里每一座地标在瓦片里都有，位置差 ≤ 8 像素，各年份的阶段对得上；CS 线自己多出来的地标，要么能在上游找到对应，要么列进「待上游收录」交所有者定，不能悄悄留着。上游 v26 的房子一生（立架、换瓦、长苔、塌顶）和 v25 的柱廊、菜园，在街巷级矢量房子里能看出来。
-- H3 时间轴接编年史：年份轴覆盖 chronicle/ 的全部时段（-657 到 70），级 0–1 每 10 年烤一套，街巷级至少有关键年。编年史里每条有地点的事件都在图上有落点，点一下 flyTo 飞过去，同时切到那一年；拖年份轴时，事件按年淡入淡出。写 check_chronicle：能定位的事件 100% 有落点、能飞到；没法定位的列出来。文案用编年史原文摘一句，不编故事。
-- H4 不退步：perf_tiles.py 全部场景不比 perf.json 现在的数差（飞行 ≥50 FPS、最差帧 ≤50ms 的线守住）；首屏请求量 ≤ b5fec41 时的 1.2 倍；瓦片总体积另外记账，超过 80MB 要先停下来问所有者。
-- 恒定约束：底账（world.json、proposals/、rules/、chronicle/、engine/）只从上游并，不手改；不新开地块，不改故事；街区页保留。
+- G1 水网（谭线 notes/epic-system.md）：水渠→蓄水池→宁芙泉→街角喷泉，按 world.json 的建成年连成网（tools/cs/factory/net_water.py → tiles/net_water.json，每个节点 fed_by 上游节点）。脉在地下，不画网线（铁律：脉不露面）；只露效果：喷泉在供水的蓄水池建成以前是干的、以后有水；敲门卡上可多一句「这家从哪口泉打水」（只一句）。检查 check_nets.py：每个喷泉/宁芙泉都有 fed_by、上游都早于它建成、年份全读 world.json 不自编。
+- G2 粮网：港口→粮仓→面包台阶（谭线 bread_steps 卡，经 landmarks_city.py 放；fed_by 最近的已建粮仓）。效果：台阶只在有粮仓供时清晨排队（沿用南港 cs5 的「效果才露面」规矩）。check_nets.py 同样查。
+- G3 史诗地块：world.json 里的史诗建筑（广场、宁芙泉、大粮仓、浴场、教堂等）先占地——它们存续期内脚印下没有房子、没有街（派生表里清场，写 cleared_cs.json，叠层「旧街坊」能显示）。check：全城 0 栋房、0 段街压在当年已建的史诗脚印里。
+- G4 分期绘制：谭线 render_xero.py 的 epic_ground / epic_tall / mese_portico 搬进瓦片画法，狄奥多西广场（57）、大宁芙泉（44）、梅塞柱廊按年分期出现（立架→落成）。check：这三处在建成前后各一年的瓦片画面不同、建成前没有成品。
+- G5 道路规则：谭线终扫 + prune_islands（孤岛小路删掉）+ 全城房屋严格不压当年道路；audit 目标 0。
+- G6 刘线旁车：敲门卡点开时才按瓦片懒取刘线 reg 旁车（门牌·坊·教区一行），不预载；没有旁车的房子不显示这一行。资产只取刘线 liu/main 已有的、注明来源。
+- G7 负担（硬线，每轮都量）：首屏 ≤1 秒、≤1 MB；街巷级最密处 ≤12 MB、堆 ≤150 MB、≥55 FPS（perf_tiles.py；沙箱 SwiftShader 是悲观值）；不加栅格年份档；瓦片总体积 ≤80 MB。任何一条要破线：停下这一项，标「卡住·超负担」，留给所有者定。
+- 恒定约束：world.json、proposals/、rules/、chronicle/、engine/ 只从上游并、不手改；不新开地块、不改故事；九块街区页保留；未提交的 docs/living/gucheng/ACCEPT.md、docs/living/nangang/ACCEPT.md、nightlog.md 不 reset 不 stash（提交时别带上）。社会关系网、财政层、3D 不上页面。
 
 ## 预算
-- 最多 20 轮，或者到 2026-10-14 21:00 PT 为止，先到哪个算哪个。
-- 同一项连着两轮修不好：回滚，标「卡住」，换下一项。
+- 到 2026-10-15 08:00 PT 为止，或 16 轮，先到哪个算哪个。
+- 同一项连着两轮修不好：回滚（git revert 自己那轮的提交），标「卡住」，换下一项。
 
 ## 清单（每轮开工先重排，做最上面那条没卡住的）
 | # | 项 | 对应 | 状态 |
 |---|---|---|---|
-| 1 | 并上游：git merge origin/main，冲突逐一处理（xerolophos/scene.json 保留 next 链路；index.html 两边的块都留）；九块 accept、check_tiles 全过 | H1 | 完成（第 1 轮） |
-| 1b | check_lives.js 在干山页上抛 `null.hid`（并之前的 HEAD 就抛，不是合并引起）：查清再修 | H1 | 完成（第 2 轮：检查挑的例子是嫁到别的街区的女儿，没有丈夫家；页面没坏） |
-| 2 | 写 check_landmark_src，先在现状上跑出「不过」（列出 CS 线和上游对不上的地标） | H2 | 完成（第 2 轮：tools/cs/check_landmark_src.py，修前 7 条不过） |
-| 3 | 地标的名字、位置、建成年、到期年改成读上游 registry（lm_src.py → scene_auto / places）；CS 线多出来的列「待上游收录」（lm_pending.json） | H2 | 部分完成（第 2 轮：7 座规格固定地标 5 座全对、2 座画布外已登记；轮廓和阶段留给 3b） |
-| 3b | 规格的轮廓（poly）和阶段表进瓦片：上游 stages（立架→换瓦→长苔→塌顶）、固定地标的 overlay；check_landmark_src 加轮廓 IoU 和阶段年份检查 | H2 | 完成（第 6 轮：check_landmark_src 加轮廓 IoU 和按年阶段，现状就全过，没有要改的画面） |
-| 4 | 矢量房子吃上游 house_types（P1 户型、P2 柱廊菜园、P3 一生阶段）：查明瓦片烤的是 CS 线 cs29 时分叉的老 tools/cs/factory/house_types.py（v24/v25，320 行，上游现 433 行，geom 不带年份区间）。做法：CS 的改成薄壳，import 上游 tools/house_types，只补 dock/horrea 两种街区；tile_bake 把每个零件的年份区间写进 vec；页面 worker 按年挑零件。先写 check_house_src（分叉不许有，vec 零件带年份区间，同一栋房子 立架/建成/换瓦/塌顶 各年画面不同）| H2 | 完成（第 7 轮：薄壳 + vec 零件带年份区间 + 页面按年挑零件；check_house_src 5 条全过） |
-| 5 | 写 check_chronicle：把编年史事件解析成「年份、地点、一句话」，定位到世界坐标（地名词典、地标、街区） | H3 | 完成（第 3 轮：chron_events.py + check_chronicle.py，58 件有落点，4 条没地点） |
-| 6 | 年份轴扩到 -657 到 70，级 0–1 每 10 年一套；体积先算清楚再烤。做法：按内容哈希去重（相同的瓦片只存一份，每年一张清单指到哈希文件；40/50 年 0 级就有 63/146 块逐字节相同），先量 -657–0 的体积，再定烤哪些年 | H3 | 完成（第 4 轮：-657、-400、-200、0、10…70 共 11 个年份，49 MB） |
-| 7 | 事件落点：events.json 接进页面（places.json 的 events 换成它），跟着年份淡入淡出，点一下飞过去并切年；年份轴是一根能拖的 range；check_chronicle 加页面那头（check_chron_page.js） | H3 | 完成（第 5 轮：58 件事件接进页面，10 项页面检查全过） |
-| 8 | perf 复测和优化，体积记账 | H4 | 待做 |
-| 9 | 收口：九块 --live、perf、截图，写总结 | 全部 | 待做 |
+| 0 | 合流①：谭线 v31 三卡（肉鱼市、砖窑、城外墓地）进全城 + vec 带底账 id + 回刘线 TO_LIU.md | — | 完成（会话里，ebb2bdc） |
+| 1 | 写 check_nets.py（先跑出不过）+ net_water.py：从 world.json 抽水渠/蓄水池/宁芙泉/喷泉，连 fed_by | G1 | 待做 |
+| 2 | 喷泉干/湿效果进瓦片页（街巷级），敲门卡一句水源 | G1 | 待做 |
+| 3 | 面包台阶卡经 landmarks_city 全城放 + 粮网 fed_by + 台阶清晨排队只在有粮时 | G2 | 待做 |
+| 4 | 史诗地块清场（派生表）+ check | G3 | 待做 |
+| 5 | epic_ground / epic_tall / mese_portico 分期画法进 render_ng/tile_bake，重烤 | G4 | 待做 |
+| 6 | 道路终扫 + prune_islands + 全城 audit 0 | G5 | 待做 |
+| 7 | 刘线 reg 旁车懒加载进敲门卡 | G6 | 待做 |
+| 8 | 收口：perf 全量、九块 accept --live、截图，写总结发给所有者（早上 08:00 前） | 全部 | 待做 |
 
 ## 轮次（每轮一行：时间、项、结果、重排）
-- 2026-10-13 20:56 PT 立项（会话里），清单 9 项。
-- 2026-10-13 21:10 PT 第 1 轮 · 项 1 · 完成：先用现成不过的检查——九块 accept.py 都红着「上游底账落后」。git merge origin/main（8 个提交 aafed1c…c72b1f3，v24–v30 房子 P1–P3、地标规格卡 tools/landmarks/*.json + landmark_registry.py、3D 管线）；world.json 上游没动。冲突只有 1 处：xerolophos/scene.json——上游改成多行并加了 hgeom，取上游整份、补回 next→南港（理由：底账以上游为准，链路是 CS 线的）；xerolophos/index.html 自动合并（上游加 geomHG/阶段年份，CS 线块和 id="next" 按钮都在）。九块 accept 全过且「底账落后」转绿（nangang 72、jinjiao 48、gucheng 120、siqiu 67、dongjia 41、xipo 68、qiangwai 51、jiaowan 41、nanan 54 项，0 红；注意九块并行跑会同时重写 world.json 读到半截 JSON，要串着跑）；check_tiles errors 0；干山页 check_talk、check_card 过（1123 张卡 0 坏）。查出 check_lives 抛 null.hid，开工前的 HEAD 就抛，不是合并引起。重排：加 1b（check_lives），放在 2 前面——H1 要干山页照样能打开，先确认它只是检查过时还是页面真坏。 线上复验（768f83e 部署后）：九块 accept --live 全过 0 红（nangang 88、jinjiao 64、gucheng 136、siqiu 83、dongjia 57、xipo 84、qiangwai 67、jiaowan 57、nanan 70）。
-- 2026-10-13 21:40 PT 第 2 轮 · 项 1b + 2 + 3（前半）· 完成：① check_lives 的 null.hid 是检查自己挑错例子（挑中嫁到别的街区的女儿，csSpouse 为空），改成挑嫁到本街区的、找不到就明说；页面没坏，输出 3 条一生都在。② 新写 tools/cs/check_landmark_src.py：规格固定地标换算到瓦片像素（干山页框 = 世界格 (400,356)，瓦片原点 (416,192)，同一个 14.21875 像素/格），查有没有、位置差 ≤ 8、建成年、到期年、名字；瓦片多出来的分「只有底账」25 座和「CS 线自己的」fire_ruins；修前 7 条不过（水渠桥位置差 113 像素且名字写成「大水道桥」，运水人蓄水池差 13，三座没带建成年）。③ 新 lm_src.py 一处读上游规格；scene_auto（街区 city.json 的名字、故事、此刻、位置、到期年）和 places.py（地标位置、名字、built/until）改读它；names_zh.json 里 7 条规格已有的名字删掉，只剩底账有、规格没有的。规格没写建成年的（兵营）用底账的。修后规格固定地标 5 座全对，奠基者城门和阿里乌聚会所落在画布外 44、150 像素（画布 x 从世界格 416 起，正好盖住全部房子），登记进 lm_pending.json 等所有者定；fire_ruins（底账里没有这座建筑）也登记待收录。④ 瓦片页标记按 built/until 亮（亚历山大粮仓 55 年才亮）。⑤ accept：规格故事不写年份不算错（写了得对）。check_tiles errors 0；siqiu、xipo accept 本地 0 红。重排：3 拆成 3（名字/位置/年份，已做）和 3b（轮廓、阶段）；因为上游规格固定地标只有 7 座、全在干山页框里，原来「重烤地标层」不需要——地标图是按底账地基贴的，规格 poly 和底账地基是同一个多边形（莫德斯图斯蓄水池规格 poly 对得上）。 线上复验（9b48f8b 部署后）：siqiu、xipo accept --live 0 红。
-- 2026-10-13 22:00 PT 第 3 轮 · 项 5 · 完成：先写 tools/cs/check_chronicle.py，events.json 不存在时红；再写 tools/cs/factory/chron_events.py，从上游编年史（chronicle/*.md）和底账（world.json 的 eras[].accepted、eras[].events、structures 几何）生成 docs/living/tiles/events.json：编年史里写了、且是这个时代新建的结构 + 底账里的火灾，共 58 件有落点（-657 到 65 年；文案是编年史原文一句，占位符换成上游 docs/data.json 的中文名）。8 个时代每个都有（-657–0 有 6、1–10 有 12、11–20 有 11、21–30 有 5、31–40 有 8、41–50 有 6、51–60 有 4、61–70 有 6）。13 件在画布外（水渠、城外田野、莫基乌斯小路、阿里乌聚会所等，偏出 68–1603 px），落点收到画布西缘，登记进 lm_pending.json 等所有者定要不要往西扩；4 条带年份没地点的（大教堂祝圣、第三十年人口、51 年下诏、52 年大公会议）列在 unlocated。check_chronicle 7 条全过。重排：6 加上「内容哈希去重」做法，7 写明要把 events.json 接进页面并给 check_chronicle 补页面那头。
-- 2026-10-13 22:16 PT 让开：工作树有未提交改动（tile_bake.py 等，且 tile_bake.py 进程 04:59 UTC 起仍在后台烤年份轴，是上一发的项 6 还在跑），不是本轮改的，什么都没动、没提交。
-- 2026-10-13 22:40 PT 第 4 轮 · 项 6 · 完成：先在 check_chronicle 加年份轴/每时代有年份/级 0–1 瓦片齐/体积 ≤80MB 四条，修前 2 条不过（年份只有 40/50/60，-657–0、1–10、11–20、21–30、61–70 五个时代没有年份）。做法：新 tile_years.py 一处定年份轴 [-657,-400,-200,0,10,…,70]；ground_ng 给非关键年各出一张「地标只留当年已建成」的地面，存 out/ground_y/（gitignore，不进 docs），render_ng/tile_bake 按年取；tile_bake 默认整套年份一起烤，烤完做内容哈希去重（字节全同的瓦片只留最早一年那份，meta.alias 记指向；页面 tileKey() 按别名取、内存里也只存一份）。去重省 25.7 MB，瓦片总体积 49 MB（80 MB 线内，旧 33 MB）。0 年前南港一带没房子（10 年才起 500 栋），所以 check_tiles 的街巷级「要有房子和人」改成「该年南港有房子才要求」。默认年仍是 60。check_chronicle 11 条全过；check_tiles errors 0 全绿；gucheng/nangang accept 0 红（并了上游 c280852，只动 3D 页和 engine 导出）；perf 八个场景都不比 perf.json 旧数差（首屏 25 个请求不变，+41KB 别名表；飞行 56.4/54.8 FPS，最差帧 34/50 ms）。目测 -657/-200/20/70 四张全城图：城从东北角（卫城）往西南长，70 年满。重排：7 的内容加一条「年份轴上的按钮改成能拖的轴 + 事件按年淡入淡出」，8 的 perf 已提前测过一遍（过），收口再测。 线上复验（0851b00 部署后）：meta.json 11 个年份、别名表在；nangang、siqiu accept --live 0 红（siqiu 83/83）。
-- 2026-10-13 22:46 PT 第 5 轮 · 项 7 · 完成：先写 tools/cs/check_chron_page.js（jsdom 跑瓦片页，由 check_chronicle.py 第 9 段调用），修前 6 条不过（页面只载入 0 件事件，没有 evAlpha、年份轴、事件卡）。做法：places.py 把 events.json 的 58 件带 show_year（烤好的年份里 ≥ 事件年的第一个，48 年火灾 → 看 50 年）写进 places.json；页面事件按年淡入淡出（show_year 亮满，之后每过一年淡一截，20 年灭，发生以前不亮；切年时两年亮度交叉淡入，跟瓦片同一个 fade），亮的圆点随亮度放大、火灾橙色；点一下落点 → flyTo + 切到 show_year + 左下出卡（年、名字、编年史原文，叠在同一处的几件一起列）；顶上多一根能拖的年份轴 #yrs（11 格，切年、点事件都带动它）；下拉菜单「事件（编年史）」58 件按「年 · 名」。同时修了 flyTo 里 `if(o.year)` 遇到 0 年不切年。查出两处：事件和同名地标叠在同一处（church_peace 等）时点中地标不切年——事件优先；同一处叠两件事（fire19/余烬市、广场/柱）按当前亮度先后。check_chronicle 21 条全过（含页面 10 条）；check_tiles errors 0 全绿；目测全城 20 年（事件红点亮着、火灾橙）和飞到大教堂落地帧（本沙箱没 CJK 字体，按钮汉字是空白，不是页面问题）。perf 复测两次：首屏 25 个请求，飞行 56.3–56.5 / 52.5–53.4 FPS，最差帧 50/33–50 ms，线（≥50、≤50）守住，横穿 55.9 FPS 比旧的 55.5 好，请求数 494→491；飞行最差帧在 33/50 之间跳是 50 ms 档的取样噪声。重排：项 3b、4 还没做，H2 的轮廓和阶段是大头，接下来先做 3b；8 的 perf 这轮已测，收口再测一遍。
-- 2026-10-14 00:05 PT 第 6 轮 · 项 3b · 完成：先在 check_landmark_src 加两段，且读的是烤好的级 0 瓦片而不是配置——① 轮廓：规格有 poly 的，底账地基（瓦片像素）和规格 poly 的 IoU ≥ 0.9（两座蓄水池 1.00，阿里乌聚会所在画布外不查）；规格没写 poly 的，规格点离底账地基 ≤ 24 像素；② 阶段：建成年前一个烤好的年份 → 第一个 ≥ 建成年的年份，地基里平均色差 ≥ 6（水渠桥是细带，门槛 3），建成前再早一年也要和建成后不一样（地标不能提前画出来）。现状 5 座在画布内的固定地标全过：水渠桥 11 年 6.2、城门兵营 6.8、君士坦提乌斯浴场 25 年 48.9、运水人蓄水池 54 年 46.5、莫德斯图斯蓄水池 41 年 82.8。检查自己红过两次，都是检查写得不对：长条水渠桥拿中心比规格点差 113 像素（改成点到地基距离）；运水人蓄水池 40→50 年地基里色差 21 是 50 年那块地上还有民房、建池时才拆（改成只要求建成前后不一样，不要求建成前不变）。上游固定地标没有 stages 表（stages 只在要生成的教堂、面包台阶、客栈、粮仓上），所以「阶段」对固定地标就是建成年那一跳，已被检查盖住。重排：4 查出真正的缺口——瓦片烤房子用的是 cs29 分叉的老 house_types.py，不是上游 v24–v30 的，4 改成「换成上游 + 年份区间进 vec + 页面按年挑零件」，下一轮做。
-- 2026-10-14 00:36 PT · 让开（tile_bake 仍在后台写，不算轮数）
-- 2026-10-14 01:20 PT 第 7 轮 · 项 4 · 完成：先写 tools/cs/check_house_src.py（5 条，修前薄壳/vec 区间 2 条不过）。做法：tools/cs/factory/house_types.py 改成 30 行薄壳，加载上游 tools/house_types.py（含 P1 户型、P2 柱廊菜园、P3 立架/换瓦/长苔/塌顶一生），只补 dock/horrea 配色和类型；tile_bake 把每个零件的 [起,止) 年写进 vec（333277/354790 个零件带区间）；页面 paintHouses/贴图按年挑零件，贴图缓存键带阶段；render_ng 按年取零件。全套 11 年重烤（约 14 分钟），体积 64 MB（80 MB 线内）；check_tiles errors 0、check_chronicle/landmark_src 全过、nangang/gucheng accept 0 红。perf 与线上复验留给下一轮（项 8）。重排：无。
-- 2026-10-14 01:40 PT 第 8 轮 · 项 8 · 完成：项 4 之后线上（7b9e7c3）复测。Mac M4 真 GPU 的 Chrome 测线上地址（perf_mac.py，约 1 分钟）：首屏 25 个请求 0.4MB，全城/街巷/横穿/换年/拉回 60 FPS 最差帧 17 ms，飞行两段 59.9/59.8 FPS、最差帧 17 ms，倾斜带平移 60.2 FPS；H4 线（≥50、≤50ms、请求 ≤1.2×）全守住。（perf_mac.py 要本地仓库才能读 vec，现用 DENSE=1_9.json 绕开，且写 perf.json 的路径不对，数字取自标准输出。）nangang、gucheng accept --live 各只红 1 条 check_palette，是沙箱丢了 cv2 的假红，装回后单跑两块都过。重排：H1–H4 全部达标，下一发收口（第 7 步）。
+- 2026-10-14 09:40 PT 立项（会话里），清单 8 项。
