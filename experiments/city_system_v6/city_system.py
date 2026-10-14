@@ -14,6 +14,7 @@
 """
 import bisect
 import gzip
+import heapq
 import json
 import os
 import sys
@@ -30,8 +31,8 @@ POP_PER_HOUSE = 9            # engine/rules：人口 = 房屋 × 9
 FANG_SIZE = 150              # 假设：每 ~150 栋一坊
 WALL_SEG = 50.0              # 假设：城墙每 50 单位一段 = 一个哨/征工点
 ARIAN = {"arian_meeting", "church_arian_brick"}
-FIELDS = ("d", "fang", "water", "parish", "arian", "watch", "grain", "ration")
-NODE_TITLE = {"区": "区长", "坊": "坊长", "水": "水役头", "教": "长老", "阿": "长老(阿里乌)", "哨": "哨长"}
+FIELDS = ("d", "fang", "water", "parish", "arian", "watch", "grain", "ration", "guild")
+NODE_TITLE = {"区": "区长", "坊": "坊长", "水": "水役头", "教": "长老", "阿": "长老(阿里乌)", "哨": "哨长", "行": "行会头"}
 
 
 def food_cap(Y):
@@ -95,6 +96,7 @@ def prepare(world):
     S.structs = world["structures"]
     S.sidx = {s["id"]: k for k, s in enumerate(S.structs)}
     S.kind_pts = {}          # sidx -> [(kind, label, xy), ...]
+    S.wall_poly = {}         # sidx -> 城墙折线（取候选时用作距离下界）
     for k, s in enumerate(S.structs):
         g = s["geom"]
         c = np.asarray(g["coords"], float)
@@ -112,12 +114,51 @@ def prepare(world):
         elif t == "gate":
             pts.append(("watch", sid, cen))
         elif t == "wall":
+            S.wall_poly[k] = c
             for a, b, segno in _wall_segments(c):
                 for q in _sample(a, b):
                     pts.append(("watch", f"{sid}#s{segno:02d}", q))
         S.kind_pts[k] = pts
     S.kinds = ("water", "parish", "church_all", "watch", "grain")
+    S.lab_names = {kd: [] for kd in S.kinds}      # 每类设施的全局标签表（静态），房屋归属存整数下标
+    S.lab_id = {kd: {} for kd in S.kinds}
+    for k in range(len(S.structs)):
+        for kd, label, _ in S.kind_pts[k]:
+            if label not in S.lab_id[kd]:
+                S.lab_id[kd][label] = len(S.lab_names[kd])
+                S.lab_names[kd].append(label)
+    S.is_arian = np.array([lb in ARIAN for lb in S.lab_names["church_all"]], bool)
+    S.htree = cKDTree(S.xy)                      # 全部账本房屋（静态），供结构增量取候选
+    S.guild = [None] * len(H)                    # 行会（第 9 栏街区功能），见 load_guilds
+    load_guilds(S)
     return S
+
+
+UPSTREAM = os.path.join(ROOT, "docs", "living", "xerolophos", "facts_upstream")
+GUILD_FN = ("market", "shops", "workshop")       # 只把「行当」类街区功能算行会；民居/体面人家/菜园/新街坊/汲水/兵营不算
+
+
+def load_guilds(S):
+    """上游 houses.json 第 9 栏 = 房屋所在地块的街区功能；按 id 接到账本房屋，行当类给行会字段。"""
+    S.guild_stats = {"upstream_houses": 0, "matched": 0, "date_mismatch": 0, "guild_houses": 0}
+    try:
+        fn = json.load(open(os.path.join(UPSTREAM, "blocks.json")))["fn"]
+        U = json.load(open(os.path.join(UPSTREAM, "houses.json")))["houses"]
+    except (OSError, KeyError, ValueError):
+        return
+    pos = {int(x): i for i, x in enumerate(S.idnum.tolist())}
+    st = S.guild_stats
+    st["upstream_houses"] = len(U)
+    for row in U:
+        i = pos.get(int(row[0]))
+        if i is None:
+            continue
+        st["matched"] += 1
+        if S.built[i] != row[2] or (S.destroyed[i] if S.destroyed[i] < 10 ** 9 else 9999) != row[3]:
+            st["date_mismatch"] += 1
+        if row[8] in GUILD_FN:
+            S.guild[i] = fn[row[8]][0]
+            st["guild_houses"] += 1
 
 
 def _wall_segments(c):
@@ -133,6 +174,17 @@ def _wall_segments(c):
             acc += t2 - t
             t = t2
     return out
+
+
+def _poly_dist(Q, c):
+    """点集 Q 到折线 c 的最近距离（向量化）。"""
+    best = np.full(len(Q), np.inf)
+    for a, b in zip(c[:-1], c[1:]):
+        ab = b - a
+        L2 = float(ab @ ab)
+        t = np.clip(((Q - a) @ ab) / L2, 0.0, 1.0) if L2 > 0 else np.zeros(len(Q))
+        best = np.minimum(best, np.sqrt(((Q - a - t[:, None] * ab) ** 2).sum(1)))
+    return best
 
 
 def _sample(a, b, step=1.0):
@@ -152,124 +204,312 @@ class State:
     pass
 
 
-def _make_trees(S, sset):
-    trees = {}
-    for kind in S.kinds:
-        pts, lab = [], []
-        for k in sorted(sset):
-            for kd, label, q in S.kind_pts[k]:
-                if kd == kind:
-                    pts.append(q)
-                    lab.append(label)
-        trees[kind] = (cKDTree(np.array(pts)), lab) if pts else (None, [])
-    return trees
+KINDS = ("water", "parish", "church_all", "watch", "grain")
+# 一户一职：固定优先序（区长 > 坊长 > 长老 > 阿里乌长老 > 水役头 > 哨长 > 行会头）
+TAGS = ("区", "坊", "教", "阿", "水", "哨", "行")
+LEVEL = {t: i for i, t in enumerate(TAGS)}
+TIE_EPS = 1e-9
 
 
-def _query(st, kind, xy):
-    tree, lab = st.trees[kind]
-    if tree is None:
-        return [None] * len(xy)
-    _, j = tree.query(xy)
-    return [lab[t] for t in np.atleast_1d(j)]
+def _make_tree(S, sset, kind):
+    pts, gid = [], []
+    ids = S.lab_id[kind]
+    for k in sorted(sset):
+        for kd, label, q in S.kind_pts[k]:
+            if kd == kind:
+                pts.append(q)
+                gid.append(ids[label])
+    return (cKDTree(np.array(pts)), np.array(gid, dtype=np.int32)) if pts else (None, None)
 
 
-def _assign(st, hs):
-    """hs：房屋下标列表 → {h: [water, parish, arian, watch, grain]}"""
+def _assign_kind(st, kind, hs):
+    """对房屋 hs 按当前该类设施树重查最近设施，写 dist / labi / tie（全向量化）。"""
     if not len(hs):
-        return {}
-    xy = st.S.xy[hs]
-    w = _query(st, "water", xy)
-    p = _query(st, "parish", xy)
-    a = _query(st, "church_all", xy)
-    g = _query(st, "watch", xy)
-    r = _query(st, "grain", xy)
-    return {h: [w[i], p[i], a[i] if a[i] in ARIAN else None, g[i], r[i]] for i, h in enumerate(hs)}
+        return
+    tree, gid = st.trees[kind]
+    hs = np.asarray(hs, dtype=np.int64)
+    if tree is None:
+        st.dist[kind][hs] = np.inf
+        st.labi[kind][hs] = -1
+        st.tie[kind][hs] = False
+        return
+    if tree.n > 1:
+        d, j = tree.query(st.S.xy[hs], k=2)
+        st.tie[kind][hs] = (d[:, 1] - d[:, 0]) <= TIE_EPS * (1.0 + d[:, 0])
+        d, j = d[:, 0], j[:, 0]
+    else:
+        d, j = tree.query(st.S.xy[hs])
+        st.tie[kind][hs] = False
+    st.dist[kind][hs] = d
+    st.labi[kind][hs] = gid[j]
+
+
+NODE_KIND = (("教", "parish"), ("阿", "church_all"), ("水", "water"), ("哨", "watch"))
 
 
 def _node_keys(st, h):
-    S, v = st.S, st.rec[h]
+    S = st.S
     ks = [("区", S.d[h]), ("坊", S.fang[h])]
-    for tag, x in (("水", v[0]), ("教", v[1]), ("阿", v[2]), ("哨", v[3])):
-        if x is not None:
-            ks.append((tag, x))
+    for tag, kd in NODE_KIND:
+        i = st.labi[kd][h]
+        if i >= 0 and (tag != "阿" or S.is_arian[i]):
+            ks.append((tag, S.lab_names[kd][i]))
+    g = S.guild[h]
+    if g is not None:
+        ks.append(("行", f"{S.d[h]}×{g}"))
     return ks
 
 
-def _join(st, h):
+# ---- 一户一职的增量维护：脏节点按优先级层次由高到低结算，层 L 的改动只会弄脏 >L 的层
+def _mark(st, k, h=None):
+    if h is None:
+        st.recomp.add(k)
+    else:
+        st.cand.setdefault(k, set()).add(h)
+    if k not in st.queued:
+        st.queued.add(k)
+        heapq.heappush(st.heap, (LEVEL[k[0]], k))
+
+
+def _free(st, h, L):
+    """h 卸下层 L 的职务：若 h 仍在，则在其更低层节点里候选。"""
+    if h in st.rec:
+        for k2 in _node_keys(st, h):
+            if LEVEL[k2[0]] > L:
+                _mark(st, k2, h)
+
+
+def _add_member(st, k, h):
+    m = st.members.get(k)
+    if m is None:
+        st.members[k] = {h}
+        st.holder[k] = None
+    else:
+        m.add(h)
+    _mark(st, k, h)
+
+
+def _remove_member(st, k, h):
+    m = st.members[k]
+    m.discard(h)
+    if st.holder[k] == h:
+        st.holder[k] = None
+        del st.office[h]
+        _free(st, h, LEVEL[k[0]])
+        _mark(st, k)
+    if not m:
+        del st.members[k], st.holder[k]
+
+
+def _settle(st):
     sen = st.S.seniority
-    for k in _node_keys(st, h):
-        m = st.members.get(k)
+    office, members, holder = st.office, st.members, st.holder
+    while st.heap:
+        L, k = heapq.heappop(st.heap)
+        st.queued.discard(k)
+        cand = st.cand.pop(k, ())
+        rec = k in st.recomp
+        st.recomp.discard(k)
+        m = members.get(k)
         if m is None:
-            st.members[k] = {h}
-            st.holder[k] = h
+            continue
+
+        def elig(x):
+            o = office.get(x)
+            return o is None or o == k or LEVEL[o[0]] > L
+        cur = holder[k]
+        src_ = m if rec else cand
+        new = None
+        if len(src_) > 64:              # 大批：按年资排序后取第一个合格者
+            arr = np.fromiter(src_, dtype=np.int64, count=len(src_))
+            for x in arr[np.argsort(sen[arr], kind="stable")].tolist():
+                if (rec or x in m) and elig(x):
+                    new = x
+                    break
         else:
-            m.add(h)
-            if sen[h] < sen[st.holder[k]]:
-                st.holder[k] = h
+            pool = [x for x in src_ if (rec or x in m) and elig(x)]
+            new = min(pool, key=sen.__getitem__) if pool else None
+        if not rec and cur is not None and (new is None or sen[cur] < sen[new]):
+            new = cur
+        if new == cur:
+            continue
+        if cur is not None:
+            del office[cur]
+            _free(st, cur, L)
+        if new is not None:
+            o = office.get(new)
+            if o is not None:
+                holder[o] = None
+                _mark(st, o)
+            office[new] = k
+        holder[k] = new
 
 
-def _leave(st, h):
-    sen = st.S.seniority
-    for k in _node_keys(st, h):
-        m = st.members[k]
-        m.discard(h)
-        if not m:
-            del st.members[k], st.holder[k]
-        elif st.holder[k] == h:
-            st.holder[k] = min(m, key=sen.__getitem__)
-
-
-def build(world, Y, S=None):
-    S = S or prepare(world)
+def _new_state(S, Y):
     st = State()
     st.S, st.Y = S, Y
-    st.sset = {k for k, s in enumerate(S.structs) if standing(s, Y)}
-    st.trees = _make_trees(S, st.sset)
+    N = len(S.hid)
+    st.alive = np.zeros(N, bool)
+    st.dist = {k: np.full(N, np.inf) for k in KINDS}
+    st.labi = {k: np.full(N, -1, dtype=np.int32) for k in KINDS}
+    st.tie = {k: np.zeros(N, bool) for k in KINDS}
+    st.rec, st.members, st.holder, st.office = {}, {}, {}, {}
+    st.cand, st.recomp, st.queued, st.heap = {}, set(), set(), []
+    return st
+
+
+def build(world, Y, S=None, sset=None):
+    S = S or prepare(world)
+    st = _new_state(S, Y)
+    st.sset = set(sset) if sset is not None else {k for k, s in enumerate(S.structs) if standing(s, Y)}
+    st.trees = {kind: _make_tree(S, st.sset, kind) for kind in KINDS}
     alive = np.nonzero((S.built <= Y) & (S.destroyed > Y))[0]
-    st.rec = _assign(st, alive.tolist())
-    st.members, st.holder = {}, {}
-    # 按年资顺序加入：第一个加入者即担任者
-    for h in alive[np.argsort(S.seniority[alive], kind="stable")].tolist():
-        for k in _node_keys(st, h):
+    st.alive[alive] = True
+    for kind in KINDS:
+        _assign_kind(st, kind, alive)
+    order = alive[np.argsort(S.seniority[alive], kind="stable")].tolist()
+    keys = {}
+    for h in order:
+        st.rec[h] = None
+        ks = _node_keys(st, h)
+        keys[h] = {k[0]: k for k in ks}
+        for k in ks:
             m = st.members.get(k)
             if m is None:
                 st.members[k] = {h}
-                st.holder[k] = h
+                st.holder[k] = None
             else:
                 m.add(h)
+    # 一户一职：逐层按年资（最早建成，同年按 id）取所辖中尚未任职者
+    office, holder = st.office, st.holder
+    for tag in TAGS:
+        for h in order:
+            if h in office:
+                continue
+            k = keys[h].get(tag)
+            if k is not None and holder[k] is None:
+                holder[k] = h
+                office[h] = k
     return st
 
 
 def apply(st, ev):
     kind, arg = ev
+    S = st.S
     if kind == "build":
         hs = [h for h in arg if h not in st.rec]
-        st.rec.update(_assign(st, hs))
+        st.alive[hs] = True
+        for kd in KINDS:
+            _assign_kind(st, kd, hs)
         for h in hs:
-            _join(st, h)
+            st.rec[h] = None
+            for k in _node_keys(st, h):
+                _add_member(st, k, h)
+        _settle(st)
     elif kind == "destroy":
         for h in arg:
             if h in st.rec:
-                _leave(st, h)
+                ks = _node_keys(st, h)
                 del st.rec[h]
+                st.alive[h] = False
+                for kd in KINDS:
+                    st.tie[kd][h] = False
+                for k in ks:
+                    _remove_member(st, k, h)
+        _settle(st)
     elif kind in ("struct_add", "struct_remove"):
+        pts = S.kind_pts[arg]
         if kind == "struct_add":
             st.sset.add(arg)
         else:
             st.sset.discard(arg)
-        if not st.S.kind_pts[arg]:          # 道路、街区多边形等：不改任何制度字段
+        if not pts:                         # 道路、街区多边形等：不改任何制度字段
             return 0
-        st.trees = _make_trees(st.S, st.sset)
-        hs = list(st.rec)
-        new = _assign(st, hs)
-        changed = [h for h in hs if new[h] != st.rec[h]]
-        for h in changed:
-            _leave(st, h)
-        for h in changed:
-            st.rec[h] = new[h]
-            _join(st, h)
-        return len(changed)
+        moves = {}                      # (旧节点, 新节点) -> [房屋]；补给点（grain）不进节点
+        tagof = {kd: tag for tag, kd in NODE_KIND}
+        alive_idx = np.nonzero(st.alive)[0]
+        n_changed = set()
+        for kd in sorted({p[0] for p in pts}):
+            P = np.array([q for kk, _, q in pts if kk == kd])
+            ids = np.array(sorted({S.lab_id[kd][lb] for kk, lb, _ in pts if kk == kd}), dtype=np.int32)
+            if kind == "struct_add":
+                if st.trees[kd][0] is None or not len(alive_idx):
+                    cand = alive_idx
+                else:
+                    # 只查可能改归属的房屋：离新设施比离当前归属设施更近（含并列）
+                    c = P.mean(0)
+                    R = float(np.sqrt(((P - c) ** 2).sum(1)).max())
+                    rmax = float(st.dist[kd][alive_idx].max())
+                    ball = np.asarray(S.htree.query_ball_point(c, R + rmax + 1e-6), dtype=np.int64)
+                    ball = ball[st.alive[ball]]
+                    Q = S.xy[ball]
+                    if arg in S.wall_poly and kd == "watch" and len(P) > 16:
+                        dn = _poly_dist(Q, S.wall_poly[arg])    # 折线距离 ≤ 到采样点距离：候选取超集，安全
+                        if len(P) < sum(1 for p in pts if p[0] == kd):
+                            dn = np.minimum(dn, cKDTree(P).query(Q)[0])
+                    elif len(P) > 16:
+                        dn = cKDTree(P).query(Q)[0]
+                    else:
+                        dn = np.sqrt(((Q[:, None, :] - P[None, :, :]) ** 2).sum(2)).min(1)
+                    cand = ball[dn <= st.dist[kd][ball] * (1 + TIE_EPS) + TIE_EPS]
+            else:
+                # 拆除：只重查原归属该结构的房屋
+                cand = alive_idx[np.isin(st.labi[kd][alive_idx], ids)]
+            cand = np.union1d(cand, alive_idx[st.tie[kd][alive_idx]]).astype(np.int64)
+            old = st.labi[kd][cand].copy()
+            st.trees[kd] = _make_tree(S, st.sset, kd)
+            _assign_kind(st, kd, cand)
+            new = st.labi[kd][cand]
+            ch = old != new
+            hs, old, new = cand[ch], old[ch], new[ch]
+            tag = tagof.get(kd)
+            if tag is None or not len(hs):
+                n_changed.update(hs.tolist())
+                continue
+            if tag == "阿":             # 只有最近教堂是阿里乌派时才是成员
+                old = np.where((old >= 0) & S.is_arian[np.maximum(old, 0)], old, -1)
+                new = np.where((new >= 0) & S.is_arian[np.maximum(new, 0)], new, -1)
+                keep = old != new
+                hs, old, new = hs[keep], old[keep], new[keep]
+            n_changed.update(hs.tolist())
+            names = S.lab_names[kd]
+            pair = old.astype(np.int64) * 100003 + new
+            for pv in np.unique(pair).tolist():
+                sel = pair == pv
+                o, nw = int(old[sel][0]), int(new[sel][0])
+                moves[(None if o < 0 else (tag, names[o]), None if nw < 0 else (tag, names[nw]))] = hs[sel].tolist()
+        n = len(n_changed)
+        _bulk_move(st, moves)
+        _settle(st)
+        return n
     return 0
+
+
+def _bulk_move(st, moves):
+    """成批改节点成员：旧节点去掉、新节点加上（新成员全部作候选，结算时按一户一职取舍）。"""
+    for (ko, kn), hs in moves.items():
+        if ko is not None:
+            m = st.members[ko]
+            m.difference_update(hs)
+            hd = st.holder[ko]
+            if hd is not None and hd not in m:
+                st.holder[ko] = None
+                del st.office[hd]
+                _free(st, hd, LEVEL[ko[0]])
+                _mark(st, ko)
+            if not m:
+                del st.members[ko], st.holder[ko]
+        if kn is not None:
+            m = st.members.get(kn)
+            if m is None:
+                st.members[kn] = set(hs)
+                st.holder[kn] = None
+            else:
+                m.update(hs)
+            st.cand.setdefault(kn, set()).update(hs)
+            if kn not in st.queued:
+                st.queued.add(kn)
+                heapq.heappush(st.heap, (LEVEL[kn[0]], kn))
 
 
 def materialize(st):
@@ -278,9 +518,17 @@ def materialize(st):
     cap = food_cap(st.Y)
     ration = cap / n if n else 0.0
     recs = {}
-    for h, v in st.rec.items():
-        recs[S.hid[h]] = (S.d[h], S.fang[h], v[0], v[1], v[2], v[3], v[4], ration)
-    nodes = {f"{k[0]}:{k[1]}": (NODE_TITLE[k[0]], S.hid[st.holder[k]], len(m)) for k, m in st.members.items()}
+    nm = S.lab_names
+
+    def lab(kd, h):
+        i = st.labi[kd][h]
+        return None if i < 0 else nm[kd][i]
+    for h in st.rec:
+        a = lab("church_all", h)
+        recs[S.hid[h]] = (S.d[h], S.fang[h], lab("water", h), lab("parish", h), a if a in ARIAN else None,
+                          lab("watch", h), lab("grain", h), ration, S.guild[h])
+    nodes = {f"{k[0]}:{k[1]}": (NODE_TITLE[k[0]], None if st.holder[k] is None else S.hid[st.holder[k]], len(m))
+             for k, m in st.members.items()}
     return recs, nodes
 
 
@@ -346,7 +594,8 @@ def main():
 
     # 增量 AF41–70
     st = build(world, 40, S)
-    yearly, times = [], {"build": [], "destroy": [], "struct_add": [], "struct_remove": []}
+    yearly, times = [], {"build": [], "destroy": [], "struct_add": [], "struct_remove": [],
+                         "struct_add_facility": [], "struct_remove_facility": []}
     destroy_per_house = []
     all_ok = True
     for Y in range(41, 71):
@@ -358,6 +607,8 @@ def main():
             r = apply(st, ev)
             dt = time.perf_counter() - t0
             times[ev[0]].append(dt)
+            if ev[0].startswith("struct") and S.kind_pts[ev[1]]:
+                times[ev[0] + "_facility"].append(dt)
             if ev[0] == "destroy":
                 destroy_per_house.append(dt / len(ev[1]))
             if ev[0].startswith("struct"):
@@ -389,6 +640,31 @@ def main():
         a = np.array(v) * 1000
         return {"n": len(a), "median_ms": round(float(np.median(a)), 4), "p99_ms": round(float(np.percentile(a, 99)), 4),
                 "max_ms": round(float(a.max()), 4)}
+    # 拆除/新增结构往返（AF41–70 账本内无结构拆除事件，故合成）：在 AF45、AF70 对每个设施结构
+    # 先拆（与「不含该结构」重建逐字段比对）再建回（与原年重建比对）
+    rt = {"n": 0, "all_equal": True, "remove_ms": [], "add_ms": [], "worst": []}
+    for Y in (45, 70):
+        st2 = build(world, Y, S)
+        for k in sorted(st2.sset):
+            if not S.kind_pts[k]:
+                continue
+            t0 = time.perf_counter(); r1 = apply(st2, ("struct_remove", k)); d1 = time.perf_counter() - t0
+            e1 = diff(materialize(st2), materialize(build(world, Y, S, st2.sset)))
+            t0 = time.perf_counter(); r2 = apply(st2, ("struct_add", k)); d2 = time.perf_counter() - t0
+            e2 = diff(materialize(st2), materialize(build(world, Y, S)))
+            ok = all(e[0] == 0 and not any(e[1].values()) and e[2] == 0 for e in (e1, e2))
+            rt["n"] += 1
+            rt["all_equal"] &= ok
+            rt["remove_ms"].append(d1)
+            rt["add_ms"].append(d2)
+            rt["worst"].append((round(max(d1, d2) * 1000, 2), Y, S.structs[k]["id"], r1, r2, ok))
+            times["struct_remove"].append(d1); times["struct_remove_facility"].append(d1)
+            times["struct_add_synthetic"] = times.get("struct_add_synthetic", []) + [d2]
+    rt["worst"] = sorted(rt["worst"], reverse=True)[:8]
+    rt["remove_ms"], rt["add_ms"] = stat(rt["remove_ms"]), stat(rt["add_ms"])
+    out["struct_roundtrip"] = rt
+    print("roundtrip", json.dumps(rt, ensure_ascii=False))
+
     out["incremental"] = {k: stat(v) for k, v in times.items()}
     out["incremental"]["destroy_per_house"] = stat(destroy_per_house)
     out["incremental"]["all_years_equal"] = bool(all_ok)
@@ -401,8 +677,26 @@ def main():
     for t, _, c in nodes70.values():
         out["node_counts_70"][t] = out["node_counts_70"].get(t, 0) + 1
     out["sample_nodes_70"] = {k: v for k, v in nodes70.items() if not k.startswith("坊:")}
+    # 一户一职核查（AF70）
+    cnt = {}
+    for t, hid, c in nodes70.values():
+        if hid is not None:
+            cnt[hid] = cnt.get(hid, 0) + 1
+    out["one_office_70"] = {
+        "households_with_multiple_offices": sum(1 for v in cnt.values() if v > 1),
+        "office_holders": len(cnt), "nodes": len(nodes70),
+        "vacant_nodes": sum(1 for _, hid, _ in nodes70.values() if hid is None),
+        "h1315_offices": [k for k, v in nodes70.items() if v[1] == "h1315"],
+    }
+    out["guild"] = dict(S.guild_stats)
+    out["guild"]["guild_houses_standing_70"] = sum(1 for v in recs70.values() if v[8] is not None)
+    out["guild"]["standing_70"] = len(recs70)
+    out["guild"]["nodes_70"] = {k: v for k, v in nodes70.items() if k.startswith("行:")}
+    out["guild"]["upstream_matched_standing_by_year"] = {
+        Y: int(sum(1 for r in json.load(open(os.path.join(UPSTREAM, "houses.json")))["houses"]
+                   if r[2] <= Y < r[3])) for Y in (41, 50, 60, 70)} if S.guild_stats["upstream_houses"] else {}
     json.dump(out, open(os.path.join(HERE, "results.json"), "w"), ensure_ascii=False, indent=1, default=int)
-    print(json.dumps({k: out[k] for k in ("perf", "incremental", "fang_70", "node_counts_70")}, ensure_ascii=False, indent=1))
+    print(json.dumps({k: out[k] for k in ("perf", "incremental", "fang_70", "node_counts_70", "one_office_70", "guild")}, ensure_ascii=False, indent=1))
 
 
 if __name__ == "__main__":
