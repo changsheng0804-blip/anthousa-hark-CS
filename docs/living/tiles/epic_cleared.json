@@ -1,0 +1,55 @@
+{
+"src": "tools/cs/factory/epic_clear.py（world.json 史诗多边形脚印）",
+"cleared": [
+{
+"id": "h10143",
+"epic": "aqb_valley",
+"year": 34,
+"from": 34,
+"was": 9999,
+"q": [
+"xipo"
+]
+},
+{
+"id": "h12617",
+"epic": "aqb_valley",
+"year": 42,
+"from": 42,
+"was": 9999,
+"q": [
+"xipo"
+]
+},
+{
+"id": "h13868",
+"epic": "aqb_valley",
+"year": 46,
+"from": 46,
+"was": 9999,
+"q": [
+"siqiu"
+]
+},
+{
+"id": "h3451",
+"epic": "aqb_valley",
+"year": 11,
+"from": 8,
+"was": 9999,
+"q": [
+"xipo"
+]
+},
+{
+"id": "h7063",
+"epic": "aqb_valley",
+"year": 21,
+"from": 21,
+"was": 9999,
+"q": [
+"siqiu"
+]
+}
+]
+}
