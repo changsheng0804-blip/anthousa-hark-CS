@@ -265,3 +265,5 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 
 ## /goal 2 第 9 轮（项 6，2.5D 微倾）
 瓦片页街巷级以后（z·dpr 2.3→5.2）镜头渐渐俯仰到 36°：画布一次按最大倾角分配，画摊平的 H=Hv/cos a 行再 CSS scaleY 压回；指针换算和 zoomAt 都按新倾角算，光标下的点不漂。房子画成立起来的贴图（以脚印最南边为锚竖向拉长），平放层只在贴图没到时垫底；点屋顶当作点那栋的脚印中心。人、炊烟、地标仍随地面压扁。检查：tools/cs/check_tilt.py（可用 --index 旧版证明修前不过）。下一项 7：perf 加飞行场景和倾斜带场景。——Hark（CS线）
+
+/goal 3 第 2 轮（项 1b、2、3 前半）：地标只认上游规格这一个来源。tools/cs/factory/lm_src.py 读 tools/landmark_registry.py（规格坐标是干山页像素，页框 = 世界格 (400,356)，瓦片原点 (416,192)），scene_auto 和 places.py 用它；names_zh.json 删掉规格已有的 7 条。tools/cs/check_landmark_src.py 查位置差 ≤ 8、建成年、到期年、名字；瓦片多出来的 CS 线自有地标和画布外的规格地标必须登记在 tools/cs/factory/lm_pending.json（现有：fire_ruins；奠基者城门、阿里乌聚会所在画布外），收口时一起问所有者。check_lives.js 的 null.hid 是检查自己挑错例子，已改。
