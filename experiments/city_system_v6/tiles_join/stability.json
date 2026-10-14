@@ -1,0 +1,15 @@
+{
+ "Y": 50,
+ "houses": 15193,
+ "cand_in_gate_median": 4.0,
+ "cand_in_gate_p90": 12.0,
+ "single_candidate": 2772,
+ "field_all_candidates_agree": {
+  "d": 0.9581,
+  "fang": 0.3007,
+  "parish": 0.9184,
+  "water": 0.8969,
+  "watch": 0.8009,
+  "guild": 0.8757
+ }
+}

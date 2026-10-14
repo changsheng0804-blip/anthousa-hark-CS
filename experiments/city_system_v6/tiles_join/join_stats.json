@@ -1,0 +1,661 @@
+{
+ "cs_raw_entries": 18373,
+ "cs_houses": 18373,
+ "ledger_houses": 18943,
+ "pair_overlap": 18255,
+ "cs_pair_not_in_ledger": 0,
+ "anchors": 395,
+ "anchor_inliers_global": 388,
+ "global_affine": [
+  [
+   0.070729,
+   0.000243
+  ],
+  [
+   -0.000199,
+   0.06926
+  ],
+  [
+   415.479573,
+   195.430866
+  ]
+ ],
+ "global_scale_vs_meta": [
+  14.139,
+  14.438,
+  14.21875
+ ],
+ "quarter_anchor_n": {
+  "nangang": 48,
+  "jinjiao": 5,
+  "gucheng": 311,
+  "siqiu": 1,
+  "dongjia": 23,
+  "xipo": 6,
+  "qiangwai": 0,
+  "jiaowan": 0,
+  "nanan": 1
+ },
+ "quarter_refit_n": {
+  "nangang": 502,
+  "jinjiao": 206,
+  "gucheng": 2265,
+  "siqiu": 266,
+  "dongjia": 581,
+  "xipo": 49,
+  "qiangwai": 19,
+  "jiaowan": 18,
+  "nanan": 14
+ },
+ "matched": 18151,
+ "match_rate_cs": 0.9879,
+ "match_rate_ledger": 0.9582,
+ "cs_unmatched": 222,
+ "cs_unmatched_reason": {
+  "年份对不在账本": 0,
+  "同年份对账本房屋已被占尽": 169,
+  "门限外/其他": 53
+ },
+ "ledger_absent": 792,
+ "ledger_absent_breakdown": {
+  "AF40/50/60 均不在世": 664,
+  "在世但未匹配": 128
+ },
+ "ledger_absent_by_d": {
+  "d_byzas": 13,
+  "d_forum": 162,
+  "d_harbor": 61,
+  "d_xerolophos": 25,
+  "d_exokionion": 531
+ },
+ "matched_with_rival_in_gate": 14224,
+ "per_quarter": {
+  "nangang": {
+   "cs": 4941,
+   "matched": 4884,
+   "rate": 0.9885,
+   "resid_median": 4.72,
+   "resid_p90": 6.91,
+   "resid_rms": 5.04,
+   "anchors": 48,
+   "affine": [
+    [
+     0.06996,
+     7e-05
+    ],
+    [
+     -7e-05,
+     0.06996
+    ],
+    [
+     416.66223,
+     193.42983
+    ]
+   ],
+   "matched_d": {
+    "d_harbor": 3150,
+    "d_forum": 1648,
+    "d_xerolophos": 86
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.587,
+    "d_exokionion": 0.088,
+    "d_forum": 0.97,
+    "d_harbor": 0.94,
+    "d_xerolophos": 0.557
+   }
+  },
+  "jinjiao": {
+   "cs": 3058,
+   "matched": 3037,
+   "rate": 0.9931,
+   "resid_median": 4.46,
+   "resid_p90": 6.84,
+   "resid_rms": 4.87,
+   "anchors": 5,
+   "affine": [
+    [
+     0.0694,
+     -7e-05
+    ],
+    [
+     7e-05,
+     0.0694
+    ],
+    [
+     417.36848,
+     193.75868
+    ]
+   ],
+   "matched_d": {
+    "d_forum": 3037
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.565,
+    "d_exokionion": 0.077,
+    "d_forum": 0.921,
+    "d_harbor": 0.963,
+    "d_xerolophos": 0.828
+   }
+  },
+  "gucheng": {
+   "cs": 5354,
+   "matched": 5327,
+   "rate": 0.995,
+   "resid_median": 4.96,
+   "resid_p90": 6.99,
+   "resid_rms": 5.25,
+   "anchors": 311,
+   "affine": [
+    [
+     0.07003,
+     0.00027
+    ],
+    [
+     -0.00027,
+     0.07003
+    ],
+    [
+     417.99481,
+     192.00007
+    ]
+   ],
+   "matched_d": {
+    "d_byzas": 2498,
+    "d_forum": 1688,
+    "d_harbor": 1141
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.709,
+    "d_exokionion": 0.087,
+    "d_forum": 0.971,
+    "d_harbor": 0.91,
+    "d_xerolophos": 0.534
+   }
+  },
+  "siqiu": {
+   "cs": 2963,
+   "matched": 2901,
+   "rate": 0.9791,
+   "resid_median": 4.7,
+   "resid_p90": 7.18,
+   "resid_rms": 5.15,
+   "anchors": 1,
+   "affine": [
+    [
+     0.06968,
+     -0.00113
+    ],
+    [
+     0.00113,
+     0.06968
+    ],
+    [
+     414.1569,
+     195.11126
+    ]
+   ],
+   "matched_d": {
+    "d_forum": 2812,
+    "d_xerolophos": 89
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.571,
+    "d_exokionion": 0.072,
+    "d_forum": 0.992,
+    "d_harbor": 0.93,
+    "d_xerolophos": 0.584
+   }
+  },
+  "dongjia": {
+   "cs": 730,
+   "matched": 730,
+   "rate": 1.0,
+   "resid_median": 5.07,
+   "resid_p90": 6.99,
+   "resid_rms": 5.39,
+   "anchors": 23,
+   "affine": [
+    [
+     0.06828,
+     0.00025
+    ],
+    [
+     -0.00025,
+     0.06828
+    ],
+    [
+     425.04773,
+     197.68749
+    ]
+   ],
+   "matched_d": {
+    "d_byzas": 730
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.802,
+    "d_exokionion": 0.168,
+    "d_forum": 0.456,
+    "d_harbor": 0.538,
+    "d_xerolophos": 0.495
+   }
+  },
+  "xipo": {
+   "cs": 630,
+   "matched": 618,
+   "rate": 0.981,
+   "resid_median": 3.76,
+   "resid_p90": 6.83,
+   "resid_rms": 4.54,
+   "anchors": 6,
+   "affine": [
+    [
+     0.06573,
+     0.00095
+    ],
+    [
+     -0.00095,
+     0.06573
+    ],
+    [
+     421.49494,
+     207.14506
+    ]
+   ],
+   "matched_d": {
+    "d_xerolophos": 609,
+    "d_harbor": 9
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.406,
+    "d_exokionion": 0.077,
+    "d_forum": 0.602,
+    "d_harbor": 0.783,
+    "d_xerolophos": 0.997
+   }
+  },
+  "qiangwai": {
+   "cs": 380,
+   "matched": 360,
+   "rate": 0.9474,
+   "resid_median": 3.86,
+   "resid_p90": 7.27,
+   "resid_rms": 4.67,
+   "anchors": 0,
+   "affine": [
+    [
+     0.07073,
+     0.00024
+    ],
+    [
+     -0.0002,
+     0.06926
+    ],
+    [
+     415.47957,
+     195.43087
+    ]
+   ],
+   "matched_d": {
+    "d_harbor": 360
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.398,
+    "d_exokionion": 0.034,
+    "d_forum": 0.597,
+    "d_harbor": 0.779,
+    "d_xerolophos": 0.978
+   }
+  },
+  "jiaowan": {
+   "cs": 171,
+   "matched": 169,
+   "rate": 0.9883,
+   "resid_median": 4.54,
+   "resid_p90": 7.18,
+   "resid_rms": 4.96,
+   "anchors": 0,
+   "affine": [
+    [
+     0.07073,
+     0.00024
+    ],
+    [
+     -0.0002,
+     0.06926
+    ],
+    [
+     415.47957,
+     195.43087
+    ]
+   ],
+   "matched_d": {
+    "d_forum": 169
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.491,
+    "d_exokionion": 0.036,
+    "d_forum": 0.889,
+    "d_harbor": 0.777,
+    "d_xerolophos": 0.348
+   }
+  },
+  "nanan": {
+   "cs": 146,
+   "matched": 125,
+   "rate": 0.8562,
+   "resid_median": 3.8,
+   "resid_p90": 6.39,
+   "resid_rms": 4.41,
+   "anchors": 1,
+   "affine": [
+    [
+     0.07073,
+     0.00024
+    ],
+    [
+     -0.0002,
+     0.06926
+    ],
+    [
+     415.47957,
+     195.43087
+    ]
+   ],
+   "matched_d": {
+    "d_harbor": 120,
+    "d_byzas": 5
+   },
+   "pair_cosine_d": {
+    "d_byzas": 0.409,
+    "d_exokionion": 0.098,
+    "d_forum": 0.562,
+    "d_harbor": 0.752,
+    "d_xerolophos": 0.926
+   }
+  }
+ },
+ "global_affine_full": [
+  [
+   0.07072862894698732,
+   0.0002431299831396106
+  ],
+  [
+   -0.0001989140917334234,
+   0.06925990347517144
+  ],
+  [
+   415.47957320782,
+   195.4308663810515
+  ]
+ ],
+ "area_sample": [
+  {
+   "ledger_id": "h11716",
+   "pair": [
+    45,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "jinjiao",
+   "dist": 3.54,
+   "area_cs": 0.61,
+   "area_ledger": 1.55,
+   "ratio": 0.4
+  },
+  {
+   "ledger_id": "h6913",
+   "pair": [
+    27,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "jiaowan",
+   "dist": 3.62,
+   "area_cs": 0.56,
+   "area_ledger": 1.0,
+   "ratio": 0.56
+  },
+  {
+   "ledger_id": "h957",
+   "pair": [
+    -58,
+    9999
+   ],
+   "d": "d_byzas",
+   "quarter": "gucheng",
+   "dist": 6.16,
+   "area_cs": 0.69,
+   "area_ledger": 0.93,
+   "ratio": 0.74
+  },
+  {
+   "ledger_id": "h15492",
+   "pair": [
+    43,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "jinjiao",
+   "dist": 3.61,
+   "area_cs": 0.8,
+   "area_ledger": 1.15,
+   "ratio": 0.7
+  },
+  {
+   "ledger_id": "h8210",
+   "pair": [
+    39,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "siqiu",
+   "dist": 2.26,
+   "area_cs": 0.46,
+   "area_ledger": 0.95,
+   "ratio": 0.49
+  },
+  {
+   "ledger_id": "h9549",
+   "pair": [
+    40,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "nangang",
+   "dist": 4.81,
+   "area_cs": 0.56,
+   "area_ledger": 0.97,
+   "ratio": 0.58
+  },
+  {
+   "ledger_id": "h12071",
+   "pair": [
+    44,
+    9999
+   ],
+   "d": "d_harbor",
+   "quarter": "nangang",
+   "dist": 7.83,
+   "area_cs": 0.71,
+   "area_ledger": 0.77,
+   "ratio": 0.92
+  },
+  {
+   "ledger_id": "h9632",
+   "pair": [
+    32,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "gucheng",
+   "dist": 1.91,
+   "area_cs": 0.61,
+   "area_ledger": 1.26,
+   "ratio": 0.49
+  },
+  {
+   "ledger_id": "h4086",
+   "pair": [
+    19,
+    22
+   ],
+   "d": "d_forum",
+   "quarter": "jinjiao",
+   "dist": 2.81,
+   "area_cs": 0.9,
+   "area_ledger": 0.83,
+   "ratio": 1.09
+  },
+  {
+   "ledger_id": "h18684",
+   "pair": [
+    61,
+    9999
+   ],
+   "d": "d_byzas",
+   "quarter": "gucheng",
+   "dist": 8.07,
+   "area_cs": 0.44,
+   "area_ledger": 0.9,
+   "ratio": 0.49
+  },
+  {
+   "ledger_id": "h14080",
+   "pair": [
+    46,
+    9999
+   ],
+   "d": "d_harbor",
+   "quarter": "qiangwai",
+   "dist": 4.44,
+   "area_cs": 0.73,
+   "area_ledger": 1.04,
+   "ratio": 0.71
+  },
+  {
+   "ledger_id": "h13579",
+   "pair": [
+    44,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "jinjiao",
+   "dist": 6.43,
+   "area_cs": 0.59,
+   "area_ledger": 0.85,
+   "ratio": 0.7
+  },
+  {
+   "ledger_id": "h955",
+   "pair": [
+    -153,
+    9999
+   ],
+   "d": "d_byzas",
+   "quarter": "gucheng",
+   "dist": 6.33,
+   "area_cs": 0.71,
+   "area_ledger": 0.73,
+   "ratio": 0.97
+  },
+  {
+   "ledger_id": "h8493",
+   "pair": [
+    33,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "siqiu",
+   "dist": 3.48,
+   "area_cs": 0.64,
+   "area_ledger": 0.81,
+   "ratio": 0.79
+  },
+  {
+   "ledger_id": "h542",
+   "pair": [
+    -403,
+    9999
+   ],
+   "d": "d_byzas",
+   "quarter": "gucheng",
+   "dist": 5.2,
+   "area_cs": 0.73,
+   "area_ledger": 0.66,
+   "ratio": 1.11
+  },
+  {
+   "ledger_id": "h18085",
+   "pair": [
+    64,
+    9999
+   ],
+   "d": "d_harbor",
+   "quarter": "nangang",
+   "dist": 6.1,
+   "area_cs": 0.72,
+   "area_ledger": 0.95,
+   "ratio": 0.76
+  },
+  {
+   "ledger_id": "h5334",
+   "pair": [
+    19,
+    9999
+   ],
+   "d": "d_harbor",
+   "quarter": "nangang",
+   "dist": 3.99,
+   "area_cs": 0.74,
+   "area_ledger": 0.72,
+   "ratio": 1.02
+  },
+  {
+   "ledger_id": "h3396",
+   "pair": [
+    4,
+    22
+   ],
+   "d": "d_forum",
+   "quarter": "jinjiao",
+   "dist": 3.02,
+   "area_cs": 0.8,
+   "area_ledger": 1.1,
+   "ratio": 0.73
+  },
+  {
+   "ledger_id": "h5074",
+   "pair": [
+    20,
+    9999
+   ],
+   "d": "d_forum",
+   "quarter": "nangang",
+   "dist": 6.63,
+   "area_cs": 0.62,
+   "area_ledger": 1.29,
+   "ratio": 0.48
+  },
+  {
+   "ledger_id": "h11258",
+   "pair": [
+    38,
+    9999
+   ],
+   "d": "d_byzas",
+   "quarter": "gucheng",
+   "dist": 7.65,
+   "area_cs": 0.65,
+   "area_ledger": 0.84,
+   "ratio": 0.77
+  }
+ ],
+ "area_ratio_all": {
+  "median": 0.608,
+  "p10": 0.403,
+  "p90": 0.892,
+  "pearson_cs_vs_ledger": 0.019
+ },
+ "join_seconds": 7.49
+}
