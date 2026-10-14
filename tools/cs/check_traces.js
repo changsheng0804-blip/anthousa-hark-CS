@@ -1,5 +1,6 @@
 // 叠层痕迹检查（2026-10-14）：traces.json 每条都有底账出处、编年史原文能在编年史里找到、页面按年显隐、点开出卡、能回到原来的年份。
 //  1 每条 src 在 world.json 里查得到（ruin：结构 destroyed=since；spolia：结构 spolia_from 含来源；fire：eras 里有这一年的火）
+//  1b 派生表清场（clearedcs<）：逐户对 cleared_cs.json / epic_cleared.json，户数、最早年一致；文案只说「N 年起…」一句事实，不编故事
 //  2 文案每一句（中文名换回占位符后）都是编年史里的原句（不编）
 //  3 火场焦痕：找到的烧毁房 ≥ 底账烧毁数的 70%（瓦片页房子按街道重排过，个别对不上）
 //  4 页面：TRACES 全部载入；since 之前不在标记里、之后在；traceDraw 不抛错；showTrace 出卡且「回到」切到 back 年
@@ -23,9 +24,9 @@ const ST=Object.fromEntries(WJ.structures.map(s=>[s.id,s]));const CH=fs.readdirS
 const sub=t=>t.replace(/\{\{([a-z_0-9]+)\}\}/g,(m,k)=>NZ[k]||(ST[k]&&ST[k].name)||k);const CHZ=sub(CH);
 (async()=>{await sleep(700);const T=w.__TILES,TR=w.__TRACE;if(!T||!TR){console.log('❌ 页面没起来',errs);process.exit(1)}
  const TJ=JSON.parse(fs.readFileSync(D+'traces.json','utf8')).traces;
- const srcBad=TJ.filter(t=>{if(t.kind==='ruin'){const s=ST[t.id];return !s||s.destroyed!==t.since}if(t.kind==='spolia'){const [a,b]=t.id.split('<');return !ST[a]||!(ST[a].spolia_from||[]).includes(b)||ST[a].built!==t.since}if(t.kind==='cleared'){const L=WJ.structures.find(x=>'cleared<'+x.id===t.id);return !L||L.built!==t.since||WJ.houses.filter(h=>h.cause==='cleared for '+L.name).length!==t.n}if(t.kind==='fire'){return !WJ.eras.some(e=>(e.events||[]).some(v=>v.type==='fire'&&v.year===t.since))}return true}).map(t=>t.name);
+ const srcBad=TJ.filter(t=>{if(t.kind==='ruin'){const s=ST[t.id];return !s||s.destroyed!==t.since}if(t.kind==='spolia'){const [a,b]=t.id.split('<');return !ST[a]||!(ST[a].spolia_from||[]).includes(b)||ST[a].built!==t.since}if(t.kind==='cleared'&&t.id.startsWith('clearedcs<')){const who=t.id.slice(10);const R=['cleared_cs.json','epic_cleared.json'].flatMap(f=>fs.existsSync(D+f)?JSON.parse(fs.readFileSync(D+f,'utf8')).cleared.map(r=>Object.assign({_f:f},r)):[]).filter(r=>r.lm===who||r.epic===who);return !R.length||new Set(R.map(r=>r.id)).size!==t.n||Math.min(...R.map(r=>r.year))!==t.since}if(t.kind==='cleared'){const L=WJ.structures.find(x=>'cleared<'+x.id===t.id);return !L||L.built!==t.since||WJ.houses.filter(h=>h.cause==='cleared for '+L.name).length!==t.n}if(t.kind==='fire'){return !WJ.eras.some(e=>(e.events||[]).some(v=>v.type==='fire'&&v.year===t.since))}return true}).map(t=>t.name);
  chk(TJ.length>0&&!srcBad.length,`${TJ.length} 条痕迹都有底账出处`+(srcBad.length?'；查不到：'+srcBad.join('、'):''));
- const txtBad=TJ.filter(t=>!t.text||t.text.split(/(?<=[。！？])/).some(x=>x.trim()&&!CHZ.includes(x.replace(/。$/,'').slice(0,12)))).map(t=>t.name);
+ const txtBad=TJ.filter(t=>!t.text||t.id.startsWith('clearedcs<')?!(t.text&&t.text.startsWith(t.since+' 年起')):t.text.split(/(?<=[。！？])/).some(x=>x.trim()&&!CHZ.includes(x.replace(/。$/,'').slice(0,12)))).map(t=>t.name);
  chk(!txtBad.length,'文案都是编年史原句'+(txtBad.length?'；对不上：'+txtBad.join('、'):''));
  const fireBad=TJ.filter(t=>t.kind==='fire').filter(t=>{const v=WJ.eras.flatMap(e=>e.events||[]).find(v=>v.type==='fire'&&v.year===t.since);return t.polys.length<0.7*v.houses}).map(t=>t.name+' '+t.polys.length);
  chk(!fireBad.length,'火场焦痕 ≥ 底账烧毁数的 70%：'+TJ.filter(t=>t.kind==='fire').map(t=>t.name+' '+t.polys.length).join('，')+(fireBad.length?'；不足：'+fireBad.join('、'):''));
