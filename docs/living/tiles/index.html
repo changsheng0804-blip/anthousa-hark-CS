@@ -383,7 +383,7 @@ function flyStep(now){const F=FLY;if(!F)return;if(F.t0==null)F.t0=now;const e=u=
   if(hold>0.1&&pending()===0||hold>=1){FLY=null;F.res({dur:F.dur,hold:Math.round(hold*100)/100,pending:pending()})}}
 function zoomStep(dt){if(!ZT)return;const r=Math.log(ZT.z/cam.z);if(Math.abs(r)<0.002){zoomAt(ZT.sx,ZT.sy,ZT.z/cam.z);ZT=null;return}zoomAt(ZT.sx,ZT.sy,Math.exp(r*(1-Math.exp(-dt*12))))}
 /* 落点：九块中心、地标、事件 → 下拉菜单 + 地图上的点（点一下飞过去） */
-function markList(){return [...PLACES.landmarks.map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l'})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e'}))]}
+function markList(){return [...PLACES.landmarks.filter(l=>(l.built==null||YEAR>=l.built)&&(l.until==null||YEAR<l.until)).map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l'})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e'}))]}
 function drawMarks(){const r=4/cam.z;ctx.lineWidth=1.5/cam.z;ctx.font=(13/cam.z)+'px serif';
   for(const m of markList()){if(Math.abs(m.x-cam.x)>W/2/cam.z+60/cam.z||Math.abs(m.y-cam.y)>H/2/cam.z+60/cam.z)continue;ctx.fillStyle=m.k==='e'?'#c0392b':'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,r,0,6.283);ctx.fill();ctx.stroke();
     if(cam.z>=0.3){ctx.fillStyle='#2a1c0c';ctx.fillText(m.name,m.x+r*1.8,m.y+r*0.6)}}}

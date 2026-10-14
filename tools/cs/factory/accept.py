@@ -122,6 +122,7 @@ def compare(q, fix):
     burned = sum(1 for h in w['houses'] if h['destroyed'] == 48)
     for m in set(re.findall(r'烧毁 (\d+) 座', text)):
         rec(S, f'「烧毁 {m} 座」', int(m) == burned, f'底账 48 年毁掉 {burned} 栋', '改 city.json')
+    _spec_lm = __import__('lm_src').spec
     # 2 地标：名字对应底账里的建筑，故事里的第一个「建城 N 年」就是建成年
     for L in city['landmarks']:
         s = st.get(L['id'])
@@ -131,6 +132,7 @@ def compare(q, fix):
         ys = [int(y) for y in re.findall(r'建城 (\d+) 年', L['story'])]
         exp = s['built']
         ok = (not ys and exp <= 1) or (exp in ys)
+        if L['id'] in _spec_lm(): ok = not ys or exp in ys   # /goal 3：故事取自上游规格卡，不写年份也行；写了就得对
         rec(S, f"地标 {L['name']} 的年份", ok, f"页面 {ys or '未写'}，底账 {exp}", '改 city.json 的 story')
         inb = any(f['id'] == L['id'] for f in fr['structures'])
         rec(S, f"地标 {L['name']} 在本街区框内", inb, '', '删掉，或扩框')

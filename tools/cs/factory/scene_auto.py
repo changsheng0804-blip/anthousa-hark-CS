@@ -25,11 +25,17 @@ def main():
     n_up = sum(1 for h in HS['houses'] if h[2] <= last)
     st = {s['id']: s for s in fr['structures']}
     lms = []
+    from lm_src import spec as _spec; LS = _spec(); TM = json.load(open(os.path.join(LIV, 'tiles', 'meta.json')))
     ZH = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'city', 'names_zh.json')))
     for k in list(HS['late']) + [s['id'] for s in fr['structures'] if s['id'] in R['names'] and s['id'] not in HS['late'] and s['geom'] == 'polygon']:
         s = st[k]; nm = R['names'].get(k) or ZH.get(k) or s['name']   # cs36：全城中文名表兜底
         story = R.get('stories', {}).get(k) or f"{nm}，建城 {s['built']} 年建成。"
-        lms.append({'id': k, 'xy': s['xy'], 'name': nm, 'story': story, 'now': R.get('now', {}).get(k, {})})
+        e = {'id': k, 'xy': s['xy'], 'name': nm, 'story': story, 'now': R.get('now', {}).get(k, {})}
+        if k in LS:   # /goal 3：上游规格卡里有的地标，名字、故事、此刻、位置、到期年全从规格读（lm_src.py），本线不另存
+            sp = LS[k]; e.update(name=sp['name'], story=sp['story'], now=sp['now'])
+            if sp['until'] is not None: e['until'] = sp['until']
+            if q in TM['quarters']: e['xy'] = [round(sp['tile_xy'][0] - TM['quarters'][q][0]), round(sp['tile_xy'][1] - TM['quarters'][q][1])]
+        lms.append(e)
     if not lms:   # cs36：框里一座地标也没有（海岸、墙外）——给街区本身一个落脚点，敲门卡的「最近地标」才不会落空
         lms.append({'id': 'homes_' + q, 'xy': [910, 1024], 'name': R['title'], 'story': R['hook'], 'now': {}})
     # 镜头起点：最后一个关键年住得最密的地方
