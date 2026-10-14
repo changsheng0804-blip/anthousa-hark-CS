@@ -55,8 +55,8 @@ const cache=new Map();let loads=0,bytesSeen=0;
 /* 瓦片载入排队：同时在途（取+解码）至多 LQMAX 块，后到的先上（飞行中最新的请求最要紧）。两个核的机器上一次放出上百块解码，会把主线程和合成器饿住 100 ms */
 const LQ=[],LQMAX=4;let lqN=0;function lqPump(){while(lqN<LQMAX&&LQ.length){lqN++;LQ.pop()()}}
 /* 去重：字节全同的瓦片只存最早那一年的一份，meta.alias 记着后面的年份指向哪一年；内存里也按根文件只存一份（换年时同一块不重下、不重解码） */
-function tileKey(Y,l,tx,ty,gr){const o=M.alias&&M.alias[gr?Y:Y+'/'+l],r=o&&o[tx+'_'+ty];if(r!==undefined)return gr?r+'/'+tx+'_'+ty:r+'/'+l+'/'+tx+'_'+ty;return gr?Y+'/'+tx+'_'+ty:Y+'/'+l+'/'+tx+'_'+ty}
-function tile(Y,l,tx,ty,gr){const k=tileKey(Y,l,tx,ty,gr);let t=cache.get(k);if(t!==undefined)return t;const lv=gr?{grid:M.grid}:M.levels[l][Y];if(tx<0||ty<0||tx>=lv.grid[0]||ty>=lv.grid[1]){cache.set(k,null);return null}
+function tileKey(Y,l,tx,ty,gr){if(!gr&&M.levels[l][Y]===undefined)Y=keyYearFor(Y);const o=M.alias&&M.alias[gr?Y:Y+'/'+l],r=o&&o[tx+'_'+ty];if(r!==undefined)return gr?r+'/'+tx+'_'+ty:r+'/'+l+'/'+tx+'_'+ty;return gr?Y+'/'+tx+'_'+ty:Y+'/'+l+'/'+tx+'_'+ty}
+function tile(Y,l,tx,ty,gr){if(!gr&&M.levels[l][Y]===undefined)Y=keyYearFor(Y);const k=tileKey(Y,l,tx,ty,gr);let t=cache.get(k);if(t!==undefined)return t;const lv=gr?{grid:M.grid}:M.levels[l][Y];if(tx<0||ty<0||tx>=lv.grid[0]||ty>=lv.grid[1]){cache.set(k,null);return null}
   const im=new Image();t={im,ok:false,miss:false};const done=()=>{lqN--;lqPump()};
   im.onload=()=>{const fin=()=>{t.ok=true;dirty=true;cver++;done()};if(window.createImageBitmap)createImageBitmap(im).then(bm=>{t.im=bm;fin()},fin);else fin()};im.onerror=()=>{t.miss=true;done()};LQ.push(()=>{if(window.createImageBitmap&&window.Blob&&!window.__NOFETCHBM){fetch(k+'.webp').then(r=>r.ok?r.blob():Promise.reject()).then(bl=>createImageBitmap(bl)).then(bm=>{t.im=bm;t.ok=true;dirty=true;cver++;done()},()=>{t.miss=true;done()})}else im.src=k+'.webp'});   /* 从 Blob 解码在线程池里做；从 <img> 做会在主线程上同步解码（一块 16 ms） */lqPump();loads++;cache.set(k,t);
   if(cache.size>(LMOB?120:220)){for(const [kk,v] of cache){if(cache.size<=(LMOB?80:160))break;if(!v||v.ok||v.miss){cache.delete(kk);if(v&&v.im&&v.im.close)try{v.im.close()}catch(e){}}}}return t}
@@ -275,7 +275,7 @@ function prefetchLevel(Y,l){const ts=TP*2**l,x0=cam.x-W/2/cam.z,y0=cam.y-H/2/cam
 let sRamp=0;/* 矢量层刚备好时不是一下冒出来，而是 0.2 秒内淡入 */
 function streetAlpha(){const t=Math.max(0,Math.min(1,(cam.z*dpr-SZ0)/(SZ1-SZ0)));return t*t*(3-2*t)}
 function paintedPass(){const d0=drawn,h0=hdrawn;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
-  if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
+  if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);traceDraw(YEAR);ctx.setTransform(1,0,0,1,0,0);const n=drawn-d0;drawn=d0;hdrawn=h0;return n}
 /* ── 房子立起来（/goal 2 项 6）：倾斜时地面被压扁，房子不跟着压——每栋房子画成一张小贴图（不含地面阴影），
    以脚印最南边的中点为锚，竖向拉长 k=(1/cos a)·(1+0.5(1−cos a))，压扁后屋顶仍是原来的高度再高出约一成（高度感）。
    平放的 h 层一直垫在底下（贴图没到的房子就显示压扁的版本，贴图到了把它盖住），所以没有“空房子”的闪烁。 */
@@ -322,7 +322,7 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     redraw=!prepped&&dirty&&(!pc.ok||pc.Y!==YEAR||(pc.ver!==cver&&(!inFly||now-rdT>150))||pc.sk!==SKIPH||fade>0||!pcCovers(inFly)||(pc.z!==cam.z&&!inFly));   /* 飞行途中，只因新货到了的重画至多 150 ms 一次（一次 25 ms） */
     if(redraw){rdT=now;dirty=false;drawn=0;pc.ok=true;pc.x=cam.x;pc.y=cam.y;pc.z=cam.z;pc.Y=YEAR;pc.ver=cver;pc.sk=SKIPH;const OW=off.width,OH=off.height;
       octx.setTransform(1,0,0,1,0,0);octx.fillStyle='#cdb68c';octx.fillRect(0,0,OW,OH);
-      octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
+      octx.setTransform(dpr*cam.z,0,0,dpr*cam.z,OW/2-dpr*pc.x*cam.z,OH/2-dpr*pc.y*cam.z);ctx=octx;drawStreet(YEAR);traceDraw(YEAR);ctx=ctx0;octx.setTransform(1,0,0,1,0,0)}
     else if(!prepped)dirty=false;
     if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
     if(wasDirty&&(!inFly||now-lsT>200)){lsT=now;lifeSync(YEAR)}   /* 飞行途中人船的同步 200 ms 一次，落地后每帧照旧 */
@@ -337,7 +337,7 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
   if(fade>0){fade=Math.max(0,fade-0.06);dirty=true}
   if(dirty){dirty=false;drawn=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#cdb68c';ctx.fillRect(0,0,W,H);
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
-    hdrawn=0;if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);
+    hdrawn=0;if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);traceDraw(YEAR);
     ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
     for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
     drawMarks();ctx.setTransform(1,0,0,1,0,0);
@@ -345,10 +345,19 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
   ctx=ctx0;requestAnimationFrame(frame)}
 const ui=document.getElementById('ui');
 for(const Y of M.years){const b=document.createElement('button');b.className='b'+(Y===YEAR?' on':'');b.dataset.y=Y;b.textContent=Y+' 年';b.onclick=()=>setYear(Y);ui.appendChild(b)}
+/* 叠层（2026-10-14）：年份轴按年连续——建城前只有烤好的几档，建城后每一年一格；栅格取不早于它的那一档（tile() 里换），矢量房子、街巷、痕迹按这一年精确画。
+   刻度 = 编年史事件年；轴旁一行字报这一年发生了什么 */
+const STOPS=[...M.years.filter(y=>y<=0)];for(let y=1;y<=M.years[M.years.length-1];y++)STOPS.push(y);
+const yrTick=document.createElement('datalist');yrTick.id='yrticks';document.body.appendChild(yrTick);
+const yrL=document.createElement('div');yrL.id='yrlab';yrL.style.cssText='flex:1 1 100%;order:2;font-size:12px;color:#5a4630;min-height:16px';
+function plEv(){try{return PLACES.events||[]}catch(e){return []}}
+function yrTicks(){try{yrTick.innerHTML=[...new Set([...plEv().map(v=>v.year),...TRACES.map(t=>t.since)])].filter(y=>STOPS.includes(y)).sort((a,b)=>a-b).map(y=>'<option value="'+STOPS.indexOf(y)+'">').join('')}catch(e){}}
+function yrFmt(y){return y<0?'前 '+(-y)+' 年':y===0?'建城前夕':'第 '+y+' 年'}
+function yrLab(){const ev=plEv().filter(v=>v.year===YEAR).map(v=>v.name);const tr=TRACES.filter(t=>t.since===YEAR&&t.kind!=='fire').map(t=>t.name);yrL.textContent=yrFmt(YEAR)+(ev.length||tr.length?' · '+[...ev,...tr].slice(0,4).join('、'):'')}
 /* 年份轴：一根能拖的 range，一格一个烤好的年份；拖动切年，按钮、点事件切年也带动它 */
-const yrR=document.createElement('input');yrR.type='range';yrR.id='yrs';yrR.min=0;yrR.max=M.years.length-1;yrR.step=1;yrR.value=M.years.indexOf(YEAR);yrR.style.cssText='flex:1 1 100%;order:1;max-width:min(560px,80vw);accent-color:#d4a85a';yrR.oninput=()=>setYear(M.years[+yrR.value]);
-function yrSync(){if(+yrR.value!==M.years.indexOf(YEAR))yrR.value=M.years.indexOf(YEAR)}
-ui.appendChild(yrR);
+const yrR=document.createElement('input');yrR.type='range';yrR.id='yrs';yrR.min=0;yrR.max=STOPS.length-1;yrR.step=1;yrR.value=STOPS.indexOf(YEAR);yrR.setAttribute('list','yrticks');yrR.style.cssText='flex:1 1 100%;order:1;max-width:min(560px,80vw);accent-color:#d4a85a';yrR.oninput=()=>setYear(STOPS[+yrR.value]);
+function yrSync(){const i=STOPS.indexOf(YEAR);if(i>=0&&+yrR.value!==i)yrR.value=i;yrLab()}
+ui.appendChild(yrR);ui.appendChild(yrL);
 /* 拖、滚轮、双指 */
 let drag=null,pts=new Map();
 c.addEventListener('pointerdown',e=>{cancelFly();ZT=null;c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
@@ -403,19 +412,36 @@ function flyStep(now){const F=FLY;if(!F)return;if(F.t0==null)F.t0=now;const e=u=
 function zoomStep(dt){if(!ZT)return;const r=Math.log(ZT.z/cam.z);if(Math.abs(r)<0.002){zoomAt(ZT.sx,ZT.sy,ZT.z/cam.z);ZT=null;return}zoomAt(ZT.sx,ZT.sy,Math.exp(r*(1-Math.exp(-dt*12))))}
 /* 落点：九块中心、地标、事件 → 下拉菜单 + 地图上的点（点一下飞过去） */
 /* 事件落点（/goal 3 项 7）：编年史事件（events.json → places.json 的 events）按年淡入淡出——show_year（烤好的年份里 ≥ 事件年的第一个）亮满，之后每过一年淡一截，20 年后灭；发生以前不亮。切年时两年的亮度交叉淡入淡出（和瓦片同一个 fade） */
-function evAlpha(e,Y){if(Y<e.show_year)return 0;return Math.max(0,1-(Y-e.show_year)/20)}
+function evAlpha(e,Y){const sy=evYear(e);if(Y<sy)return 0;return Math.max(0,1-(Y-sy)/20)}
+function evYear(e){return e.year>0?e.year:e.show_year}
 function evAlphaNow(e){const a=evAlpha(e,YEAR);return fade>0&&prevYear!=null?evAlpha(e,prevYear)*fade+a*(1-fade):a}
-function markList(){return [...PLACES.landmarks.filter(l=>(l.built==null||YEAR>=l.built)&&(l.until==null||YEAR<l.until)).map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l',a:1})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:v.show_year,k:'e',a:evAlphaNow(v),ev:v})).filter(m=>m.a>0.03)]}
+function markList(){return [...PLACES.landmarks.filter(l=>(l.built==null||YEAR>=l.built)&&(l.until==null||YEAR<l.until)).map(l=>({x:l.x,y:l.y,z:1.6,name:l.name,k:'l',a:1})),...PLACES.events.map(v=>({x:v.x,y:v.y,z:v.z,name:v.name,year:evYear(v),k:'e',a:evAlphaNow(v),ev:v})).filter(m=>m.a>0.03),...TRACES.filter(t=>YEAR>=t.since).map(t=>({x:t.x,y:t.y,z:1.4,name:t.name,k:'t',a:1,tr:t}))]}
 function drawMarks(){const r=4/cam.z;ctx.lineWidth=1.5/cam.z;ctx.font=(13/cam.z)+'px serif';
-  for(const m of markList()){if(Math.abs(m.x-cam.x)>W/2/cam.z+60/cam.z||Math.abs(m.y-cam.y)>H/2/cam.z+60/cam.z)continue;ctx.globalAlpha=m.a;ctx.fillStyle=m.k==='e'?(m.ev.kind==='fire'?'#e8731f':'#c0392b'):'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,m.k==='e'?r*(1+0.9*m.a):r,0,6.283);ctx.fill();ctx.stroke();
+  for(const m of markList()){if(Math.abs(m.x-cam.x)>W/2/cam.z+60/cam.z||Math.abs(m.y-cam.y)>H/2/cam.z+60/cam.z)continue;ctx.globalAlpha=m.a;ctx.fillStyle=m.k==='e'?(m.ev.kind==='fire'?'#e8731f':'#c0392b'):m.k==='t'?'#8a7556':'#7a3b2a';ctx.strokeStyle='rgba(239,228,204,.9)';ctx.beginPath();ctx.arc(m.x,m.y,m.k==='e'?r*(1+0.9*m.a):r,0,6.283);ctx.fill();ctx.stroke();
     if(cam.z>=0.3&&m.a>0.3){ctx.fillStyle='#2a1c0c';ctx.fillText(m.name,m.x+r*1.8,m.y+r*0.6)}}ctx.globalAlpha=1}
 function markHit(sx,sy){if(cam.z*dpr>=SZ0)return false;let best=null,bd=14*14;for(const m of markList()){if(m.k==='e'&&m.a<0.3)continue;const dx=(m.x-cam.x)*cam.z+W/2-sx,dy=(m.y-cam.y)*cam.z+H/2-sy,d=(dx*dx+dy*dy)*(m.k==='e'?0.5:1)-(m.k==='e'?0.01+0.01*m.a:0);   /* 同一处叠着几件事，亮得多的先 */if(d<bd){bd=d;best=m}}   /* 事件和同一处的地标叠着时，点中事件（亮着的事件优先） */
-  if(best){if(best.ev){const g=markList().filter(m=>m.ev&&m!==best&&m.a>=0.3&&Math.hypot(m.x-best.x,m.y-best.y)*cam.z<6).map(m=>m.ev);evGo(best.ev,g)}else flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
+  if(best){if(best.tr){showTrace(best.tr);flyTo(best.x,best.y,Math.max(cam.z,best.z));return true}if(best.ev){const g=markList().filter(m=>m.ev&&m!==best&&m.a>=0.3&&Math.hypot(m.x-best.x,m.y-best.y)*cam.z<6).map(m=>m.ev);evGo(best.ev,g)}else flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
 /* 事件卡：年 · 名字 + 编年史原文一句（不编故事）；飞过去的时候出，14 秒后收，或点 × */
 const evEl=document.createElement('div');evEl.id='evcard';evEl.style.cssText='position:fixed;left:12px;bottom:44px;max-width:min(360px,70vw);background:rgba(26,20,12,.9);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.5;display:none';document.body.appendChild(evEl);let evT=0;
+/* ── CS 线 · 叠层痕迹（traces.json ← tools/cs/factory/traces.py，只从底账推）：
+   旧址 = 拆掉的结构在原线上的浅痕（编年史：「只在地面留下一道浅浅的痕迹」）；旧石 = 用了旧料的结构；火场 = 烧掉的房子留焦痕，8 年淡去，标记一直在。
+   点标记出卡：编年史原文 + 出处 + 「回到第 N 年」看它原来的样子 */
+var TRACES=[];fetch('traces.json').then(r=>r.ok?r.json():{traces:[]}).then(j=>{TRACES=j.traces||[];yrTicks();yrLab();dirty=true;cver++}).catch(()=>{});
+function traceDraw(Y){if(!TRACES.length)return;
+  for(const t of TRACES){if(Y<t.since)continue;
+    if(t.kind==='ruin'&&t.line.length>1){ctx.save();ctx.strokeStyle='rgba(92,66,38,.5)';ctx.lineWidth=Math.max(3,2.2/cam.z);ctx.setLineDash([Math.max(9,7/cam.z),Math.max(6,5/cam.z)]);ctx.beginPath();ctx.moveTo(t.line[0][0],t.line[0][1]);for(let i=1;i<t.line.length;i++)ctx.lineTo(t.line[i][0],t.line[i][1]);if(t.closed)ctx.closePath();ctx.stroke();ctx.restore()}
+    else if(t.kind==='fire'){const age=Y-t.since;if(age<8){ctx.fillStyle='rgba(44,28,18,'+(0.62*(1-age/8)).toFixed(3)+')';ctx.beginPath();for(const P of t.polys){ctx.moveTo(P[0],P[1]);for(let j=2;j<P.length;j+=2)ctx.lineTo(P[j],P[j+1]);ctx.closePath()}ctx.fill()}}}}
+function showTrace(t){const head={ruin:'旧址',spolia:'旧石',fire:'火场'}[t.kind];let extra='';
+  if(t.kind==='spolia')extra='石料来自'+t.from_name+'（'+yrFmt(t.from_built)+'建'+(t.from_destroyed!=null?'，'+yrFmt(t.from_destroyed)+'拆':'')+'）';
+  if(t.kind==='ruin')extra=yrFmt(t.built)+'建，'+yrFmt(t.since)+'拆';
+  if(t.kind==='fire')extra=t.later.length?'火场上后来建起：'+t.later.map(l=>l.name+'（'+yrFmt(l.year)+'）').join('、'):'火场上没有再起公共建筑，烧掉的地块慢慢又盖满了房子';
+  const back=t.kind==='ruin'?t.since-1:t.back;
+  evEl.innerHTML='<div style="color:#d4a85a;font-size:12px">叠层 · '+head+' · 自'+yrFmt(t.since)+'</div><div style="font-weight:600">'+t.name+'<span id="evx" style="float:right;cursor:pointer;opacity:.6;padding-left:12px">×</span></div>'+(t.text?'<div>'+t.text+'</div>':'')+'<div style="margin-top:4px;color:#cdbb95">'+extra+'</div>'+(STOPS.includes(back)||M.years.includes(back)?'<div id="trback" style="margin-top:6px;color:#d4a85a;cursor:pointer;text-decoration:underline">回到'+yrFmt(back)+'，看它原来的样子</div>':'');
+  evEl.style.display='block';document.getElementById('evx').onclick=()=>{evEl.style.display='none'};const b=document.getElementById('trback');if(b)b.onclick=()=>{const y=STOPS.includes(back)?back:keyYearFor(back);setYear(y)};clearTimeout(evT);evT=setTimeout(()=>{evEl.style.display='none'},20000)}
+window.__TRACE={list:()=>TRACES,show:showTrace,draw:traceDraw,STOPS,marks:()=>markList()};
 function showEv(e,more){evEl.innerHTML='<div style="color:#d4a85a;font-size:12px">'+(e.year<0?'前 '+(-e.year):'第 '+e.year)+' 年 · '+(e.kind==='fire'?'火灾':'落成')+(e.off?' · 在画布以西，落点收在边上':'')+'</div><div style="font-weight:600">'+e.name+'<span id="evx" style="float:right;cursor:pointer;opacity:.6;padding-left:12px">×</span></div><div>'+e.text+'</div>'+(more||[]).map(o=>'<div style="margin-top:6px;border-top:1px solid rgba(212,168,90,.25);padding-top:4px"><span style="color:#d4a85a;font-size:12px">同一处 · '+(o.year<0?'前 '+(-o.year):'第 '+o.year)+' 年 · </span><b>'+o.name+'</b><br>'+o.text+'</div>').join('');evEl.style.display='block';document.getElementById('evx').onclick=()=>{evEl.style.display='none'};clearTimeout(evT);evT=setTimeout(()=>{evEl.style.display='none'},14000)}
-function evGo(e,more){showEv(e,more);return flyTo(e.x,e.y,e.z,{year:e.show_year})}
-fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;for(const q of j.quarters)NAMES[q.q]=q.name;const sel=document.createElement('select');sel.className='b';
+function evGo(e,more){showEv(e,more);return flyTo(e.x,e.y,e.z,{year:evYear(e)})}
+fetch('places.json').then(r=>r.json()).then(j=>{PLACES=j;dirty=true;try{yrTicks();yrLab()}catch(e){}for(const q of j.quarters)NAMES[q.q]=q.name;const sel=document.createElement('select');sel.className='b';
   sel.innerHTML='<option value="">飞去…</option>';const grp=(t,items)=>{const g=document.createElement('optgroup');g.label=t;for(const [v,n] of items){const o=document.createElement('option');o.value=v;o.textContent=n;g.appendChild(o)}sel.appendChild(g)};
   grp('九块',j.quarters.map((q,i)=>['q'+i,q.name]));grp('地标',j.landmarks.map((l,i)=>['l'+i,l.name]));grp('事件（编年史）',j.events.map((v,i)=>['e'+i,(v.year<0?'前'+(-v.year):v.year)+' 年 · '+v.name]));
   sel.onchange=()=>{const v=sel.value;sel.value='';if(!v)return;const i=+v.slice(1);if(v[0]==='q')flyTo(j.quarters[i].x,j.quarters[i].y,1.6,{year:YEAR});else if(v[0]==='l')flyTo(j.landmarks[i].x,j.landmarks[i].y,1.6);else evGo(j.events[i])};
