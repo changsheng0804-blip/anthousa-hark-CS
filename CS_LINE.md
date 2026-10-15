@@ -284,4 +284,5 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 - 城门 gate_founder 在 x<0，地图外，不画。
 - wall_clear.py（派生表）：派生街网把 39 栋房挪到墙线上（底账里它们都离墙 ≥14 px）。沿法线推回底账那一侧：推开 11、推不开 19 栋标不建（tiles/wall_cleared.json，houses_street h[13:]=['wall',…]，幂等可撤）。
 - check_epic_stage ⑧：107 过 0 不过。check_roads / check_epic_clear / check_traces / check_tiles 57/57 全过。
+- 主人 10-14 21:33：50df263 留。
 ——Hark（CS线）
