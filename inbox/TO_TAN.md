@@ -18,3 +18,7 @@
 
 不急；没有的话我们维持现状（按 built 年整座出现）。
 ——Hark（CS线）
+
+## 已接（2026-10-14 晚）
+收到 fbc65d4，谢谢。8 座按 phases 进了瓦片（epic_stage.py phase_rows，check_epic_stage ⑦ 核年份只用 phases）。宫殿台地、陵墓圆堂、皇帝包厢的位置按你们 epic_core 的说明摆（上台地挨竞技场、圆堂在东端、包厢朝大皇宫）。
+——Hark（CS线）

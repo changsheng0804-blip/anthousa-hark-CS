@@ -198,11 +198,107 @@ def mese_rows():
                 R.rect(pt.x - 0.9, pt.y - 0.9, pt.x + 0.9, pt.y + 0.9, MARBLE, y0, ye)
         if R.parts: rows.append(R)
     return rows
+
+# ── 帝国中心分期（谭线 2026-10-14 fbc65d4 写进底账 structures[].phases，inbox/TO_CS.md）──
+# 规则：年份只读 phases；成品是栅格里的 AI 小图（landmarks.py），页面在关键年之间拿「下一个关键年」的栅格，
+# 所以整座 done 之前用一块盖住脚印（放宽 8%，小图裁在 6%）的工地画面把小图挡住：site = 清场地 + 桩线 + 石堆；
+# frame = 墙线 + 脚手架格；带 part 的 done = 那一部分先铺成屋顶。整座 done 起这批部件全部停画，栅格小图露出来。
+# 斑岩柱 col_founder 底账是点，栅格里没有小图：整根柱子都由这里画（基座 → 鼓石逐年加高的影子 → 立像）。
+PH_IDS = [s_['id'] for s_ in W['structures'] if s_.get('phases')]
+SITE_C = (176, 154, 120); STAKE_C = (112, 88, 62); STONE_C = (206, 198, 180); WALL_C = (214, 206, 188); SCAF_C = (124, 92, 58)
+def whole_done(e): return min(p_['year'] for p_ in ST[e]['phases'] if p_['stage'] == 'done' and not p_.get('part'))
+def scale_poly(P, k):
+    c = P.centroid; return Polygon([(c.x + (x - c.x) * k, c.y + (y - c.y) * k) for x, y in P.exterior.coords])
+def lattice(R, P, step, col, ya, yb):
+    x0, y0, x1, y1 = P.bounds; n = 0
+    for v in list(range(int(x0) + 3, int(x1), step)):
+        g = P.intersection(LineString([(v, y0 - 1), (v, y1 + 1)]))
+        for ln in ([g] if g.geom_type == 'LineString' else [q for q in getattr(g, 'geoms', []) if q.geom_type == 'LineString']):
+            if ln.length > 2: R.line(list(ln.coords), col, ya, yb); n += 1
+    for v in list(range(int(y0) + 3, int(y1), step)):
+        g = P.intersection(LineString([(x0 - 1, v), (x1 + 1, v)]))
+        for ln in ([g] if g.geom_type == 'LineString' else [q for q in getattr(g, 'geoms', []) if q.geom_type == 'LineString']):
+            if ln.length > 2: R.line(list(ln.coords), col, ya, yb); n += 1
+    return n
+def part_region(e, part, P):
+    """带 part 的局部落成画在脚印里的哪一块：宫殿三级台地按离竞技场远近切三条（上台地挨着竞技场，向海跌落；谭线 epic_core）；
+    圣使徒陵墓圆堂在东端（谭线：东端创城者陵墓圆堂）；皇帝包厢在竞技场朝大皇宫那一侧（谭线：东侧 kathisma 朝向大皇宫）。"""
+    if e == 'palace_great':
+        hc = poly_px('hippodrome').centroid; c = P.centroid; dx, dy = c.x - hc.x, c.y - hc.y; L = math.hypot(dx, dy); dx, dy = dx / L, dy / L
+        q4 = quad(P); ax = []   # 台地沿宫殿自己的边走：取外接矩形里最朝竞技场反方向的那条轴
+        for i in (0, 1):
+            ux, uy = q4[i + 1][0] - q4[i][0], q4[i + 1][1] - q4[i][1]; l = math.hypot(ux, uy); ux, uy = ux / l, uy / l
+            if ux * dx + uy * dy < 0: ux, uy = -ux, -uy
+            ax.append((ux * dx + uy * dy, ux, uy))
+        _, dx, dy = max(ax)
+        pr = [(x - c.x) * dx + (y - c.y) * dy for x, y in P.exterior.coords]; a, b = min(pr), max(pr); k = {'upper': 0, 'middle': 1, 'lower': 2}[part]
+        lo, hi = a + (b - a) * k / 3, a + (b - a) * (k + 1) / 3; big = 2000
+        band = Polygon([(c.x + dx * lo - dy * big, c.y + dy * lo + dx * big), (c.x + dx * lo + dy * big, c.y + dy * lo - dx * big),
+                        (c.x + dx * hi + dy * big, c.y + dy * hi - dx * big), (c.x + dx * hi - dy * big, c.y + dy * hi + dx * big)])
+        return P.intersection(band)
+    if e == 'church_apostles':
+        x0, y0, x1, y1 = P.bounds; east = P.intersection(box(x1 - (x1 - x0) * 0.3, y0, x1, y1)); c = east.centroid
+        return Point(c.x, c.y).buffer(min(x1 - x0, y1 - y0) * 0.16, 12).intersection(P)
+    if e == 'hippodrome':
+        pc = poly_px('palace_great').centroid; from shapely.ops import nearest_points
+        q = nearest_points(P.exterior, pc)[0]; return Point(q.x, q.y).buffer(22, 8).intersection(P)
+    return None
+def phase_rows():
+    rows = []; meta = {}
+    for e in PH_IDS:
+        ph = ST[e]['phases']; wd = whole_done(e); site = ph[0]['year']; dst = ST[e].get('destroyed') or INF
+        fr = [p_['year'] for p_ in ph if p_['stage'] == 'frame']; fy = fr[0] if fr else wd
+        meta[e] = {'built': ST[e]['built'], 'phases': [[p_['year'], p_['stage'], p_.get('part')] for p_ in ph], 'done': wd}
+        if ST[e]['geom']['type'] == 'point':
+            x, y = wp(*ST[e]['geom']['coords']); R = Row('epic:' + e, site, [(x - 4, y - 4), (x + 4, y - 4), (x + 4, y + 4), (x - 4, y + 4)])
+            R.rect(x - 4, y - 4, x + 4, y + 4, WALL_C, site, dst); R.edge([(x - 4, y - 4), (x + 4, y - 4), (x + 4, y + 4), (x - 4, y + 4)], (176, 164, 142), site, dst)
+            ys = sorted(p_['year'] for p_ in ph); DR = 7     # 谭线：基座 + 7 节斑岩鼓石；2—4 年各两节，5 年立像
+            for i, Y in enumerate(range(fy, wd + 1)):
+                y1 = Y + 1 if Y < wd else dst; n = DR if Y >= wd else min(DR, 2 * (i + 1)); L = 40 * n / DR + (4 if Y >= wd else 0)
+                R.fill([(x + 1, y - 1), (x + 1 + L * 0.72, y - 1 + L * 0.69), (x - 1 + L * 0.72, y + 1 + L * 0.69), (x - 1, y + 1)], (150, 134, 112), Y, y1)
+            R.ell(x, y, 2.2, 2.2, (122, 52, 60), fy, dst, 10)
+            R.edge([(x - 6, y - 6), (x + 6, y - 6), (x + 6, y + 6), (x - 6, y + 6)], SCAF_C, fy, wd)
+            R.ell(x, y, 1, 1, (212, 170, 60), wd, dst, 6)
+            rows.append(R); continue
+        P = poly_px(e).buffer(0); C = scale_poly(P, 1.08).union(P.buffer(3, join_style=2)).simplify(0.2); R = Row('epic:' + e, site, quad(P))
+        for o in W['structures']:   # 放宽的那 8% 不伸进工地期里站着的别的史诗脚印（底账自己的重叠不管）
+            if o['id'] == e or o['geom']['type'] != 'polygon' or o['type'] in ('district', 'farmland', 'wall', 'gate', 'harbor'): continue
+            if max(site, o['built']) < min(wd, o.get('destroyed') or INF): C = C.difference(poly_px(o['id']).buffer(1.0).difference(P))   # 1 px 余量：vec 坐标取整到半像素
+        C = max(polys(C.buffer(0)), key=lambda g: g.area)
+        cc = list(C.exterior.coords)[:-1]
+        R.fill(cc, SITE_C, site, wd)                                    # 盖住栅格小图：整座 done 前一直在
+        R.edge(list(P.simplify(0.2).exterior.coords)[:-1], STAKE_C, site, fy)   # 放线桩
+        x0, y0, x1, y1 = P.bounds; n_ = max(4, int(P.area / 1500))
+        for i in range(min(n_, 18)):
+            for t in range(20):
+                px, py = x0 + hsh(i + len(e) * 31, 2 * t + 1) * (x1 - x0), y0 + hsh(i + len(e) * 31, 2 * t + 2) * (y1 - y0)
+                if P.buffer(-3).contains(Point(px, py)): R.ell(px, py, 2.6, 1.8, STONE_C, site, wd, 6); break
+        if fy < wd:
+            R.edge(list(P.buffer(-1.5, join_style=2).simplify(0.2).exterior.coords)[:-1], WALL_C, fy, wd)
+            inn = P.buffer(-4, join_style=2)
+            if not inn.is_empty and inn.geom_type == 'Polygon': R.edge(list(inn.simplify(0.2).exterior.coords)[:-1], WALL_C, fy, wd)
+            lattice(R, P.buffer(-1), max(7, int(P.area ** 0.5 / 14)), SCAF_C, fy, wd)
+        for p_ in ph:
+            if p_['stage'] != 'done' or not p_.get('part'): continue
+            g = part_region(e, p_['part'], P)
+            if g is None or g.is_empty: continue
+            if p_['year'] < wd:                                               # 局部先落成：那一块先铺好
+                if e == 'palace_great':   # 台地：大理石地坪 + 一圈殿宇屋顶 + 中间庭院花园（谭线 epic_core：每级一排殿宇、列柱庭院带花园）
+                    R.polys(g, MARBLE, (176, 164, 142), p_['year'], wd)
+                    R.polys(g.difference(g.buffer(-11, join_style=2)), TILE, TILE_D, p_['year'], wd)
+                    R.polys(g.buffer(-19, join_style=2), (128, 150, 96), (96, 118, 70), p_['year'], wd)
+                else: R.polys(g, TILE, TILE_D, p_['year'], wd)
+            else:                                                             # 整座之后才落成的局部（竞技场皇帝包厢）：之前那块还是工地
+                ga = g.buffer(1.5).intersection(C); R.polys(ga, SITE_C, None, wd, p_['year']); lattice(R, g, 5, SCAF_C, wd, p_['year'])
+        rows.append(R)
+    return rows, meta
 def build():
-    rows = forum_rows() + nymph_rows() + mese_rows()
+    pr, pm = phase_rows()
+    rows = forum_rows() + nymph_rows() + mese_rows() + pr
     meta = {'forum_theodosius': {'built': B_FORUM, 'finish': B_FORUM + FORUM_SITE, 'column_done': B_FORUM + COLUMN_COURSES - 1, 'arch': ARCH_Y, 'column_parts': list(COLR[0])},
             'nymphaeum_maius': {'built': B_NYMPH, 'finish': B_NYMPH, 'wet': WET_NYMPH},
             'r_mese': {'built': B_MESE, 'finish': B_MESE + MESE_SITE}}
+    meta.update(pm)
     return {'src': 'tools/cs/factory/epic_stage.py（谭线 render_xero.py epic_ground/epic_tall/mese_portico，年份读 world.json）', 'epics': meta, 'rows': [r.out() for r in rows]}
 if __name__ == '__main__':
     D = build(); json.dump(D, open(os.path.join(OUT, 'epic_stage.json'), 'w'), separators=(',', ':'), ensure_ascii=False)

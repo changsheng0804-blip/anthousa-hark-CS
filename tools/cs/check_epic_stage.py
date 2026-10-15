@@ -5,6 +5,7 @@
   ③ 建成前后各一年画面不同：开工年-1 与 开工年+1 的「在画的部件集」不同。
   ④ 分期：广场 工地年（落成前）部件集 ≠ 落成后；柱廊 立架年 ≠ 落成年；狄奥多西柱 每年部件集不同，直到落成年。
   ⑤ 大宁芙泉 水面从 net_water 出水年起。
+  ⑦ 帝国中心 8 座按底账 phases 分期（年份只用 phases、每期画面变、整座落成前盖住栅格成品、落成后露出、不出脚印、不压别的史诗）。
 ——Hark（CS线）"""
 import json, os, glob, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); T = os.path.join(ROOT, 'docs/living/tiles')
@@ -67,4 +68,44 @@ for i, h in VEC.items():
         for eid, P, eb, ee in EP:
             if max(p[3], eb) < min(p[4], ee) and Q.intersects(P) and Q.intersection(P).area > 1e-3 * max(Q.area, 1e-9): nbad += 1; bad.append(f'⑥ {i} 部件（{p[3]}–{p[4]}）压在 {eid}（{eb}）脚印里') if nbad < 6 else None
 chk(nbad == 0, f'⑥ 梅塞柱廊 {npart} 个部件在画着的年份里不压别的史诗脚印')
+
+from shapely.ops import unary_union
+# ⑦ 帝国中心分期（底账 structures[].phases，谭线 fbc65d4）：读 vec 里 'epic:<id>' 这一行
+INF = 9999
+PH = [e for e in W['structures'] if e.get('phases')]
+chk(len(PH) >= 8, f'⑦ world.json 里带 phases 的结构 {len(PH)} 座（engine/build_all.py 生成的 world.json 已含分期）')
+for e in PH:
+    k = e['id']; i = 'epic:' + k; h = VEC.get(i); ph = e['phases']; ys = sorted({p['year'] for p in ph}); dst = e['destroyed'] if e['destroyed'] is not None else INF
+    wd = min(p['year'] for p in ph if p['stage'] == 'done' and not p.get('part'))
+    chk(E.get(k, {}).get('phases') == [[p['year'], p['stage'], p.get('part')] for p in ph], f'⑦ {k} epic_stage 的分期 = world.json')
+    chk(h is not None, f'⑦ {k} 进了 vec')
+    if not h: continue
+    yrs = {v for p in h[4] for v in p[3:5]}; extra = yrs - set(ys) - {INF, dst}
+    import re   # 分期原文里写明的逐年区间（斑岩柱「2—4 年各加两节」）也算底账年份
+    for p in ph:
+        for a, b in re.findall(r'(\d+)\s*[—–-]\s*(\d+)\s*年', p.get('note', '')): extra -= set(range(int(a), int(b) + 1))
+    chk(not extra, f'⑦ {k} 部件年份段只用底账的分期年 {ys}' + (f'（多出 {sorted(extra)}）' if extra else ''))
+    chk(not sig([i], ys[0] - 1), f'⑦ {k} {ys[0]-1} 年（开工前）不画')
+    seq = [sig([i], y) for y in ys]
+    chk(all(seq[j] != seq[j + 1] for j in range(len(seq) - 1)), f'⑦ {k} 每个分期年画面都变（{ys}：{[len(x) for x in seq]} 个部件）')
+    if e['geom']['type'] == 'polygon':
+        P = Polygon([((x - X0) * S, (y - Y0) * S) for x, y in e['geom']['coords']]).buffer(0)
+        cov = [p for p in h[4] if p[0] == 0 and p[3] == ys[0] and p[4] == wd]
+        C = Polygon(list(zip(cov[0][1][0::2], cov[0][1][1::2]))).buffer(0) if cov else None
+        chk(bool(C) and C.buffer(0.6).contains(P.difference(unary_union([q for eid, q, eb, ee in EP if eid != k and max(ys[0], eb) < min(wd, ee)])) if True else P) and C.difference(P.buffer(P.length * 0.02 + 4)).area < 1, f'⑦ {k} 整座落成前有一块盖住脚印、不超出脚印 2%+4 px（{ys[0]}–{wd}，面积 ×{(C.area / P.area) if C else 0:.2f}）把栅格成品挡住')
+        live = [p for p in h[4] if p[3] <= wd < p[4]]
+        chk(all(p[3] >= wd for p in live), f'⑦ {k} {wd} 年（整座 done）起只剩整座之后的局部工地，栅格小图露出（{len(live)} 个部件还画）')
+        out = 0
+        for p in h[4]:
+            if len(p[1]) >= 6:
+                Q = Polygon(list(zip(p[1][0::2], p[1][1::2]))).buffer(0)
+                if Q.difference(P.buffer(P.length * 0.02 + 3)).area > 0.5: out += 1
+        chk(out == 0, f'⑦ {k} 部件都在脚印里（放宽 2%+3 px），出界 {out}')
+        nb = 0
+        for eid, Q2, eb, ee in EP:
+            if eid == k: continue
+            if max(ys[0], eb) < min(wd, ee) and (C or P).difference(P).intersection(Q2).area > 2: nb += 1; bad.append(f'⑦ {k} 工地压 {eid}') if nb < 4 else None
+        chk(nb == 0, f'⑦ {k} 工地期（{ys[0]}–{wd}）不压当年站着的别的史诗脚印')
+    else:
+        chk(bool(sig([i], wd + 5)), f'⑦ {k} 是点、栅格无小图：整座落成后柱子一直画')
 print('\n'.join('过 ' + m for m in ok)); print('\n'.join('不过 ' + m for m in bad)); print(f'{len(ok)} 过 {len(bad)} 不过'); sys.exit(1 if bad else 0)

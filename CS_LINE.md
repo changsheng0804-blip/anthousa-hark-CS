@@ -269,3 +269,11 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 /goal 3 第 2 轮（项 1b、2、3 前半）：地标只认上游规格这一个来源。tools/cs/factory/lm_src.py 读 tools/landmark_registry.py（规格坐标是干山页像素，页框 = 世界格 (400,356)，瓦片原点 (416,192)），scene_auto 和 places.py 用它；names_zh.json 删掉规格已有的 7 条。tools/cs/check_landmark_src.py 查位置差 ≤ 8、建成年、到期年、名字；瓦片多出来的 CS 线自有地标和画布外的规格地标必须登记在 tools/cs/factory/lm_pending.json（现有：fire_ruins；奠基者城门、阿里乌聚会所在画布外），收口时一起问所有者。check_lives.js 的 null.hid 是检查自己挑错例子，已改。
 
 /goal 3 第 3 轮（项 5）：编年史事件有了落点。tools/cs/factory/chron_events.py 读上游 chronicle/*.md + world.json（eras[].accepted 的新建结构、eras[].events 的火灾、structures 几何）+ docs/data.json 的 names_zh，写 docs/living/tiles/events.json：58 件（-657 到 65 年），文案 = 编年史原文一句，位置 = 结构几何中心（折线取一半长度处）换成瓦片像素。13 件在画布外（画布从世界格 x=416 起），落点收到西缘并标 off，登记进 lm_pending.json 的 off_canvas_events 等所有者定；4 条有年份没地点的列 unlocated。tools/cs/check_chronicle.py 独立再查一遍（每件有落点、年 = 底账 built、位置在结构包围盒或灾害坐标 ±1 px、文案是原文、「第 N 年」一致）。页面那头（淡入淡出、点了飞过去）是项 7。
+
+## 帝国中心分期（2026-10-14 晚，所有者转来谭线回信 fbc65d4）
+- 并 origin/main（谭线把 8 座结构的 phases 写进 proposals/era_0001/0011/0021，world.json 由 engine/build_all.py 生成、不入库：**本地要先跑 build_all.py 才读得到 phases**；房子、拆迁一个字节没变，已核）。
+- epic_stage.py phase_rows()：年份只读 phases。整座 done 之前一块盖住脚印（×1.08 ∪ 外扩 3 px，不伸进当年别的史诗）挡住栅格里的 AI 成品——site 清场地+桩线+石堆，frame 墙线+脚手架格，带 part 的 done 先铺那一块（大皇宫三级台地按离竞技场远近、沿宫殿自己的轴切；圣使徒东端陵墓圆堂；竞技场皇帝包厢在整座之后，4–5 年朝大皇宫那侧留一小块工地）；整座 done 起全部停画，栅格小图露出。斑岩柱是点、栅格无小图：基座 → 2/3/4 年影子按鼓石节数加长 → 5 年立像，一直画。
+- epic_vec.py：只换 vec 里的 epic 行再跑 zsort，不必整套重烤（其余行只是全城 z 序号平移）。
+- check_epic_stage.py ⑦（91 过）；check_epic_clear、check_roads、check_traces、check_tiles 57/57 全过。
+- 已知：分期只在推近到街巷级（矢量层）看得到；全城/街区远景在 1–9 年仍显 10 年栅格的成品（不加栅格年份档的规矩下的取舍，G4 广场同此）。
+——Hark（CS线）
