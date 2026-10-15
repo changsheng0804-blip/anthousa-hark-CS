@@ -290,3 +290,7 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 ## 南港街区页 · 码头工地·续（2026-10-14）
 - 栈桥建成前两年：前沿立人字扒杆、外侧泊运石驳船，白天吊石头来回。数据全来自 heart.py 已有的 docks（建成年 39/44/47/60），不自编年份。
 - 检查：check_fleet「dock kit」吊杆 8/8、驳船 8/8；登记册 17 种全在域内。accept nangang 68/70，两项红与本改无关（上游底账落后 1 提交；check_palette 是沙箱丢了 cv2，补装后全过）。——Hark（CS线）
+
+## 合流 ①–⑨ + 刘线 cs-sync（2026-10-15）
+- 谭线 handoff-cs ①–⑨ 全接进瓦片页：tools/cs/factory/tan/epic_core.py（谭线画师）→ epic_sprites.py 按年份切透明叠层 tiles/ep/*.webp + ep.json（297 块、1.92 MB，按需取视口当年）；竞技场赛车日 dawn/filling/race/dusk 跟页内时辰走、不进底账；大水道埋地段按当年房屋擦除、渠线房屋起拆之年重出一帧。check_epic_sprites 82/82、check_ep_page 全过。
+- 合并 liu/cs-sync：干山敲门卡「生计/房况」点开才取；check_econ 全过。回信 inbox/TO_LIU.md（vec h[5] 早已是账本 id）。

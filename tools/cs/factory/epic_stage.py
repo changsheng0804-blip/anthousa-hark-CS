@@ -32,8 +32,9 @@ MESE_SITE = 2; COLUMN_COURSES = 8
 _FP = ST['forum_theodosius']['phases']
 F_SITE = _FP[0]['year']; ARCH_Y = [q['year'] for q in _FP if q.get('part') == 'arch'][0]; F_DONE = min(q['year'] for q in _FP if q['stage'] == 'done' and not q.get('part'))
 FORUM_SITE = F_DONE - B_FORUM
-def course_year(k):   # 八节柱子按分期年分三批：开工年立基座和头两节，凯旋门那年到第五节，完工年到顶
-    return F_SITE if k < 2 else ARCH_Y if k < 5 else F_DONE
+_FY = sorted({q['year'] for q in _FP}); F_FRAME = ([q['year'] for q in _FP if q['stage'] == 'frame'] or [F_DONE])[0]   # 454707e 加了 59 frame：铺地、柱廊起墙
+def course_year(k):   # 八节柱子按分期年分批（57/59/60/64 各两节），完工年到顶
+    return _FY[min(len(_FY) - 1, k * len(_FY) // COLUMN_COURSES)]
 def hx(c): return '%02x%02x%02x' % tuple(c)
 def hsh(n, k=0):
     x = (n * 2654435761 + k * 40503) & 0xffffffff; x ^= x >> 15; x = (x * 2246822519) & 0xffffffff; x ^= x >> 13
@@ -73,13 +74,14 @@ def forum_rows():
     mz = MESE.buffer(9, cap_style=2)
     R = Row('epic:forum_theodosius', F_SITE, quad(FORUM)); a, f = F_SITE, F_DONE   # a=开工、f=整座完工（都读 phases）
     # 工地：整片清空的碎石地 + 石堆
-    R.fill(list(ex)[:-1], (170, 150, 118), a, f)
-    for i in range(14): R.ell(x0 + 8 + hsh(i, 1) * (x1 - x0 - 16), y0 + 8 + hsh(i, 2) * (y1 - y0 - 16), 3, 2, (206, 198, 180), a, f, 6)
-    # 落成：铺面、石缝、梅塞磨出的旧路、内线
-    R.fill(list(ex)[:-1], (214, 204, 184), f)
+    R.fill(list(ex)[:-1], (170, 150, 118), a, F_FRAME)
+    for i in range(14): R.ell(x0 + 8 + hsh(i, 1) * (x1 - x0 - 16), y0 + 8 + hsh(i, 2) * (y1 - y0 - 16), 3, 2, (206, 198, 180), a, F_FRAME, 6)
+    # 起架（59）：铺面、石缝、梅塞磨出的旧路；柱廊只砌起墙基（一圈石带），完工年上瓦顶
+    R.fill(list(ex)[:-1], (214, 204, 184), F_FRAME)
     inn = FORUM.buffer(-10, join_style=2); ix0, iy0, ix1, iy1 = inn.bounds
-    for k in range(1, int((iy1 - iy0) // 4)): R.line([(ix0, iy0 + k * 4), (ix1, iy0 + k * 4)], (190, 180, 158), f)
-    R.rect(ix0, my_ - 7, ix1, my_ + 7, (205, 195, 175), f)
+    for k in range(1, int((iy1 - iy0) // 4)): R.line([(ix0, iy0 + k * 4), (ix1, iy0 + k * 4)], (190, 180, 158), F_FRAME)
+    R.rect(ix0, my_ - 7, ix1, my_ + 7, (205, 195, 175), F_FRAME)
+    if F_FRAME < f: R.polys(ring_band(FORUM, 0, 9).difference(mz), (196, 186, 166), (150, 140, 120), F_FRAME, f)
     R.line([(ix0, my_ - 7), (ix1, my_ - 7)], (176, 164, 142), f); R.line([(ix0, my_ + 7), (ix1, my_ + 7)], (176, 164, 142), f)
     R.edge(list(inn.exterior.coords)[:-1], (170, 156, 132), f)
     # 雕像（基座 + 像）与铜牛（Forum Tauri）
@@ -478,7 +480,7 @@ def barracks_rows():
 def build():
     pr, pm = phase_rows(); hr, hm = harbor_rows(); wr, wm = wall_rows(); br, bm = barracks_rows(); ar, am = aq_rows()
     rows = forum_rows() + nymph_rows() + mese_rows() + pr + hr + wr + br + ar
-    meta = {'forum_theodosius': {'built': B_FORUM, 'site': F_SITE, 'finish': F_DONE, 'column_done': F_DONE, 'arch': ARCH_Y, 'column_parts': list(COLR[0]), 'column_years': sorted({course_year(k) for k in range(COLUMN_COURSES)}), 'phases': [[q['year'], q['stage'], q.get('part')] for q in _FP]},
+    meta = {'forum_theodosius': {'built': B_FORUM, 'site': F_SITE, 'frame': F_FRAME, 'finish': F_DONE, 'column_done': F_DONE, 'arch': ARCH_Y, 'column_parts': list(COLR[0]), 'column_years': sorted({course_year(k) for k in range(COLUMN_COURSES)}), 'phases': [[q['year'], q['stage'], q.get('part')] for q in _FP]},
             'nymphaeum_maius': {'built': B_NYMPH, 'finish': B_NYMPH, 'wet': WET_NYMPH},
             'r_mese': {'built': B_MESE, 'finish': B_MESE + MESE_SITE}}
     meta.update(pm); meta.update(hm); meta.update(wm); meta.update(bm); meta.update(am)

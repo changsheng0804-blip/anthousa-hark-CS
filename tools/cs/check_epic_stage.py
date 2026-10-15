@@ -43,7 +43,8 @@ f = E['forum_theodosius']; ids = G['forum_theodosius']
 if ids:
     s_site, s_done = sig(ids, f['built']), sig(ids, f['finish'])
     chk(s_site != s_done and len(s_done) > len(s_site), f'④ 广场 工地年 {f["built"]} ({len(s_site)}) ≠ 落成 {f["finish"]} ({len(s_done)})')
-    chk(not any(h for h in [VEC.get('epic:forum_theodosius')] if h and any(p[0] == 1 and p[3] < f['finish'] for p in h[4] if len(p) > 4)), '④ 广场 柱廊/铺面在工地年不画（边线都从落成年起）')
+    fr_ = f.get('frame', f['finish'])   # 454707e：59 起架 = 铺地、柱廊起墙
+    chk(not any(h for h in [VEC.get('epic:forum_theodosius')] if h and any(p[0] == 1 and p[3] < fr_ for p in h[4] if len(p) > 4)), f'④ 广场 柱廊/铺面在工地年不画（边线都从起架年 {fr_} 起）')
     ys = f['column_years']; CR = f['column_parts']; FR = ['epic:forum_theodosius']; cs = [sig(FR, y, CR) for y in ys]   # e45f0ab 起柱子只按分期年长（57/60/64）
     chk(ys == sorted({q['year'] for q in ST['forum_theodosius']['phases']}) and all(cs[i] != cs[i + 1] for i in range(len(cs) - 1)), f'④ 狄奥多西柱 只在分期年 {ys} 长高（{[len(c) for c in cs]}）')
     chk(sig(FR, f['column_done'] - 1, CR) != sig(FR, f['column_done'], CR) and not [p for p in VEC['epic:forum_theodosius'][4][CR[0]:CR[1]] if p[2] == '7c5c3a' and p[3] <= f['column_done'] < p[4]], '④ 柱 落成后脚手架拆、立像（部件集再变一次）')

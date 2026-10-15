@@ -228,7 +228,7 @@ function paintStreets(g,d,Y){g.lineCap='round';
   for(const pas of [0,1])for(const k of 'lcsm'){const col=SSTY[k][pas];if(!col)continue;g.strokeStyle=col;
     const ws=new Map();for(const q of d.s){if(q[5]!==k||q[6]>Y||(q[7]&&q[7]<=Y))continue;const w=q[4]+(pas?0:2);let p=ws.get(w);if(!p)ws.set(w,p=new Path2D());p.moveTo(q[0],q[1]);p.lineTo(q[2],q[3])}
     for(const [w,p] of ws){g.lineWidth=w;g.stroke(p)}}}
-function paintHouses(g,d,Y){const hs=d.h.filter(h=>h[0]<=Y&&Y<h[1]);hs.sort((a,b)=>a[2]-b[2]);
+function paintHouses(g,d,Y){const hs=d.h.filter(h=>h[0]<=Y&&Y<h[1]&&!(EPSKIP&&typeof h[5]==='string'&&EPSKIP.has(h[5])));/* 谭线史诗画接管的结构，CS 自画的分期矢量行不再画（梅塞柱廊仍由 CS 画） */hs.sort((a,b)=>a[2]-b[2]);
   g.fillStyle='rgba(50,32,14,.27)';for(const h of hs){const s=h[3];g.beginPath();g.moveTo(s[0],s[1]);for(let i=2;i<s.length;i+=2)g.lineTo(s[i],s[i+1]);g.fill()}
   g.lineWidth=0.5;g.lineCap='butt';
   for(const h of hs)for(const [kd,p,c,y0,y1] of h[4]){if(p.length<4||(y0!==undefined&&(Y<y0||Y>=y1)))continue;g.beginPath();g.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)g.lineTo(p[i],p[i+1]);
@@ -277,7 +277,8 @@ function drawStreet(Y){const x0=pc.x-W*PCK/2/cam.z,y0=pc.y-H*PCK/2/cam.z,x1=pc.x
     const v=vtile(tx,ty);if(!gim)continue;
     if(v.ok){const L=layer('s',tx,ty,Y,v,zr,gim);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);drawn++}}else{ctx.drawImage(gim,tx*TP,ty*TP,TP+0.5,TP+0.5);drawn++}
     if(v.ok)vs.push([tx,ty,v])}
-  hdrawn=0;if(!SKIPH)for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}}
+  hdrawn=0;if(!SKIPH)for(const [tx,ty,v] of vs){const L=layer('h',tx,ty,Y,v,zr);if(L){ctx.drawImage(L.cv,tx*TP-L.MG,ty*TP-L.MG,L.sz,L.sz);hdrawn+=L.n}}
+  epDraw(Y,x0,y0,x1,y1)}
 /* ── 级间交叉淡入（/goal 2 项 2b）：本级 l 垫底；离换级还剩 LB 个倍频程时，细一级 l-1 的瓦片按平滑步函数叠上去，
    到换级那一刻细一级刚好不透明，所以 level() 一跳，画面是连续的。细一级还没到的格子不顶粗的（垫底的就是粗的），等它到了再淡入。 */
 const LB=0.4;
@@ -453,6 +454,19 @@ function markHit(sx,sy){if(cam.z*dpr>=SZ0)return false;let best=null,bd=14*14;fo
   if(best){if(best.tr){showTrace(best.tr);flyTo(best.x,best.y,Math.max(cam.z,best.z));return true}if(best.ev){const g=markList().filter(m=>m.ev&&m!==best&&m.a>=0.3&&Math.hypot(m.x-best.x,m.y-best.y)*cam.z<6).map(m=>m.ev);evGo(best.ev,g)}else flyTo(best.x,best.y,best.z,{year:best.year});return true}return false}
 /* 事件卡：年 · 名字 + 编年史原文一句（不编故事）；飞过去的时候出，14 秒后收，或点 × */
 const evEl=document.createElement('div');evEl.id='evcard';evEl.style.cssText='position:fixed;left:12px;bottom:44px;max-width:min(360px,70vw);background:rgba(26,20,12,.9);color:#efe4cc;border:1px solid rgba(212,168,90,.5);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.5;display:none';document.body.appendChild(evEl);let evT=0;
+/* ── CS 线 · 谭线史诗画（handoff-cs ②–⑨，ep.json ← tools/cs/factory/epic_sprites.py，画师 = 谭线 epic_core.py）：
+   帝国中心、港口粮仓、城墙、营房、金角湾、水道与喷泉楼、狄奥多西广场、圣使徒与浴场，按底账 phases 逐年出图，透明底切成 level-0 块，压在房子层之上；
+   竞技场单独一层，按时钟分四刻（谭线 ⑨ 赛车日：清晨空场 / 上午入场 / 正午开赛 / 黄昏散场），不进底账。只在街道级画，按需下载。 */
+var EP=null,EPSKIP=null;const EPI=new Map();fetch('ep.json').then(r=>r.ok?r.json():null).then(j=>{if(!j)return;EP=j;EPSKIP=new Set(Object.values(j.views).flat().concat(['hippodrome']).map(k=>'epic:'+k));LAY.clear();dirty=true;cver++}).catch(()=>{});
+function epAt(seq,Y){let f=null;if(seq)for(const e of seq){if(e[0]<=Y)f=e[1];else break}return f}
+function epMoment(h){const M_=EP.moments;for(const k in M_)if(h>=M_[k][0]&&h<M_[k][1])return k;return 'dawn'}
+function epImg(f){let t=EPI.get(f);if(t)return t.ok?t.im:null;t={ok:false};EPI.set(f,t);const im=new Image();im.onload=()=>{const fin=()=>{t.ok=true;dirty=true;cver++};if(window.createImageBitmap)createImageBitmap(im).then(bm=>{t.im=bm;fin()},()=>{t.im=im;fin()});else{t.im=im;fin()}};im.src='ep/'+f;return null}
+function epDraw(Y,x0,y0,x1,y1){if(!EP)return 0;let n=0;const mo=epMoment(HCLK.h);
+  for(let ty=Math.floor(y0/TP);ty<=Math.floor(y1/TP);ty++)for(let tx=Math.floor(x0/TP);tx<=Math.floor(x1/TP);tx++){const k=tx+'_'+ty;
+    const f=epAt(EP.t[k],Y);if(f){const im=epImg(f);if(im){ctx.drawImage(im,tx*TP,ty*TP,TP,TP);n++}}
+    const r=epAt(EP.race[k],Y);if(r&&r[mo]){const im=epImg(r[mo]);if(im){ctx.drawImage(im,tx*TP,ty*TP,TP,TP);n++}}}
+  epDrawn=n;return n}
+var epDrawn=0;window.__EP={draw:epDraw,get skip(){return EPSKIP},get data(){return EP},at:(k,Y)=>EP&&epAt(EP.t[k],Y),race:(k,Y,h)=>{const r=EP&&epAt(EP.race[k],Y);return r&&r[epMoment(h)]},moment:epMoment,get drawn(){return epDrawn},get loaded(){return [...EPI.values()].filter(t=>t.ok).length}};
 /* ── CS 线 · 叠层痕迹（traces.json ← tools/cs/factory/traces.py，只从底账推）：
    旧址 = 拆掉的结构在原线上的浅痕（编年史：「只在地面留下一道浅浅的痕迹」）；旧石 = 用了旧料的结构；火场 = 烧掉的房子留焦痕，8 年淡去，标记一直在。
    点标记出卡：编年史原文 + 出处 + 「回到第 N 年」看它原来的样子 */
