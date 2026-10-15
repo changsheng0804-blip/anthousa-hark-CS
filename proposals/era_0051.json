@@ -164,7 +164,25 @@
      ],
      "ornament": 3,
      "scale": "monumental"
-    }
+    },
+    "phases": [
+     {
+      "year": 57,
+      "stage": "site",
+      "note": "第 57 年划出广场（编年史）"
+     },
+     {
+      "year": 60,
+      "stage": "done",
+      "part": "arch",
+      "note": "西侧凯旋门落成"
+     },
+     {
+      "year": 64,
+      "stage": "done",
+      "note": "纪功柱立到顶，广场完工"
+     }
+    ]
    },
    "why": "Theodosius lays out a great forum on the Forum Tauri, beside the fountain where Valens' water arrives.",
    "year": 57

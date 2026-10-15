@@ -44,7 +44,24 @@
        470.9
       ]
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "门址清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "双塔起墙"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "门楼上大理石，大道车马通行"
+     }
+    ]
    },
    "why": "Where the Mese passes the new wall."
   },
@@ -67,7 +84,24 @@
        554.1
       ]
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "沿划定的线挖基槽、堆石料"
+     },
+     {
+      "year": 3,
+      "stage": "frame",
+      "note": "墙身砌到一半高"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "雉堞与方塔完工"
+     }
+    ]
    },
    "why": "The Founder walks the line of the new wall with a spear, 'until he who walks before me stops.'"
   },
@@ -682,7 +716,24 @@
       ]
      ]
     },
-    "label": "Cistern"
+    "label": "Cistern",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "大道旁挖池"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "砖拱封顶"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "note": "存起雨水"
+     }
+    ]
    },
    "why": "A covered cistern under brick vaults."
   },
