@@ -72,13 +72,19 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
  #year .yhint{display:none}
  #topr{top:auto;bottom:100px;right:8px;flex-direction:column;align-items:flex-end}
 }
+#surf{position:fixed;left:14px;top:96px;width:236px;padding:10px 12px;display:none;z-index:6;font-size:12px;line-height:1.6}
+#surf .yb{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}#surf .yb button{background:var(--ink2);color:var(--ivory);border:1px solid rgba(212,168,90,.35);border-radius:999px;padding:2px 7px;font:inherit;font-size:11px;cursor:pointer}#surf .yb button.on{background:rgba(212,168,90,.35)}
+#surf .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}#surf .sm{color:var(--mute);font-size:11px}
+.surfbox{border:1px solid rgba(212,168,90,.35);border-radius:8px;padding:8px 10px;margin:6px 0 10px;font-size:13px;line-height:1.65}.surfbox b{color:var(--gold2)}.surfbox .why{color:var(--mute);font-size:12px;margin-top:4px}
+@media (max-width:700px){#surf{top:auto;bottom:150px;left:8px;width:200px;max-height:40%;overflow:auto}}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <div id="title" class="panel"><h1>活着的安托萨</h1><div class="sub"><span id="scn">城东尖角</span> · <span id="tyear">建城 50 年（公元 379 年）</span></div><div class="hint">拖动 · 缩放 · 敲任何一扇门 · 拨动年代</div></div>
-<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="info">i</button></div>
+<div id="topr"><div id="clock" class="panel">清晨 6 时</div><button class="btn" id="spd">1×</button><button class="btn" id="snd">🔊 声音</button><button class="btn" id="daph">达芙涅</button><button class="btn" id="other"></button><button class="btn" id="surfbtn" title="经济层映射到街面：房屋维护、门面、街上人流、施舍">表面</button><button class="btn" id="info">i</button></div>
+<div id="surf" class="panel"></div>
 <div id="ticker" class="panel"><b>城中此刻</b><span id="tk">一艘特罗阿德的粮船正在进港</span></div>
 <div id="talk" class="panel"><img id="talkimg" src="daphne.jpg" alt=""><div><div class="who" id="talkwho">达芙涅 · 运水人的女儿</div><div class="say" id="talksay"></div><div class="acts" id="talkacts"></div></div></div>
 <div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
@@ -98,7 +104,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 </div>
 
 <script>
-const BUILD='liu4';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
+const BUILD='liu5';try{const _f=window.fetch.bind(window);window.fetch=(u,o)=>_f(typeof u==='string'&&!/^(https?:|data:|blob:)/.test(u)?u+(u.includes('?')?'&':'?')+'b='+BUILD:u,o);const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');if(d&&d.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:d.get,set(v){if(typeof v==='string'&&!/^(https?:|data:|blob:)/.test(v))v=v+(v.includes('?')?'&':'?')+'b='+BUILD;d.set.call(this,v)},configurable:true})}catch(e){}
 (async function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -509,6 +515,61 @@ let last=performance.now(),gullT=0,bellHour=-1;
 function grade(t){ // returns [color, alpha]
   if(t<4.5||t>=21)return['rgba(12,22,58,',.55];if(t<6)return['rgba(255,150,90,',.25*(1-(t-4.5)/1.5)+.1];if(t<8)return['rgba(255,190,120,',.12*(1-(t-6)/2)];
   if(t<16)return['rgba(0,0,0,',0];if(t<18.5)return['rgba(255,170,70,',.18*(t-16)/2.5];if(t<21)return['rgba(30,30,80,',.18+.37*(t-18.5)/2.5];return['rgba(12,22,58,',.55]}
+
+/* ---------- 表面层（surface_v22：经济层 economy_v21 → 街上看得见的东西）——Hark（刘线） ---------- */
+const SURF={on:false,Y:null,data:{},follow:true};
+const SURF_YEARS=[40,50,60,65,70];
+const MCOL=['rgba(120,190,110,.62)','rgba(225,205,150,.45)','rgba(205,130,60,.62)','rgba(150,40,35,.75)'];
+function surfYearFor(Y){return Y<45?40:Y<55?50:60}
+function surfLoad(Y){if(SURF.data[Y])return Promise.resolve(SURF.data[Y]);return fetch('surface_AF'+Y+'.json').then(r=>r.ok?r.json():null).then(d=>{if(d)SURF.data[Y]=d;return d}).catch(()=>null)}
+function surfCur(){return SURF.data[SURF.follow?surfYearFor(YEAR):SURF.Y]||null}
+function surfNum(v){return (Math.round(v*10)/10).toFixed(1)}
+function surfFill(t,o){return t.replace(/\{(\w+)\}/g,(m,k)=>o[k]!=null?o[k]:m)}
+function surfWhy(D,r,id,Y){const W=D.why,out=[];const ten=r[4]>0;const o={owner:ten?'房东':'这家',rep:surfNum(r[11]),need:surfNum(r[12]),nh:Math.round(r[12]/0.6),ocash:surfNum(r[13]),onet:surfNum(r[14]),built:r[25],
+  sales:surfNum(r[15]),craft:surfNum(r[16]),liv:D.liv[r[2]],dalms:surfNum(r[18]),loan:surfNum(r[19]),lsrc:r[20]||'别人',alms:surfNum(r[17])};
+  if(r[0]===0&&D.year-r[25]<3)out.push(surfFill(W.m0new,o));else out.push(surfFill(W['m'+r[0]],o));
+  if(r[1]===1)out.push(surfFill(W.f1,o));else if(r[1]===2)out.push(surfFill(W.f2,o));else if(r[1]===3)out.push(surfFill(r[6]===1?W.f3c:r[6]===2?W.f3:W.f3z,o));
+  if(r[5]&2)out.push(surfFill(W.p_smoke,o));if(r[5]&4)out.push(surfFill(W.p_loan,o));if(r[5]&8)out.push(surfFill(W.p_alms,o));return out.join('')}
+function surfHTML(id){const D=surfCur();if(!D)return '';const Y=D.year;const r=D.houses[String(id)];
+  if(!r){const g=D.gone&&D.gone[String(id)];return `<div class="surfbox"><b>表面 · 建城 ${Y} 年</b>${D.path==='骤降路径'?'（到港骤降路径）':''}<br>${g?'账本里这栋房在建城 '+g+' 年拆了（页面底图只画到 60 年）。':'这一年账本里没有这户。'}</div>`}
+  const ty=t=>t>=0?D.types[t]:'—';const ten=r[4]>0?(()=>{const a=addrOf(r[4],Math.min(Y,60));return '租住'+(a&&a.st?'（房东在'+a.st+' '+a.no+' 号）':'')})():(r[3]>0?'自有，另有 '+r[3]+' 栋出租':'自有');
+  const tags=[];if(r[5]&1)tags.push('净收入低于贫困线');if(r[5]&2)tags.push('灶冷');if(r[5]&4)tags.push('借债');if(r[5]&8)tags.push('领施舍');
+  return `<div class="surfbox"><b>表面 · 建城 ${Y} 年</b>${D.path==='骤降路径'?'（到港骤降路径）':''}${doorHTML(id,Math.min(Y,60))}
+  行当：<b>${D.liv[r[2]]}</b> · 门面：${D.facade[r[1]]} · 房屋：<span class="sw" style="background:${MCOL[r[0]]}"></span>${D.maint[r[0]]} · ${ten}<br>
+  本年：收入 ${surfNum(r[7])}，净收入 ${surfNum(r[8])}，支出 ${surfNum(r[9])}，年末现钱 ${surfNum(r[10])}<br>
+  最大进项 ${ty(r[21])} ${surfNum(r[22])} · 最大开销 ${ty(r[23])} ${surfNum(r[24])}${tags.length?'<br>'+tags.join(' · '):''}
+  <div class="why">为什么看起来这样：${surfWhy(D,r,id,Y)}</div></div>`}
+function surfPanel(){const D=surfCur();const el=$('surf');if(!SURF.on){el.style.display='none';return}el.style.display='block';
+  const cur=SURF.follow?'f':SURF.Y;const bt=SURF_YEARS.map(y=>`<button data-sy="${y}" class="${cur===y?'on':''}">${y===65?'65 骤降':y}</button>`).join('');
+  let h=`<b style="color:var(--gold2)">表面层</b> <span class="sm">经济账映射到街面</span><div class="yb"><button data-sy="f" class="${cur==='f'?'on':''}">跟随年代</button>${bt}</div>`;
+  if(!D){el.innerHTML=h+'<span class="sm">载入中……</span>';return}
+  const S=D.summary;h+=`<div>建城 ${D.year} 年${D.path==='骤降路径'?' · <b>到港骤降路径</b>':''}${SURF.follow&&YEAR<40?'<br><span class="sm">经济账从 40 年起，先显示 40 年</span>':''}</div>`;
+  h+=D.maint.map((m,i)=>`<span class="sw" style="background:${MCOL[i]}"></span>${m} ${S.maint_page[m]}`).join('　')+'<br>';
+  h+=`<span style="color:#f2c14e">●</span> 开张 ${S.facade_page['开张的铺子']}　<span style="color:#e07b39">■</span> 作坊 ${S.facade_page['作坊开工']}　<span style="color:#d33">✕</span> 关门 ${S.closed_shopfronts_page}<br>`;
+  h+=`<span style="color:#9aa">○</span> 贫困 ${S.poor_page}（灶冷 ${S.nosmoke_page}）<br><span class="sm">干山 ${S.page_matched} 户对上账本（${(S.match_rate*100).toFixed(1)}%）· 全城到港 ${Math.round(S.ships)} 船</span><br>`;
+  const ns=D.nodes.filter(n=>n.kind==='harbor'||n.kind==='church').filter(n=>n.inpage||n.id==='harbor_theodosius');
+  h+=ns.map(n=>n.kind==='harbor'?`<span class="sm">${n.name}：${n.ships} 船 · 脚夫 ${n.porters} · 零工 ${n.casual} · 仓库${n.store}</span>`:`<span class="sm">${n.name}：施舍队 ${n.alms_queue} 户</span>`).join('<br>');
+  h+=`<br><span class="sm">街名旁：人流（买卖进账/户）、☁ 作坊烟声、✋ 领施舍户（近教堂为乞讨点）。点房子看为什么。</span>`;el.innerHTML=h}
+$('surf').addEventListener('click',e=>{const b=e.target.closest('[data-sy]');if(!b)return;e.stopPropagation();const v=b.dataset.sy;if(v==='f'){SURF.follow=true}else{SURF.follow=false;SURF.Y=+v;const yy=Math.min(+v,60);if(YEAR!==yy){$('yr').value=yy;setYear(yy)}}
+  surfLoad(SURF.follow?surfYearFor(YEAR):SURF.Y).then(()=>{surfPanel();if(sel)renderCard()})});
+$('surfbtn').addEventListener('click',e=>{e.stopPropagation();SURF.on=!SURF.on;$('surfbtn').style.background=SURF.on?'rgba(212,168,90,.35)':'';surfLoad(SURF.follow?surfYearFor(YEAR):SURF.Y).then(()=>{surfPanel();if(sel)renderCard()})});
+$('yr').addEventListener('input',()=>{if(SURF.on&&SURF.follow)surfLoad(surfYearFor(YEAR)).then(()=>{surfPanel();if(sel)renderCard()})});
+const _renderCardBase=renderCard;renderCard=function(){_renderCardBase();if(SURF.on&&sel&&sel.kind==='house'&&$('card').style.display!=='none'){$('cardbody').insertAdjacentHTML('afterbegin',surfHTML(sel.hh.h.id))}};
+function drawSurface(vis){const D=surfCur();if(!D)return;const Y=D.year,YH=Math.min(Y,60);
+  for(const h of houses){if(!(h.built<=YH&&h.destroyed>YH))continue;if(!vis(h.cx,h.cy,30))continue;const r=D.houses[String(h.id)];
+    ctx.beginPath();polyPath(ctx,h.p,1.6);if(!r){if(D.gone&&D.gone[String(h.id)]){ctx.strokeStyle='rgba(30,25,20,.8)';ctx.lineWidth=1.2;ctx.setLineDash([2,2]);ctx.stroke();ctx.setLineDash([])}continue}
+    ctx.fillStyle=MCOL[r[0]];ctx.fill();
+    if(cam.z>=.9){const s=Math.max(2.2,3.2/Math.sqrt(cam.z));
+      if(r[1]===1){ctx.fillStyle='#f2c14e';ctx.beginPath();ctx.arc(h.cx,h.cy,s,0,7);ctx.fill()}
+      else if(r[1]===2){ctx.fillStyle='#e07b39';ctx.fillRect(h.cx-s,h.cy-s,2*s,2*s)}
+      else if(r[1]===3){ctx.strokeStyle='#d33';ctx.lineWidth=s*.55;ctx.beginPath();ctx.moveTo(h.cx-s,h.cy-s);ctx.lineTo(h.cx+s,h.cy+s);ctx.moveTo(h.cx+s,h.cy-s);ctx.lineTo(h.cx-s,h.cy+s);ctx.stroke()}
+      if(r[5]&1){ctx.strokeStyle=(r[5]&2)?'rgba(40,40,45,.95)':'rgba(170,180,185,.9)';ctx.lineWidth=.8;ctx.beginPath();ctx.arc(h.cx,h.cy,s*1.9,0,7);ctx.stroke()}}}
+  if(cam.z>=.8){ctx.font=`${11/cam.z}px serif`;for(const st of D.streets){if(!vis(st.x,st.y,60))continue;const nm=streetName(st.si,YH);if(!nm)continue;
+    const t=`${nm.replace(/（.*）/,'')} · ${D.level[st.crowd]}${st.smoke?' ☁'+st.smoke:''}${st.beg?' ✋'+st.beg:''}${st.beg_spot?'（乞讨点）':''}`;const tw=ctx.measureText(t).width;
+    ctx.fillStyle='rgba(20,17,13,.72)';ctx.fillRect(st.x-tw/2-3/cam.z,st.y-11/cam.z,tw+6/cam.z,14/cam.z);ctx.fillStyle=st.crowd>=2?'#f2d48a':'#e8dcc4';ctx.fillText(t,st.x-tw/2,st.y)}}
+  ctx.font=`${13/cam.z}px serif`;for(const n of D.nodes){if(!(n.kind==='harbor'||n.kind==='church'||n.kind==='market'))continue;const off=Math.max(-n.x,n.x-W,-n.y,n.y-H,0);if(off>420)continue;
+    const x=clamp(n.x,30,W-30),y=clamp(n.y,30,H-30);const t=n.kind==='harbor'?`${n.name}${off?' →':''}：${n.ships} 船 · 脚夫 ${n.porters} · 仓库${n.store}`:n.kind==='church'?`${n.name}${off?' →':''}：施舍队 ${n.alms_queue} 户`:`${n.name}${off?' →':''}：开张 ${n.sellers_open} · 关门 ${n.sellers_closed}`;
+    const tw=ctx.measureText(t).width;ctx.fillStyle='rgba(60,20,15,.82)';ctx.fillRect(x-tw/2-4/cam.z,y-14/cam.z,tw+8/cam.z,18/cam.z);ctx.fillStyle='#ffe6b0';ctx.fillText(t,x-tw/2,y)}}
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   clock=(clock+dt*speed*(sceneSlow?.3:1)*24/DAY)%24;const per=periodOf(clock);race.on=has('hippodrome')&&clock>=13&&clock<17;
   const hr=Math.floor(clock);if(hr!==bellHour){bellHour=hr;if(hr===6||hr===18){const d=Math.min(dist(cam.x,cam.y,LM.church_peace.xy[0],LM.church_peace.xy[1]),dist(cam.x,cam.y,LM.church_megale.xy[0],LM.church_megale.xy[1]));const v=.06+.16*clamp(1-d/1200,0,1);for(let k=0;k<5;k++)setTimeout(()=>bell(v,hr===6?294:262),k*1700)}
@@ -524,7 +585,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
   ctx.drawImage(base,0,0);
   if(fadeT>0){fadeT=Math.max(0,fadeT-dt*2.5);ctx.globalAlpha=fadeT;ctx.drawImage(prevBase,0,0);ctx.globalAlpha=1}
   closeC=closeNow();closeA=closeC?clamp((cam.z-2.2)/1.4,0,1):0;
-  const [vx0,vy0]=s2w(0,0),[vx1,vy1]=s2w(VW,VH);drawComposed(clamp((cam.z-2.0)/1.2,0,1),vx0,vy0,vx1,vy1,per);if(closeA>0){const r=closeC.r;ctx.globalAlpha=closeA;ctx.drawImage(closeC.im,r[0],r[1],r[2]-r[0],r[3]-r[1]);ctx.globalAlpha=1}const vis=(x,y,m=40)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;
+  const [vx0,vy0]=s2w(0,0),[vx1,vy1]=s2w(VW,VH);drawComposed(clamp((cam.z-2.0)/1.2,0,1),vx0,vy0,vx1,vy1,per);if(closeA>0){const r=closeC.r;ctx.globalAlpha=closeA;ctx.drawImage(closeC.im,r[0],r[1],r[2]-r[0],r[3]-r[1]);ctx.globalAlpha=1}const vis=(x,y,m=40)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;if(SURF.on)drawSurface(vis);
   const t=now/1000;const density=clamp(houses.filter(h=>h.built<=YEAR).length/houses.length,.25,1);
   // smoke
   for(const s of smokes){if(!vis(s.x,s.y,120))continue;const str=per==='morning'||per==='evening'?1:.55;for(let k=0;k<5;k++){const ph=((t*.12+s.ph+k*.2)%1);const x=s.x+ph*60+Math.sin(t+k)*4,y=s.y-ph*90;ctx.fillStyle=`rgba(225,220,210,${.13*(1-ph)*str})`;ctx.beginPath();ctx.arc(x,y,4+ph*14,0,7);ctx.fill()}}
