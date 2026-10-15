@@ -172,6 +172,11 @@
       "note": "第 57 年划出广场（编年史）"
      },
      {
+      "year": 59,
+      "stage": "frame",
+      "note": "铺地，四面柱廊起墙"
+     },
+     {
       "year": 60,
       "stage": "done",
       "part": "arch",
