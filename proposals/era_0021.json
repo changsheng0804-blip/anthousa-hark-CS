@@ -155,7 +155,24 @@
      ],
      "ornament": 0,
      "scale": "civic"
-    }
+    },
+    "phases": [
+     {
+      "year": 24,
+      "stage": "site",
+      "note": "新港上方塔基"
+     },
+     {
+      "year": 25,
+      "stage": "frame",
+      "note": "塔身上升"
+     },
+     {
+      "year": 26,
+      "stage": "done",
+      "note": "塔顶雉堞"
+     }
+    ]
    },
    "why": "A watchtower over the Neorion, where the Black Sea grain ships now lie.",
    "year": 24

@@ -63,7 +63,24 @@
       ]
      ]
     },
-    "label": "Harbor of Theodosius"
+    "label": "Harbor of Theodosius",
+    "phases": [
+     {
+      "year": 31,
+      "stage": "site",
+      "note": "马尔马拉海岸疏浚港池、抛石筑堤（水上作业，岸上房子还在）"
+     },
+     {
+      "year": 32,
+      "stage": "frame",
+      "note": "防波堤合拢，码头岸线砌石"
+     },
+     {
+      "year": 33,
+      "stage": "done",
+      "note": "第 33 年完工（编年史），岸边三间房让给码头"
+     }
+    ]
    },
    "why": "The Egyptian grain fleet needs a harbor on the Marmara shore big enough for the whole convoy; the merchants dig one west of the Julian harbor.",
    "year": 33
