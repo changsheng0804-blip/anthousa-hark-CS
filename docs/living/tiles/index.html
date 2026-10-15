@@ -370,7 +370,8 @@ function frame(now){now=now||performance.now();const dt=Math.min(0.1,(now-lastT)
     ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z,dpr*(W/2-cam.x*cam.z),dpr*(H/2-cam.y*cam.z));
     hdrawn=0;if(fade>0&&prevYear!=null)drawYear(prevYear,1);drawYear(YEAR,fade>0?1-fade:1);traceDraw(YEAR);
     ctx.lineWidth=2/cam.z;ctx.font=(16/cam.z)+'px serif';
-    for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];ctx.strokeStyle='rgba(212,168,90,.7)';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#3a2a14';ctx.fillText((NAMES[q]||q)+' →',x+8/cam.z,y+22/cam.z)}
+    /* goal5 G1：全城级不再画街区金框（所有者看到的是「格子」）；只留不带框的地名，放在街区中心，描浅边 */
+    ctx.textAlign='center';ctx.lineJoin='round';for(const q in M.quarters){const [x,y,w,h]=M.quarters[q],t=(NAMES[q]||q)+' →';ctx.strokeStyle='rgba(240,228,200,.85)';ctx.lineWidth=4/cam.z;ctx.strokeText(t,x+w/2,y+h/2);ctx.fillStyle='#3a2a14';ctx.fillText(t,x+w/2,y+h/2)}ctx.textAlign='start';
     drawMarks();ctx.setTransform(1,0,0,1,0,0);
     document.getElementById('st').textContent=`${YEAR} 年 · 级 ${level()} · 画了 ${drawn} 块瓦片 · 已请求 ${loads} 块 · 缓存 ${cache.size}`}}
   ctx=ctx0;requestAnimationFrame(frame)}
@@ -396,7 +397,7 @@ c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts
   if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
   else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])*(H/Hv)/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
-c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY*H/Hv-H/2)/cam.z;if(markHit(e.clientX,e.clientY*H/Hv)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(wx>x&&wx<x+w&&wy>y&&wy<y+28/cam.z+8)location.href='../'+q+'/'}}drag=null});
+c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY*H/Hv-H/2)/cam.z;if(markHit(e.clientX,e.clientY*H/Hv)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(Math.abs(wx-(x+w/2))<70/cam.z&&Math.abs(wy-(y+h/2+6/cam.z))<16/cam.z)location.href='../'+q+'/'}}drag=null});
 /* 缩放绕光标：光标下的世界点缩放后仍在光标下。倾角随 z 变，所以新的摊平视野高 H' 要先算出来（并立刻生效），不然光标会随倾角漂 */
 function zoomAt(sx,sy,k){const fy=sy*H/Hv,wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(fy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));H=Hv/Math.cos(tiltOf(cam.z));const fy2=sy*H/Hv;cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(fy2-H/2)/cam.z;dirty=true}
 c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});

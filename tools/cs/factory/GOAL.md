@@ -24,8 +24,8 @@
 ## 清单（每轮开工先重排，做最上面那条没卡住的）
 | # | 项 | 对应 | 状态 |
 |---|---|---|---|
-| 1 | 写 check_seams.py（各级瓦片 + 街巷级地面 g/，先跑出不过，记基线数字） | G1 | 待做 |
-| 2 | 页面：去掉全城级金色框（地名保留）；check_ep_page/check_tiles 照过 | G1 | 待做 |
+| 1 | 写 check_seams.py（各级瓦片 + 街巷级地面 g/，先跑出不过，记基线数字） | G1 | 完成（基线 factory/seams_base.json；G1 落地前推送用 --gate） |
+| 2 | 页面：去掉全城级金色框（地名保留）；check_ep_page/check_tiles 照过 | G1 | 完成 |
 | 3 | ground_city.py：全城一张地面（关键年），先在沙箱出 1/4 分辨率预览对比图 out/ground_city_<年>.jpg，自己看一眼再接 | G1 | 待做 |
 | 4 | render_ng / tile_bake 改读全城地面；世界框往西扩 2 列（origin 352）；Mac 全量重烤；check_seams 过 | G1 G2 | 待做 |
 | 5 | 第十块「城外」chengwai：make_quarter + quarters/chengwai.json，ORDER 末尾；城门/外水道桥/教堂/城外区进瓦片；check_epic_stage 改「要画」；epic_sprites 按新 origin 重出（Mac） | G2 | 待做 |
@@ -35,3 +35,4 @@
 
 ## 轮次（每轮一行：时间、项、结果、重排）
 - 2026-10-15 03:20 PT 立项（会话里），清单 8 项。
+- 2026-10-15 03:45 PT 第 1 轮：项 1 + 项 2。check_seams.py 写好，现状不过（基线，年 70）：街区缝跳变 级0 ~36%（210/587 段）、级1 26%、瓦片缝 ≤1–3%、空洞 级0 缺 36/182 块、水陆错 级1 0.62%、街巷地面 g/ 街区缝 ~35%；--gate 过渡闸（不比基线差）。页面全城级去掉金框，地名改无框居中描边、点地名进街区。重排：下一轮项 3 ground_city.py。
