@@ -20,13 +20,15 @@ const dom=new JSDOM(html,{runScripts:'dangerously',pretendToBeVisual:true,virtua
 const NG_=JSON.parse(fs.readFileSync((process.env.AH||'/workspace/work/ah')+'/docs/living/nangang/houses_street.json','utf8')).houses;const NH=Y=>NG_.filter(h=>h[2]<=Y&&Y<h[3]).length;
 const w=dom.window;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 (async()=>{await sleep(300);const T=w.__TILES;if(!T){console.log('❌ 页面没起来',errs);process.exit(1)}
- const out=[];let bad=0;const BUD={tiles:40,bytes:1.5e6,houses:5000,walkers:600,ships:40};
+ const out=[];let bad=0;let VEC=0;const BUD={tiles:40,bytes:1.5e6,houses:5000,walkers:600,ships:40};
  const views=[['全城',null],['街区',0.45],['街坊',1.0],['街巷',2.5],['贴近',5]];
  for(const Y of T.M.years){for(const [nm,z] of views){
    if(z!==null){const q=T.M.quarters.nangang;T.cam.x=q[0]+q[2]/2;T.cam.y=q[1]+q[3]/2;T.cam.z=z}else{T.cam.z=Math.min(1920/(T.M.grid[0]*T.M.tile_px),1080/(T.M.grid[1]*T.M.tile_px))*0.95;T.cam.x=T.M.grid[0]*T.M.tile_px/2;T.cam.y=T.M.grid[1]*T.M.tile_px/2}
    w.__TILES.setYear(Y);const r0=req.length;await sleep(z!==null&&z>=1.15?900:150);
-   const got=req.slice(r0);const by=got.reduce((s,f)=>{const p=path.join(D,f);if(!fs.existsSync(p))return s;return s+(f.endsWith('.json')?zlib.gzipSync(fs.readFileSync(p)).length:fs.statSync(p).size)},0);
+   const got=req.slice(r0);const sz=f=>{const p=path.join(D,f);if(!fs.existsSync(p))return 0;return f.endsWith('.json')?zlib.gzipSync(fs.readFileSync(p)).length:fs.statSync(p).size};const isV=f=>/(^|\/)vec\//.test(f);const by=got.filter(f=>!isV(f)).reduce((s,f)=>s+sz(f),0);VEC+=got.filter(isV).reduce((s,f)=>s+sz(f),0);
    const [bl,bf]=T.levelF(),band=bl>0&&bf<0.85&&z!==null;const ok=T.drawn<=(band?80:BUD.tiles)&&by<=((z!==null&&z>=0.76&&z<1.45)||band?3.3e6:BUD.bytes)&&T.hdrawn<=BUD.houses&&(z===null||z<T.STREET_Z||T.hdrawn>0||!NH(Y))&&T.LIFE.walkers<=BUD.walkers&&T.LIFE.ships<=BUD.ships&&(z===null||z<T.STREET_Z||T.LIFE.walkers>0||!NH(Y));bad+=!ok;out.push(`${ok?'✅':'❌'} ${Y} 年 ${nm}（级 ${T.level()}）：画 ${T.drawn} 块，新下载 ${got.length} 块 ${(by/1024).toFixed(0)} KB${T.hdrawn?'，矢量房子 '+T.hdrawn+' 栋，人 '+T.LIFE.walkers+'，船 '+T.LIFE.ships:''}`)}}
+ // 矢量瓦片（vec/）与年份无关、只下一次：不算进每一步 1.5 MB，单独按 /goal 4 G7 街巷级 12 MB（gzip）记总账（2026-10-14：此前它落在第一年那一步，-657 街巷时红时绿）
+ {const ok=VEC<=12e6;bad+=!ok;out.push(`${ok?'✅':'❌'} 矢量瓦片全程共下 ${(VEC/1048576).toFixed(2)} MB（gzip，≤12 MB）`)}
  // 定律：街巷级跑 20 秒模拟时间，人始终在 w 位为真的街上，船始终在水格（含四周）里；再拉到港口看船
  {const q=T.M.quarters.nangang;T.cam.x=q[0]+q[2]*0.6;T.cam.y=q[1]+q[3]*0.85;T.cam.z=2;w.__TILES.setYear(60);await sleep(400);
   let bw=0,bs=0,maxS=0;for(let k=0;k<40;k++){await sleep(30);const gi=T.M.street.ground_keys.indexOf(60),N=T.M.water_cells_n,C=T.M.water_cell,TP=T.M.tile_px;
