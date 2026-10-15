@@ -1,0 +1,246 @@
+{
+ "_doc": "economy_v20 标定 5 组（G2 采用；calib.py 复现：V20_OVR='<ovr>' python3 calib.py <组> base|path|x05）——Hark（刘线）",
+ "defaults": {
+  "craft_cap_on": true,
+  "craft_rmin": 7.0,
+  "export_shop0": 1.5,
+  "R_conv_harbor20": 60.0,
+  "fine_on": true,
+  "fine_estate": 4.5,
+  "fine_pension": 3.5,
+  "p_pension": 0.3
+ },
+ "groups": [
+  {
+   "group": "G1",
+   "ovr": {
+    "craft_rmin": 5.0
+   },
+   "base_AF70": {
+    "unemp_AF70": 0.0719,
+    "poor_share_net": 0.0839,
+    "poor_share": 0.0633,
+    "gini_net": 0.4989,
+    "unfunded": 106,
+    "poor_net_by_livelihood": {
+     "雇工": 742,
+     "面包": 21,
+     "手工铺": 501,
+     "作坊": 4,
+     "营造": 126,
+     "体面户": 85
+    },
+    "craft": {
+     "converted_ever": 151,
+     "to_porter_ever": 1,
+     "to_labourer_ever": 150,
+     "export_shop_param": 1.6152
+    }
+   },
+   "path": {
+    "unemp": {
+     "63": 0.0573,
+     "64": 0.076,
+     "65": 0.0924,
+     "66": 0.1138,
+     "67": 0.1252,
+     "68": 0.1242,
+     "69": 0.1133,
+     "70": 0.1204
+    },
+    "poor": {
+     "63": 934,
+     "64": 1133,
+     "65": 1551,
+     "66": 1366,
+     "67": 1291,
+     "68": 1639,
+     "69": 1541,
+     "70": 1636
+    },
+    "poor_net": {
+     "63": 1300,
+     "64": 1504,
+     "65": 2058,
+     "66": 1646,
+     "67": 1631,
+     "68": 1971,
+     "69": 1897,
+     "70": 2002
+    },
+    "reserve_max": 20000.0,
+    "cons": 1.0186340659856796e-09,
+    "checks": true
+   }
+  },
+  {
+   "group": "G2（采用）",
+   "ovr": {
+    "craft_rmin": 7.0
+   },
+   "base_AF70": {
+    "unemp_AF70": 0.0918,
+    "poor_share_net": 0.0836,
+    "poor_share": 0.0689,
+    "gini_net": 0.5016,
+    "unfunded": 110,
+    "poor_net_by_livelihood": {
+     "雇工": 979,
+     "码头脚夫": 12,
+     "面包": 18,
+     "手工铺": 251,
+     "作坊": 5,
+     "营造": 128,
+     "体面户": 82
+    },
+    "craft": {
+     "export_total_AF70": 3157.5,
+     "export_per_shop_after_AF70": 2.015,
+     "shops_ever": 2117,
+     "shops_ever_after": 1599,
+     "converted_ever": 518,
+     "to_porter_ever": 4,
+     "to_labourer_ever": 514,
+     "export_shop_param": 1.9859
+    },
+    "cons": 7.8580342233181e-10,
+    "checks": true
+   },
+   "path": {
+    "unemp": {
+     "63": 0.0779,
+     "64": 0.0993,
+     "65": 0.1139,
+     "66": 0.1191,
+     "67": 0.1368,
+     "68": 0.1349,
+     "69": 0.1362,
+     "70": 0.1389
+    },
+    "poor": {
+     "63": 1013,
+     "64": 1265,
+     "65": 1740,
+     "66": 1111,
+     "67": 1585,
+     "68": 1679,
+     "69": 1686,
+     "70": 1730
+    },
+    "poor_net": {
+     "63": 1257,
+     "64": 1556,
+     "65": 2214,
+     "66": 1324,
+     "67": 1792,
+     "68": 1909,
+     "69": 1968,
+     "70": 1999
+    },
+    "max_money_err": 1.0040821507573128e-09,
+    "checks_ok": true
+   },
+   "x05": {
+    "poor_share_AF70": 0.2686,
+    "poor_share_net_AF70": 0.2918,
+    "gini_net_income_AF70": 0.5275,
+    "unfunded_AF70": 3456,
+    "max_money_err": 2.6086013349413406e-09,
+    "checks_ok": true,
+    "unemp": 0.3848
+   }
+  },
+  {
+   "group": "G3",
+   "ovr": {
+    "craft_rmin": 9.0
+   },
+   "base_AF70": {
+    "unemp_AF70": 0.1025,
+    "poor_share_net": 0.0846,
+    "poor_share": 0.0754,
+    "gini_net": 0.5028,
+    "unfunded": 103,
+    "poor_net_by_livelihood": {
+     "雇工": 1123,
+     "码头脚夫": 12,
+     "面包": 19,
+     "手工铺": 116,
+     "作坊": 9,
+     "营造": 128,
+     "体面户": 84
+    },
+    "craft": {
+     "export_total_AF70": 3157.5,
+     "export_per_shop_after_AF70": 2.492,
+     "shops_ever": 2117,
+     "shops_ever_after": 1292,
+     "converted_ever": 825,
+     "to_porter_ever": 13,
+     "to_labourer_ever": 812,
+     "export_shop_param": 2.4578
+    },
+    "cons": 1.0331859812140465e-09,
+    "checks": true
+   }
+  },
+  {
+   "group": "G4（分解：只有体面户收入，不设铺数上限）",
+   "ovr": {
+    "craft_cap_on": false
+   },
+   "base_AF70": {
+    "unemp_AF70": 0.0623,
+    "poor_share_net": 0.0838,
+    "poor_share": 0.0633,
+    "gini_net": 0.4993,
+    "unfunded": 104,
+    "poor_net_by_livelihood": {
+     "雇工": 639,
+     "面包": 17,
+     "手工铺": 604,
+     "作坊": 6,
+     "营造": 127,
+     "体面户": 84
+    },
+    "craft": {},
+    "cons": 1.195303411805071e-09,
+    "checks": true
+   }
+  },
+  {
+   "group": "G5（分解：只有铺数上限 7.0，体面户无新收入）",
+   "ovr": {
+    "fine_on": false
+   },
+   "base_AF70": {
+    "unemp_AF70": 0.0998,
+    "poor_share_net": 0.1019,
+    "poor_share": 0.0865,
+    "gini_net": 0.5039,
+    "unfunded": 134,
+    "poor_net_by_livelihood": {
+     "雇工": 1064,
+     "码头脚夫": 12,
+     "面包": 20,
+     "手工铺": 259,
+     "作坊": 4,
+     "营造": 122,
+     "体面户": 315
+    },
+    "craft": {
+     "export_total_AF70": 3157.5,
+     "export_per_shop_after_AF70": 2.015,
+     "shops_ever": 2117,
+     "shops_ever_after": 1599,
+     "converted_ever": 518,
+     "to_porter_ever": 4,
+     "to_labourer_ever": 514,
+     "export_shop_param": 1.9859
+    },
+    "cons": 1.7313226408077753e-09,
+    "checks": true
+   }
+  }
+ ]
+}
