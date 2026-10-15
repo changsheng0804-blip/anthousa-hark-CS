@@ -3,6 +3,36 @@
 收件：changsheng0804-blip/anthousa-hark-CS（瓦片页 /living/tiles/）
 发件：liuzhijie820802-a11y/anthousa-liuzhijie（刘线）。下文路径都以本仓库根目录为起点。
 
+## 同步到主线：合并 liu/cs-sync（2026-10-15）
+
+- **分支**：https://github.com/liuzhijie820802-a11y/anthousa-liuzhijie/tree/cs-sync
+- **基于 CS 提交**：`f4ba426`（你们 main 当时的最新：瓦片分期 check_epic_stage 225/225）；cs-sync 只比它多一个提交 `0579d1c`，可快进。
+- **合并命令**（在 CS 仓库，remote 名 liu）：
+  ```
+  git fetch liu && git merge --ff-only liu/cs-sync
+  ```
+  若你们 main 在此之后又有提交，不能快进，改 `git merge liu/cs-sync`：我们只加文件，唯一改动的已有文件是 `docs/living/xerolophos/index.html`（末尾加一段 ECON + 两行 CSS），冲突面很小。
+- **带了什么**（底账 world.json / proposals / rules / chronicle / engine 一律没动）：
+  | 路径 | 内容 | 体积 |
+  |---|---|---|
+  | `liu/experiments/` | 刘线 24 个实验（rules_v0–v5、city_system_v6/v7、gov_frame_v8、social_foci_v9、social_v10–12、yamen_v13、economy_v14–v21、surface_v22–v23）的代码、REPORT.md、≤1 MB 的 results/json；大中间件不带，`liu/SOURCE.md` 写了来源提交和如何重跑 | 15 MB |
+  | `docs/living/xerolophos/econ/` | 生计/房况旁车：照你们 reg_pack 的做法，按底账 id 取刘线 surface_v23（economy_v21 骤降路径）原值，`g{id//64}.json` 251 组，4,786 户 × AF40–70 每年一档（行当以经济层为准、经济层生计、房况档/存量%、门面、出租/租住、贫困/灶冷/借债/施舍、收支与最大进项/开销、「为什么看起来这样」的模板与数字）；`chron.json` 街道/港口/市集/教堂 40–70 年表；`SOURCE.md` 写来源 | 12.6 MB（gzip 2.2 MB，单文件 ≤ 91 KB） |
+  | `docs/living/xerolophos/index.html` | 敲门卡末尾加一段「生计/房况」：**点开卡才取**这栋房所在组的一个文件，同组只取一次；没旁车 / 那一年账本没这户 / 40 年前 → 不显示；卡已关或换房子，旧请求不插。手工铺/作坊且你们卡上原行当是陶匠/织工/鞋匠/铜匠时用原行当做细分。不改你们卡片其它部分 | +23 行 |
+  | `docs/living/liu6/` | 刘线干山页 BUILD liu6（91a16d3）整份快照，照 liu1/liu2 | 19.2 MB |
+  | `liu/tools/` | `econ_pack.py`（重装箱，默认 `git archive liu/main`）、`check_econ.py`、`shot_econ_card.py`（无头点房截图） | — |
+  合计新增约 47 MB（1,030 个文件）。
+- **自检**：
+  - 新加 `liu/tools/check_econ.py` ✅ 全过：旁车 4,786 户 id 全在 world.json（用你们 engine/build_all.py 现烤的）、每户 31 档、AF40–70 每年都有户、非空档 28 字段无空值且下标不越界、你们干山页每栋房所在组都有文件（不会 404）；页面拼出的「为什么」短句与刘线 surfWhy 抽样 1,293 条逐字一致；600 次开卡出段 592（其余 8 次那一年账本没这户）。
+  - 无头 Chromium 打开你们的 `/living/xerolophos/`，真的点 AF40/50/60 各一栋房：卡里出「生计/房况」段，**0 JS 报错**，开卡前 econ 请求 0 次。
+  - 你们现有：check_reg、check_card、check_lives、check_talk、check_breadqueue、check_waterline、check_page（xerolophos、nangang 0 报错）、check_tiles、check_chron_page、check_traces、check_house_src、check_landmark_src、check_lm_city、check_nets、check_streets、check_dockpatch、check_epic_clear、check_heart ✅；accept.py xerolophos 9/10（唯一不过：落后上游底账 4 个提交）。
+  - 不过但与本次无关（干净的 f4ba426 上同样失败）：check_card_tile（nangang 心跳 `household` 读 undefined.B，56 项 ok 后抛错）、check_chronicle（3 句无地点）、check_zones（货栈长屋 0）。没跑成：check_fleet / check_vein（要你们本地的 run_ng.js）、check_palette（缺 cv2）、check_epic_stage（超过 115 s）、check_fly / zoom / tilt / hearts9、perf_*。
+- **已知问题**：
+  1. 房况破败偏高：AF70 干山破败 36.2%（全城 39.0%），折旧基数待刘线 surface_v24 修；卡片 title 和 SOURCE.md 都注明了。
+  2. AF61–70 无新生儿。
+  3. 行当冲突 1,852 条：刘线页面旧文字里与经济层行当对不上的，已隐藏或标 ⚠；你们卡上的旧文字没动，这段只给经济层行当。
+  4. 旁车只覆盖干山页的房子；全城版要把 surface 跑到全城，还没做。你们滑杆到 60，61–70 的旁车在但看不到。
+- **还欠你们的**（TO_LIU C/D）：门牌与 id 并列放进户籍旁车（yamen_v13）；每户一句「此刻」结果。下一轮做。
+
 ## A. 一个请求（最重要）
 
 **请在 `tile_bake.py` 烤 `vec/{tx}_{ty}.json` 时，把每栋房子的账本 id（`world.json` 里 `houses[].id`）作为 `'h'` 每条记录的第 6 个字段写进去。**
