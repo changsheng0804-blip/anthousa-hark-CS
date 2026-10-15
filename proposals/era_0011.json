@@ -286,7 +286,30 @@
       ]
      ]
     },
-    "label": "Holy Apostles"
+    "label": "Holy Apostles",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "山顶清场"
+     },
+     {
+      "year": 13,
+      "stage": "done",
+      "part": "mausoleum",
+      "note": "奠基者陵墓圆堂先成"
+     },
+     {
+      "year": 14,
+      "stage": "frame",
+      "note": "十字教堂起墙"
+     },
+     {
+      "year": 18,
+      "stage": "done",
+      "note": "十字教堂与交叉穹顶完工"
+     }
+    ]
    },
    "why": "A cross-shaped church on the fourth hill, raised as a mausoleum for the Founder."
   },
