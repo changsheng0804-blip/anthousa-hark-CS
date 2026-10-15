@@ -200,6 +200,23 @@
     },
     "spolia_from": [
      "wall_byzas"
+    ],
+    "phases": [
+     {
+      "year": 30,
+      "stage": "site",
+      "note": "清场，用拜扎斯旧墙石砌地基"
+     },
+     {
+      "year": 31,
+      "stage": "frame",
+      "note": "墙体与木屋架"
+     },
+     {
+      "year": 33,
+      "stage": "done",
+      "note": "木顶巴西利卡献堂"
+     }
     ]
    },
    "why": "Beside the church of Holy Peace the bishops raise the Great Church, a timber-roofed basilica longer than any hall in the city. Its foundations are laid with blocks taken from the old Greek wall of Byzas, pulled down when the Founder's wall was built.",

@@ -240,7 +240,24 @@
       ]
      ]
     },
-    "label": "Forum of the Founder"
+    "label": "Forum of the Founder",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场放线，椭圆地坪"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "柱廊立柱"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "柱廊上瓦、大理石铺地，与斑岩柱同年献祭"
+     }
+    ]
    },
    "why": "An oval forum of marble porticoes on the Mese, about six hundred metres from the Milion."
   },
@@ -257,7 +274,24 @@
       611,
       454
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "基座"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "斑岩鼓石逐年上架，2—4 年各加两节"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "奠基者立像登顶"
+     }
+    ]
    },
    "why": "A porphyry column carries the Founder's statue."
   },
@@ -289,7 +323,24 @@
       ]
      ]
     },
-    "label": "Milion"
+    "label": "Milion",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场、立木拱架"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "四面拱砌起"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "note": "穹顶合拢，帝国道路从这里起算"
+     }
+    ]
    },
    "why": "The milestone from which every road of the empire is measured."
   },
@@ -321,7 +372,31 @@
       ]
      ]
     },
-    "label": "Great Palace"
+    "label": "Great Palace",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场，台地开挖"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "part": "upper",
+      "note": "上台地：铜门与会堂"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "part": "middle",
+      "note": "中台地：庭院与花园"
+     },
+     {
+      "year": 8,
+      "stage": "done",
+      "note": "下台地与临海护墙，整座宫殿完成"
+     }
+    ]
    },
    "why": "Terraces of the palace step down towards the sea."
   },
@@ -377,7 +452,30 @@
       ]
      ]
     },
-    "label": "Hippodrome"
+    "label": "Hippodrome",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场、挖赛道"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "看台拱基与起跑门"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "赛道、分隔墙与看台完工"
+     },
+     {
+      "year": 6,
+      "stage": "done",
+      "part": "kathisma",
+      "note": "皇帝包厢落成，连通大皇宫"
+     }
+    ]
    },
    "why": "450 metres of race track beside the palace; the city will love and riot here."
   },
@@ -409,7 +507,24 @@
       ]
      ]
     },
-    "label": "Holy Peace"
+    "label": "Holy Peace",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "墙体与木屋架"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "献堂"
+     }
+    ]
    },
    "why": "The first great church rises beside the old citadel."
   },
