@@ -27,7 +27,13 @@ B_FORUM, B_NYMPH, B_MESE = ST['forum_theodosius']['built'], ST['nymphaeum_maius'
 NW = {n['id']: n for n in json.load(open(os.path.join(OUT, 'net_water.json')))['nodes']}
 WET_NYMPH = NW['nymphaeum_maius']['wet']
 MARBLE = (236, 230, 216); TILE = (186, 108, 72); TILE_D = (138, 74, 48)
-FORUM_SITE = 2; MESE_SITE = 2; COLUMN_COURSES = 8; ARCH_Y = 60   # 工地年数、柱节数、凯旋门年（谭线：AF57 起、AF64 落成、AF60 凯旋门）
+MESE_SITE = 2; COLUMN_COURSES = 8
+# 狄奥多西广场：年份只读底账 phases（谭线 e45f0ab：57 划出 → 60 凯旋门 part=arch → 64 纪功柱到顶、整座完工）
+_FP = ST['forum_theodosius']['phases']
+F_SITE = _FP[0]['year']; ARCH_Y = [q['year'] for q in _FP if q.get('part') == 'arch'][0]; F_DONE = min(q['year'] for q in _FP if q['stage'] == 'done' and not q.get('part'))
+FORUM_SITE = F_DONE - B_FORUM
+def course_year(k):   # 八节柱子按分期年分三批：开工年立基座和头两节，凯旋门那年到第五节，完工年到顶
+    return F_SITE if k < 2 else ARCH_Y if k < 5 else F_DONE
 def hx(c): return '%02x%02x%02x' % tuple(c)
 def hsh(n, k=0):
     x = (n * 2654435761 + k * 40503) & 0xffffffff; x ^= x >> 15; x = (x * 2246822519) & 0xffffffff; x ^= x >> 13
@@ -65,7 +71,7 @@ COLR = [None]
 def forum_rows():
     rows = []; x0, y0, x1, y1 = FORUM.bounds; ex = FORUM.exterior.coords; my_ = mese_y_at((x0 + x1) / 2)
     mz = MESE.buffer(9, cap_style=2)
-    R = Row('epic:forum_theodosius', B_FORUM, quad(FORUM)); a, f = B_FORUM, B_FORUM + FORUM_SITE   # a=开工(账本 built)；f=铺面落成
+    R = Row('epic:forum_theodosius', F_SITE, quad(FORUM)); a, f = F_SITE, F_DONE   # a=开工、f=整座完工（都读 phases）
     # 工地：整片清空的碎石地 + 石堆
     R.fill(list(ex)[:-1], (170, 150, 118), a, f)
     for i in range(14): R.ell(x0 + 8 + hsh(i, 1) * (x1 - x0 - 16), y0 + 8 + hsh(i, 2) * (y1 - y0 - 16), 3, 2, (206, 198, 180), a, f, 6)
@@ -102,19 +108,20 @@ def forum_rows():
     rows.append(R)
     # 狄奥多西柱：每年立一节，64 年（courses 节）落成立像、脚手架拆除
     C = R; COL0 = len(R.parts)   # 柱的部件接在广场行末尾（同一行内按部件次序画，柱压在铺面和北面柱廊之上；分行的话拓扑排序会把铺面排到柱前面）
-    cx, cy = (x0 + x1) / 2, y0 + 26; n = COLUMN_COURSES; dz = 52.0 / n; top = 9 + 52; done = B_FORUM + n - 1
+    cx, cy = (x0 + x1) / 2, y0 + 26; n = COLUMN_COURSES; dz = 52.0 / n; top = 9 + 52; done = F_DONE
     C.fill([(cx + 3, cy + 3), (cx + 30, cy + 14), (cx + 32, cy + 10), (cx + 5, cy - 1)], (203, 195, 188), a)   # 长影
     C.rect(cx - 5, cy - 5, cx + 5, cy + 5, (196, 188, 170), a); C.rect(cx - 5, cy + 5 - 9, cx + 5, cy + 5, (206, 198, 182), a)
     C.rect(cx - 5, cy - 9 - 5, cx + 5, cy - 9 + 5, MARBLE, a)
-    for k in range(n):   # 第 k 节：账本 built+k 年起
-        yk = B_FORUM + k; zb, zt = 9 + k * dz, 9 + (k + 1) * dz
+    for k in range(n):   # 第 k 节：按分期年起
+        yk = course_year(k); zb, zt = 9 + k * dz, 9 + (k + 1) * dz
         C.rect(cx - 3.2, cy - zt, cx + 3.2, cy - zb, MARBLE, yk); C.rect(cx + 1.0, cy - zt, cx + 3.2, cy - zb, (196, 188, 170), yk)
         z = zb
         while z < zt - 0.5: C.line([(cx - 3.2, cy - z), (cx + 3.2, cy - z - 2.4)], (160, 146, 120), yk); z += 3.0
-        for sx in (-4, 4): C.line([(cx + sx, cy - zb), (cx + sx, cy - zt - 3)], (124, 92, 58), yk, done)   # 脚手架立杆
+        if yk < done:
+            for sx in (-4, 4): C.line([(cx + sx, cy - zb), (cx + sx, cy - zt - 3)], (124, 92, 58), yk, done)   # 脚手架立杆
         zz = 11
         while zz <= zt + 2:
-            if zz > zb + 2: C.line([(cx - 4, cy - zz), (cx + 4, cy - zz)], (124, 92, 58), yk, done)
+            if zz > zb + 2 and yk < done: C.line([(cx - 4, cy - zz), (cx + 4, cy - zz)], (124, 92, 58), yk, done)
             zz += 4
     d1 = done; C.rect(cx - 3.4, cy - top - 1.6, cx + 3.4, cy - top, MARBLE, d1)
     C.fill([(cx - 1.3, cy - top - 1.6), (cx + 1.3, cy - top - 1.6), (cx + 0.8, cy - top - 8), (cx - 0.8, cy - top - 8)], (176, 144, 70), d1); C.ell(cx, cy - top - 9, 1, 1, (176, 144, 70), d1, INF, 6)
@@ -205,6 +212,18 @@ def mese_rows():
 # frame = 墙线 + 脚手架格；带 part 的 done = 那一部分先铺成屋顶。整座 done 起这批部件全部停画，栅格小图露出来。
 # 斑岩柱 col_founder 底账是点，栅格里没有小图：整根柱子都由这里画（基座 → 鼓石逐年加高的影子 → 立像）。
 PH_IDS = [s_['id'] for s_ in W['structures'] if s_.get('phases')]
+# e45f0ab 起谭线又给 16 座加了 phases。通用「盖住脚印的工地」只用于栅格里有 AI 小图的多边形建筑；
+# 自己画成品的（广场、港、城墙、水道）各有分期画法；整座在图外的（城门、外水道桥）不画。
+SELF_DRAWN = {'forum_theodosius', 'wall_founder', 'aq_great'} | {s_['id'] for s_ in W['structures'] if s_['type'] == 'harbor'}
+def in_map(e):
+    g = ST[e]['geom']; cs = [g['coords']] if g['type'] == 'point' else g['coords']; xs = [wp(*c)[0] for c in cs]; ys = [wp(*c)[1] for c in cs]
+    GM = M['grid']; TP = M['tile_px']; return max(xs) > 0 and min(xs) < GM[0] * TP and max(ys) > 0 and min(ys) < GM[1] * TP
+def ph_years(e):   # (开工, 起架, 整座完工)；没有 phases 就三者都是 built
+    ph = ST[e].get('phases')
+    if not ph: b = ST[e]['built']; return b, b, b
+    wd = min(q['year'] for q in ph if q['stage'] == 'done' and not q.get('part')); fr = [q['year'] for q in ph if q['stage'] == 'frame']
+    return ph[0]['year'], (fr[0] if fr else wd), wd
+def ph_meta(e): return [[q['year'], q['stage'], q.get('part')] for q in ST[e].get('phases') or []]
 SITE_C = (176, 154, 120); STAKE_C = (112, 88, 62); STONE_C = (206, 198, 180); WALL_C = (214, 206, 188); SCAF_C = (124, 92, 58)
 def whole_done(e): return min(p_['year'] for p_ in ST[e]['phases'] if p_['stage'] == 'done' and not p_.get('part'))
 def scale_poly(P, k):
@@ -246,6 +265,7 @@ def part_region(e, part, P):
 def phase_rows():
     rows = []; meta = {}
     for e in PH_IDS:
+        if e in SELF_DRAWN or not in_map(e): continue
         ph = ST[e]['phases']; wd = whole_done(e); site = ph[0]['year']; dst = ST[e].get('destroyed') or INF
         fr = [p_['year'] for p_ in ph if p_['stage'] == 'frame']; fy = fr[0] if fr else wd
         meta[e] = {'built': ST[e]['built'], 'phases': [[p_['year'], p_['stage'], p_.get('part')] for p_ in ph], 'done': wd}
@@ -290,6 +310,7 @@ def phase_rows():
                 else: R.polys(g, TILE, TILE_D, p_['year'], wd)
             else:                                                             # 整座之后才落成的局部（竞技场皇帝包厢）：之前那块还是工地
                 ga = g.buffer(1.5).intersection(C); R.polys(ga, SITE_C, None, wd, p_['year']); lattice(R, g, 5, SCAF_C, wd, p_['year'])
+        if ST[e]['type'] == 'barracks': barracks_done(R, P, wd, dst)   # 营房成品由 vec 画（谭线 barracks），整座完工年起
         rows.append(R)
     return rows, meta
 
@@ -309,13 +330,14 @@ def is_water(x, y):
     if not g: return False
     i, j = int((x - tx * TP) // C), int((y - ty * TP) // C)
     return 0 <= i < N and 0 <= j < N and g[j * N + i] == '1'
-STONE_M = (168, 158, 138); STONE_E = (118, 108, 92)
+STONE_M = (168, 158, 138); STONE_E = (118, 108, 92); RUBBLE = (150, 140, 122)
 def chunks(line, L=120):
     n = max(1, int(math.ceil(line.length / L))); return [substring(line, line.length * k / n, line.length * (k + 1) / n) for k in range(n)]
 def harbor_rows():
     rows = []; meta = {}
     for e in [s_['id'] for s_ in W['structures'] if s_['type'] == 'harbor' and s_['geom']['type'] == 'polygon']:
         b = ST[e]['built']; dst = ST[e].get('destroyed') or INF; P = poly_px(e); c = P.centroid; ring = P.exterior; L = ring.length
+        s0, f0, d0_ = ph_years(e)   # 分期（谭线 e45f0ab）：开工 抛石 → 起架 堤合拢、码头岸线砌石 → 完工 灯塔、系船柱、货
         cls = []
         for k in range(int(L // 3)):
             q = ring.interpolate(k * 3); q2 = ring.interpolate(min(L, k * 3 + 1)); dx, dy = q2.x - q.x, q2.y - q.y; l = math.hypot(dx, dy) or 1; nx, ny = dy / l, -dx / l
@@ -335,42 +357,58 @@ def harbor_rows():
             if d1 - d0 < (6 if any(r_[0] == 'gap' for r_ in runs[max(0, i - 1):i + 2]) else 12) or t in ('gap', 'land'): continue
             ln = substring(ring, d0, d1) if t == 'mole' else LineString(shp).simplify(1.0)
             for j, part in enumerate(chunks(ln)):
-                R = Row(f'epic:{e}:{t}{i}_{j}', b, quad(part.buffer(6, cap_style=2)))
+                R = Row(f'epic:{e}:{t}{i}_{j}', s0, quad(part.buffer(6, cap_style=2)))
                 if t == 'mole':
-                    R.polys(part.buffer(6, cap_style=1), STONE_M, STONE_E, b, dst)
+                    if s0 < f0:   # 开工：碎石一堆堆抛进去，还没成堤
+                        for k in range(int(part.length // 3)):
+                            q = part.interpolate(k * 3); R.ell(q.x + (hsh(k, i + 5) - .5) * 9, q.y + (hsh(k, i + 7) - .5) * 9, 1.8, 1.3, RUBBLE, s0, f0, 5)
+                    R.polys(part.buffer(6, cap_style=1), STONE_M, STONE_E, f0, dst)
                     for k in range(int(part.length // 4)):
-                        q = part.interpolate(k * 4); R.ell(q.x + (hsh(k, i) - .5) * 5, q.y + (hsh(k, i + 9) - .5) * 5, 1.5, 1.1, (190, 180, 160), b, dst, 5)
+                        q = part.interpolate(k * 4); R.ell(q.x + (hsh(k, i) - .5) * 5, q.y + (hsh(k, i + 9) - .5) * 5, 1.5, 1.1, (190, 180, 160), f0, dst, 5)
                     moles += 1
                 else:
-                    nx, ny = n; R.line(list(part.coords), (150, 138, 112), b, dst); R.line([(x - nx * 1.5, y - ny * 1.5) for x, y in part.coords], (150, 138, 112), b, dst)
+                    nx, ny = n
+                    if s0 < f0:   # 开工：码头前沿外的水里先抛石（狄奥多西港「水上作业，岸上房子还在」）
+                        for k in range(int(part.length // 4)):
+                            q = part.interpolate(k * 4); dd = 4 + hsh(k, i + 11) * 6; R.ell(q.x + nx * dd, q.y + ny * dd, 1.7, 1.2, RUBBLE, s0, f0, 5)
+                    R.line(list(part.coords), (150, 138, 112), f0, dst); R.line([(x - nx * 1.5, y - ny * 1.5) for x, y in part.coords], (150, 138, 112), f0, dst)
                     for k in range(int(part.length // 14)):
-                        q = part.interpolate(7 + k * 14); R.ell(q.x - nx * 3, q.y - ny * 3, 1.1, 1.1, (80, 70, 56), b, dst, 6)
+                        q = part.interpolate(7 + k * 14); R.ell(q.x - nx * 3, q.y - ny * 3, 1.1, 1.1, (80, 70, 56), d0_, dst, 6)
                         if hsh(k, i + 3) < 0.6:
-                            for m in range(3): R.ell(q.x - nx * 7 + ny * (m * 2.2 - 2), q.y - ny * 7 - nx * (m * 2.2 - 2), 1.2, 0.9, (214, 196, 150), b, dst, 6)
+                            for m in range(3): R.ell(q.x - nx * 7 + ny * (m * 2.2 - 2), q.y - ny * 7 - nx * (m * 2.2 - 2), 1.2, 0.9, (214, 196, 150), d0_, dst, 6)
                     quays += 1
                 rows.append(R)
             if t == 'mole':   # 堤头小灯塔：这段堤挨着船口的那一头
                 for end, nb in ((d0, runs[i - 1] if i else None), (d1, runs[i + 1] if i + 1 < len(runs) else None)):
                     if nb and nb[0] == 'gap':
-                        q = ring.interpolate(end); R = Row(f'epic:{e}:light{i}_{end}', b, [(q.x - 4, q.y - 4), (q.x + 4, q.y - 4), (q.x + 4, q.y + 4), (q.x - 4, q.y + 4)])
+                        q = ring.interpolate(end); b = d0_; R = Row(f'epic:{e}:light{i}_{end}', b, [(q.x - 4, q.y - 4), (q.x + 4, q.y - 4), (q.x + 4, q.y + 4), (q.x - 4, q.y + 4)])
                         R.ell(q.x, q.y, 4.5, 4.5, (200, 190, 170), b, dst, 12); R.edge([(q.x + 4.5 * math.cos(a_ * math.pi / 6), q.y + 4.5 * math.sin(a_ * math.pi / 6)) for a_ in range(12)], (150, 138, 114), b, dst)
                         R.ell(q.x, q.y, 1.6, 1.6, (240, 190, 90), b, dst, 8); rows.append(R); towers += 1
-        meta[e] = {'built': b, 'moles': moles, 'quays': quays, 'lights': towers}
+        meta[e] = {'built': ST[e]['built'], 'site': s0, 'moles': moles, 'quays': quays, 'lights': towers, 'phases': ph_meta(e)}
     return rows, meta
 from shapely.strtree import STRtree
-HF = []
+HF = []; HFY = []
 for _f in __import__('glob').glob(os.path.join(OUT, 'vec', '*.json')):
     for _h in json.load(open(_f))['h']:
-        if not str(_h[5]).startswith('epic:') and len(_h[3]) >= 8 and _h[1] > _h[0]: HF.append(Polygon(list(zip(_h[3][0:8:2], _h[3][1:8:2]))).buffer(0))
+        if not str(_h[5]).startswith('epic:') and len(_h[3]) >= 8 and _h[1] > _h[0]: HF.append(Polygon(list(zip(_h[3][0:8:2], _h[3][1:8:2]))).buffer(0)); HFY.append((_h[0], _h[1]))
 HOUSE_FEET = STRtree(HF)
 def wall_rows():
-    e = 'wall_founder'; b = ST[e]['built']; dst = ST[e].get('destroyed') or INF
+    e = 'wall_founder'; dst = ST[e].get('destroyed') or INF; s0, f0, b = ph_years(e)   # 分期：开工 挖基槽、堆石料 → 起架 墙身半高 → 完工 雉堞方塔（b = 完工年）
     ln = LineString([wp(*c_) for c_ in ST[e]['geom']['coords']]); G = M['grid']; TPX = M['tile_px']
     inside = ln.intersection(box(0, 0, G[0] * TPX, G[1] * TPX)); rows = []
     if inside.is_empty: return rows, {}
     off = inside.parallel_offset(7.5, 'left'); towers = 0
     for j, part in enumerate(chunks(inside, 128)):
-        band = part.buffer(9, cap_style=2); R = Row(f'epic:{e}:{j}', b, quad(band))
+        band = part.buffer(9, cap_style=2); R = Row(f'epic:{e}:{j}', s0, quad(band))
+        if s0 < f0:   # 基槽：一条翻开的土带（盖住栅格里已经画好的墙线）+ 槽底暗线 + 一堆堆石料
+            R.polys(band, SITE_C, None, s0, f0); R.line(list(part.coords), (98, 78, 56), s0, f0)
+            for k in range(int(part.length // 22)):
+                q = part.interpolate(11 + k * 22); R.ell(q.x + (hsh(k, j) - .5) * 8, q.y + (hsh(k, j + 3) - .5) * 8, 2.8, 2, STONE_C, s0, f0, 6)
+        if f0 < b:    # 墙身半高：墙带已砌、没有垛口，横搭脚手架
+            R.polys(band, (190, 182, 166), (120, 114, 104), f0, b)
+            for k in range(int(part.length // 9)):
+                q = part.interpolate(k * 9); q2 = part.interpolate(min(part.length, k * 9 + 1)); dx, dy = q2.x - q.x, q2.y - q.y; l = math.hypot(dx, dy) or 1
+                R.line([(q.x - dy / l * 10, q.y + dx / l * 10), (q.x + dy / l * 10, q.y - dx / l * 10)], SCAF_C, f0, b)
         R.polys(band, (178, 170, 154), (110, 104, 96), b, dst); R.line(list(part.coords), (150, 144, 134), b, dst)
         a0 = inside.project(Point(part.coords[0])); a1 = inside.project(Point(part.coords[-1]))
         for k in range(int(a0 // 4), int(a1 // 4)):
@@ -386,24 +424,66 @@ def wall_rows():
             for m in range(5): R.rect(q.x - 10 + m * 4.5, q.y - 10, q.x - 8 + m * 4.5, q.y - 8, (232, 226, 212), b, dst)
             towers += 1
         rows.append(R)
-    return rows, {e: {'built': b, 'towers': towers, 'len_px': round(inside.length), 'gate_in_map': False}}
+    return rows, {e: {'built': ST[e]['built'], 'site': s0, 'towers': towers, 'len_px': round(inside.length), 'gate_in_map': False, 'phases': ph_meta(e)}}
+def aq_rows():
+    """大水道 aq_great（线，谭线 e45f0ab：11 测坡开沟 → 13 渠道与石拱 → 16 通水）。栅格草图把水道画成 1.6 格宽的线，
+    瓦片栅格里城内这段没有画出水道（查收图核过），所以由 vec 画：开工 工地土带 + 测桩 + 渠沟 → 起架 砌渠、石拱墩 → 通水 封顶入地，地面一排检修井，一直画。"""
+    e = 'aq_great'; s0, f0, wd = ph_years(e); rows = []
+    ln = LineString([wp(*c_) for c_ in ST[e]['geom']['coords']]); G = M['grid']; TPX = M['tile_px']
+    inside = ln.intersection(box(0, 0, G[0] * TPX, G[1] * TPX))
+    parts = [inside] if inside.geom_type == 'LineString' else [g for g in getattr(inside, 'geoms', []) if g.geom_type == 'LineString']
+    def roofs(g, y0, y1):   # 这段带子上、y0–y1 之间站着的房：水道在房下走暗渠（罗马水道本就多半埋在地下），房顶上不画
+        ids = [i_ for i_ in HOUSE_FEET.query(g) if HFY[i_][0] < y1 and y0 < HFY[i_][1] and HF[i_].intersects(g)]
+        return unary_union([HF[i_].buffer(2) for i_ in ids]) if ids else None
+    def cut(g, r): return g if r is None else g.difference(r)
+    def cutl(R, part, col, y0, r):
+        g = cut(part, r)
+        for ln2 in ([g] if g.geom_type == 'LineString' else [q for q in getattr(g, 'geoms', []) if q.geom_type == 'LineString']):
+            if ln2.length > 2: R.line(list(ln2.coords), col, y0)
+    for a_, ln_ in enumerate(parts):
+        for j, part in enumerate(chunks(ln_, 128)):
+            band = part.buffer(7, cap_style=2); R = Row(f'epic:{e}:{a_}_{j}', s0, quad(band))
+            r_site = roofs(band, s0, wd); r_done = roofs(band, wd, INF); band_s = cut(band, r_site)
+            R.polys(band_s, SITE_C, None, s0, wd)                                      # 工地土带
+            for k in range(int(part.length // 16)):                                    # 测坡的桩
+                q = part.interpolate(8 + k * 16)
+                if band_s.contains(q): R.ell(q.x, q.y, 1.2, 1.2, STAKE_C, s0, f0, 6)
+            for ln2 in ([cut(part, r_site)] if True else []):                           # 渠沟
+                for l3 in ([ln2] if ln2.geom_type == 'LineString' else [q for q in getattr(ln2, 'geoms', []) if q.geom_type == 'LineString']):
+                    if l3.length > 2: R.line(list(l3.coords), (98, 78, 56), s0, f0)
+            if f0 < wd:
+                R.polys(cut(part.buffer(3.5, cap_style=2), r_site), WALL_C, (150, 140, 120), f0, wd)  # 砌好的渠道
+                for k in range(int(part.length // 12)):                                # 石拱的墩
+                    q = part.interpolate(6 + k * 12)
+                    if band_s.contains(q): R.rect(q.x - 2, q.y - 2, q.x + 2, q.y + 2, (176, 166, 146), f0, wd)
+            for k in range(int(part.length // 20)):   # 通水：渠道封顶埋进地下（罗马水道的常态），地面只剩一排检修井（puteus），井口不落在后来的房上
+                q = part.interpolate(10 + k * 20)
+                if r_done is None or not r_done.buffer(3).contains(q):
+                    R.rect(q.x - 2.6, q.y - 2.6, q.x + 2.6, q.y + 2.6, WALL_C, wd); R.rect(q.x - 1.2, q.y - 1.2, q.x + 1.2, q.y + 1.2, (70, 110, 128), wd)
+            rows.append(R)
+    return rows, {e: {'built': ST[e]['built'], 'site': s0, 'phases': ph_meta(e), 'rows': len(rows)}}
+def barracks_done(R, P, b, dst):
+    inner = P.buffer(-11, join_style=2); R.polys(P, TILE, TILE_D, b, dst)                 # 一圈瓦顶（先铺满，再挖出院子）
+    if not inner.is_empty:
+        R.edge(list(inner.buffer(5.5, join_style=2).exterior.coords)[:-1], (150, 84, 56), b, dst)   # 屋脊
+        R.polys(inner, (196, 184, 158), (170, 156, 128), b, dst)                         # 操练的院子
 def barracks_rows():
     out = []; meta = {}
     for e in [s_['id'] for s_ in W['structures'] if s_['type'] == 'barracks' and s_['geom']['type'] == 'polygon']:
-        b = ST[e]['built']; dst = ST[e].get('destroyed') or INF; P = poly_px(e); inner = P.buffer(-11, join_style=2)
-        R = Row('epic:' + e, b, quad(P)); R.polys(P, TILE, TILE_D, b, dst)                 # 一圈瓦顶（先铺满，再挖出院子）
-        if not inner.is_empty:
-            R.edge(list(inner.buffer(5.5, join_style=2).exterior.coords)[:-1], (150, 84, 56), b, dst)   # 屋脊
-            R.polys(inner, (196, 184, 158), (170, 156, 128), b, dst)                         # 操练的院子
-        out.append(R); meta[e] = {'built': b}
+        meta[e] = {'built': ST[e]['built'], 'site': ph_years(e)[0], 'phases': ph_meta(e)}
+        if ST[e].get('phases'): continue   # 有分期的在 phase_rows 里画（工地 → 起墙 → 完工年起成品）
+        b = ST[e]['built']; dst = ST[e].get('destroyed') or INF; P = poly_px(e)
+        R = Row('epic:' + e, b, quad(P)); barracks_done(R, P, b, dst); out.append(R)
     return out, meta
 def build():
-    pr, pm = phase_rows(); hr, hm = harbor_rows(); wr, wm = wall_rows(); br, bm = barracks_rows()
-    rows = forum_rows() + nymph_rows() + mese_rows() + pr + hr + wr + br
-    meta = {'forum_theodosius': {'built': B_FORUM, 'finish': B_FORUM + FORUM_SITE, 'column_done': B_FORUM + COLUMN_COURSES - 1, 'arch': ARCH_Y, 'column_parts': list(COLR[0])},
+    pr, pm = phase_rows(); hr, hm = harbor_rows(); wr, wm = wall_rows(); br, bm = barracks_rows(); ar, am = aq_rows()
+    rows = forum_rows() + nymph_rows() + mese_rows() + pr + hr + wr + br + ar
+    meta = {'forum_theodosius': {'built': B_FORUM, 'site': F_SITE, 'finish': F_DONE, 'column_done': F_DONE, 'arch': ARCH_Y, 'column_parts': list(COLR[0]), 'column_years': sorted({course_year(k) for k in range(COLUMN_COURSES)}), 'phases': [[q['year'], q['stage'], q.get('part')] for q in _FP]},
             'nymphaeum_maius': {'built': B_NYMPH, 'finish': B_NYMPH, 'wet': WET_NYMPH},
             'r_mese': {'built': B_MESE, 'finish': B_MESE + MESE_SITE}}
-    meta.update(pm); meta.update(hm); meta.update(wm); meta.update(bm)
+    meta.update(pm); meta.update(hm); meta.update(wm); meta.update(bm); meta.update(am)
+    for e in PH_IDS:
+        if e not in meta: meta[e] = {'built': ST[e]['built'], 'phases': ph_meta(e), 'in_map': in_map(e)}
     return {'src': 'tools/cs/factory/epic_stage.py（谭线 render_xero.py epic_ground/epic_tall/mese_portico，年份读 world.json）', 'epics': meta, 'rows': [r.out() for r in rows]}
 if __name__ == '__main__':
     D = build(); json.dump(D, open(os.path.join(OUT, 'epic_stage.json'), 'w'), separators=(',', ':'), ensure_ascii=False)

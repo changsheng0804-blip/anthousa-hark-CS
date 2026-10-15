@@ -44,8 +44,8 @@ if ids:
     s_site, s_done = sig(ids, f['built']), sig(ids, f['finish'])
     chk(s_site != s_done and len(s_done) > len(s_site), f'④ 广场 工地年 {f["built"]} ({len(s_site)}) ≠ 落成 {f["finish"]} ({len(s_done)})')
     chk(not any(h for h in [VEC.get('epic:forum_theodosius')] if h and any(p[0] == 1 and p[3] < f['finish'] for p in h[4] if len(p) > 4)), '④ 广场 柱廊/铺面在工地年不画（边线都从落成年起）')
-    ys = list(range(f['built'], f['column_done'] + 1)); CR = f['column_parts']; FR = ['epic:forum_theodosius']; cs = [sig(FR, y, CR) for y in ys]
-    chk(all(cs[i] != cs[i + 1] for i in range(len(cs) - 1)), f'④ 狄奥多西柱 {ys[0]}–{ys[-1]} 年每年多一节（{[len(c) for c in cs]}）')
+    ys = f['column_years']; CR = f['column_parts']; FR = ['epic:forum_theodosius']; cs = [sig(FR, y, CR) for y in ys]   # e45f0ab 起柱子只按分期年长（57/60/64）
+    chk(ys == sorted({q['year'] for q in ST['forum_theodosius']['phases']}) and all(cs[i] != cs[i + 1] for i in range(len(cs) - 1)), f'④ 狄奥多西柱 只在分期年 {ys} 长高（{[len(c) for c in cs]}）')
     chk(sig(FR, f['column_done'] - 1, CR) != sig(FR, f['column_done'], CR) and not [p for p in VEC['epic:forum_theodosius'][4][CR[0]:CR[1]] if p[2] == '7c5c3a' and p[3] <= f['column_done'] < p[4]], '④ 柱 落成后脚手架拆、立像（部件集再变一次）')
     chk(not sig(['epic:forum_theodosius:arch'], f['arch'] - 1) and sig(['epic:forum_theodosius:arch'], f['arch']), f'④ 凯旋门 {f["arch"]} 年起')
 m = E['r_mese']; ids = G['r_mese']
@@ -74,10 +74,26 @@ from shapely.ops import unary_union
 INF = 9999
 PH = [e for e in W['structures'] if e.get('phases')]
 chk(len(PH) >= 8, f'⑦ world.json 里带 phases 的结构 {len(PH)} 座（engine/build_all.py 生成的 world.json 已含分期）')
+GM = M['grid']; TPX0 = M['tile_px']
+def in_map(e):
+    g = e['geom']; cs = [g['coords']] if g['type'] == 'point' else g['coords']; xs = [(c[0] - X0) * S for c in cs]; ys = [(c[1] - Y0) * S for c in cs]
+    return max(xs) > 0 and min(xs) < GM[0] * TPX0 and max(ys) > 0 and min(ys) < GM[1] * TPX0
+SELF = {'forum_theodosius', 'wall_founder', 'aq_great'} | {e['id'] for e in W['structures'] if e['type'] == 'harbor'}
 for e in PH:
     k = e['id']; i = 'epic:' + k; h = VEC.get(i); ph = e['phases']; ys = sorted({p['year'] for p in ph}); dst = e['destroyed'] if e['destroyed'] is not None else INF
     wd = min(p['year'] for p in ph if p['stage'] == 'done' and not p.get('part'))
     chk(E.get(k, {}).get('phases') == [[p['year'], p['stage'], p.get('part')] for p in ph], f'⑦ {k} epic_stage 的分期 = world.json')
+    ids = [j for j in VEC if j == i or j.startswith(i + ':')]
+    if not in_map(e): chk(not ids, f'⑦ {k} 整座在图外，不画'); continue
+    if k in SELF:   # 自己画成品的（广场、港、城墙、水道）：年份只用分期年、开工前不画、每期画面变、完工后成品一直画
+        chk(bool(ids), f'⑦ {k} 进了 vec（{len(ids)} 行）')
+        yrs = {v for j in ids for p in VEC[j][4] for v in p[3:5]} | {VEC[j][0] for j in ids}; extra = yrs - set(ys) - {INF, dst}
+        chk(not extra, f'⑦ {k} 部件年份段只用底账的分期年 {ys}' + (f'（多出 {sorted(extra)}）' if extra else ''))
+        chk(not sig(ids, ys[0] - 1) and bool(sig(ids, ys[0])), f'⑦ {k} {ys[0]-1} 年不画、{ys[0]} 年（开工）起画')
+        seq = [sig(ids, y) for y in ys]
+        chk(all(seq[j] != seq[j + 1] for j in range(len(seq) - 1)), f'⑦ {k} 每个分期年画面都变（{ys}：{[len(x) for x in seq]} 个部件）')
+        chk(bool(sig(ids, wd + 5)), f'⑦ {k} 完工后成品一直画（{wd + 5} 年 {len(sig(ids, wd + 5))} 个部件；栅格里没有这些成品）')
+        continue
     chk(h is not None, f'⑦ {k} 进了 vec')
     if not h: continue
     yrs = {v for p in h[4] for v in p[3:5]}; extra = yrs - set(ys) - {INF, dst}
@@ -94,7 +110,7 @@ for e in PH:
         C = Polygon(list(zip(cov[0][1][0::2], cov[0][1][1::2]))).buffer(0) if cov else None
         chk(bool(C) and C.buffer(0.6).contains(P.difference(unary_union([q for eid, q, eb, ee in EP if eid != k and max(ys[0], eb) < min(wd, ee)])) if True else P) and C.difference(P.buffer(P.length * 0.02 + 4)).area < 1, f'⑦ {k} 整座落成前有一块盖住脚印、不超出脚印 2%+4 px（{ys[0]}–{wd}，面积 ×{(C.area / P.area) if C else 0:.2f}）把栅格成品挡住')
         live = [p for p in h[4] if p[3] <= wd < p[4]]
-        chk(all(p[3] >= wd for p in live), f'⑦ {k} {wd} 年（整座 done）起只剩整座之后的局部工地，栅格小图露出（{len(live)} 个部件还画）')
+        chk(all(p[3] >= wd for p in live), f'⑦ {k} {wd} 年（整座 done）起只剩整座之后的部件（局部工地；营房成品由 vec 画），开工期的工地全撤（{len(live)} 个部件还画）')
         out = 0
         for p in h[4]:
             if len(p[1]) >= 6:
@@ -131,10 +147,10 @@ def wat(x, y, K=60):
         f = os.path.join(T, 'vec', f'{tx}_{ty}.json'); _wgc[k] = (json.load(open(f)).get('wg', {}) if os.path.exists(f) else {}).get(str(K))
     g = _wgc[k]; i, j = int((x - tx * TPX) // WC), int((y - ty * TPX) // WC)
     return bool(g) and 0 <= i < WN and 0 <= j < WN and g[j * WN + i] == '1'
-for k in ('wall_founder', 'barracks_gate', 'harbor_julian', 'harbor_theodosius'):
-    ids = [i for i in VEC if i == 'epic:' + k or i.startswith('epic:' + k + ':')]; b = ST[k]['built']
-    chk(len(ids) > 0 and E.get(k, {}).get('built') == b, f'⑧ {k}：vec 里 {len(ids)} 行，起始年 = world.json {b}')
-    chk(all(VEC[i][0] == b for i in ids) and not sig(ids, b - 1) and sig(ids, b), f'⑧ {k} {b-1} 年不画、{b} 年起画')
+for k in ('wall_founder', 'barracks_gate', 'harbor_julian', 'harbor_theodosius', 'harbor_neorion', 'aq_great'):
+    ids = [i for i in VEC if i == 'epic:' + k or i.startswith('epic:' + k + ':')]; b = ST[k]['built']; s0 = ST[k]['phases'][0]['year'] if ST[k].get('phases') else b   # e45f0ab 起有分期：从开工年画
+    chk(len(ids) > 0 and E.get(k, {}).get('built') == b, f'⑧ {k}：vec 里 {len(ids)} 行，built = world.json {b}')
+    chk(min(VEC[i][0] for i in ids) == s0 and not sig(ids, s0 - 1) and sig(ids, s0), f'⑧ {k} {s0-1} 年不画、{s0} 年（开工）起画')
     Y = max(b, 60); P = [q for i in ids for q in parts_poly(i, Y)]
     if k != 'harbor_julian' and k != 'harbor_theodosius':
         hit = sum(1 for H, hb, he in HS if hb <= Y < he and any(H.intersection(q).area > 2 for q in P if q.bounds[0] - 30 < H.bounds[2] and H.bounds[0] - 30 < q.bounds[2] and q.bounds[1] - 30 < H.bounds[3] and H.bounds[1] - 30 < q.bounds[3]))
