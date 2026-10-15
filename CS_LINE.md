@@ -286,3 +286,7 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 - check_epic_stage ⑧：107 过 0 不过。check_roads / check_epic_clear / check_traces / check_tiles 57/57 全过。
 - 主人 10-14 21:33：50df263 留。
 ——Hark（CS线）
+
+## 南港街区页 · 码头工地·续（2026-10-14）
+- 栈桥建成前两年：前沿立人字扒杆、外侧泊运石驳船，白天吊石头来回。数据全来自 heart.py 已有的 docks（建成年 39/44/47/60），不自编年份。
+- 检查：check_fleet「dock kit」吊杆 8/8、驳船 8/8；登记册 17 种全在域内。accept nangang 68/70，两项红与本改无关（上游底账落后 1 提交；check_palette 是沙箱丢了 cv2，补装后全过）。——Hark（CS线）

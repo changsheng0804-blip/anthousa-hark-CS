@@ -51,9 +51,9 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
   const small=gr.filter(g=>g.length<bs.length*.15).length;if(gr.length!==3||small){ok2=false;info+=' Y'+Y+':'+gr.length+'堆'}}
  console.log('ship peak speed',peak|0,'px/h (<=450); at 70px',s70|0,'at 25px',s25|0,bad2.join(),'| leave waves',ok2?'3 waves':info);if(!ok1||!ok2)bad++}
 /* cs16 · backlog 3：会动的东西登记册（页面里的 csMovers）——每一种都要登记，并在 40/48/50/57/60 年逐种检查：land 的点要在人走的网上，water 的要在水里，off 的要在画外，absent 的不能有点 */
-{const FL=w.__fleet;const REQ=['街上的人','摊子','烟囱的烟','工地上的人','面包房炉烟','早市队伍','码头人群','酒馆门口的人','大船队','旧版停泊船','旧版海上帆影','旧版进港船','赛马','海鸥'];
+{const FL=w.__fleet;const REQ=['街上的人','摊子','烟囱的烟','工地上的人','面包房炉烟','早市队伍','码头人群','酒馆门口的人','大船队','旧版停泊船','旧版海上帆影','旧版进港船','赛马','海鸥','工地吊杆','运石驳船'];
  const Wd=FL.FLEET.C.walk;const res={},miss=new Set(REQ);let badk=[];
- for(const Y of [40,48,50,57,60]){A.setYear(Y);const mv=FL.movers(Y);
+ for(const Y of [38,40,43,46,48,50,57,59,60]){A.setYear(Y);const mv=FL.movers(Y);
   for(const m of mv){miss.delete(m.kind);const r=res[m.kind]||(res[m.kind]={n:0,bad:0,dom:m.domain,eg:null});
    for(const [x,y] of m.pts){r.n++;const c=FL.cell(x,y);let ok=true;
     if(m.domain==='land')ok=FL.walk(x,y);else if(m.domain==='water')ok=c==='w';else if(m.domain==='off')ok=x<0||y<0||x>Wd.W*Wd.R||y>Wd.H*Wd.R;else if(m.domain==='absent')ok=false;
@@ -64,6 +64,9 @@ for(const Y of [40,50,57]){A.setYear(Y);const R=F.FLEET.crowd(Y);
  const tot=Object.values(res).reduce((a,r)=>a+r.bad,0);
  console.log('movers',Object.keys(res).length,'kinds; missing',[...miss].join(',')||'none','; off-domain',JSON.stringify(Object.fromEntries(Object.entries(res).filter(([k,r])=>r.bad).map(([k,r])=>[k,r.bad+'/'+r.n+' '+JSON.stringify(r.eg)]))),'; unregistered frame loops',loops.join(',')||'none');
  if(miss.size||tot)bad++}
+/* backlog 1 码头工地·续：每座栈桥动工的两年里，工地都有一座吊杆、一条泊在水里的运石驳船 */
+{const FS=F.FLEET,D=FS.C.docks||[];let need=0,got=0,bg=0;for(const d of D)for(const Y of [d.from-2,d.from-1]){if(Y<1)continue;need++;A.setYear(Y);const k=FS.dockKit(Y).find(k=>k.d===d);if(k)got++;if(k&&k.barge)bg++}
+ console.log('dock kit: derricks',got+'/'+need,'barges',bg+'/'+need);if(got<need||bg<need)bad++}
 const K={};for(const Y of [50]){A.setYear(Y);for(const [per,cl] of [['morning',7],['day',12]]){const hs=A.houses.filter(h=>h.built<=Y&&h.destroyed>Y);for(const h of hs){const k=F.FLEET.keyOf(h,Y,per);if(k)K[per+k]=(K[per+k]||0)+1}}}console.log(JSON.stringify(K));console.log('distinct lines',lines.size,'near pairs',pairs,'same-line near pairs',dup);
 {const FS=F.FLEET,ps=FS.C.pier_spots||[];const cnt=[];for(const Y of [40,50,57,60]){A.setYear(Y);const Rr=FS.crowd(Y);cnt.push(Rr.crowd.filter(m=>ps.some(s=>Math.hypot(m.spot[0]-s[0],m.spot[1]-s[1])<16)).length)}
  console.log('people standing on piers per year',cnt.join(','),'pier spots',ps.length);/* cs19 暂时放宽：原来要 ≥4 个站位、每年 ≥8 人，其中 3 个站位其实站在船上（查收图抓到）。backlog 1「真栈桥认不全」修好后改回 */ /* cs20：蒙版生成的 60 年画让真栈桥出到 5 个，恢复严格 */ if(ps.length<4||cnt.some(v=>v<8))bad++;

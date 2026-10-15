@@ -933,6 +933,22 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
   FLEET.dockWork=function(Y){const out=[];for(const d of C.docks||[]){if(!(d.from>Y&&d.from-Y<=2))continue;
       const R=d.rects.slice().sort((a,b)=>Math.hypot(a[0]-d.root[0],a[1]-d.root[1])-Math.hypot(b[0]-d.root[0],b[1]-d.root[1]));const n=Math.max(1,Math.round(R.length*(d.from-Y===2?.35:.7)));
       for(let j=0;j<3;j++){const q=R[Math.max(0,n-1-j)];let p=[q[0]+q[2]/2,q[1]+q[3]/2];if(!FLEET_walkable(p[0],p[1]))p=[d.root[0],d.root[1]];out.push({d,R,n,p})}}return out};
+  /* backlog 1 码头工地更像工地·续：工地的吊杆（人字扒杆，立在打桩前沿；前沿还不能站人就立在栈桥根）和运石料的驳船（泊在前沿外侧、四周 8 px 都是水） */
+  const csW=(x,y)=>cellAt(WK.quay,x,y)==='w';
+  FLEET.dockKit=function(Y){const out=[];const seen=new Set();for(const w of FLEET.dockWork(Y)){if(seen.has(w.d))continue;seen.add(w.d);
+      const q=w.R[w.n-1];const f=[q[0]+q[2]/2,q[1]+q[3]/2];const der=FLEET_walkable(f[0],f[1])?f:[w.d.root[0],w.d.root[1]];
+      let barge=null;for(let r=10;r<=40&&!barge;r+=3)for(let a=0;a<16&&!barge;a++){const x=f[0]+Math.cos(a*Math.PI/8)*r,y=f[1]+Math.sin(a*Math.PI/8)*r;
+        if(csW(x,y)&&csW(x-9,y)&&csW(x+9,y)&&csW(x,y-5)&&csW(x,y+5)&&csW(x-9,y-5)&&csW(x+9,y+5)&&csW(x-9,y+5)&&csW(x+9,y-5))barge=[x,y]}
+      out.push({d:w.d,der,barge})}return out};
+  FLEET.kitDraw=function(t){const day=clock>=7&&clock<17;for(const [i,k] of FLEET.dockKit(YEAR).entries()){const [x,y]=k.der;
+      if(k.barge){const [bx,by]=k.barge;const bob=Math.sin(t*1.6+i)*.4;ctx.save();ctx.translate(bx,by+bob);ctx.fillStyle='rgba(96,66,40,.97)';ctx.fillRect(-9,-3.5,18,7);ctx.fillStyle='rgba(70,48,30,.97)';ctx.fillRect(-9,-3.5,18,1.2);
+        ctx.fillStyle='rgba(176,170,158,.97)';for(let m=0;m<6;m++){ctx.beginPath();ctx.arc(-6+(m%3)*4.5,-1+Math.floor(m/3)*2.6,1.5,0,7);ctx.fill()}ctx.restore()}
+      /* 人字扒杆：两条腿 + 一根斜吊臂；白天吊着一块石头在驳船和前沿之间来回 */
+      const tx=k.barge?k.barge[0]:x+10,ty=k.barge?k.barge[1]:y-6;const tip=[x+(tx-x)*.55,y+(ty-y)*.55-14];
+      ctx.strokeStyle='rgba(92,62,36,.97)';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x,y-16);ctx.lineTo(x+3,y);ctx.moveTo(x,y-16);ctx.lineTo(tip[0],tip[1]);ctx.stroke();
+      const u=day?(Math.sin(t*.7+i)+1)/2:.5;const hx=k.barge?tx+(x-tx)*u:tip[0],hy=(k.barge?ty+(y-ty)*u:tip[1]+8)-4;
+      ctx.strokeStyle='rgba(210,190,150,.9)';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(tip[0],tip[1]);ctx.lineTo(hx,hy);ctx.stroke();
+      if(day){ctx.fillStyle='rgba(176,170,158,.97)';ctx.fillRect(hx-1.6,hy,3.2,2.6)}}};
   FLEET.dockDraw=function(t){const D=C.docks;if(!D||!D.length)return;const Y=YEAR;const ks=(SCENE.keys||[]).map(k=>k[0]);let kk=ks[0];for(const k of ks)if(k<=Y)kk=k;
     for(const d of D){if(d.from<=Y||(d.borrow&&d.borrow[keyFor(Y)[0]]))continue;const c=d.col[kk]||d.col[Object.keys(d.col)[0]];ctx.save();ctx.fillStyle=ctx.shadowColor=`rgb(${c[0]},${c[1]},${c[2]})`;ctx.shadowBlur=5;for(const q of d.rects)ctx.fillRect(q[0]-1,q[1],q[2]+2,q[3]);ctx.restore()}   /* 借不到水才退回平涂 */
     const W=FLEET.dockWork(Y);const done=new Set();
@@ -941,7 +957,7 @@ var FLEET=null,FLEET_walkable=()=>true;let dayIdx=0;
       /* 岸上栈桥根：一垛木料、一堆石块（工地） */
       const [rx,ry]=w.d.root;ctx.fillStyle='rgba(150,108,66,.95)';for(let k=0;k<4;k++)ctx.fillRect(rx-9,ry-12+k*2,12,1.6);ctx.fillStyle='rgba(165,160,150,.95)';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(rx+6+(k%3)*2.4,ry-10+Math.floor(k/3)*2.2,1.3,0,7);ctx.fill()}}
     if(clock>=7&&clock<17)for(const [i,w] of W.entries()){const b=Math.sin(t*4+i*2)*.8;ctx.fillStyle='rgba(70,48,30,.95)';ctx.beginPath();ctx.arc(w.p[0]+(i-1)*3,w.p[1]+b,1.6,0,7);ctx.fill();ctx.fillStyle='rgba(220,190,150,.95)';ctx.beginPath();ctx.arc(w.p[0]+(i-1)*3,w.p[1]-2+b,1,0,7);ctx.fill()}};
-  FLEET.draw=function(t,vis){FLEET.dockDraw(t);FLEET.on=FLEET.active(YEAR);FLEET.slow=false;if(!FLEET.on)return;const c=clock,Y=YEAR,R=FLEET.crowd(Y);
+  FLEET.draw=function(t,vis){FLEET.dockDraw(t);FLEET.kitDraw(t);FLEET.on=FLEET.active(YEAR);FLEET.slow=false;if(!FLEET.on)return;const c=clock,Y=YEAR,R=FLEET.crowd(Y);
     FLEET.slow=c>=C.snap-.35&&c<C.hold+.3;
     // 船
     for(const s of ships){if(c<s.t0||!FLEET.shipOn(s,Y))continue;const[x,y,a,u]=shipPos(s,c);   /* cs25：岸线够几条船才来几条 */if(!vis(x,y,80))continue;drawBig(x,y,a,s.main?1.9:1.45,u>=.98&&c>C.hold+.3);
@@ -993,7 +1009,7 @@ function csMovers(Y){const out=[];if(!SCENE.fleet||!FLEET)return out;const add=(
   for(const w of walkers){const r=roads[w.r];for(let s=0;s<=r.L;s+=12){const q=walkerXY(w,s);wk.push([q[0],q[1]])}}
   add('街上的人','land',wk);add('摊子','land',stalls.map(s=>[s.x,s.y]));add('烟囱的烟','land',smokes.map(s=>[s.x,s.y]));
   const sites=buildingNow.map(h=>csSitePos(h)).filter(Boolean);for(const k in late){const L=late[k];if(!(L.built>Y&&L.built<=Y+2))continue;for(let j=0;j<3;j++){const q=csLatePos(L,j);if(q)sites.push(q)}}
-  add('工地上的人','land',sites);add('码头工地','land',Fl.dockWork?Fl.dockWork(Y).map(w=>w.p):[]);
+  add('工地上的人','land',sites);add('码头工地','land',Fl.dockWork?Fl.dockWork(Y).map(w=>w.p):[]);add('工地吊杆','land',Fl.dockKit?Fl.dockKit(Y).map(k=>k.der):[]);add('运石驳船','water',Fl.dockKit?Fl.dockKit(Y).filter(k=>k.barge).map(k=>k.barge):[]);
   if(typeof VEIN!=='undefined'&&VEIN&&VEIN.steps&&VEIN.steps.length&&Y>=33){const R=VEIN.at(Y);
     add('面包房炉烟','land',csBakeries(R).map(b=>[b.x,b.y]));
     for(const s of R.steps){const n=csQueueN(s,Y);const ang=csQueueAng(s,Y,n);for(let k=0;k<n;k++)pl.push(csQueuePt(s,ang,k))}
