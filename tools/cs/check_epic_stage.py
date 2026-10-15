@@ -108,4 +108,53 @@ for e in PH:
         chk(nb == 0, f'⑦ {k} 工地期（{ys[0]}–{wd}）不压当年站着的别的史诗脚印')
     else:
         chk(bool(sig([i], wd + 5)), f'⑦ {k} 是点、栅格无小图：整座落成后柱子一直画')
+
+# ⑧ 谭线交接 ③：港（碎石堤/码头前沿/堤头灯塔）、创城者城墙、卫队营房。年份 = world.json；不压当年房子；城墙不被街穿；堤与码头不下水
+from shapely.geometry import LineString as _LS, Point as _Pt
+HS = []   # 普通房子（非 epic 行）的脚印与年份
+STR = []
+for f in glob.glob(os.path.join(T, 'vec', '*.json')):
+    v = json.load(open(f))
+    for h in v.get('h', []):
+        if not str(h[5]).startswith('epic:') and len(h[3]) >= 8: HS.append((Polygon(list(zip(h[3][0:8:2], h[3][1:8:2]))).buffer(0), h[0], h[1]))
+    for st in v.get('s', []): STR.append(st)
+def parts_poly(i, Y):
+    h = VEC.get(i); out = []
+    if not h: return out
+    for p in h[4]:
+        if p[0] == 0 and len(p[1]) >= 6 and (len(p) <= 4 or p[3] <= Y < p[4]): out.append(Polygon(list(zip(p[1][0::2], p[1][1::2]))).buffer(0))
+    return out
+TPX = M['tile_px']; WC = M['water_cell']; WN = M['water_cells_n']; _wgc = {}
+def wat(x, y, K=60):
+    tx, ty = int(x // TPX), int(y // TPX); k = (tx, ty)
+    if k not in _wgc:
+        f = os.path.join(T, 'vec', f'{tx}_{ty}.json'); _wgc[k] = (json.load(open(f)).get('wg', {}) if os.path.exists(f) else {}).get(str(K))
+    g = _wgc[k]; i, j = int((x - tx * TPX) // WC), int((y - ty * TPX) // WC)
+    return bool(g) and 0 <= i < WN and 0 <= j < WN and g[j * WN + i] == '1'
+for k in ('wall_founder', 'barracks_gate', 'harbor_julian', 'harbor_theodosius'):
+    ids = [i for i in VEC if i == 'epic:' + k or i.startswith('epic:' + k + ':')]; b = ST[k]['built']
+    chk(len(ids) > 0 and E.get(k, {}).get('built') == b, f'⑧ {k}：vec 里 {len(ids)} 行，起始年 = world.json {b}')
+    chk(all(VEC[i][0] == b for i in ids) and not sig(ids, b - 1) and sig(ids, b), f'⑧ {k} {b-1} 年不画、{b} 年起画')
+    Y = max(b, 60); P = [q for i in ids for q in parts_poly(i, Y)]
+    if k != 'harbor_julian' and k != 'harbor_theodosius':
+        hit = sum(1 for H, hb, he in HS if hb <= Y < he and any(H.intersection(q).area > 2 for q in P if q.bounds[0] - 30 < H.bounds[2] and H.bounds[0] - 30 < q.bounds[2] and q.bounds[1] - 30 < H.bounds[3] and H.bounds[1] - 30 < q.bounds[3]))
+        chk(hit == 0, f'⑧ {k} {Y} 年不压房子（压了 {hit} 栋）')
+wl = _LS([((x - X0) * S, (y - Y0) * S) for x, y in ST['wall_founder']['geom']['coords']])
+cross = [st for st in STR if _LS([(st[0], st[1]), (st[2], st[3])]).intersects(wl)]
+chk(not cross, f'⑧ 创城者城墙不被街穿过（{len(cross)} 段）')
+chk(E['wall_founder']['towers'] >= 20, f'⑧ 城墙方塔 {E["wall_founder"]["towers"]} 座（每 64 px 一座）')
+for k in ('harbor_julian', 'harbor_theodosius'):
+    mol = [i for i in VEC if i.startswith(f'epic:{k}:mole')]; qu = [i for i in VEC if i.startswith(f'epic:{k}:quay')]
+    def wet_share(ids):
+        n = w = 0
+        for i in ids:
+            for p in VEC[i][4]:
+                if p[0] == 2:
+                    for a in range(0, len(p[1]), 2): n += 1; w += wat(p[1][a], p[1][a + 1])
+                elif p[0] == 0 and len(p[1]) >= 6 and p[2] == '%02x%02x%02x' % (168, 158, 138):
+                    c = Polygon(list(zip(p[1][0::2], p[1][1::2]))).centroid; n += 1; w += wat(c.x, c.y)
+        return w / max(1, n), n
+    if mol: r, n = wet_share(mol); chk(r <= 0.1, f'⑧ {k} 碎石堤落在陆带上（{n} 处，水里占 {r:.0%}）')
+    if qu: r, n = wet_share(qu); chk(r <= 0.1, f'⑧ {k} 码头前沿在岸上（{n} 点，水里占 {r:.0%}）')
+chk(E['harbor_julian']['moles'] > 0, f'⑧ 尤里安港有碎石堤（底账：Moles of rubble enclose a harbor）{E["harbor_julian"]["moles"]} 段')
 print('\n'.join('过 ' + m for m in ok)); print('\n'.join('不过 ' + m for m in bad)); print(f'{len(ok)} 过 {len(bad)} 不过'); sys.exit(1 if bad else 0)

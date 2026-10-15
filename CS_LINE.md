@@ -277,3 +277,11 @@ backlog 要求「每一种会动的东西都有不下水检查」。清点页面
 - check_epic_stage.py ⑦（91 过）；check_epic_clear、check_roads、check_traces、check_tiles 57/57 全过。
 - 已知：分期只在推近到街巷级（矢量层）看得到；全城/街区远景在 1–9 年仍显 10 年栅格的成品（不加栅格年份档的规矩下的取舍，G4 广场同此）。
 ——Hark（CS线）
+
+## 谭线交接 ③ 进瓦片：港 / 城墙 / 营房（2026-10-14 夜）
+- epic_stage.py 新增 harbor_rows / wall_rows / barracks_rows，年份几何只读 world.json：尤里安港（1 年，底账「Moles of rubble」）碎石堤 6 段 + 码头前沿沿真岸线（系船柱、麻袋）+ 堤头灯塔；狄奥多西港（33 年）码头前沿；创城者城墙（1 年）墙道+垛口+方塔 40 座（塔位有房就不立）；卫队营房（11 年）瓦顶围院。
+- 南岸瓦片里尤里安港那条平沙框 → 画成碎石堤（街巷级）。全城/街区远景仍是旧栅格接缝，要整套重烤地面才能改。
+- 城门 gate_founder 在 x<0，地图外，不画。
+- wall_clear.py（派生表）：派生街网把 39 栋房挪到墙线上（底账里它们都离墙 ≥14 px）。沿法线推回底账那一侧：推开 11、推不开 19 栋标不建（tiles/wall_cleared.json，houses_street h[13:]=['wall',…]，幂等可撤）。
+- check_epic_stage ⑧：107 过 0 不过。check_roads / check_epic_clear / check_traces / check_tiles 57/57 全过。
+——Hark（CS线）

@@ -292,13 +292,118 @@ def phase_rows():
                 ga = g.buffer(1.5).intersection(C); R.polys(ga, SITE_C, None, wd, p_['year']); lattice(R, g, 5, SCAF_C, wd, p_['year'])
         rows.append(R)
     return rows, meta
+
+# ── 谭线交接 ③（handoff-cs a029e36 epic_core.py：harbor / city_wall / barracks）搬进瓦片：年份、几何只读 world.json ──
+# · 港：底账原文「Moles of rubble enclose a harbor」。沿港池边界每 3 px 取样（水陆读 vec 的 wg，60 年档）：
+#   边界上是陆、里外两侧都是水 → 碎石防波堤；里水外陆 → 码头前沿（压边石、系船柱、麻袋）；边界上是水 → 船口。堤头（挨着船口的端点）立小灯塔。
+# · 创城者城墙 wall_founder（线）：墙道 + 垛口 + 每 64 px 一座方塔（谭线 ~55 m）；地图只到 x=0，城门 gate_founder 在图外不画。
+# · 卫队营房 barracks_gate（11 年）：四面一圈瓦顶围合院子（谭线 barracks：环宽 11 px）。
+WG = {}
+def _wg(tx, ty, K=60):
+    k = (tx, ty)
+    if k not in WG:
+        f = os.path.join(OUT, 'vec', f'{tx}_{ty}.json'); WG[k] = (json.load(open(f)).get('wg', {}) if os.path.exists(f) else {}).get(str(K))
+    return WG[k]
+def is_water(x, y):
+    TP = M['tile_px']; C = M['water_cell']; N = M['water_cells_n']; tx, ty = int(x // TP), int(y // TP); g = _wg(tx, ty)
+    if not g: return False
+    i, j = int((x - tx * TP) // C), int((y - ty * TP) // C)
+    return 0 <= i < N and 0 <= j < N and g[j * N + i] == '1'
+STONE_M = (168, 158, 138); STONE_E = (118, 108, 92)
+def chunks(line, L=120):
+    n = max(1, int(math.ceil(line.length / L))); return [substring(line, line.length * k / n, line.length * (k + 1) / n) for k in range(n)]
+def harbor_rows():
+    rows = []; meta = {}
+    for e in [s_['id'] for s_ in W['structures'] if s_['type'] == 'harbor' and s_['geom']['type'] == 'polygon']:
+        b = ST[e]['built']; dst = ST[e].get('destroyed') or INF; P = poly_px(e); c = P.centroid; ring = P.exterior; L = ring.length
+        cls = []
+        for k in range(int(L // 3)):
+            q = ring.interpolate(k * 3); q2 = ring.interpolate(min(L, k * 3 + 1)); dx, dy = q2.x - q.x, q2.y - q.y; l = math.hypot(dx, dy) or 1; nx, ny = dy / l, -dx / l
+            if (c.x - q.x) * nx + (c.y - q.y) * ny < 0: nx, ny = -nx, -ny      # n 指向港池里
+            mid, ins, out = is_water(q.x, q.y), is_water(q.x + nx * 11, q.y + ny * 11), is_water(q.x - nx * 15, q.y - ny * 15)
+            sh = None
+            if not mid and not out:   # 码头前沿沿真岸线走：沿法线往港池里找第一格水（≤40 px），岸点退回 1.5 px
+                for d in [1.5 * i_ for i_ in range(2, 27)]:
+                    if is_water(q.x + nx * d, q.y + ny * d): sh = (q.x + nx * (d - 1.5), q.y + ny * (d - 1.5)); break
+            cls.append(('gap' if mid else 'mole' if ins and out else 'quay' if sh else 'land', k * 3, (nx, ny), sh))
+        runs = []
+        for t, d, n, sh in cls:
+            if runs and runs[-1][0] == t and d - runs[-1][2] <= 3 and (t != 'quay' or math.dist(runs[-1][4][-1], sh) < 8): runs[-1][2] = d; runs[-1][4].append(sh)
+            else: runs.append([t, d, d, n, [sh]])
+        moles = quays = towers = 0
+        for i, (t, d0, d1, n, shp) in enumerate(runs):
+            if d1 - d0 < (6 if any(r_[0] == 'gap' for r_ in runs[max(0, i - 1):i + 2]) else 12) or t in ('gap', 'land'): continue
+            ln = substring(ring, d0, d1) if t == 'mole' else LineString(shp).simplify(1.0)
+            for j, part in enumerate(chunks(ln)):
+                R = Row(f'epic:{e}:{t}{i}_{j}', b, quad(part.buffer(6, cap_style=2)))
+                if t == 'mole':
+                    R.polys(part.buffer(6, cap_style=1), STONE_M, STONE_E, b, dst)
+                    for k in range(int(part.length // 4)):
+                        q = part.interpolate(k * 4); R.ell(q.x + (hsh(k, i) - .5) * 5, q.y + (hsh(k, i + 9) - .5) * 5, 1.5, 1.1, (190, 180, 160), b, dst, 5)
+                    moles += 1
+                else:
+                    nx, ny = n; R.line(list(part.coords), (150, 138, 112), b, dst); R.line([(x - nx * 1.5, y - ny * 1.5) for x, y in part.coords], (150, 138, 112), b, dst)
+                    for k in range(int(part.length // 14)):
+                        q = part.interpolate(7 + k * 14); R.ell(q.x - nx * 3, q.y - ny * 3, 1.1, 1.1, (80, 70, 56), b, dst, 6)
+                        if hsh(k, i + 3) < 0.6:
+                            for m in range(3): R.ell(q.x - nx * 7 + ny * (m * 2.2 - 2), q.y - ny * 7 - nx * (m * 2.2 - 2), 1.2, 0.9, (214, 196, 150), b, dst, 6)
+                    quays += 1
+                rows.append(R)
+            if t == 'mole':   # 堤头小灯塔：这段堤挨着船口的那一头
+                for end, nb in ((d0, runs[i - 1] if i else None), (d1, runs[i + 1] if i + 1 < len(runs) else None)):
+                    if nb and nb[0] == 'gap':
+                        q = ring.interpolate(end); R = Row(f'epic:{e}:light{i}_{end}', b, [(q.x - 4, q.y - 4), (q.x + 4, q.y - 4), (q.x + 4, q.y + 4), (q.x - 4, q.y + 4)])
+                        R.ell(q.x, q.y, 4.5, 4.5, (200, 190, 170), b, dst, 12); R.edge([(q.x + 4.5 * math.cos(a_ * math.pi / 6), q.y + 4.5 * math.sin(a_ * math.pi / 6)) for a_ in range(12)], (150, 138, 114), b, dst)
+                        R.ell(q.x, q.y, 1.6, 1.6, (240, 190, 90), b, dst, 8); rows.append(R); towers += 1
+        meta[e] = {'built': b, 'moles': moles, 'quays': quays, 'lights': towers}
+    return rows, meta
+from shapely.strtree import STRtree
+HF = []
+for _f in __import__('glob').glob(os.path.join(OUT, 'vec', '*.json')):
+    for _h in json.load(open(_f))['h']:
+        if not str(_h[5]).startswith('epic:') and len(_h[3]) >= 8 and _h[1] > _h[0]: HF.append(Polygon(list(zip(_h[3][0:8:2], _h[3][1:8:2]))).buffer(0))
+HOUSE_FEET = STRtree(HF)
+def wall_rows():
+    e = 'wall_founder'; b = ST[e]['built']; dst = ST[e].get('destroyed') or INF
+    ln = LineString([wp(*c_) for c_ in ST[e]['geom']['coords']]); G = M['grid']; TPX = M['tile_px']
+    inside = ln.intersection(box(0, 0, G[0] * TPX, G[1] * TPX)); rows = []
+    if inside.is_empty: return rows, {}
+    off = inside.parallel_offset(7.5, 'left'); towers = 0
+    for j, part in enumerate(chunks(inside, 128)):
+        band = part.buffer(9, cap_style=2); R = Row(f'epic:{e}:{j}', b, quad(band))
+        R.polys(band, (178, 170, 154), (110, 104, 96), b, dst); R.line(list(part.coords), (150, 144, 134), b, dst)
+        a0 = inside.project(Point(part.coords[0])); a1 = inside.project(Point(part.coords[-1]))
+        for k in range(int(a0 // 4), int(a1 // 4)):
+            q = off.interpolate(off.project(inside.interpolate(k * 4))); R.rect(q.x - 1, q.y - 1, q.x + 1, q.y + 1, (232, 226, 212), b, dst)
+        for k in range(int(a0 // 64), int(a1 // 64) + 1):
+            d = k * 64 + 30
+            if not (a0 <= d < a1): continue
+            q = inside.interpolate(d); t = Polygon([(q.x - 11, q.y - 11), (q.x + 11, q.y - 11), (q.x + 11, q.y + 11), (q.x - 11, q.y + 11)])
+            from shapely import affinity
+            t = affinity.rotate(t, 12, origin=(q.x, q.y))
+            if any(HF[i_].intersection(t).area > 0.5 for i_ in HOUSE_FEET.query(t)): continue   # 塔位上有房（派生街网）就不立这座塔
+            R.polys(t, (150, 144, 134), (96, 90, 84), b, dst)
+            for m in range(5): R.rect(q.x - 10 + m * 4.5, q.y - 10, q.x - 8 + m * 4.5, q.y - 8, (232, 226, 212), b, dst)
+            towers += 1
+        rows.append(R)
+    return rows, {e: {'built': b, 'towers': towers, 'len_px': round(inside.length), 'gate_in_map': False}}
+def barracks_rows():
+    out = []; meta = {}
+    for e in [s_['id'] for s_ in W['structures'] if s_['type'] == 'barracks' and s_['geom']['type'] == 'polygon']:
+        b = ST[e]['built']; dst = ST[e].get('destroyed') or INF; P = poly_px(e); inner = P.buffer(-11, join_style=2)
+        R = Row('epic:' + e, b, quad(P)); R.polys(P, TILE, TILE_D, b, dst)                 # 一圈瓦顶（先铺满，再挖出院子）
+        if not inner.is_empty:
+            R.edge(list(inner.buffer(5.5, join_style=2).exterior.coords)[:-1], (150, 84, 56), b, dst)   # 屋脊
+            R.polys(inner, (196, 184, 158), (170, 156, 128), b, dst)                         # 操练的院子
+        out.append(R); meta[e] = {'built': b}
+    return out, meta
 def build():
-    pr, pm = phase_rows()
-    rows = forum_rows() + nymph_rows() + mese_rows() + pr
+    pr, pm = phase_rows(); hr, hm = harbor_rows(); wr, wm = wall_rows(); br, bm = barracks_rows()
+    rows = forum_rows() + nymph_rows() + mese_rows() + pr + hr + wr + br
     meta = {'forum_theodosius': {'built': B_FORUM, 'finish': B_FORUM + FORUM_SITE, 'column_done': B_FORUM + COLUMN_COURSES - 1, 'arch': ARCH_Y, 'column_parts': list(COLR[0])},
             'nymphaeum_maius': {'built': B_NYMPH, 'finish': B_NYMPH, 'wet': WET_NYMPH},
             'r_mese': {'built': B_MESE, 'finish': B_MESE + MESE_SITE}}
-    meta.update(pm)
+    meta.update(pm); meta.update(hm); meta.update(wm); meta.update(bm)
     return {'src': 'tools/cs/factory/epic_stage.py（谭线 render_xero.py epic_ground/epic_tall/mese_portico，年份读 world.json）', 'epics': meta, 'rows': [r.out() for r in rows]}
 if __name__ == '__main__':
     D = build(); json.dump(D, open(os.path.join(OUT, 'epic_stage.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
