@@ -584,7 +584,24 @@
       ]
      ]
     },
-    "label": "Harbor of Julian"
+    "label": "Harbor of Julian",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "南岸抛填碎石，防波堤向海里伸"
+     },
+     {
+      "year": 3,
+      "stage": "frame",
+      "note": "两道防波堤合拢，石砌码头岸线"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "堤头灯塔点火，码头系船柱、货栈齐备"
+     }
+    ]
    },
    "why": "Moles of rubble enclose a harbor on the inland sea."
   },
@@ -616,7 +633,24 @@
       ]
      ]
     },
-    "label": "Granary"
+    "label": "Granary",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "港后清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "四面拱库起墙"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "上瓦，第一批埃及粮入库"
+     }
+    ]
    },
    "why": "Egyptian grain needs a home."
   },

@@ -341,7 +341,24 @@
       ]
      ]
     },
-    "label": "Neorion"
+    "label": "Neorion",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "金角湾避风处打桩、抛石"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "码头岸线与船坡"
+     },
+     {
+      "year": 15,
+      "stage": "done",
+      "note": "码头完工，黑海船靠岸卸货"
+     }
+    ]
    },
    "why": "Ships from the Black Sea unload in the calm of the Horn, west of the old landing."
   },
@@ -373,7 +390,24 @@
       ]
      ]
     },
-    "label": "Horrea"
+    "label": "Horrea",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "码头后清场"
+     },
+     {
+      "year": 12,
+      "stage": "frame",
+      "note": "仓库起墙"
+     },
+     {
+      "year": 14,
+      "stage": "done",
+      "note": "一排仓库上瓦"
+     }
+    ]
    },
    "why": "Warehouses behind the new quay."
   },
