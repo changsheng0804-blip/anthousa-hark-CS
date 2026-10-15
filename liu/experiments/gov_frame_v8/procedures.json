@@ -1,0 +1,15 @@
+{
+ "_doc": "五条流程。每步 = 职位类 + 所需职权；实例由发起户的辖区决定（城市级职位全城一个）。静态校验：每步职位类持有该职权、相邻两步为上下级或同一户的辖区链；动态校验：逐年每户的每步实例是否有人在任。——Hark（刘线）",
+ "procedures": [
+  {"id": "edict_down", "name": "政令下行", "steps": [
+   {"office": "eparch", "power": "裁断"}, {"office": "district_head", "power": "治安"}, {"office": "fang_head", "power": "治安"}]},
+  {"id": "petition_up", "name": "请愿上行", "steps": [
+   {"office": "fang_head", "power": "上报"}, {"office": "district_head", "power": "上报"}, {"office": "eparch", "power": "裁断"}]},
+  {"id": "build_permit", "name": "建房许可", "steps": [
+   {"office": "fang_head", "power": "上报"}, {"office": "district_head", "power": "批建"}, {"office": "water_head", "power": "上报"}, {"office": "aquae", "power": "批建"}]},
+  {"id": "demolition_comp", "name": "拆迁补偿", "steps": [
+   {"office": "fang_head", "power": "上报"}, {"office": "district_head", "power": "批建"}, {"office": "eparch", "power": "裁断"}, {"office": "district_head", "power": "征税"}]},
+  {"id": "relief", "name": "赈济", "steps": [
+   {"office": "fang_head", "power": "上报"}, {"office": "district_head", "power": "上报"}, {"office": "annona", "power": "配粮"}, {"office": "granary_head", "power": "配粮"}, {"office": "fang_head", "power": "配粮"}]}
+ ]
+}

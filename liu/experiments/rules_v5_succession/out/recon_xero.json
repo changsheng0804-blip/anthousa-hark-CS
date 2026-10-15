@@ -1,0 +1,1683 @@
+{
+ "14": {
+  "A": 14,
+  "years": {
+   "40": {
+    "books": 1934,
+    "owner_households": 1934,
+    "books_eq_owners": true,
+    "books_held": 1934,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 272
+   },
+   "41": {
+    "books": 2062,
+    "owner_households": 2062,
+    "books_eq_owners": true,
+    "books_held": 2062,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 283,
+    "pop": 14539,
+    "inflow": {
+     "出生": 717,
+     "娶进": 68,
+     "新户搬入": 686,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 350,
+     "离家": 295,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "42": {
+    "books": 2199,
+    "owner_households": 2199,
+    "books_eq_owners": true,
+    "books_held": 2199,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 296,
+    "pop": 15441,
+    "inflow": {
+     "出生": 783,
+     "娶进": 83,
+     "新户搬入": 744,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 384,
+     "离家": 324,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "43": {
+    "books": 2332,
+    "owner_households": 2332,
+    "books_eq_owners": true,
+    "books_held": 2332,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 303,
+    "pop": 16289,
+    "inflow": {
+     "出生": 822,
+     "娶进": 67,
+     "新户搬入": 692,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 398,
+     "离家": 335,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "44": {
+    "books": 2478,
+    "owner_households": 2478,
+    "books_eq_owners": true,
+    "books_held": 2478,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 326,
+    "pop": 17201,
+    "inflow": {
+     "出生": 852,
+     "娶进": 68,
+     "新户搬入": 733,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 424,
+     "离家": 317,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "45": {
+    "books": 2608,
+    "owner_households": 2608,
+    "books_eq_owners": true,
+    "books_held": 2608,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 342,
+    "pop": 18057,
+    "inflow": {
+     "出生": 920,
+     "娶进": 83,
+     "新户搬入": 665,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 473,
+     "离家": 339,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "46": {
+    "books": 2727,
+    "owner_households": 2727,
+    "books_eq_owners": true,
+    "books_held": 2727,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 362,
+    "pop": 18854,
+    "inflow": {
+     "出生": 896,
+     "娶进": 88,
+     "新户搬入": 686,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 468,
+     "离家": 405,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "47": {
+    "books": 2854,
+    "owner_households": 2854,
+    "books_eq_owners": true,
+    "books_held": 2854,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 394,
+    "pop": 19726,
+    "inflow": {
+     "出生": 968,
+     "娶进": 75,
+     "新户搬入": 706,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 499,
+     "离家": 378,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "48": {
+    "books": 2888,
+    "owner_households": 2888,
+    "books_eq_owners": true,
+    "books_held": 2888,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 406,
+    "pop": 19959,
+    "inflow": {
+     "出生": 972,
+     "娶进": 78,
+     "新户搬入": 595,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 506,
+     "离家": 442,
+     "户结束": 464
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "49": {
+    "books": 3029,
+    "owner_households": 3029,
+    "books_eq_owners": true,
+    "books_held": 3029,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 433,
+    "pop": 20863,
+    "inflow": {
+     "出生": 1015,
+     "娶进": 92,
+     "新户搬入": 738,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 505,
+     "离家": 436,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "50": {
+    "books": 3167,
+    "owner_households": 3167,
+    "books_eq_owners": true,
+    "books_held": 3167,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 462,
+    "pop": 21839,
+    "inflow": {
+     "出生": 1073,
+     "娶进": 98,
+     "新户搬入": 789,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 500,
+     "离家": 484,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "51": {
+    "books": 3210,
+    "owner_households": 3210,
+    "books_eq_owners": true,
+    "books_held": 3210,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 491,
+    "pop": 22202,
+    "inflow": {
+     "出生": 1057,
+     "娶进": 101,
+     "新户搬入": 265,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 584,
+     "离家": 476,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "52": {
+    "books": 3244,
+    "owner_households": 3244,
+    "books_eq_owners": true,
+    "books_held": 3244,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 506,
+    "pop": 22538,
+    "inflow": {
+     "出生": 1041,
+     "娶进": 102,
+     "新户搬入": 228,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 546,
+     "离家": 489,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "53": {
+    "books": 3282,
+    "owner_households": 3282,
+    "books_eq_owners": true,
+    "books_held": 3282,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 520,
+    "pop": 22917,
+    "inflow": {
+     "出生": 1055,
+     "娶进": 97,
+     "新户搬入": 273,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 499,
+     "离家": 547,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "54": {
+    "books": 3299,
+    "owner_households": 3299,
+    "books_eq_owners": true,
+    "books_held": 3299,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 526,
+    "pop": 23036,
+    "inflow": {
+     "出生": 989,
+     "娶进": 96,
+     "新户搬入": 246,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 581,
+     "离家": 548,
+     "户结束": 83
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "55": {
+    "books": 3321,
+    "owner_households": 3321,
+    "books_eq_owners": true,
+    "books_held": 3321,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 530,
+    "pop": 23315,
+    "inflow": {
+     "出生": 1090,
+     "娶进": 135,
+     "新户搬入": 231,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 643,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "56": {
+    "books": 3344,
+    "owner_households": 3344,
+    "books_eq_owners": true,
+    "books_held": 3344,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 543,
+    "pop": 23573,
+    "inflow": {
+     "出生": 1051,
+     "娶进": 109,
+     "新户搬入": 236,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 604,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "57": {
+    "books": 3379,
+    "owner_households": 3379,
+    "books_eq_owners": true,
+    "books_held": 3379,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 534,
+    "pop": 23655,
+    "inflow": {
+     "出生": 943,
+     "娶进": 122,
+     "新户搬入": 245,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 569,
+     "离家": 659,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "58": {
+    "books": 3412,
+    "owner_households": 3412,
+    "books_eq_owners": true,
+    "books_held": 3412,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 535,
+    "pop": 23881,
+    "inflow": {
+     "出生": 1037,
+     "娶进": 148,
+     "新户搬入": 270,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 695,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "59": {
+    "books": 3431,
+    "owner_households": 3431,
+    "books_eq_owners": true,
+    "books_held": 3431,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 532,
+    "pop": 23902,
+    "inflow": {
+     "出生": 992,
+     "娶进": 148,
+     "新户搬入": 242,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 564,
+     "离家": 797,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "60": {
+    "books": 3460,
+    "owner_households": 3460,
+    "books_eq_owners": true,
+    "books_held": 3460,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 536,
+    "pop": 23912,
+    "inflow": {
+     "出生": 938,
+     "娶进": 173,
+     "新户搬入": 258,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 554,
+     "离家": 805,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "61": {
+    "books": 3454,
+    "owner_households": 3454,
+    "books_eq_owners": true,
+    "books_held": 3454,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 528,
+    "pop": 23348,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 564,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "62": {
+    "books": 3426,
+    "owner_households": 3426,
+    "books_eq_owners": true,
+    "books_held": 3426,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 506,
+    "pop": 22873,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 475,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "63": {
+    "books": 3428,
+    "owner_households": 3428,
+    "books_eq_owners": true,
+    "books_held": 3428,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 511,
+    "pop": 22465,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 408,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "64": {
+    "books": 3416,
+    "owner_households": 3416,
+    "books_eq_owners": true,
+    "books_held": 3416,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 491,
+    "pop": 22112,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 353,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "65": {
+    "books": 3403,
+    "owner_households": 3403,
+    "books_eq_owners": true,
+    "books_held": 3403,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 471,
+    "pop": 21815,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 297,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "66": {
+    "books": 3397,
+    "owner_households": 3397,
+    "books_eq_owners": true,
+    "books_held": 3397,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 454,
+    "pop": 21505,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 310,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "67": {
+    "books": 3389,
+    "owner_households": 3389,
+    "books_eq_owners": true,
+    "books_held": 3389,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 453,
+    "pop": 21188,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 317,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "68": {
+    "books": 3376,
+    "owner_households": 3376,
+    "books_eq_owners": true,
+    "books_held": 3376,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 432,
+    "pop": 20896,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 292,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "69": {
+    "books": 3370,
+    "owner_households": 3370,
+    "books_eq_owners": true,
+    "books_held": 3370,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 416,
+    "pop": 20622,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 274,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "70": {
+    "books": 3357,
+    "owner_households": 3357,
+    "books_eq_owners": true,
+    "books_held": 3357,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 411,
+    "pop": 20312,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 310,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   }
+  },
+  "books_all_years_ok": true,
+  "heads_ok": true,
+  "pop_other_or_resid_total": 0,
+  "pop_eq_v1_all": true,
+  "pop_flows_41_70": {
+   "出生": 19211,
+   "娶进": 2031,
+   "新户搬入": 9528,
+   "复户": 0,
+   "死亡": 13606,
+   "离家": 10018,
+   "户结束": 547
+  },
+  "book_transfers_by_succession": {
+   "孤儿": 797,
+   "寡妇": 863,
+   "儿子": 1329,
+   "儿子满龄": 1008,
+   "孙子满龄": 31,
+   "兄弟": 189,
+   "孙子": 37
+  },
+  "b2": {
+   "lost_household_years": 13805,
+   "lost_households": 1554,
+   "lost_person_years": 46295,
+   "by_year": {
+    "40": 272,
+    "41": 283,
+    "42": 296,
+    "43": 303,
+    "44": 326,
+    "45": 342,
+    "46": 362,
+    "47": 394,
+    "48": 406,
+    "49": 433,
+    "50": 462,
+    "51": 491,
+    "52": 506,
+    "53": 520,
+    "54": 526,
+    "55": 530,
+    "56": 543,
+    "57": 534,
+    "58": 535,
+    "59": 532,
+    "60": 536,
+    "61": 528,
+    "62": 506,
+    "63": 511,
+    "64": 491,
+    "65": 471,
+    "66": 454,
+    "67": 453,
+    "68": 432,
+    "69": 416,
+    "70": 411
+   }
+  },
+  "debts": {
+   "total": 827,
+   "inherited_any_side": 228,
+   "by_side": {
+    "债务户": 175,
+    "债主户": 67
+   },
+   "by_kind": {
+    "孤儿": 61,
+    "儿子": 68,
+    "儿子满龄": 68,
+    "寡妇": 61,
+    "兄弟": 8
+   },
+   "voided_by_household_end": 0
+  }
+ },
+ "16": {
+  "A": 16,
+  "years": {
+   "40": {
+    "books": 1934,
+    "owner_households": 1934,
+    "books_eq_owners": true,
+    "books_held": 1934,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 323
+   },
+   "41": {
+    "books": 2062,
+    "owner_households": 2062,
+    "books_eq_owners": true,
+    "books_held": 2062,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 335,
+    "pop": 14539,
+    "inflow": {
+     "出生": 717,
+     "娶进": 68,
+     "新户搬入": 686,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 350,
+     "离家": 295,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "42": {
+    "books": 2199,
+    "owner_households": 2199,
+    "books_eq_owners": true,
+    "books_held": 2199,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 347,
+    "pop": 15441,
+    "inflow": {
+     "出生": 783,
+     "娶进": 83,
+     "新户搬入": 744,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 384,
+     "离家": 324,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "43": {
+    "books": 2332,
+    "owner_households": 2332,
+    "books_eq_owners": true,
+    "books_held": 2332,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 369,
+    "pop": 16289,
+    "inflow": {
+     "出生": 822,
+     "娶进": 67,
+     "新户搬入": 692,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 398,
+     "离家": 335,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "44": {
+    "books": 2478,
+    "owner_households": 2478,
+    "books_eq_owners": true,
+    "books_held": 2478,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 397,
+    "pop": 17201,
+    "inflow": {
+     "出生": 852,
+     "娶进": 68,
+     "新户搬入": 733,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 424,
+     "离家": 317,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "45": {
+    "books": 2608,
+    "owner_households": 2608,
+    "books_eq_owners": true,
+    "books_held": 2608,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 410,
+    "pop": 18057,
+    "inflow": {
+     "出生": 920,
+     "娶进": 83,
+     "新户搬入": 665,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 473,
+     "离家": 339,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "46": {
+    "books": 2727,
+    "owner_households": 2727,
+    "books_eq_owners": true,
+    "books_held": 2727,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 419,
+    "pop": 18854,
+    "inflow": {
+     "出生": 896,
+     "娶进": 88,
+     "新户搬入": 686,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 468,
+     "离家": 405,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "47": {
+    "books": 2854,
+    "owner_households": 2854,
+    "books_eq_owners": true,
+    "books_held": 2854,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 460,
+    "pop": 19726,
+    "inflow": {
+     "出生": 968,
+     "娶进": 75,
+     "新户搬入": 706,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 499,
+     "离家": 378,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "48": {
+    "books": 2888,
+    "owner_households": 2888,
+    "books_eq_owners": true,
+    "books_held": 2888,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 483,
+    "pop": 19959,
+    "inflow": {
+     "出生": 972,
+     "娶进": 78,
+     "新户搬入": 595,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 506,
+     "离家": 442,
+     "户结束": 464
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "49": {
+    "books": 3029,
+    "owner_households": 3029,
+    "books_eq_owners": true,
+    "books_held": 3029,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 509,
+    "pop": 20863,
+    "inflow": {
+     "出生": 1015,
+     "娶进": 92,
+     "新户搬入": 738,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 505,
+     "离家": 436,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "50": {
+    "books": 3167,
+    "owner_households": 3167,
+    "books_eq_owners": true,
+    "books_held": 3167,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 530,
+    "pop": 21839,
+    "inflow": {
+     "出生": 1073,
+     "娶进": 98,
+     "新户搬入": 789,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 500,
+     "离家": 484,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "51": {
+    "books": 3210,
+    "owner_households": 3210,
+    "books_eq_owners": true,
+    "books_held": 3210,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 574,
+    "pop": 22202,
+    "inflow": {
+     "出生": 1057,
+     "娶进": 101,
+     "新户搬入": 265,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 584,
+     "离家": 476,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "52": {
+    "books": 3244,
+    "owner_households": 3244,
+    "books_eq_owners": true,
+    "books_held": 3244,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 603,
+    "pop": 22538,
+    "inflow": {
+     "出生": 1041,
+     "娶进": 102,
+     "新户搬入": 228,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 546,
+     "离家": 489,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "53": {
+    "books": 3282,
+    "owner_households": 3282,
+    "books_eq_owners": true,
+    "books_held": 3282,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 626,
+    "pop": 22917,
+    "inflow": {
+     "出生": 1055,
+     "娶进": 97,
+     "新户搬入": 273,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 499,
+     "离家": 547,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "54": {
+    "books": 3299,
+    "owner_households": 3299,
+    "books_eq_owners": true,
+    "books_held": 3299,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 627,
+    "pop": 23036,
+    "inflow": {
+     "出生": 989,
+     "娶进": 96,
+     "新户搬入": 246,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 581,
+     "离家": 548,
+     "户结束": 83
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "55": {
+    "books": 3321,
+    "owner_households": 3321,
+    "books_eq_owners": true,
+    "books_held": 3321,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 635,
+    "pop": 23315,
+    "inflow": {
+     "出生": 1090,
+     "娶进": 135,
+     "新户搬入": 231,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 643,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "56": {
+    "books": 3344,
+    "owner_households": 3344,
+    "books_eq_owners": true,
+    "books_held": 3344,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 645,
+    "pop": 23573,
+    "inflow": {
+     "出生": 1051,
+     "娶进": 109,
+     "新户搬入": 236,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 604,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "57": {
+    "books": 3379,
+    "owner_households": 3379,
+    "books_eq_owners": true,
+    "books_held": 3379,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 636,
+    "pop": 23655,
+    "inflow": {
+     "出生": 943,
+     "娶进": 122,
+     "新户搬入": 245,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 569,
+     "离家": 659,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "58": {
+    "books": 3412,
+    "owner_households": 3412,
+    "books_eq_owners": true,
+    "books_held": 3412,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 670,
+    "pop": 23881,
+    "inflow": {
+     "出生": 1037,
+     "娶进": 148,
+     "新户搬入": 270,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 534,
+     "离家": 695,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "59": {
+    "books": 3431,
+    "owner_households": 3431,
+    "books_eq_owners": true,
+    "books_held": 3431,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 686,
+    "pop": 23902,
+    "inflow": {
+     "出生": 992,
+     "娶进": 148,
+     "新户搬入": 242,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 564,
+     "离家": 797,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "60": {
+    "books": 3460,
+    "owner_households": 3460,
+    "books_eq_owners": true,
+    "books_held": 3460,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 681,
+    "pop": 23912,
+    "inflow": {
+     "出生": 938,
+     "娶进": 173,
+     "新户搬入": 258,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 554,
+     "离家": 805,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "61": {
+    "books": 3454,
+    "owner_households": 3454,
+    "books_eq_owners": true,
+    "books_held": 3454,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 655,
+    "pop": 23348,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 564,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "62": {
+    "books": 3426,
+    "owner_households": 3426,
+    "books_eq_owners": true,
+    "books_held": 3426,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 639,
+    "pop": 22873,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 475,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "63": {
+    "books": 3428,
+    "owner_households": 3428,
+    "books_eq_owners": true,
+    "books_held": 3428,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 638,
+    "pop": 22465,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 408,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "64": {
+    "books": 3416,
+    "owner_households": 3416,
+    "books_eq_owners": true,
+    "books_held": 3416,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 614,
+    "pop": 22112,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 353,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "65": {
+    "books": 3403,
+    "owner_households": 3403,
+    "books_eq_owners": true,
+    "books_held": 3403,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 595,
+    "pop": 21815,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 297,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "66": {
+    "books": 3397,
+    "owner_households": 3397,
+    "books_eq_owners": true,
+    "books_held": 3397,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 578,
+    "pop": 21505,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 310,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "67": {
+    "books": 3389,
+    "owner_households": 3389,
+    "books_eq_owners": true,
+    "books_held": 3389,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 558,
+    "pop": 21188,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 317,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "68": {
+    "books": 3376,
+    "owner_households": 3376,
+    "books_eq_owners": true,
+    "books_held": 3376,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 535,
+    "pop": 20896,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 292,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "69": {
+    "books": 3370,
+    "owner_households": 3370,
+    "books_eq_owners": true,
+    "books_held": 3370,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 525,
+    "pop": 20622,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 274,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   },
+   "70": {
+    "books": 3357,
+    "owner_households": 3357,
+    "books_eq_owners": true,
+    "books_held": 3357,
+    "every_household_one_head": true,
+    "heads_at_home": true,
+    "b2_lost": 498,
+    "pop": 20312,
+    "inflow": {
+     "出生": 0,
+     "娶进": 0,
+     "新户搬入": 0,
+     "复户": 0
+    },
+    "outflow": {
+     "死亡": 310,
+     "离家": 0,
+     "户结束": 0
+    },
+    "other_in": 0,
+    "other_out": 0,
+    "resid": 0,
+    "pop_eq_v1_size": true
+   }
+  },
+  "books_all_years_ok": true,
+  "heads_ok": true,
+  "pop_other_or_resid_total": 0,
+  "pop_eq_v1_all": true,
+  "pop_flows_41_70": {
+   "出生": 19211,
+   "娶进": 2031,
+   "新户搬入": 9528,
+   "复户": 0,
+   "死亡": 13606,
+   "离家": 10018,
+   "户结束": 547
+  },
+  "book_transfers_by_succession": {
+   "孤儿": 1006,
+   "寡妇": 982,
+   "儿子": 1160,
+   "儿子满龄": 1173,
+   "孙子满龄": 34,
+   "兄弟": 138,
+   "孙子": 31
+  },
+  "b2": {
+   "lost_household_years": 16800,
+   "lost_households": 1778,
+   "lost_person_years": 59945,
+   "by_year": {
+    "40": 323,
+    "41": 335,
+    "42": 347,
+    "43": 369,
+    "44": 397,
+    "45": 410,
+    "46": 419,
+    "47": 460,
+    "48": 483,
+    "49": 509,
+    "50": 530,
+    "51": 574,
+    "52": 603,
+    "53": 626,
+    "54": 627,
+    "55": 635,
+    "56": 645,
+    "57": 636,
+    "58": 670,
+    "59": 686,
+    "60": 681,
+    "61": 655,
+    "62": 639,
+    "63": 638,
+    "64": 614,
+    "65": 595,
+    "66": 578,
+    "67": 558,
+    "68": 535,
+    "69": 525,
+    "70": 498
+   }
+  },
+  "debts": {
+   "total": 827,
+   "inherited_any_side": 235,
+   "by_side": {
+    "债务户": 171,
+    "债主户": 75
+   },
+   "by_kind": {
+    "孤儿": 74,
+    "寡妇": 72,
+    "儿子满龄": 66,
+    "儿子": 50,
+    "兄弟": 6
+   },
+   "voided_by_household_end": 0
+  }
+ },
+ "seconds": 1.52
+}

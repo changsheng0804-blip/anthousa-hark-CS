@@ -1,0 +1,86 @@
+{
+ "_doc": "economy_v18 标定（上限 6 组）。基准 ×1.0 平年不触发，6 组的 AF70 基准都与 v17 相同（Gini 0.512、失业+零工 11.77%、<线 10.84%、净<线 13.0%、无人借 177）。——Hark（刘线）",
+ "groups": [
+  {
+   "id": 1,
+   "change": "储备库 res_in 15% 关税截留、上限 20,000、触发 <80% 基线、每年动用 ≤60%；转业（短工 ≤8%、渔 2/渔户 × 0.6 工钱、公役 ≤30%）；救济 2.0/1.0；房税代缴；冲击年放宽借贷 + 官贷（30% 长官库、≤4/户、官欠 ≤8、3 年还）；触发年无蠲免",
+   "AF65_event": {
+    "unemp_casual_ev": 0.2303,
+    "unemp_casual_cf": 0.1107,
+    "poor_ev": 2995,
+    "poor_cf": 1815,
+    "poor_increment": 1180
+   },
+   "x0.5": {
+    "unfunded_AF70": 4969,
+    "unemp_casual": 0.4734,
+    "poor_share": 0.3488,
+    "note": "×0.5 每年都触发，平年不存在，储备库一直是 0"
+   }
+  },
+  {
+   "id": 2,
+   "change": "组 1 + 触发年皇帝蠲免关税上解 50% 转入储备库（不受上限）",
+   "x0.5": {
+    "unfunded_AF70": 2346,
+    "poor_share_net": 0.2705,
+    "reserve_AF70": 4000,
+    "official_loans_AF70": 916,
+    "note": "官贷预算用尽；无工 1,644 + 零工 1,442"
+   }
+  },
+  {
+   "id": 3,
+   "change": "组 2 + 官贷预算 60%、官欠上限 12",
+   "x0.5": {
+    "unfunded_AF70": 2274,
+    "note": "官贷放宽几乎无效：亏空是结构性的（收入不够），借贷只是挪后"
+   }
+  },
+  {
+   "id": 4,
+   "change": "蠲免 100%（不受上限）+ 公役上限 45%",
+   "x0.5": {
+    "unfunded_AF70": 58,
+    "poor_share": 0.0685,
+    "poor_share_net": 0.0898,
+    "unemp_casual": 0.0469,
+    "reserve_peak": 58296,
+    "reserve_AF70": 30155,
+    "note": "过头：储备库 AF51 峰值 58k（违反「不无限积累」），×0.5 的贫困率比 ×1.0 还低"
+   }
+  },
+  {
+   "id": 5,
+   "change": "组 4 + 官贷 60% / 12",
+   "x0.5": {
+    "unfunded_AF70": 58,
+    "note": "与组 4 完全相同：官贷不是瓶颈"
+   }
+  },
+  {
+   "id": 6,
+   "chosen": true,
+   "change": "组 4，但蠲免也受库存上限 20,000（平年截留与触发年蠲免共用上限）",
+   "AF65_event": {
+    "unemp_casual_ev": 0.0803,
+    "unemp_casual_cf": 0.1107,
+    "poor_ev": 2246,
+    "poor_cf": 1815,
+    "poor_increment": 431
+   },
+   "x0.5": {
+    "unfunded_AF70": 72,
+    "unemp_casual": 0.0702,
+    "poor_share": 0.0994,
+    "poor_share_net": 0.1211,
+    "reserve_max": 19233,
+    "reserve_AF70": 8000
+   },
+   "x1.5": {
+    "unfunded_AF70": 53,
+    "note": "不触发，与 v17 相同"
+   }
+  }
+ ]
+}

@@ -49,6 +49,7 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-fam
 #card details{margin-top:8px;font-size:13px}#card summary{cursor:pointer;color:var(--gold2)}
 #card .obj{font-size:13px;margin-top:8px;color:var(--mute)}
 #card .obj b{color:var(--gold2);font-weight:normal}
+#card .obj.econ{line-height:1.6}#card .obj.econ .ewhy{font-size:12px;opacity:.85}
 #card .cstalk{margin:10px 0;padding:8px 10px;border:1px solid rgba(212,168,90,.35);border-radius:6px}#card .cswho{font-size:12.5px;color:var(--mute);margin-bottom:6px}#card .cssp,#card .csgo{color:var(--gold2);cursor:pointer;border-bottom:1px dotted var(--gold)}#card .cssp.on{color:var(--ivory);border-bottom:1px solid var(--ivory)}#card .csqs{display:flex;flex-wrap:wrap;gap:5px}#card .csq{font-size:12px;padding:3px 8px;border:1px solid rgba(212,168,90,.4);border-radius:12px;cursor:pointer;color:var(--ivory)}#card .csq.on{background:rgba(212,168,90,.25)}#card .csans{font-size:14px;line-height:1.8;margin-top:8px;color:var(--ivory)}#card .csans b{color:var(--gold2);font-weight:normal}
 #card .cshook{margin:8px 0;font-size:14px;line-height:1.6}#card .csmore summary{font-size:12px;color:var(--mute);cursor:pointer;margin-top:8px}#card .cson{background:rgba(212,168,90,.18);border-radius:4px}#card .csstep{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:12px;color:var(--mute)}
 #card .pin{font-size:11.5px;color:var(--gold);margin-top:8px}
@@ -1108,7 +1109,29 @@ function drawScenes(t,vis){const bubbles=[];let started=null;sceneSlow=false;
 function qp(th,mx,my,u){const a=(1-u)*(1-u),b=2*u*(1-u),c=u*u;return[a*th.fx+b*mx+c*th.x,a*th.fy+b*my+c*th.y]}
 function drawQ(th,mx,my,k){ctx.beginPath();ctx.moveTo(th.fx,th.fy);const N=24;for(let i=1;i<=N*k;i++){const q=qp(th,mx,my,i/N);ctx.lineTo(q[0],q[1])}ctx.stroke()}
 requestAnimationFrame(frame);
-window.__anth={city,VOICES,cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
+/* 刘线 · 生计/房况（liu/cs-sync）：敲门卡多一段「生计/房况」——刘线经济层 economy_v21 → 表面层 surface_v23 的旁车（来源见 econ/SOURCE.md），**点开卡才取**：
+   按底账 id 只取一个文件 econ/g{id//64}.json，同组只取一次；这栋房没旁车、那一年账本没有这户（或年份在 40 年前）就不加这一段。行当以经济层为准；房况折旧偏高（破败 36%），待刘线 v24 修。 */
+var ECONC=new Map();
+function econLoad(id){const g=Math.floor(id/64);let p=ECONC.get(g);if(!p){p=fetch('econ/g'+g+'.json').then(r=>r.ok?r.json():null).catch(()=>null);ECONC.set(g,p)}return p}
+function econNum(v){return (Math.round(v*10)/10).toFixed(1)}
+function econFillT(t,o){return t.replace(/\{(\w+)\}/g,(m,k)=>o[k]!=null?o[k]:m)}
+function econWhy(J,r,Y){const W=J.why,out=[];const o={owner:r[8]?'房东':'这家',built:r[17],sales:econNum(r[22]),craft:econNum(r[23]),liv:J.liv[r[1]],dalms:econNum(r[25]),loan:econNum(r[26]),lsrc:r[27]>=0?J.lsrc[r[27]]:'别人',alms:econNum(r[24]),
+  cond:r[3],wear:r[19].toFixed(2),rs:r[20].toFixed(2),age:r[18],trend:r[21]<0?'':(r[21]===r[2]?'和去年同一档。':'去年是「'+J.maint[r[21]]+'」。')};
+  out.push(econFillT(r[2]===0&&Y-r[17]<3?W.m0new:W['m'+r[2]],o));
+  if(r[4]===1)out.push(econFillT(W.f1,o));else if(r[4]===2)out.push(econFillT(W.f2,o));else if(r[4]===3)out.push(econFillT(r[6]===1?W.f3c:r[6]===2?W.f3:W.f3z,o));
+  if(r[5]&2)out.push(econFillT(W.p_smoke,o));if(r[5]&4)out.push(econFillT(W.p_loan,o));if(r[5]&8)out.push(econFillT(W.p_alms,o));return out.join('')}
+function econText(J,r,Y,fine){const ty=t=>t>=0?J.types[t]:'—',tr=r[0]>=0?((J.craft_liv||[]).includes(r[0])&&(J.craft_fine||[]).includes(fine)?fine:J.term[r[0]]):J.liv[r[1]];   /* 手工铺/作坊且页面原行当是手艺（陶匠/织工/鞋匠/铜匠）时用原行当做细分，同刘线 tradeAt */const tags=[];if(r[5]&1)tags.push('净收入低于贫困线');if(r[5]&2)tags.push('灶冷');if(r[5]&4)tags.push('借债');if(r[5]&8)tags.push('领施舍');
+  return '<b>生计/房况</b> 建城 '+Y+' 年'+(J.path[Y]==='骤降路径'?'（到港骤降路径）':'')+' · '+tr+' · 门面：'+J.facade[r[4]]+' · 房屋：'+J.maint[r[2]]+'（房况 '+r[3]+'%）· '+(r[8]?'租住':r[7]>0?'自有，另有 '+r[7]+' 栋出租':'自有')
+   +'<br>收入 '+econNum(r[9])+'，净收入 '+econNum(r[10])+'，支出 '+econNum(r[11])+'，年末现钱 '+econNum(r[12])+'；最大进项 '+ty(r[13])+' '+econNum(r[14])+'，最大开销 '+ty(r[15])+' '+econNum(r[16])+(tags.length?'<br>'+tags.join(' · '):'')
+   +'<br><span class="ewhy">为什么看起来这样：'+econWhy(J,r,Y)+'</span>'}
+async function econFill(){try{if(!sel||sel.kind!=='house')return;const h=sel.hh.h,id=h.id,Y=YEAR;if(typeof id!=='number'||Y<40||Y>70)return;
+  const J=await econLoad(id);if(!J||!J.h)return;const rows=J.h['h'+id];const r=rows&&rows[Y-J.y0];if(!r)return;
+  if(!sel||sel.kind!=='house'||sel.hh.h.id!==id||YEAR!==Y||$('card').style.display==='none')return;   /* 卡已关、换了房子或换了年份：旧请求不乱插 */
+  const cb=$('cardbody');if(/obj econ/.test(cb.innerHTML))return;
+  let fine='';try{fine=famAt(sel.hh,Y).trade||''}catch(e){}
+  cb.insertAdjacentHTML('beforeend','<div class="obj econ" title="生计/房况旁车：刘线 economy_v21 → surface_v23（行当以经济层为准；房况破败档偏高，待 v24 修）">'+econText(J,r,Y,fine)+'</div>')}catch(e){}}
+{const _econShow=showCard;showCard=function(html){_econShow(html);econFill()}}
+window.__econ={econFill,econLoad,econText,econWhy};window.__anth={city,VOICES,cam,drawScenes,SCENES,set clock(v){clock=v},household,houses,setYear,aliveAt,renderDeep,STORIES,houseById,get threads(){return threads}};
 })();
 </script>
 </body>

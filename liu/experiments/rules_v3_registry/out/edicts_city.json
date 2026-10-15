@@ -1,0 +1,403 @@
+{
+ "scope": "city",
+ "edicts": {
+  "51 阿里乌派被请出城里教堂": {
+   "tree": "教会",
+   "path": "皇帝诏 → 阿里乌派主教（失去城里教堂）→ 教区（城里的阿里乌派教堂 → 51 年无处、52 起城外木院）→ 教区长老 → 户",
+   "households": 8382,
+   "people": 45548,
+   "parish_nodes_changed": 1,
+   "elders": 168,
+   "needy14_lost_alms": 1110,
+   "needy14_arian_51": 1143,
+   "levels": 4,
+   "ledger": "chronicle 51_60：51 年皇帝下诏只认尼西亚派，年底阿里乌派被请出城里所有的教堂"
+  },
+  "54 拆房：运水人蓄水池": {
+   "tree": "民政",
+   "ledger_houses_demolished_city": 17,
+   "ledger_houses_demolished_xerolophos": 17,
+   "ledger_houses_in_page_area": 17,
+   "households_evicted": 17,
+   "people": 73,
+   "owners_evicted": 17,
+   "page_also_demolished": 17,
+   "districts": {
+    "干山区": 17
+   },
+   "faith": {
+    "尼西亚派": 6,
+    "阿里乌派": 10,
+    "还拜旧神": 1
+   },
+   "re_registered_to": 0,
+   "relay": {
+    "households": 17,
+    "people": 73,
+    "via_owner_houses": 0,
+    "fang_heads": 2,
+    "district_heads": 1,
+    "reaches_prefect": true,
+    "relay_nodes": 4,
+    "messages_no_aggregation": 51,
+    "messages_tree_aggregated": 21,
+    "levels": 3
+   },
+   "levels": 3
+  },
+  "57 拆房：狄奥多西广场": {
+   "tree": "民政",
+   "ledger_houses_demolished_city": 29,
+   "ledger_houses_demolished_xerolophos": 0,
+   "ledger_houses_in_page_area": 28,
+   "households_evicted": 28,
+   "people": 141,
+   "owners_evicted": 28,
+   "page_also_demolished": 28,
+   "districts": {
+    "广场区": 28
+   },
+   "faith": {
+    "阿里乌派": 12,
+    "还拜旧神": 8,
+    "尼西亚派": 8
+   },
+   "re_registered_to": 0,
+   "relay": {
+    "households": 28,
+    "people": 141,
+    "via_owner_houses": 0,
+    "fang_heads": 2,
+    "district_heads": 1,
+    "reaches_prefect": true,
+    "relay_nodes": 4,
+    "messages_no_aggregation": 84,
+    "messages_tree_aggregated": 32,
+    "levels": 3
+   },
+   "levels": 3
+  },
+  "62 拆房：台阶路 + 第二座运水人蓄水池": {
+   "tree": "民政",
+   "ledger_houses_demolished_city": 55,
+   "ledger_houses_demolished_xerolophos": 55,
+   "ledger_houses_in_page_area": 55,
+   "households_evicted": 55,
+   "people": 242,
+   "owners_evicted": 55,
+   "page_also_demolished": 55,
+   "districts": {
+    "干山区": 55
+   },
+   "faith": {
+    "还拜旧神": 15,
+    "阿里乌派": 33,
+    "尼西亚派": 7
+   },
+   "re_registered_to": 0,
+   "relay": {
+    "households": 55,
+    "people": 242,
+    "via_owner_houses": 0,
+    "fang_heads": 5,
+    "district_heads": 1,
+    "reaches_prefect": true,
+    "relay_nodes": 7,
+    "messages_no_aggregation": 165,
+    "messages_tree_aggregated": 62,
+    "levels": 3
+   },
+   "levels": 3
+  },
+  "65 拆房：寡妇孤儿之家": {
+   "tree": "民政",
+   "ledger_houses_demolished_city": 13,
+   "ledger_houses_demolished_xerolophos": 13,
+   "ledger_houses_in_page_area": 13,
+   "households_evicted": 13,
+   "people": 45,
+   "owners_evicted": 13,
+   "page_also_demolished": 13,
+   "districts": {
+    "干山区": 13
+   },
+   "faith": {
+    "阿里乌派": 5,
+    "还拜旧神": 5,
+    "尼西亚派": 3
+   },
+   "re_registered_to": 0,
+   "relay": {
+    "households": 13,
+    "people": 45,
+    "via_owner_houses": 0,
+    "fang_heads": 3,
+    "district_heads": 1,
+    "reaches_prefect": true,
+    "relay_nodes": 5,
+    "messages_no_aggregation": 39,
+    "messages_tree_aggregated": 18,
+    "levels": 3
+   },
+   "levels": 3
+  },
+  "54 修水凑铜板": {
+   "tree": "民政",
+   "households": 0,
+   "carriers": 0,
+   "relay": {
+    "households": 0,
+    "people": 0,
+    "via_owner_houses": 0,
+    "fang_heads": 0,
+    "district_heads": 0,
+    "reaches_prefect": true,
+    "relay_nodes": 1,
+    "messages_no_aggregation": 0,
+    "messages_tree_aggregated": 1,
+    "levels": 0
+   },
+   "v2_households": 70
+  },
+  "62 修水凑铜板": {
+   "tree": "民政",
+   "households": 0,
+   "carriers": 0,
+   "relay": {
+    "households": 0,
+    "people": 0,
+    "via_owner_houses": 0,
+    "fang_heads": 0,
+    "district_heads": 0,
+    "reaches_prefect": true,
+    "relay_nodes": 1,
+    "messages_no_aggregation": 0,
+    "messages_tree_aggregated": 1,
+    "levels": 0
+   },
+   "v2_households": 380
+  },
+  "55 亚历山大粮仓：口粮增加": {
+   "tree": "民政（配给：城市长官 → 区 → 面包簿 → 屋里的户）",
+   "portions_per_book": [
+    10.94,
+    12.11
+   ],
+   "books": [
+    15686,
+    15788
+   ],
+   "households_more_bread": 3458,
+   "people_newly_fed": 3369,
+   "households_unfed_before": 0,
+   "households_unfed_after": 0,
+   "levels": 4
+  },
+  "57 狄奥多西广场：征工": {
+   "tree": "民政（征工组 = 坊）",
+   "total": 140,
+   "total_v2": 140,
+   "fang_short": 0,
+   "tenants": 0,
+   "owners": 140,
+   "big_streets_share": 0.0,
+   "big_streets_household_share": 0.0,
+   "v2_big_streets_share": 0.386,
+   "faith": {
+    "阿里乌派": 78,
+    "尼西亚派": 37,
+    "还拜旧神": 25
+   },
+   "faith_households": {
+    "阿里乌派": 8772,
+    "还拜旧神": 3197,
+    "尼西亚派": 4021
+   },
+   "per_fang_ratio": {
+    "min": 0.0,
+    "max": 0.0164
+   },
+   "relay": {
+    "households": 140,
+    "people": 1321,
+    "via_owner_houses": 0,
+    "fang_heads": 140,
+    "district_heads": 4,
+    "reaches_prefect": true,
+    "relay_nodes": 145,
+    "messages_no_aggregation": 420,
+    "messages_tree_aggregated": 285,
+    "levels": 3
+   },
+   "levels": 4
+  },
+  "64 城门外砖堂": {
+   "tree": "教会",
+   "arian_households": 8737,
+   "parish": "城外木院 → 城门外砖堂",
+   "needy14_regain_alms": 842,
+   "levels": 3
+  },
+  "65 寡妇孤儿之家：施舍不分派": {
+   "tree": "教会 → 机构（寡妇孤儿之家，挂区）",
+   "needy14": 1353,
+   "newly_alms": 401,
+   "newly_by_faith": {
+    "还拜旧神": 277,
+    "尼西亚派": 39,
+    "阿里乌派": 85
+   },
+   "levels": 3
+  }
+ },
+ "petitions": {
+  "水": {
+   "adopted_at": "城市长官",
+   "relay": {
+    "households": 1279,
+    "people": 6827,
+    "via_owner_houses": 0,
+    "fang_heads": 114,
+    "district_heads": 4,
+    "reaches_prefect": true,
+    "relay_nodes": 119,
+    "messages_no_aggregation": 3837,
+    "messages_tree_aggregated": 1398,
+    "levels": 3
+   },
+   "ledger_years": "60 提出 → 62 建成（2 年）",
+   "petitioners_by_district": {
+    "拜扎斯区": 163,
+    "广场区": 930,
+    "港口区": 77,
+    "干山区": 109
+   },
+   "outcome": {
+    "households_switch_to_new_cistern_62": 0,
+    "people": 0,
+    "demolished_for_it": 55
+   }
+  },
+  "挤": {
+   "adopted_at": "城市长官",
+   "relay": {
+    "households": 1786,
+    "people": 19552,
+    "via_owner_houses": 0,
+    "fang_heads": 168,
+    "district_heads": 4,
+    "reaches_prefect": true,
+    "relay_nodes": 173,
+    "messages_no_aggregation": 5358,
+    "messages_tree_aggregated": 1959,
+    "levels": 3
+   },
+   "ledger_years": "60 提出 → 63 建成（3 年）",
+   "petitioners_by_district": {
+    "拜扎斯区": 337,
+    "港口区": 438,
+    "广场区": 960,
+    "干山区": 51
+   },
+   "outcome": {
+    "households_moved_out": 0,
+    "note": "页面家谱 61 年后不再有人搬来/搬走（MAXY=60），城墙外新区 63 年起的 531 栋账本房屋没有人家；户籍上无人迁出（缺口）"
+   }
+  },
+  "孤寡": {
+   "adopted_at": "干山区区长（与尼西亚派修士合办）",
+   "relay": {
+    "households": 2073,
+    "people": 8815,
+    "via_owner_houses": 0,
+    "fang_heads": 167,
+    "district_heads": 4,
+    "reaches_prefect": true,
+    "relay_nodes": 173,
+    "messages_no_aggregation": 7986,
+    "messages_tree_aggregated": 2245,
+    "levels": 4
+   },
+   "ledger_years": "60 提出 → 65 建成（5 年）",
+   "petitioners_by_district": {
+    "拜扎斯区": 249,
+    "广场区": 1036,
+    "港口区": 635,
+    "干山区": 153
+   },
+   "outcome": {
+    "newly_alms_65": 401,
+    "demolished_for_it": 13
+   }
+  },
+  "信仰": {
+   "adopted_at": "阿里乌派主教（教会树）",
+   "relay": {
+    "households": 8930,
+    "people": 48722,
+    "elders": 168,
+    "parish": 1,
+    "bishop": 1,
+    "messages_no_aggregation": 26790,
+    "messages_tree_aggregated": 9099,
+    "levels": 3
+   },
+   "ledger_years": "60 提出 → 64 建成（4 年）",
+   "petitioners_by_district": {
+    "拜扎斯区": 1498,
+    "港口区": 2290,
+    "广场区": 4727,
+    "干山区": 415
+   },
+   "outcome": {
+    "parish_changed_households": 8737,
+    "needy_regain_alms": 842
+   }
+  }
+ },
+ "reconcile": {
+  "households_people_60": [
+   16281,
+   89052,
+   "chronicle 4,383 / 23,912"
+  ],
+  "needy14_60": [
+   2073,
+   "chronicle 615（v2 规则 12 岁口径 532）"
+  ],
+  "carriers_60": [
+   1279,
+   "chronicle 742"
+  ],
+  "crowded10_60": [
+   1786,
+   "chronicle 469"
+  ],
+  "arian_60": [
+   8930,
+   "drafts README 2,435"
+  ],
+  "ledger_houses_page_area_60": 16281,
+  "people_per_ledger_house": 5.47,
+  "city_people_per_ledger_house_60": 9.0,
+  "books_60": {
+   "registry": 16281,
+   "v2_owner_households": 2240,
+   "v2_ledger_xero": 746
+  },
+  "landlords_60": {
+   "registry_owners_with_tenants": 0,
+   "tenants": 0,
+   "v2_landlords": 380,
+   "v2_tenants_per_landlord": 5.18
+  },
+  "bread_60": {
+   "portions": 189752,
+   "people": 89052,
+   "fed": 88758,
+   "unfed_people": 294,
+   "v2_fed": 12912
+  }
+ },
+ "seconds": 0.36
+}

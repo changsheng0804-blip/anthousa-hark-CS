@@ -1,0 +1,18 @@
+{
+ "scope": "city",
+ "v1_tenant_years": 131291,
+ "same": 123619,
+ "street_part_v1": 124284,
+ "street_part_same": 122393,
+ "new_tenant_years": 134472,
+ "max_tenants_new": 44,
+ "pat_landlord_faith_v1": 18054,
+ "pat_landlord_faith_same": 17003,
+ "same_share": 0.942,
+ "street_part_same_share": 0.985,
+ "street_compute_ms": {
+  "mean": 0.0097,
+  "p95": 0.0209,
+  "max": 0.103
+ }
+}

@@ -1,0 +1,107 @@
+{
+ "_doc": "lazy 版：参数同 rules.json，但运水人/信仰/面包/同行四类边不再逐年全量现算——交叉模式只用到它们的户属性（行当、信仰、有房、街），这四条规则改为「交叉时现查」。",
+ "years": [
+  50,
+  70
+ ],
+ "water": {
+  "well_reach": 140,
+  "cistern_reach": 420,
+  "mode": "knn",
+  "k": 4
+ },
+ "carrier": {
+  "far": 160,
+  "radius": 260,
+  "max_customers": 12
+ },
+ "bread": {
+  "owner_rule": "first_family_before",
+  "owner_before": 41,
+  "mode": "knn",
+  "k": 3,
+  "assume": "有房 = 这栋房子的第一户且 41 年前（干山 42 年划为新区之前）就住进来；42 年后来的新户和住进旧房的后来户都算租户（账本只说新区多是新来的穷人）"
+ },
+ "faith": {
+  "radius": 90,
+  "k": 3
+ },
+ "chain": {
+  "radius": 300,
+  "max_gap": 8
+ },
+ "trade_street": {
+  "mode": "knn",
+  "k": 3
+ },
+ "landlord": {
+  "cap": 6,
+  "radius": 250,
+  "assume": "租户的房东 = 同街（否则 250px 内）住得最久的有房户，每户最多 6 家租户"
+ },
+ "debt": {
+  "z": 1.0,
+  "base_years": [
+   40,
+   70
+  ],
+  "lender_trades": [
+   "面包师",
+   "酒馆老板"
+  ],
+  "radius": 200,
+  "cap": 4,
+  "years": 4,
+  "assume": "灾年 = 干山当年死亡率高于 AF40–70 均值 + z·标准差 的年份（账本无粮价，以死亡率代）；放债的是有房的面包师/酒馆老板（有存粮或现钱）"
+ },
+ "apprentice": {
+  "age": [
+   12,
+   15
+  ],
+  "radius": 300
+ },
+ "rival": {
+  "cap": {
+   "market": 4,
+   "shops": 3,
+   "default": 2
+  },
+  "dist": 80
+ },
+ "patron": {
+  "min_tenure": 25,
+  "min_size": 5,
+  "radius": 250,
+  "cap": 5,
+  "prefer_same_faith": true,
+  "assume": "恩主 = 体面人家街区的户，或住满 25 年且 ≥5 口的有房户；门客 = 缺男丁、有丧、或刚来的租户"
+ },
+ "church": {
+  "nicene_church_from": 49,
+  "arian_out_from": 51,
+  "arian_church_from": 64,
+  "xenon_from": 65,
+  "assume": "执事的施舍只给本派缺男丁人家；51 年后阿里乌派没有城里的教堂"
+ },
+ "office": {
+  "levy_years": {
+   "54": "运水人蓄水池",
+   "62": "第二座运水人蓄水池"
+  },
+  "levy_radius": 400,
+  "corvee_year": 57,
+  "corvee_site": "狄奥多西广场",
+  "corvee_per_street": 2,
+  "assume": "57 年修狄奥多西广场按街征工（账本只记了广场与拆房，征工是假设）"
+ },
+ "garrison": {
+  "radius": 220
+ },
+ "lazy_skip": [
+  "carrier",
+  "faith",
+  "bread",
+  "trade"
+ ]
+}

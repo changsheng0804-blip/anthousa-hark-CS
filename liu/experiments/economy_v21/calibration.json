@@ -1,0 +1,196 @@
+{
+ "_doc": "economy_v21 标定 6 组（G6 采用；calib.py 复现：V21_OVR='<ovr>' python3 calib.py <组> base|path|x05）。G1–G5 的 ovr 是相对当前默认（G6）写全的。——Hark（刘线）",
+ "baseline_g4_v20": {
+  "note": "v20 G4（只给体面户收入、不设上限）= 本文件 dem_on/dyn_on/export_pool_on 全关；AF70 由 economy.py g4_run 复现 8.38%",
+  "x05": {
+   "AF70": {
+    "poor_share_net": 0.2981,
+    "poor_share": 0.271,
+    "gini_net": 0.5221,
+    "unemp": 0.3622,
+    "unfunded": 3132,
+    "poor_net_by_livelihood": {
+     "雇工": 3853,
+     "码头脚夫": 116,
+     "面包": 38,
+     "手工铺": 997,
+     "作坊": 20,
+     "营造": 140,
+     "体面户": 93
+    }
+   },
+   "cons": 2.219167072325945e-09,
+   "checks": true
+  }
+ },
+ "groups": [
+  {
+   "group": "G1",
+   "ovr": {
+    "r_exit": 4.5,
+    "exit_cap": 0.04
+   },
+   "note": "初始默认",
+   "AF70": {
+    "poor_share_net": 0.0567,
+    "poor_share": 0.0404,
+    "gini_net": 0.5061,
+    "unemp": 0.0457,
+    "unfunded": 97,
+    "poor_net_by_livelihood": {
+     "雇工": 491,
+     "面包": 20,
+     "手工铺": 251,
+     "作坊": 25,
+     "营造": 126,
+     "体面户": 86
+    }
+   },
+   "shops_AF70": 1507,
+   "exits": 1379,
+   "entries": 787,
+   "cons": 1e-09,
+   "checks": true
+  },
+  {
+   "group": "G2",
+   "ovr": {
+    "r_exit": 4.5,
+    "exit_cap": 0.04,
+    "port_buy": 500
+   },
+   "note": "港口采购减半",
+   "AF70": {
+    "poor_share_net": 0.0571,
+    "poor_share": 0.0417,
+    "gini_net": 0.5055,
+    "unemp": 0.0474,
+    "unfunded": 99,
+    "poor_net_by_livelihood": {
+     "雇工": 510,
+     "面包": 17,
+     "手工铺": 244,
+     "作坊": 24,
+     "营造": 127,
+     "体面户": 85
+    }
+   },
+   "shops_AF70": 1463,
+   "exits": 1433,
+   "entries": 783,
+   "cons": 1.0186340659856796e-09,
+   "checks": true
+  },
+  {
+   "group": "G3（分解：只有需求内生，无进出）",
+   "ovr": {
+    "r_exit": 4.5,
+    "exit_cap": 0.04,
+    "dyn_on": false
+   },
+   "AF70": {
+    "poor_share_net": 0.0654,
+    "poor_share": 0.0439,
+    "gini_net": 0.5077,
+    "unemp": 0.0263,
+    "unfunded": 96,
+    "poor_net_by_livelihood": {
+     "雇工": 267,
+     "面包": 19,
+     "手工铺": 636,
+     "作坊": 22,
+     "营造": 124,
+     "体面户": 85
+    }
+   },
+   "shops_AF70": 2105,
+   "exits": 0,
+   "entries": 0,
+   "cons": 1.178705133497715e-09,
+   "checks": true
+  },
+  {
+   "group": "G4（分解：只有进出，需求照 v20）",
+   "ovr": {
+    "r_exit": 4.5,
+    "exit_cap": 0.04,
+    "dem_on": false
+   },
+   "AF70": {
+    "poor_share_net": 0.0954,
+    "poor_share": 0.0836,
+    "gini_net": 0.5028,
+    "unemp": 0.1146,
+    "unfunded": 136,
+    "poor_net_by_livelihood": {
+     "雇工": 1266,
+     "码头脚夫": 12,
+     "面包": 18,
+     "手工铺": 177,
+     "作坊": 10,
+     "营造": 123,
+     "体面户": 77
+    }
+   },
+   "shops_AF70": 1258,
+   "exits": 1203,
+   "entries": 360,
+   "cons": null,
+   "checks": true
+  },
+  {
+   "group": "G5",
+   "ovr": {
+    "r_exit": 5.0,
+    "exit_cap": 0.05
+   },
+   "AF70": {
+    "poor_share_net": 0.0557,
+    "poor_share": 0.0411,
+    "gini_net": 0.5069,
+    "unemp": 0.0476,
+    "unfunded": 95,
+    "poor_net_by_livelihood": {
+     "雇工": 515,
+     "面包": 16,
+     "手工铺": 215,
+     "作坊": 25,
+     "营造": 127,
+     "体面户": 85
+    }
+   },
+   "shops_AF70": 1402,
+   "exits": 1527,
+   "entries": 841,
+   "cons": 8.87666828930378e-10,
+   "checks": true
+  },
+  {
+   "group": "G6（采用）",
+   "ovr": {
+    "r_exit": 5.5,
+    "exit_cap": 0.05
+   },
+   "AF70": {
+    "poor_share_net": 0.0544,
+    "poor_share": 0.042,
+    "gini_net": 0.506,
+    "unemp": 0.0496,
+    "unfunded": 94,
+    "poor_net_by_livelihood": {
+     "雇工": 536,
+     "面包": 18,
+     "手工铺": 165,
+     "作坊": 29,
+     "营造": 127,
+     "体面户": 85
+    }
+   },
+   "shops_AF70": 1329,
+   "exits": 1617,
+   "entries": 845,
+   "cons": 1.033196195265873e-09,
+   "checks": true
+  }
+ ]
+}

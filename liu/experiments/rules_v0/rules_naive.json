@@ -1,0 +1,19 @@
+{
+  "_doc": "naive 版：分组规则（同一口水 / 面包同排 / 同行同街）按全连接（同组两两成边），信仰按 150px 内全连接。用来对比哪条规则会爆炸。其余同 rules.json。",
+  "years": [50, 70],
+  "water":   {"well_reach": 140, "cistern_reach": 420, "mode": "clique", "k": 4},
+  "carrier": {"far": 160, "radius": 260, "max_customers": 999},
+  "bread":   {"owner_rule": "first_family_before", "owner_before": 41, "mode": "clique", "k": 3},
+  "faith":   {"radius": 150, "k": 9999},
+  "chain":   {"radius": 300, "max_gap": 8},
+  "trade_street": {"mode": "clique", "k": 3},
+  "landlord": {"cap": 6, "radius": 250},
+  "debt":    {"z": 1.0, "base_years": [40, 70], "lender_trades": ["面包师", "酒馆老板"], "radius": 200, "cap": 4, "years": 4},
+  "apprentice": {"age": [12, 15], "radius": 300},
+  "rival":   {"cap": {"market": 4, "shops": 3, "default": 2}, "dist": 80},
+  "patron":  {"min_tenure": 25, "min_size": 5, "radius": 250, "cap": 5, "prefer_same_faith": true},
+  "church":  {"nicene_church_from": 49, "arian_out_from": 51, "arian_church_from": 64, "xenon_from": 65},
+  "office":  {"levy_years": {"54": "运水人蓄水池", "62": "第二座运水人蓄水池"}, "levy_radius": 400,
+              "corvee_year": 57, "corvee_site": "狄奥多西广场", "corvee_per_street": 2},
+  "garrison": {"radius": 220}
+}
