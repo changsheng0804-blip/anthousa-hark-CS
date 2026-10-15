@@ -33,7 +33,24 @@
       ]
      ]
     },
-    "label": "Outer Arcade"
+    "label": "Outer Arcade",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "拱基"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "拱券起架"
+     },
+     {
+      "year": 15,
+      "stage": "done",
+      "note": "渠槽合龙"
+     }
+    ]
    },
    "why": "Where the ground falls away under the channel, an arcade of stone 550 m long carries it."
   },
@@ -65,7 +82,24 @@
       ]
      ]
     },
-    "label": "Arcade"
+    "label": "Arcade",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "拱基"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "拱券起架"
+     },
+     {
+      "year": 15,
+      "stage": "done",
+      "note": "渠槽合龙"
+     }
+    ]
    },
    "why": "Where the ground falls away under the channel, an arcade of stone 100 m long carries it."
   },
@@ -105,7 +139,24 @@
       ]
      ]
     },
-    "label": "Aqueduct Bridge"
+    "label": "Aqueduct Bridge",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "拱基"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "拱券起架"
+     },
+     {
+      "year": 15,
+      "stage": "done",
+      "note": "渠槽合龙"
+     }
+    ]
    },
    "why": "Where the ground falls away under the channel, an arcade of stone 560 m long carries it."
   },
@@ -153,6 +204,23 @@
     "label_at": [
      300,
      290
+    ],
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "测量坡度、开渠沟"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "渠道砌筑，石拱段架起"
+     },
+     {
+      "year": 16,
+      "stage": "done",
+      "note": "通水，满渠流淌"
+     }
     ]
    },
    "why": "Water is the binding limit: the old channel and one cistern serve 43,000. A new channel from springs in the Thracian hills, 62 m above the sea, falls evenly to the third hill."
@@ -185,7 +253,24 @@
       ]
      ]
     },
-    "label": "Nymphaeum"
+    "label": "Nymphaeum",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "水渠终点挖蓄水池"
+     },
+     {
+      "year": 14,
+      "stage": "frame",
+      "note": "喷泉楼起墙"
+     },
+     {
+      "year": 16,
+      "stage": "done",
+      "note": "随水渠通水开放"
+     }
+    ]
    },
    "why": "At the aqueduct's end a fountain house and reservoir feed the public fountains."
   },
@@ -286,7 +371,30 @@
       ]
      ]
     },
-    "label": "Holy Apostles"
+    "label": "Holy Apostles",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "山顶清场"
+     },
+     {
+      "year": 13,
+      "stage": "done",
+      "part": "mausoleum",
+      "note": "奠基者陵墓圆堂先成"
+     },
+     {
+      "year": 14,
+      "stage": "frame",
+      "note": "十字教堂起墙"
+     },
+     {
+      "year": 18,
+      "stage": "done",
+      "note": "十字教堂与交叉穹顶完工"
+     }
+    ]
    },
    "why": "A cross-shaped church on the fourth hill, raised as a mausoleum for the Founder."
   },
@@ -318,7 +426,24 @@
       ]
      ]
     },
-    "label": "Neorion"
+    "label": "Neorion",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "金角湾避风处打桩、抛石"
+     },
+     {
+      "year": 13,
+      "stage": "frame",
+      "note": "码头岸线与船坡"
+     },
+     {
+      "year": 15,
+      "stage": "done",
+      "note": "码头完工，黑海船靠岸卸货"
+     }
+    ]
    },
    "why": "Ships from the Black Sea unload in the calm of the Horn, west of the old landing."
   },
@@ -350,7 +475,24 @@
       ]
      ]
     },
-    "label": "Horrea"
+    "label": "Horrea",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "码头后清场"
+     },
+     {
+      "year": 12,
+      "stage": "frame",
+      "note": "仓库起墙"
+     },
+     {
+      "year": 14,
+      "stage": "done",
+      "note": "一排仓库上瓦"
+     }
+    ]
    },
    "why": "Warehouses behind the new quay."
   },
@@ -382,7 +524,24 @@
       ]
      ]
     },
-    "label": "Barracks"
+    "label": "Barracks",
+    "phases": [
+     {
+      "year": 11,
+      "stage": "site",
+      "note": "城门内侧清场"
+     },
+     {
+      "year": 12,
+      "stage": "frame",
+      "note": "营房四面起墙"
+     },
+     {
+      "year": 13,
+      "stage": "done",
+      "note": "驻军入营"
+     }
+    ]
    },
    "why": "The guard of the land gate needs quarters."
   }

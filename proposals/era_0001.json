@@ -44,7 +44,24 @@
        470.9
       ]
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "门址清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "双塔起墙"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "门楼上大理石，大道车马通行"
+     }
+    ]
    },
    "why": "Where the Mese passes the new wall."
   },
@@ -67,7 +84,24 @@
        554.1
       ]
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "沿划定的线挖基槽、堆石料"
+     },
+     {
+      "year": 3,
+      "stage": "frame",
+      "note": "墙身砌到一半高"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "雉堞与方塔完工"
+     }
+    ]
    },
    "why": "The Founder walks the line of the new wall with a spear, 'until he who walks before me stops.'"
   },
@@ -240,7 +274,24 @@
       ]
      ]
     },
-    "label": "Forum of the Founder"
+    "label": "Forum of the Founder",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场放线，椭圆地坪"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "柱廊立柱"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "柱廊上瓦、大理石铺地，与斑岩柱同年献祭"
+     }
+    ]
    },
    "why": "An oval forum of marble porticoes on the Mese, about six hundred metres from the Milion."
   },
@@ -257,7 +308,24 @@
       611,
       454
      ]
-    }
+    },
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "基座"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "斑岩鼓石逐年上架，2—4 年各加两节"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "奠基者立像登顶"
+     }
+    ]
    },
    "why": "A porphyry column carries the Founder's statue."
   },
@@ -289,7 +357,24 @@
       ]
      ]
     },
-    "label": "Milion"
+    "label": "Milion",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场、立木拱架"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "四面拱砌起"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "note": "穹顶合拢，帝国道路从这里起算"
+     }
+    ]
    },
    "why": "The milestone from which every road of the empire is measured."
   },
@@ -321,7 +406,31 @@
       ]
      ]
     },
-    "label": "Great Palace"
+    "label": "Great Palace",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场，台地开挖"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "part": "upper",
+      "note": "上台地：铜门与会堂"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "part": "middle",
+      "note": "中台地：庭院与花园"
+     },
+     {
+      "year": 8,
+      "stage": "done",
+      "note": "下台地与临海护墙，整座宫殿完成"
+     }
+    ]
    },
    "why": "Terraces of the palace step down towards the sea."
   },
@@ -377,7 +486,30 @@
       ]
      ]
     },
-    "label": "Hippodrome"
+    "label": "Hippodrome",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场、挖赛道"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "看台拱基与起跑门"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "赛道、分隔墙与看台完工"
+     },
+     {
+      "year": 6,
+      "stage": "done",
+      "part": "kathisma",
+      "note": "皇帝包厢落成，连通大皇宫"
+     }
+    ]
    },
    "why": "450 metres of race track beside the palace; the city will love and riot here."
   },
@@ -409,7 +541,24 @@
       ]
      ]
     },
-    "label": "Holy Peace"
+    "label": "Holy Peace",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "墙体与木屋架"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "献堂"
+     }
+    ]
    },
    "why": "The first great church rises beside the old citadel."
   },
@@ -469,7 +618,24 @@
       ]
      ]
     },
-    "label": "Harbor of Julian"
+    "label": "Harbor of Julian",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "南岸抛填碎石，防波堤向海里伸"
+     },
+     {
+      "year": 3,
+      "stage": "frame",
+      "note": "两道防波堤合拢，石砌码头岸线"
+     },
+     {
+      "year": 5,
+      "stage": "done",
+      "note": "堤头灯塔点火，码头系船柱、货栈齐备"
+     }
+    ]
    },
    "why": "Moles of rubble enclose a harbor on the inland sea."
   },
@@ -501,7 +667,24 @@
       ]
      ]
     },
-    "label": "Granary"
+    "label": "Granary",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "港后清场"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "四面拱库起墙"
+     },
+     {
+      "year": 4,
+      "stage": "done",
+      "note": "上瓦，第一批埃及粮入库"
+     }
+    ]
    },
    "why": "Egyptian grain needs a home."
   },
@@ -533,7 +716,24 @@
       ]
      ]
     },
-    "label": "Cistern"
+    "label": "Cistern",
+    "phases": [
+     {
+      "year": 1,
+      "stage": "site",
+      "note": "大道旁挖池"
+     },
+     {
+      "year": 2,
+      "stage": "frame",
+      "note": "砖拱封顶"
+     },
+     {
+      "year": 3,
+      "stage": "done",
+      "note": "存起雨水"
+     }
+    ]
    },
    "why": "A covered cistern under brick vaults."
   },

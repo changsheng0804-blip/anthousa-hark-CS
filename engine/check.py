@@ -63,5 +63,23 @@ for s in w["structures"]:
         o = by_id(w, src)
         if o is None or o.get("destroyed") is None or o["destroyed"] > s["built"]:
             fails.append(f"dna: {s['id']} reuses spolia from {src}, which was not a ruin in AF {s['built']}")
+# phases (2026-10-14): staged construction inside the ledger; first phase is the built (clearing) year,
+# years ascend, a 'done' without part closes it, and nothing outlives the structure
+for s in w["structures"]:
+    ph = s.get("phases")
+    if not ph: continue
+    ys = [p["year"] for p in ph]
+    # a harbor may start in the water before its built year, as long as it is done exactly in its built year
+    # (the land plots, and the ledger's demolitions, still fall on the built year)
+    pre = s["type"] == "harbor" and ys[0] < s["built"]
+    if pre:
+        if not (ph[-1]["stage"] == "done" and ys[-1] == s["built"] and all(p["stage"] != "done" for p in ph[:-1])):
+            fails.append(f"phases: harbor {s['id']} starts before built {s['built']} but is not done exactly then")
+    elif ys[0] != s["built"]: fails.append(f"phases: {s['id']} starts in {ys[0]}, built {s['built']}")
+    if ys != sorted(ys): fails.append(f"phases: {s['id']} years not ascending")
+    if any(p["stage"] not in ("site", "frame", "done") for p in ph): fails.append(f"phases: {s['id']} unknown stage")
+    if not any(p["stage"] == "done" and "part" not in p for p in ph): fails.append(f"phases: {s['id']} never done")
+    if s.get("destroyed") is not None and ys[-1] >= s["destroyed"]: fails.append(f"phases: {s['id']} phase after destruction")
+    if ys[-1] > year: fails.append(f"phases: {s['id']} phase beyond the present year {year}")
 print("\n".join(fails) if fails else f"all checks passed for {len(w['eras'])} eras, year {year}")
 sys.exit(1 if fails else 0)
