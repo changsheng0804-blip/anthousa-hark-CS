@@ -1,0 +1,4385 @@
+{
+ "_doc": "v11 结果：conversion=人→户换算；targets=靶区与出处（v10★版本，只改 Dunbar 层靶）；sweep=18 组扫描汇总（AF50/60/70 heavy）；best_config；years=最佳组 AF40–70 逐年全部指标/命中/存活率/哈希。ties 只存 AF70（ties_AF70.json.gz）。——Hark（刘线）",
+ "conversion": {
+  "person_layers": [
+   5,
+   15,
+   50,
+   150
+  ],
+  "persons_per_household": 2.206,
+  "exact": [
+   2.27,
+   6.8,
+   22.67,
+   68.0
+  ],
+  "household_layers": [
+   3,
+   7,
+   23,
+   68
+  ],
+  "source": "Hill & Dunbar 2003（150 人≈68 户）",
+  "office_cap": "68×k，k 为假设参数"
+ },
+ "targets": {
+  "dunbar_cum_3": [
+   2.1,
+   3.9,
+   "Dunbar 5 人层 ÷2.2 人/户（Hill&Dunbar 2003 150 人≈68 户）≈2.3→取 3，±30%"
+  ],
+  "dunbar_cum_7": [
+   4.9,
+   9.1,
+   "15 人层 ÷2.2 ≈6.8→7，±30%"
+  ],
+  "dunbar_cum_23": [
+   16.1,
+   29.9,
+   "50 人层 ÷2.2 ≈22.7→23，±30%"
+  ],
+  "dunbar_cum_68": [
+   47.6,
+   68.0,
+   "150 人层 ÷2.2 ≈68，下 30%，上限即 68 截断（职位户 ×k 上浮不影响全体中位）"
+  ],
+  "clustering": [
+   0.1,
+   0.5,
+   "Watts&Strogatz 1998; Newman 2003（社会网 0.1–0.5），同 v9"
+  ],
+  "avg_path": [
+   2.5,
+   6.0,
+   "改：v9 的 4–8 来自全国尺度；1.7 万户×度≈130 的城内网，随机网基线 lnN/lnk≈2.0，要求高于基线以体现空间局部性（模型假设）"
+  ],
+  "latent_degree_skew": [
+   0.0,
+   null,
+   "改：150 截断后输出图的度被压平（≤150、≤50 层亦被截），改在截断前的潜在关系网上检验右偏（Amaral+2000）"
+  ],
+  "latent_max_over_median": [
+   3.0,
+   null,
+   "同上：潜在关系网最大度 ≥3×中位"
+  ],
+  "modularity": [
+   0.3,
+   null,
+   "Newman 2006; Clauset+2004，同 v9"
+  ],
+  "assort_faith": [
+   0.5,
+   0.85,
+   "改为区间：下限=宗教同质性显著（McPherson+2001），上限 0.85 = 不得接近完全隔离；依据见 REPORT 二栏"
+  ],
+  "assort_guild": [
+   0.0,
+   null,
+   "McPherson+2001 职业同质性，同 v9"
+  ],
+  "office_strength_ratio": [
+   1.5,
+   null,
+   "改：150 截断后度比被压到 ≤1.2，改比输出关系强度和（职位户/普通户；Padgett&Ansell 1993）"
+  ],
+  "office_betw_ratio": [
+   2.0,
+   null,
+   "Freeman 1977，同 v9"
+  ],
+  "closure_share": [
+   0.0,
+   0.4,
+   "任务给定：三元闭合来源占比 <40%"
+  ]
+ },
+ "sweep": {
+  "grid_size": 18,
+  "n_all_hit": 0,
+  "all_hit": [],
+  "best": "s1k2.0",
+  "miss_counts_over_50_60_70": {
+   "dunbar_cum_3": 54,
+   "clustering": 54,
+   "office_strength_ratio": 20,
+   "office_betw_ratio": 19,
+   "latent_max_over_median": 3
+  },
+  "miss_counts_70": {
+   "dunbar_cum_3": 18,
+   "clustering": 18,
+   "office_strength_ratio": 10,
+   "office_betw_ratio": 7
+  },
+  "table": [
+   {
+    "id": "s1k2.0",
+    "j": 1,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.37,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1042
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1302
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1356
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06799009124612787,
+     "avg_path": 3.052451981246219,
+     "modularity": 0.6437418012080106,
+     "assort_faith": 0.827226900515092,
+     "assort_guild": 0.5812313045941049,
+     "closure_share": 0.1564585750517695,
+     "latent_degree_skew": 0.5105901676483754,
+     "latent_max_over_median": 3.0822784810126582,
+     "office_strength_ratio": 1.5687521531473478,
+     "office_betw_ratio": 2.5723445561550173,
+     "cap_share": 0.06512250480125706,
+     "office_median_degree": 87.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.732717064594794
+    },
+    "survival_70": 0.8135106035635437,
+    "clustering_by_year": {
+     "50": 0.08054792955449865,
+     "60": 0.07015468882040049,
+     "70": 0.06799009124612787
+    }
+   },
+   {
+    "id": "s1k1.5",
+    "j": 1,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.3717,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1048
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1307
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1362
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06774402692710361,
+     "avg_path": 3.0573502722323047,
+     "modularity": 0.653002300151126,
+     "assort_faith": 0.827699924509462,
+     "assort_guild": 0.5813587348140598,
+     "closure_share": 0.1570515723614389,
+     "latent_degree_skew": 0.5105901676483754,
+     "latent_max_over_median": 3.0822784810126582,
+     "office_strength_ratio": 1.518589286549795,
+     "office_betw_ratio": 2.069829484246754,
+     "cap_share": 0.05924460222312751,
+     "office_median_degree": 84.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.34390064084387
+    },
+    "survival_70": 0.8150387533191273,
+    "clustering_by_year": {
+     "50": 0.08031704398631527,
+     "60": 0.06994188273534767,
+     "70": 0.06774402692710361
+    }
+   },
+   {
+    "id": "s3k2.0",
+    "j": 3,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.3955,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1209
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1357
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1389
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06665703800665268,
+     "avg_path": 3.045051610707804,
+     "modularity": 0.6470057078909414,
+     "assort_faith": 0.8284650737270101,
+     "assort_guild": 0.5899831107413938,
+     "closure_share": 0.16857696393975377,
+     "latent_degree_skew": 0.644766271806648,
+     "latent_max_over_median": 4.245098039215686,
+     "office_strength_ratio": 1.5564525415693886,
+     "office_betw_ratio": 2.403832837523858,
+     "cap_share": 0.06803235756270733,
+     "office_median_degree": 82.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 59.10315884988374
+    },
+    "survival_70": 0.8184773036277115,
+    "clustering_by_year": {
+     "50": 0.07385305091755903,
+     "60": 0.06793097772665752,
+     "70": 0.06665703800665268
+    }
+   },
+   {
+    "id": "s3k1.5",
+    "j": 3,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.3978,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1217
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1365
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1396
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06636480270979296,
+     "avg_path": 3.0499338324258924,
+     "modularity": 0.6513025044498522,
+     "assort_faith": 0.8288673576760087,
+     "assort_guild": 0.5901534363879741,
+     "closure_share": 0.16906735695488115,
+     "latent_degree_skew": 0.644766271806648,
+     "latent_max_over_median": 4.245098039215686,
+     "office_strength_ratio": 1.5113828200109496,
+     "office_betw_ratio": 2.001251303905591,
+     "cap_share": 0.06279462259209684,
+     "office_median_degree": 80.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.77048715476663
+    },
+    "survival_70": 0.8197553021430001,
+    "clustering_by_year": {
+     "50": 0.0735575812057713,
+     "60": 0.06762141867114446,
+     "70": 0.06636480270979296
+    }
+   },
+   {
+    "id": "s5k2.0",
+    "j": 5,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.4014,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1156
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1403
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1455
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      60.0
+     ],
+     "clustering": 0.06400722590620664,
+     "avg_path": 3.0453815033272837,
+     "modularity": 0.6496630652335597,
+     "assort_faith": 0.8163804302537149,
+     "assort_guild": 0.5664054121891735,
+     "closure_share": 0.13587163476836564,
+     "latent_degree_skew": 0.5334073877581751,
+     "latent_max_over_median": 3.220779220779221,
+     "office_strength_ratio": 1.6965117416897737,
+     "office_betw_ratio": 2.921061741077028,
+     "cap_share": 0.06151428737705872,
+     "office_median_degree": 87.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.29592241819316
+    },
+    "survival_70": 0.8079826766596966,
+    "clustering_by_year": {
+     "50": 0.07597715779052532,
+     "60": 0.06609312091576725,
+     "70": 0.06400722590620664
+    }
+   },
+   {
+    "id": "s5k1.5",
+    "j": 5,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.4033,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1161
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1409
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1463
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      60.0
+     ],
+     "clustering": 0.06370943353245156,
+     "avg_path": 3.0527771476104055,
+     "modularity": 0.6511680150870258,
+     "assort_faith": 0.8169747485557523,
+     "assort_guild": 0.5652346684190143,
+     "closure_share": 0.1362309859056302,
+     "latent_degree_skew": 0.5334073877581751,
+     "latent_max_over_median": 3.220779220779221,
+     "office_strength_ratio": 1.63516002284489,
+     "office_betw_ratio": 2.322740616203223,
+     "cap_share": 0.05633474946167724,
+     "office_median_degree": 83.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 57.86820166732831
+    },
+    "survival_70": 0.8096018716883465,
+    "clustering_by_year": {
+     "50": 0.07579092026810694,
+     "60": 0.0658464406447022,
+     "70": 0.06370943353245156
+    }
+   },
+   {
+    "id": "s4k2.0",
+    "j": 4,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.4072,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1175
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1419
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1478
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      60.0
+     ],
+     "clustering": 0.06308727095666375,
+     "avg_path": 3.0495632940108894,
+     "modularity": 0.6490271716465472,
+     "assort_faith": 0.8159142712442781,
+     "assort_guild": 0.560043537432028,
+     "closure_share": 0.13632554501122862,
+     "latent_degree_skew": 0.5228126296348131,
+     "latent_max_over_median": 3.324675324675325,
+     "office_strength_ratio": 1.5634108244779255,
+     "office_betw_ratio": 2.349360296641172,
+     "cap_share": 0.06424954897282198,
+     "office_median_degree": 86.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.25656439630239
+    },
+    "survival_70": 0.8077089606774043,
+    "clustering_by_year": {
+     "50": 0.07520336973261865,
+     "60": 0.06547642545666418,
+     "70": 0.06308727095666375
+    }
+   },
+   {
+    "id": "s4k1.5",
+    "j": 4,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 35,
+    "dist_sum": 0.4078,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1175
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1422
+     },
+     "70": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1481
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      60.0
+     ],
+     "clustering": 0.06296614951218674,
+     "avg_path": 3.0536127495462795,
+     "modularity": 0.6498152699394285,
+     "assort_faith": 0.8162878192387029,
+     "assort_guild": 0.5608137275833256,
+     "closure_share": 0.13684216054223616,
+     "latent_degree_skew": 0.5228126296348131,
+     "latent_max_over_median": 3.324675324675325,
+     "office_strength_ratio": 1.5224778856309915,
+     "office_betw_ratio": 2.00545175648672,
+     "cap_share": 0.06285281964732585,
+     "office_median_degree": 81.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 57.952362048431915
+    },
+    "survival_70": 0.8095388179303933,
+    "clustering_by_year": {
+     "50": 0.0752138887525693,
+     "60": 0.06536018508442587,
+     "70": 0.06296614951218674
+    }
+   },
+   {
+    "id": "s2k2.0",
+    "j": 2,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 34,
+    "dist_sum": 0.4303,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1239
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1379
+     },
+     "70": {
+      "n_hit": 11,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio"
+      ],
+      "dist": 0.1685
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      61.0
+     ],
+     "clustering": 0.06577161805504328,
+     "avg_path": 3.052915154264973,
+     "modularity": 0.6508023285761327,
+     "assort_faith": 0.828647306295623,
+     "assort_guild": 0.5792820605766956,
+     "closure_share": 0.16979021429606972,
+     "latent_degree_skew": 0.6268694400439698,
+     "latent_max_over_median": 4.03921568627451,
+     "office_strength_ratio": 1.4589250239178306,
+     "office_betw_ratio": 2.0518026088090724,
+     "cap_share": 0.06884711633591341,
+     "office_median_degree": 82.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 59.07968014518233
+    },
+    "survival_70": 0.8193145032709422,
+    "clustering_by_year": {
+     "50": 0.0726722744154819,
+     "60": 0.06706107092908603,
+     "70": 0.06577161805504328
+    }
+   },
+   {
+    "id": "s0k2.0",
+    "j": 0,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 2.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 33,
+    "dist_sum": 0.4268,
+    "per": {
+     "50": {
+      "n_hit": 10,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "latent_max_over_median"
+      ],
+      "dist": 0.1385
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1324
+     },
+     "70": {
+      "n_hit": 11,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio"
+      ],
+      "dist": 0.1559
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06721340825554122,
+     "avg_path": 3.040326300665457,
+     "modularity": 0.6479417177637592,
+     "assort_faith": 0.8269682073842124,
+     "assort_guild": 0.5797748915685796,
+     "closure_share": 0.15777002107257176,
+     "latent_degree_skew": 0.5136206496074185,
+     "latent_max_over_median": 3.1012658227848102,
+     "office_strength_ratio": 1.4724790023904408,
+     "office_betw_ratio": 2.3977483573266327,
+     "cap_share": 0.06634464296106617,
+     "office_median_degree": 84.5,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.61747859127772
+    },
+    "survival_70": 0.814696081408295,
+    "clustering_by_year": {
+     "50": 0.07946595357357214,
+     "60": 0.06926609976373804,
+     "70": 0.06721340825554122
+    }
+   },
+   {
+    "id": "s0k1.5",
+    "j": 0,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 33,
+    "dist_sum": 0.4484,
+    "per": {
+     "50": {
+      "n_hit": 10,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "latent_max_over_median"
+      ],
+      "dist": 0.1385
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1325
+     },
+     "70": {
+      "n_hit": 11,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio"
+      ],
+      "dist": 0.1774
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.0671187428912472,
+     "avg_path": 3.0438416893526923,
+     "modularity": 0.6503038080279571,
+     "assort_faith": 0.8272200195063918,
+     "assort_guild": 0.580582160733839,
+     "closure_share": 0.15836262711791924,
+     "latent_degree_skew": 0.5136206496074185,
+     "latent_max_over_median": 3.1012658227848102,
+     "office_strength_ratio": 1.4405809620455106,
+     "office_betw_ratio": 2.026527306932984,
+     "cap_share": 0.06518070185648606,
+     "office_median_degree": 81.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.34741677536437
+    },
+    "survival_70": 0.8162391156382754,
+    "clustering_by_year": {
+     "50": 0.07948283758921909,
+     "60": 0.06922252493150519,
+     "70": 0.0671187428912472
+    }
+   },
+   {
+    "id": "s2k1.5",
+    "j": 2,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.5,
+    "all_hit_50_60_70": false,
+    "hits_sum": 33,
+    "dist_sum": 0.5151,
+    "per": {
+     "50": {
+      "n_hit": 11,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1242
+     },
+     "60": {
+      "n_hit": 12,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering"
+      ],
+      "dist": 0.1382
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.2527
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      61.0
+     ],
+     "clustering": 0.06565595450272728,
+     "avg_path": 3.0561412961282515,
+     "modularity": 0.6516284519349742,
+     "assort_faith": 0.8290569734803536,
+     "assort_guild": 0.5799477562414553,
+     "closure_share": 0.17028708950331808,
+     "latent_degree_skew": 0.6268694400439698,
+     "latent_max_over_median": 4.03921568627451,
+     "office_strength_ratio": 1.4325337981655082,
+     "office_betw_ratio": 1.8672998881726883,
+     "cap_share": 0.06727579584473026,
+     "office_median_degree": 80.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.86417512618386
+    },
+    "survival_70": 0.8206953019196666,
+    "clustering_by_year": {
+     "50": 0.07254652962303275,
+     "60": 0.06693586719466255,
+     "70": 0.06565595450272728
+    }
+   },
+   {
+    "id": "s5k1.0",
+    "j": 5,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 31,
+    "dist_sum": 1.1688,
+    "per": {
+     "50": {
+      "n_hit": 10,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_betw_ratio"
+      ],
+      "dist": 0.3291
+     },
+     "60": {
+      "n_hit": 11,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_betw_ratio"
+      ],
+      "dist": 0.3813
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.4584
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      59.0
+     ],
+     "clustering": 0.06336462136156368,
+     "avg_path": 3.0639244933454326,
+     "modularity": 0.6481231068858002,
+     "assort_faith": 0.8180684770272844,
+     "assort_guild": 0.5700346897405257,
+     "closure_share": 0.13643130998361944,
+     "latent_degree_skew": 0.5334073877581751,
+     "latent_max_over_median": 3.220779220779221,
+     "office_strength_ratio": 1.4745725742145386,
+     "office_betw_ratio": 1.4113478412145173,
+     "cap_share": 0.04120351510213583,
+     "office_median_degree": 65.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 56.94912947314694
+    },
+    "survival_70": 0.8101728070421576,
+    "clustering_by_year": {
+     "50": 0.07545461261185318,
+     "60": 0.06553479575213726,
+     "70": 0.06336462136156368
+    }
+   },
+   {
+    "id": "s4k1.0",
+    "j": 4,
+    "market_strength": 1500.0,
+    "c": 1.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 29,
+    "dist_sum": 1.2998,
+    "per": {
+     "50": {
+      "n_hit": 9,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.3495
+     },
+     "60": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.3932
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.5571
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      17.0,
+      59.0
+     ],
+     "clustering": 0.06286950857834998,
+     "avg_path": 3.0634301270417423,
+     "modularity": 0.6482094454269991,
+     "assort_faith": 0.8171592025125095,
+     "assort_guild": 0.5664580014601078,
+     "closure_share": 0.1378205583071967,
+     "latent_degree_skew": 0.5228126296348131,
+     "latent_max_over_median": 3.324675324675325,
+     "office_strength_ratio": 1.4080630435458756,
+     "office_betw_ratio": 1.305142223963569,
+     "cap_share": 0.05074783215969272,
+     "office_median_degree": 65.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 57.117223387965744
+    },
+    "survival_70": 0.8097963181354815,
+    "clustering_by_year": {
+     "50": 0.07516366398665943,
+     "60": 0.06523740355113154,
+     "70": 0.06286950857834998
+    }
+   },
+   {
+    "id": "s1k1.0",
+    "j": 1,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 29,
+    "dist_sum": 1.4518,
+    "per": {
+     "50": {
+      "n_hit": 9,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.4572
+     },
+     "60": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.3929
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.6017
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      59.0
+     ],
+     "clustering": 0.0674023235874335,
+     "avg_path": 3.0662517014519057,
+     "modularity": 0.6506075907800171,
+     "assort_faith": 0.8287164209620319,
+     "assort_guild": 0.5832289752526058,
+     "closure_share": 0.15813927694389998,
+     "latent_degree_skew": 0.5105901676483754,
+     "latent_max_over_median": 3.0822784810126582,
+     "office_strength_ratio": 1.382331159078031,
+     "office_betw_ratio": 1.227541257203343,
+     "cap_share": 0.04527730896816621,
+     "office_median_degree": 66.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 57.455452844099135
+    },
+    "survival_70": 0.8159401311122283,
+    "clustering_by_year": {
+     "50": 0.07999772724973857,
+     "60": 0.069651256057044,
+     "70": 0.0674023235874335
+    }
+   },
+   {
+    "id": "s3k1.0",
+    "j": 3,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 80,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 29,
+    "dist_sum": 1.528,
+    "per": {
+     "50": {
+      "n_hit": 9,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.4677
+     },
+     "60": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.4557
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.6046
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06600527703272034,
+     "avg_path": 3.0576716575922567,
+     "modularity": 0.649634711790069,
+     "assort_faith": 0.8297070080406617,
+     "assort_guild": 0.5906984465110492,
+     "closure_share": 0.1701981332896676,
+     "latent_degree_skew": 0.644766271806648,
+     "latent_max_over_median": 4.245098039215686,
+     "office_strength_ratio": 1.381543218026952,
+     "office_betw_ratio": 1.229785986300698,
+     "cap_share": 0.04900192050282256,
+     "office_median_degree": 65.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 57.9428344581183
+    },
+    "survival_70": 0.8204271284498761,
+    "clustering_by_year": {
+     "50": 0.073057565133726,
+     "60": 0.06722271483217351,
+     "70": 0.06600527703272034
+    }
+   },
+   {
+    "id": "s2k1.0",
+    "j": 2,
+    "market_strength": 800.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 29,
+    "dist_sum": 1.5364,
+    "per": {
+     "50": {
+      "n_hit": 9,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.502
+     },
+     "60": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.404
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.6304
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06556577283746962,
+     "avg_path": 3.0632788868723533,
+     "modularity": 0.646270776362886,
+     "assort_faith": 0.8300077929966831,
+     "assort_guild": 0.5843616261346474,
+     "closure_share": 0.17169573928822077,
+     "latent_degree_skew": 0.6268694400439698,
+     "latent_max_over_median": 4.03921568627451,
+     "office_strength_ratio": 1.339881130737575,
+     "office_betw_ratio": 1.2358969468973042,
+     "cap_share": 0.05604376418553221,
+     "office_median_degree": 65.0,
+     "nonoffice_median_degree": 60.0,
+     "mean_degree": 58.10469006975557
+    },
+    "survival_70": 0.8212382978221465,
+    "clustering_by_year": {
+     "50": 0.07243470417209691,
+     "60": 0.06680682513966311,
+     "70": 0.06556577283746962
+    }
+   },
+   {
+    "id": "s0k1.0",
+    "j": 0,
+    "market_strength": 1500.0,
+    "c": 2.0,
+    "office_hub_capacity": 40,
+    "office_cap_mult": 1.0,
+    "all_hit_50_60_70": false,
+    "hits_sum": 28,
+    "dist_sum": 1.6271,
+    "per": {
+     "50": {
+      "n_hit": 8,
+      "n_eval": 13,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "latent_max_over_median",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.5234
+     },
+     "60": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.485
+     },
+     "70": {
+      "n_hit": 10,
+      "n_eval": 14,
+      "miss": [
+       "dunbar_cum_3",
+       "clustering",
+       "office_strength_ratio",
+       "office_betw_ratio"
+      ],
+      "dist": 0.6187
+     }
+    },
+    "m70": {
+     "median_cum_layer": [
+      2.0,
+      5.0,
+      18.0,
+      60.0
+     ],
+     "clustering": 0.06706903861913686,
+     "avg_path": 3.0524595432546886,
+     "modularity": 0.6422415460424317,
+     "assort_faith": 0.8280693366192174,
+     "assort_guild": 0.5841302414818859,
+     "closure_share": 0.1597616526983874,
+     "latent_degree_skew": 0.5136206496074185,
+     "latent_max_over_median": 3.1012658227848102,
+     "office_strength_ratio": 1.3411038650211875,
+     "office_betw_ratio": 1.2501299567370976,
+     "cap_share": 0.05423965547343305,
+     "office_median_degree": 65.0,
+     "nonoffice_median_degree": 59.0,
+     "mean_degree": 57.52679634775705
+    },
+    "survival_70": 0.8168066726834542,
+    "clustering_by_year": {
+     "50": 0.07948125572196493,
+     "60": 0.06913051349534677,
+     "70": 0.06706903861913686
+    }
+   }
+  ]
+ },
+ "best_config": {
+  "_doc": "v11 基础配置 = v10 最佳组 g01（config_best.json）原样，只改：dunbar_layers 5/15/50/150 人 → 3/7/23/68 户（÷2.2 人/户，Hill&Dunbar 2003）；新增 office_cap_mult（职位户上限 68×k，假设）。——Hark（刘线）  最佳组 s1k2.0：市场 1500.0、c 2.0、辖民容量 80、k 2.0。",
+  "seed": 20261014,
+  "c": 2.0,
+  "a": 1.0,
+  "base": {
+   "近邻": 1.0,
+   "门口路口": 1.0,
+   "街段": 1.0,
+   "坊": 1.0,
+   "行会": 1.0,
+   "教堂会众": 1.0,
+   "井/水池": 1.0
+  },
+  "knn_k": 6,
+  "dist_d0": 20.0,
+  "dist_gamma": 1.0,
+  "homophily_faith": 0.2,
+  "homophily_guild": 0.4,
+  "office_hub_capacity": 80,
+  "market_strength": 1500.0,
+  "market_d0": 60.0,
+  "market_gamma": 6.0,
+  "tie_weight": {
+   "近邻": 3.0,
+   "门口路口": 2.0,
+   "街段": 1.5,
+   "坊": 1.0,
+   "行会": 1.5,
+   "教堂会众": 0.5,
+   "井/水池": 0.3,
+   "市场": 0.2,
+   "职位上下级": 2.0,
+   "职位辖民": 1.0,
+   "婚姻": 4.0
+  },
+  "kin_weight": {
+   "1": 5.0,
+   "2": 4.0,
+   "3": 2.5
+  },
+  "kin_window": 5,
+  "kin_max_children": 3,
+  "kin_maxdist": 3,
+  "p_immigrant": 0.35,
+  "p_marry": 0.8,
+  "p_cross_faith": 0.02,
+  "marry_d0": 60.0,
+  "marry_status_disc": 0.5,
+  "marry_guild_boost": 2.0,
+  "turnover": {
+   "近邻": 0.05,
+   "门口路口": 0.08,
+   "街段": 0.08,
+   "坊": 0.1,
+   "行会": 0.1,
+   "教堂会众": 0.15,
+   "井/水池": 0.15,
+   "市场": 0.2,
+   "职位辖民": 0.1
+  },
+  "p_lost": 0.4,
+  "age_boost": 0.3,
+  "q_closure": 0.06,
+  "closure_decay": 0.2,
+  "closure_top_k": 10,
+  "closure_weight_factor": 0.5,
+  "closure_w_cap": 3.0,
+  "dunbar_layers": [
+   3,
+   7,
+   23,
+   68
+  ],
+  "layer_names": [
+   "强",
+   "中",
+   "弱",
+   "认识"
+  ],
+  "office_cap_mult": 2.0
+ },
+ "years": {
+  "40": {
+   "digest": "8ca8458706029a90",
+   "records": 1001010,
+   "step_sec": 2.41,
+   "metrics": {
+    "n": 10713,
+    "edges": 317793,
+    "median_degree": 60.0,
+    "mean_degree": 59.328479417530104,
+    "cap_share": 0.05746239876590822,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     43.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6796463411739501,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.0940251741972096,
+    "office_strength_ratio": 1.546480317181401,
+    "latent_median_degree": 169.0,
+    "latent_max_degree": 639,
+    "latent_degree_skew": 0.5518872862739251,
+    "latent_max_over_median": 3.7810650887573964,
+    "office_degree_ratio_full": 1.4892485629267278,
+    "closure_share": 0.19455431370885645,
+    "source_label_share": {
+     "市场": 0.5849,
+     "三元闭合": 0.1946,
+     "亲属": 0.083,
+     "近邻": 0.0424,
+     "婚姻": 0.0201,
+     "坊": 0.0162,
+     "街段": 0.0159,
+     "职位辖民": 0.0138,
+     "门口路口": 0.0134,
+     "教堂会众": 0.0072,
+     "井/水池": 0.0067,
+     "行会": 0.0011,
+     "职位上下级": 0.0007
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5314348802697546,
+    "clustering": 0.08673197119779179,
+    "giant_share": 1.0,
+    "avg_path": 2.927855053522529,
+    "diameter_est": 4.0,
+    "modularity": 0.6473733460053774,
+    "n_communities": 8,
+    "office_betw_ratio": 2.6819226077255993,
+    "office_share_top1pct_betw": 0.2616822429906542,
+    "office_base_rate": 0.03183048632502567,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 83.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 341
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 3.8
+  },
+  "41": {
+   "digest": "315cf7f615e61ba4",
+   "records": 1021799,
+   "step_sec": 3.15,
+   "survival": 0.8205215344579648,
+   "survival_by_tier": {
+    "强": 0.9817293777134588,
+    "中": 0.9747354654618952,
+    "弱": 0.8849031178848566,
+    "认识": 0.7826555788277895
+   },
+   "metrics": {
+    "n": 11204,
+    "edges": 323863,
+    "median_degree": 60.0,
+    "mean_degree": 57.812031417350944,
+    "cap_share": 0.05559134836631385,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6983119616420554,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1116812564025456,
+    "office_strength_ratio": 1.5871068466657623,
+    "latent_median_degree": 166.0,
+    "latent_max_degree": 616,
+    "latent_degree_skew": 0.3334032331328852,
+    "latent_max_over_median": 3.710843373493976,
+    "office_degree_ratio_full": 1.539502731402985,
+    "closure_share": 0.18519212453354567,
+    "source_label_share": {
+     "市场": 0.588,
+     "三元闭合": 0.1852,
+     "亲属": 0.0866,
+     "近邻": 0.043,
+     "婚姻": 0.0204,
+     "坊": 0.017,
+     "街段": 0.0168,
+     "门口路口": 0.0138,
+     "职位辖民": 0.0133,
+     "教堂会众": 0.0076,
+     "井/水池": 0.0066,
+     "行会": 0.0011,
+     "职位上下级": 0.0007
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5273884028110237,
+    "clustering": 0.0886738935991929,
+    "giant_share": 1.0,
+    "avg_path": 2.9432294921003304,
+    "diameter_est": 5.0,
+    "modularity": 0.644077094878753,
+    "n_communities": 7,
+    "office_betw_ratio": 3.2192720446704564,
+    "office_share_top1pct_betw": 0.29464285714285715,
+    "office_base_rate": 0.03025705105319529,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 84.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 339
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 4.81
+  },
+  "42": {
+   "digest": "9b499716f6c530e0",
+   "records": 1044614,
+   "step_sec": 3.18,
+   "survival": 0.816372972522332,
+   "survival_by_tier": {
+    "强": 0.9833522182515471,
+    "中": 0.9760091611795019,
+    "弱": 0.8805873688640394,
+    "认识": 0.7770709003419575
+   },
+   "metrics": {
+    "n": 11693,
+    "edges": 332258,
+    "median_degree": 60.0,
+    "mean_degree": 56.83024031471821,
+    "cap_share": 0.056725094688628554,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.7003945093228677,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1191436355163638,
+    "office_strength_ratio": 1.6017446206661414,
+    "latent_median_degree": 163.0,
+    "latent_max_degree": 576,
+    "latent_degree_skew": 0.3007206735518232,
+    "latent_max_over_median": 3.5337423312883436,
+    "office_degree_ratio_full": 1.5785738812994334,
+    "closure_share": 0.17072662389816895,
+    "source_label_share": {
+     "市场": 0.5968,
+     "三元闭合": 0.1707,
+     "亲属": 0.0894,
+     "近邻": 0.0434,
+     "婚姻": 0.0207,
+     "坊": 0.0177,
+     "街段": 0.0174,
+     "门口路口": 0.0143,
+     "职位辖民": 0.0129,
+     "教堂会众": 0.0078,
+     "井/水池": 0.007,
+     "行会": 0.0012,
+     "职位上下级": 0.0007
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5392210536017548,
+    "clustering": 0.08966468300566495,
+    "giant_share": 1.0,
+    "avg_path": 3.0053198768388643,
+    "diameter_est": 5.0,
+    "modularity": 0.6515265723492427,
+    "n_communities": 7,
+    "office_betw_ratio": 3.3371887119715975,
+    "office_share_top1pct_betw": 0.3017241379310345,
+    "office_base_rate": 0.02907722569058411,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 85.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 340
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 4.93
+  },
+  "43": {
+   "digest": "28d58686a141ed6f",
+   "records": 1076816,
+   "step_sec": 3.19,
+   "survival": 0.8031469520673693,
+   "survival_by_tier": {
+    "强": 0.9809691482226693,
+    "中": 0.9744640779925774,
+    "弱": 0.8778507980067884,
+    "认识": 0.7585799984552141
+   },
+   "metrics": {
+    "n": 12169,
+    "edges": 339775,
+    "median_degree": 59.0,
+    "mean_degree": 55.842715095735066,
+    "cap_share": 0.055961683892109905,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6749863713472152,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1417350913793796,
+    "office_strength_ratio": 1.655439257786026,
+    "latent_median_degree": 161.0,
+    "latent_max_degree": 392,
+    "latent_degree_skew": 0.2897200560584036,
+    "latent_max_over_median": 2.4347826086956523,
+    "office_degree_ratio_full": 1.6369188193617223,
+    "closure_share": 0.1602803656987138,
+    "source_label_share": {
+     "市场": 0.596,
+     "三元闭合": 0.1603,
+     "亲属": 0.0922,
+     "近邻": 0.0437,
+     "婚姻": 0.021,
+     "坊": 0.0185,
+     "职位辖民": 0.0182,
+     "街段": 0.0181,
+     "门口路口": 0.0148,
+     "教堂会众": 0.008,
+     "井/水池": 0.0073,
+     "行会": 0.0012,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5509232655898628,
+    "clustering": 0.09009611798095665,
+    "giant_share": 1.0,
+    "avg_path": 3.036631602016217,
+    "diameter_est": 5.0,
+    "modularity": 0.6565425904833505,
+    "n_communities": 7,
+    "office_betw_ratio": 3.4537229932159406,
+    "office_share_top1pct_betw": 0.21487603305785125,
+    "office_base_rate": 0.02202317363793245,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 88.5,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 268
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.11
+  },
+  "44": {
+   "digest": "27cc1f0925646832",
+   "records": 1110241,
+   "step_sec": 3.41,
+   "survival": 0.815415164156591,
+   "survival_by_tier": {
+    "强": 0.9790329134498171,
+    "中": 0.968384074941452,
+    "弱": 0.8775433255596363,
+    "认识": 0.7759768512651544
+   },
+   "metrics": {
+    "n": 12663,
+    "edges": 350770,
+    "median_degree": 59.0,
+    "mean_degree": 55.400773908236594,
+    "cap_share": 0.056429382195556994,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6647513416763409,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.116951998615876,
+    "office_strength_ratio": 1.5840429327245686,
+    "latent_median_degree": 159.0,
+    "latent_max_degree": 464,
+    "latent_degree_skew": 0.35397413978208775,
+    "latent_max_over_median": 2.9182389937106916,
+    "office_degree_ratio_full": 1.6091622458445738,
+    "closure_share": 0.15180816089731194,
+    "source_label_share": {
+     "市场": 0.6031,
+     "三元闭合": 0.1518,
+     "亲属": 0.0941,
+     "近邻": 0.0432,
+     "婚姻": 0.0211,
+     "坊": 0.0189,
+     "街段": 0.0186,
+     "职位辖民": 0.0163,
+     "门口路口": 0.0152,
+     "教堂会众": 0.0082,
+     "井/水池": 0.0076,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5544046561884923,
+    "clustering": 0.08829368140197727,
+    "giant_share": 1.0,
+    "avg_path": 3.0662915284578527,
+    "diameter_est": 5.0,
+    "modularity": 0.6531604240012079,
+    "n_communities": 8,
+    "office_betw_ratio": 3.4680467051447508,
+    "office_share_top1pct_betw": 0.23809523809523808,
+    "office_base_rate": 0.025981205085682697,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 85.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 329
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.3
+  },
+  "45": {
+   "digest": "de70797bc3d6f857",
+   "records": 1147931,
+   "step_sec": 3.54,
+   "survival": 0.8146021609601733,
+   "survival_by_tier": {
+    "强": 0.9816225555642818,
+    "中": 0.974452931461602,
+    "弱": 0.8747440135990684,
+    "认识": 0.7747694199631072
+   },
+   "metrics": {
+    "n": 13136,
+    "edges": 361854,
+    "median_degree": 58.0,
+    "mean_degree": 55.09348355663825,
+    "cap_share": 0.05797327916243457,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     58.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6647807060094156,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1162757545147002,
+    "office_strength_ratio": 1.5743585546618173,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 459,
+    "latent_degree_skew": 0.4223643409280126,
+    "latent_max_over_median": 2.9050632911392404,
+    "office_degree_ratio_full": 1.622406950130455,
+    "closure_share": 0.14625691260214668,
+    "source_label_share": {
+     "市场": 0.6075,
+     "三元闭合": 0.1463,
+     "亲属": 0.0961,
+     "近邻": 0.0428,
+     "婚姻": 0.0213,
+     "坊": 0.0194,
+     "街段": 0.019,
+     "门口路口": 0.0155,
+     "职位辖民": 0.0142,
+     "教堂会众": 0.0084,
+     "井/水池": 0.008,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5530891762834665,
+    "clustering": 0.08610442083344795,
+    "giant_share": 1.0,
+    "avg_path": 3.0920860296916635,
+    "diameter_est": 5.0,
+    "modularity": 0.6539578351602711,
+    "n_communities": 8,
+    "office_betw_ratio": 3.1052128526978526,
+    "office_share_top1pct_betw": 0.2366412213740458,
+    "office_base_rate": 0.02565468940316687,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 58.0,
+    "office_median_degree": 85.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 337
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.43
+  },
+  "46": {
+   "digest": "7e35bd390c8cbad8",
+   "records": 1188207,
+   "step_sec": 3.65,
+   "survival": 0.806384947392333,
+   "survival_by_tier": {
+    "强": 0.9808043875685558,
+    "中": 0.9686405921776533,
+    "弱": 0.8750373303901837,
+    "认识": 0.7632446568887366
+   },
+   "metrics": {
+    "n": 13609,
+    "edges": 373713,
+    "median_degree": 58.0,
+    "mean_degree": 54.92144904107576,
+    "cap_share": 0.053764252812806765,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     58.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6752187638540381,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1247334464194338,
+    "office_strength_ratio": 1.6068673638044029,
+    "latent_median_degree": 157.0,
+    "latent_max_degree": 471,
+    "latent_degree_skew": 0.48289082821188906,
+    "latent_max_over_median": 3.0,
+    "office_degree_ratio_full": 1.6534813530495096,
+    "closure_share": 0.1417741248208398,
+    "source_label_share": {
+     "市场": 0.6036,
+     "三元闭合": 0.1418,
+     "亲属": 0.0973,
+     "近邻": 0.0421,
+     "婚姻": 0.0214,
+     "职位辖民": 0.0206,
+     "坊": 0.0203,
+     "街段": 0.0192,
+     "门口路口": 0.0158,
+     "教堂会众": 0.0083,
+     "井/水池": 0.008,
+     "行会": 0.0011,
+     "职位上下级": 0.0007
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5722350489699913,
+    "clustering": 0.08624079881487853,
+    "giant_share": 1.0,
+    "avg_path": 3.1128662061532433,
+    "diameter_est": 5.0,
+    "modularity": 0.661567510543189,
+    "n_communities": 8,
+    "office_betw_ratio": 3.428615858970396,
+    "office_share_top1pct_betw": 0.27205882352941174,
+    "office_base_rate": 0.026893967227569992,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 58.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 366
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.71
+  },
+  "47": {
+   "digest": "d906497848bb1527",
+   "records": 1233591,
+   "step_sec": 3.76,
+   "survival": 0.8163456984370359,
+   "survival_by_tier": {
+    "强": 0.9835015099064595,
+    "中": 0.9724761766555411,
+    "弱": 0.8742614452563863,
+    "认识": 0.7772813483007464
+   },
+   "metrics": {
+    "n": 14113,
+    "edges": 386592,
+    "median_degree": 58.0,
+    "mean_degree": 54.78523347268476,
+    "cap_share": 0.05285672853828306,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     58.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6778951066248703,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1522118577522857,
+    "office_strength_ratio": 1.7243507455471194,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 438,
+    "latent_degree_skew": 0.49494862139163326,
+    "latent_max_over_median": 2.7721518987341773,
+    "office_degree_ratio_full": 1.7275357516889305,
+    "closure_share": 0.13984408490478484,
+    "source_label_share": {
+     "市场": 0.6058,
+     "三元闭合": 0.1398,
+     "亲属": 0.0989,
+     "近邻": 0.0416,
+     "婚姻": 0.0216,
+     "坊": 0.0204,
+     "街段": 0.0195,
+     "职位辖民": 0.0182,
+     "门口路口": 0.016,
+     "教堂会众": 0.0084,
+     "井/水池": 0.008,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5743198679193225,
+    "clustering": 0.08446948772166465,
+    "giant_share": 1.0,
+    "avg_path": 3.1068168934240363,
+    "diameter_est": 5.0,
+    "modularity": 0.6617957664804995,
+    "n_communities": 8,
+    "office_betw_ratio": 3.388921187446676,
+    "office_share_top1pct_betw": 0.1702127659574468,
+    "office_base_rate": 0.022744986891518458,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 58.0,
+    "office_median_degree": 92.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 321
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.88
+  },
+  "48": {
+   "digest": "4eb26da1a5ed16c0",
+   "records": 1232344,
+   "step_sec": 3.91,
+   "survival": 0.8174261386760157,
+   "survival_by_tier": {
+    "强": 0.9785291754911268,
+    "中": 0.9695551481231304,
+    "弱": 0.8769838811591689,
+    "认识": 0.7784470627930785
+   },
+   "metrics": {
+    "n": 14287,
+    "edges": 394408,
+    "median_degree": 59.0,
+    "mean_degree": 55.21215090641842,
+    "cap_share": 0.053361103131284116,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6924794570627988,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.123222379301892,
+    "office_strength_ratio": 1.655997797106181,
+    "latent_median_degree": 156.0,
+    "latent_max_degree": 460,
+    "latent_degree_skew": 0.5504161248656234,
+    "latent_max_over_median": 2.948717948717949,
+    "office_degree_ratio_full": 1.6658209599425966,
+    "closure_share": 0.13761447922833164,
+    "source_label_share": {
+     "市场": 0.6125,
+     "三元闭合": 0.1376,
+     "亲属": 0.0985,
+     "近邻": 0.0405,
+     "婚姻": 0.0216,
+     "坊": 0.0201,
+     "街段": 0.0195,
+     "门口路口": 0.016,
+     "职位辖民": 0.0158,
+     "教堂会众": 0.0082,
+     "井/水池": 0.008,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5620966275823491,
+    "clustering": 0.0826840291087781,
+    "giant_share": 1.0,
+    "avg_path": 3.1228405431891364,
+    "diameter_est": 5.0,
+    "modularity": 0.6590716704113063,
+    "n_communities": 8,
+    "office_betw_ratio": 3.884117619503964,
+    "office_share_top1pct_betw": 0.21830985915492956,
+    "office_base_rate": 0.02540771330580248,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 89.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 363
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 5.86
+  },
+  "49": {
+   "digest": "32d2c8a8bd942f8f",
+   "records": 1282224,
+   "step_sec": 4.09,
+   "survival": 0.8070589609051148,
+   "survival_by_tier": {
+    "强": 0.9796583740874619,
+    "中": 0.9680514157973175,
+    "弱": 0.8725231018386206,
+    "认识": 0.7655494893979926
+   },
+   "metrics": {
+    "n": 14788,
+    "edges": 407032,
+    "median_degree": 59.0,
+    "mean_degree": 55.04895861509332,
+    "cap_share": 0.052365099181578584,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     17.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 17.0,
+    "inner_degree_skew": -0.6502754853559475,
+    "inner_max_over_median": 1.3529411764705883,
+    "office_inner_degree_ratio": 1.119219640081545,
+    "office_strength_ratio": 1.645777800324456,
+    "latent_median_degree": 156.0,
+    "latent_max_degree": 457,
+    "latent_degree_skew": 0.5548921488844107,
+    "latent_max_over_median": 2.9294871794871793,
+    "office_degree_ratio_full": 1.6552236490691645,
+    "closure_share": 0.13704818641255473,
+    "source_label_share": {
+     "市场": 0.6058,
+     "三元闭合": 0.137,
+     "亲属": 0.0993,
+     "近邻": 0.0401,
+     "婚姻": 0.0218,
+     "坊": 0.0204,
+     "职位辖民": 0.02,
+     "街段": 0.0198,
+     "门口路口": 0.0163,
+     "教堂会众": 0.0096,
+     "井/水池": 0.0081,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.572394598896519,
+    "clustering": 0.0818630382604263,
+    "giant_share": 1.0,
+    "avg_path": 3.110783120308379,
+    "diameter_est": 5.0,
+    "modularity": 0.663942737527516,
+    "n_communities": 8,
+    "office_betw_ratio": 2.810555515731101,
+    "office_share_top1pct_betw": 0.19047619047619047,
+    "office_base_rate": 0.02502028671896132,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 17.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 86.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 370
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.39
+  },
+  "50": {
+   "digest": "6b4c03905b43fd34",
+   "records": 1333373,
+   "step_sec": 4.33,
+   "survival": 0.8138352758505474,
+   "survival_by_tier": {
+    "强": 0.9802965810792256,
+    "中": 0.9727624707365388,
+    "弱": 0.8751892210448469,
+    "认识": 0.7741324921135647
+   },
+   "metrics": {
+    "n": 15296,
+    "edges": 420692,
+    "median_degree": 59.0,
+    "mean_degree": 55.00679916317991,
+    "cap_share": 0.05329489843802373,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     17.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     41.0
+    ],
+    "inner_median_degree": 17.0,
+    "inner_degree_skew": -0.6562692679003558,
+    "inner_max_over_median": 1.3529411764705883,
+    "office_inner_degree_ratio": 1.1245291875968355,
+    "office_strength_ratio": 1.6516145019598936,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 478,
+    "latent_degree_skew": 0.5292976005067276,
+    "latent_max_over_median": 3.0253164556962027,
+    "office_degree_ratio_full": 1.668682572336151,
+    "closure_share": 0.1368740981794738,
+    "source_label_share": {
+     "市场": 0.6083,
+     "三元闭合": 0.1369,
+     "亲属": 0.1004,
+     "近邻": 0.0398,
+     "婚姻": 0.0219,
+     "坊": 0.0204,
+     "街段": 0.0199,
+     "职位辖民": 0.0185,
+     "门口路口": 0.0164,
+     "井/水池": 0.0082,
+     "教堂会众": 0.0078,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5733063643614492,
+    "clustering": 0.08054792955449865,
+    "giant_share": 1.0,
+    "avg_path": 3.1122915985616215,
+    "diameter_est": 5.0,
+    "modularity": 0.6637463867887623,
+    "n_communities": 8,
+    "office_betw_ratio": 2.9515797585640113,
+    "office_share_top1pct_betw": 0.17105263157894737,
+    "office_base_rate": 0.024777719665271966,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 17.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 58.0,
+    "n_office": 379
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.75
+  },
+  "51": {
+   "digest": "ec924508925031ee",
+   "records": 1332928,
+   "step_sec": 4.19,
+   "survival": 0.8173247886815057,
+   "survival_by_tier": {
+    "强": 0.9856487941000598,
+    "中": 0.9752833478639931,
+    "弱": 0.8797613994325417,
+    "认识": 0.7772589441945024
+   },
+   "metrics": {
+    "n": 15417,
+    "edges": 429405,
+    "median_degree": 59.0,
+    "mean_degree": 55.705390153726405,
+    "cap_share": 0.05874153723616089,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     17.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 17.0,
+    "inner_degree_skew": -0.6759600065697109,
+    "inner_max_over_median": 1.3529411764705883,
+    "office_inner_degree_ratio": 1.1242953937254456,
+    "office_strength_ratio": 1.679995154747808,
+    "latent_median_degree": 157.0,
+    "latent_max_degree": 465,
+    "latent_degree_skew": 0.5379895944909884,
+    "latent_max_over_median": 2.961783439490446,
+    "office_degree_ratio_full": 1.673332515635676,
+    "closure_share": 0.13917608851568608,
+    "source_label_share": {
+     "市场": 0.6089,
+     "三元闭合": 0.1392,
+     "亲属": 0.0997,
+     "近邻": 0.0391,
+     "婚姻": 0.0224,
+     "坊": 0.02,
+     "街段": 0.0198,
+     "职位辖民": 0.0173,
+     "门口路口": 0.0162,
+     "井/水池": 0.0081,
+     "教堂会众": 0.0078,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": null,
+    "assort_guild": 0.5836124820166236,
+    "clustering": 0.07805403078445344,
+    "giant_share": 1.0,
+    "avg_path": 3.087973533990659,
+    "diameter_est": 5.0,
+    "modularity": 0.6581049790734269,
+    "n_communities": 8,
+    "office_betw_ratio": 3.507598460085086,
+    "office_share_top1pct_betw": 0.22727272727272727,
+    "office_base_rate": 0.02276707530647986,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 17.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 91.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 351
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": null,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.81
+  },
+  "52": {
+   "digest": "a5b054aff0170b0e",
+   "records": 1339074,
+   "step_sec": 4.43,
+   "survival": 0.8119677227791945,
+   "survival_by_tier": {
+    "强": 0.9831187598528639,
+    "中": 0.9747801844306241,
+    "弱": 0.8791968582333094,
+    "认识": 0.7704370804503596
+   },
+   "metrics": {
+    "n": 15569,
+    "edges": 438460,
+    "median_degree": 59.0,
+    "mean_degree": 56.32474789646091,
+    "cap_share": 0.05516424198538608,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6754540781295878,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1231718758350966,
+    "office_strength_ratio": 1.6496593279051563,
+    "latent_median_degree": 157.0,
+    "latent_max_degree": 469,
+    "latent_degree_skew": 0.5545514319717153,
+    "latent_max_over_median": 2.9872611464968153,
+    "office_degree_ratio_full": 1.632227941722254,
+    "closure_share": 0.14026238121236578,
+    "source_label_share": {
+     "市场": 0.606,
+     "三元闭合": 0.1403,
+     "亲属": 0.0989,
+     "近邻": 0.0384,
+     "婚姻": 0.0228,
+     "职位辖民": 0.02,
+     "坊": 0.0198,
+     "街段": 0.0195,
+     "门口路口": 0.0158,
+     "教堂会众": 0.0088,
+     "井/水池": 0.008,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7618376774654255,
+    "assort_guild": 0.5870390347000448,
+    "clustering": 0.07606346135068388,
+    "giant_share": 1.0,
+    "avg_path": 3.089543722165125,
+    "diameter_est": 5.0,
+    "modularity": 0.6578628324251506,
+    "n_communities": 8,
+    "office_betw_ratio": 2.7930052511541885,
+    "office_share_top1pct_betw": 0.15483870967741936,
+    "office_base_rate": 0.02427901599332006,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 89.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 378
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": false,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.85
+  },
+  "53": {
+   "digest": "e7e41bc56fbc4880",
+   "records": 1343847,
+   "step_sec": 4.28,
+   "survival": 0.8172033936961183,
+   "survival_by_tier": {
+    "强": 0.9829907866761163,
+    "中": 0.9734438070958148,
+    "弱": 0.8790985175865653,
+    "认识": 0.7785414887710674
+   },
+   "metrics": {
+    "n": 15708,
+    "edges": 447076,
+    "median_degree": 59.0,
+    "mean_degree": 56.923351158645275,
+    "cap_share": 0.0556608087802966,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     59.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6816034299825903,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1208829924300494,
+    "office_strength_ratio": 1.6435702992480337,
+    "latent_median_degree": 156.0,
+    "latent_max_degree": 491,
+    "latent_degree_skew": 0.5742835401781679,
+    "latent_max_over_median": 3.1474358974358974,
+    "office_degree_ratio_full": 1.5969390712490625,
+    "closure_share": 0.14062721891188937,
+    "source_label_share": {
+     "市场": 0.6095,
+     "三元闭合": 0.1406,
+     "亲属": 0.0983,
+     "近邻": 0.0379,
+     "婚姻": 0.0233,
+     "坊": 0.0194,
+     "街段": 0.0192,
+     "职位辖民": 0.0186,
+     "门口路口": 0.0156,
+     "教堂会众": 0.0083,
+     "井/水池": 0.0077,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7700418683695142,
+    "assort_guild": 0.5824296924931442,
+    "clustering": 0.07440285281179193,
+    "giant_share": 1.0,
+    "avg_path": 3.0747129729844445,
+    "diameter_est": 5.0,
+    "modularity": 0.6584499246936317,
+    "n_communities": 8,
+    "office_betw_ratio": 3.199569710603793,
+    "office_share_top1pct_betw": 0.21656050955414013,
+    "office_base_rate": 0.025528393175452,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 59.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 401
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.27
+  },
+  "54": {
+   "digest": "535873ec9655e96d",
+   "records": 1349076,
+   "step_sec": 4.23,
+   "survival": 0.8158966097479549,
+   "survival_by_tier": {
+    "强": 0.9783536003055963,
+    "中": 0.9735458636497456,
+    "弱": 0.8751692244376333,
+    "认识": 0.778461773272452
+   },
+   "metrics": {
+    "n": 15832,
+    "edges": 454915,
+    "median_degree": 60.0,
+    "mean_degree": 57.4677867609904,
+    "cap_share": 0.060556889725449474,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.672416238648858,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1169164477895799,
+    "office_strength_ratio": 1.6345588989756301,
+    "latent_median_degree": 155.0,
+    "latent_max_degree": 540,
+    "latent_degree_skew": 0.581668277164242,
+    "latent_max_over_median": 3.4838709677419355,
+    "office_degree_ratio_full": 1.580781092135276,
+    "closure_share": 0.14074762771973545,
+    "source_label_share": {
+     "市场": 0.6112,
+     "三元闭合": 0.1407,
+     "亲属": 0.0979,
+     "近邻": 0.0372,
+     "婚姻": 0.0238,
+     "街段": 0.0191,
+     "坊": 0.0191,
+     "职位辖民": 0.018,
+     "门口路口": 0.0154,
+     "教堂会众": 0.0084,
+     "井/水池": 0.0075,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7774726150476585,
+    "assort_guild": 0.5854514728203568,
+    "clustering": 0.07291070993435805,
+    "giant_share": 1.0,
+    "avg_path": 3.0736045311940705,
+    "diameter_est": 5.0,
+    "modularity": 0.6572998757029055,
+    "n_communities": 8,
+    "office_betw_ratio": 3.3374305662315438,
+    "office_share_top1pct_betw": 0.22151898734177214,
+    "office_base_rate": 0.026844365841334008,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 425
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.77
+  },
+  "55": {
+   "digest": "acac4f85b524f75d",
+   "records": 1355899,
+   "step_sec": 4.38,
+   "survival": 0.8109203304257917,
+   "survival_by_tier": {
+    "强": 0.9749575284716542,
+    "中": 0.9691789368604942,
+    "弱": 0.8756676335534695,
+    "认识": 0.7721254160141717
+   },
+   "metrics": {
+    "n": 15950,
+    "edges": 460009,
+    "median_degree": 60.0,
+    "mean_degree": 57.68137931034483,
+    "cap_share": 0.059863683127572016,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6874379913973442,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1257941062521815,
+    "office_strength_ratio": 1.6626003778933922,
+    "latent_median_degree": 155.0,
+    "latent_max_degree": 496,
+    "latent_degree_skew": 0.5774583800391474,
+    "latent_max_over_median": 3.2,
+    "office_degree_ratio_full": 1.5856610625684806,
+    "closure_share": 0.14083533511198884,
+    "source_label_share": {
+     "市场": 0.6095,
+     "三元闭合": 0.1408,
+     "亲属": 0.0978,
+     "近邻": 0.0365,
+     "婚姻": 0.0243,
+     "职位辖民": 0.0203,
+     "街段": 0.019,
+     "坊": 0.019,
+     "门口路口": 0.0152,
+     "教堂会众": 0.0083,
+     "井/水池": 0.0077,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7803670293897991,
+    "assort_guild": 0.5818857136436293,
+    "clustering": 0.07196524993103671,
+    "giant_share": 1.0,
+    "avg_path": 3.0794407172863503,
+    "diameter_est": 5.0,
+    "modularity": 0.6524182590263204,
+    "n_communities": 8,
+    "office_betw_ratio": 2.7782913790412027,
+    "office_share_top1pct_betw": 0.1761006289308176,
+    "office_base_rate": 0.024952978056426333,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 398
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 6.87
+  },
+  "56": {
+   "digest": "6a948d37b1a515df",
+   "records": 1365669,
+   "step_sec": 5.47,
+   "survival": 0.8172427061209672,
+   "survival_by_tier": {
+    "强": 0.9809914275065226,
+    "中": 0.9743738116888485,
+    "弱": 0.877861218948217,
+    "认识": 0.7799003807165091
+   },
+   "metrics": {
+    "n": 16097,
+    "edges": 465176,
+    "median_degree": 60.0,
+    "mean_degree": 57.796608063614336,
+    "cap_share": 0.06126091668260343,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6956933605286192,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.107713032590705,
+    "office_strength_ratio": 1.621738789310661,
+    "latent_median_degree": 155.0,
+    "latent_max_degree": 541,
+    "latent_degree_skew": 0.594433162120049,
+    "latent_max_over_median": 3.490322580645161,
+    "office_degree_ratio_full": 1.5645510224971,
+    "closure_share": 0.14192750956643452,
+    "source_label_share": {
+     "市场": 0.6094,
+     "三元闭合": 0.1419,
+     "亲属": 0.0978,
+     "近邻": 0.0362,
+     "婚姻": 0.0248,
+     "职位辖民": 0.0192,
+     "坊": 0.0189,
+     "街段": 0.0188,
+     "门口路口": 0.0152,
+     "教堂会众": 0.0083,
+     "井/水池": 0.0077,
+     "行会": 0.0011,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7846168288777589,
+    "assort_guild": 0.5741453106055088,
+    "clustering": 0.07114424153337477,
+    "giant_share": 1.0,
+    "avg_path": 3.077441600397614,
+    "diameter_est": 5.0,
+    "modularity": 0.6559781710712417,
+    "n_communities": 8,
+    "office_betw_ratio": 2.8570077490821166,
+    "office_share_top1pct_betw": 0.23125,
+    "office_base_rate": 0.025470584580977822,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 410
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.2
+  },
+  "57": {
+   "digest": "2ce181d18f2bed4d",
+   "records": 1456844,
+   "step_sec": 5.07,
+   "survival": 0.7764596217002343,
+   "survival_by_tier": {
+    "强": 0.9764046328240512,
+    "中": 0.9697727832007218,
+    "弱": 0.8736956384257014,
+    "认识": 0.7240619111216817
+   },
+   "metrics": {
+    "n": 16206,
+    "edges": 468913,
+    "median_degree": 60.0,
+    "mean_degree": 57.86906084166358,
+    "cap_share": 0.06322458029775103,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6827298010681812,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1086575635657734,
+    "office_strength_ratio": 1.6136454258518118,
+    "latent_median_degree": 162.0,
+    "latent_max_degree": 543,
+    "latent_degree_skew": 0.532622179027559,
+    "latent_max_over_median": 3.3518518518518516,
+    "office_degree_ratio_full": 1.5511918622126493,
+    "closure_share": 0.13886068830523826,
+    "source_label_share": {
+     "市场": 0.6192,
+     "三元闭合": 0.1389,
+     "亲属": 0.0955,
+     "近邻": 0.035,
+     "婚姻": 0.0248,
+     "坊": 0.0184,
+     "街段": 0.0182,
+     "职位辖民": 0.0182,
+     "门口路口": 0.0146,
+     "教堂会众": 0.0083,
+     "井/水池": 0.0075,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7899447876826533,
+    "assort_guild": 0.5697056690950324,
+    "clustering": 0.07221150747551182,
+    "giant_share": 1.0,
+    "avg_path": 3.0670914326853853,
+    "diameter_est": 5.0,
+    "modularity": 0.6607124716109927,
+    "n_communities": 9,
+    "office_betw_ratio": 2.8818452283191336,
+    "office_share_top1pct_betw": 0.18518518518518517,
+    "office_base_rate": 0.025978032827347897,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 86.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 421
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.12
+  },
+  "58": {
+   "digest": "7d8aad7c4a2bfbef",
+   "records": 1446658,
+   "step_sec": 5.03,
+   "survival": 0.8080326201235624,
+   "survival_by_tier": {
+    "强": 0.979257907542579,
+    "中": 0.9732668045921058,
+    "弱": 0.8764199226064162,
+    "认识": 0.7674455063462872
+   },
+   "metrics": {
+    "n": 16331,
+    "edges": 472490,
+    "median_degree": 60.0,
+    "mean_degree": 57.864184679444,
+    "cap_share": 0.06150169789963526,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6749730845855514,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1007337623054816,
+    "office_strength_ratio": 1.618672571014015,
+    "latent_median_degree": 162.0,
+    "latent_max_degree": 548,
+    "latent_degree_skew": 0.4329517590923085,
+    "latent_max_over_median": 3.382716049382716,
+    "office_degree_ratio_full": 1.5529466178718314,
+    "closure_share": 0.14113565787333285,
+    "source_label_share": {
+     "市场": 0.6126,
+     "三元闭合": 0.1411,
+     "亲属": 0.0965,
+     "近邻": 0.0348,
+     "婚姻": 0.0256,
+     "职位辖民": 0.0204,
+     "坊": 0.0184,
+     "街段": 0.0182,
+     "门口路口": 0.0147,
+     "教堂会众": 0.0084,
+     "井/水池": 0.0076,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.7946362334663591,
+    "assort_guild": 0.5731115443707808,
+    "clustering": 0.07178950215918496,
+    "giant_share": 1.0,
+    "avg_path": 3.082700551132884,
+    "diameter_est": 5.0,
+    "modularity": 0.6629266418632086,
+    "n_communities": 9,
+    "office_betw_ratio": 3.0229383164980765,
+    "office_share_top1pct_betw": 0.20245398773006135,
+    "office_base_rate": 0.026269058845141142,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 84.0,
+    "nonoffice_median_degree": 59.0,
+    "n_office": 429
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.14
+  },
+  "59": {
+   "digest": "cb8b0e1a3e311f9c",
+   "records": 1447049,
+   "step_sec": 5.04,
+   "survival": 0.8146775593134247,
+   "survival_by_tier": {
+    "强": 0.9808063737324964,
+    "中": 0.9742880064179703,
+    "弱": 0.8773355079794372,
+    "认识": 0.7763634404611545
+   },
+   "metrics": {
+    "n": 16454,
+    "edges": 476707,
+    "median_degree": 60.0,
+    "mean_degree": 57.94420809529598,
+    "cap_share": 0.06062305295950156,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6773819357287548,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1158461989849788,
+    "office_strength_ratio": 1.665644372815012,
+    "latent_median_degree": 163.0,
+    "latent_max_degree": 528,
+    "latent_degree_skew": 0.40699903315728986,
+    "latent_max_over_median": 3.2392638036809815,
+    "office_degree_ratio_full": 1.578440691532732,
+    "closure_share": 0.14340547430148956,
+    "source_label_share": {
+     "市场": 0.6099,
+     "三元闭合": 0.1434,
+     "亲属": 0.0969,
+     "近邻": 0.035,
+     "婚姻": 0.0264,
+     "职位辖民": 0.0191,
+     "坊": 0.0185,
+     "街段": 0.0182,
+     "门口路口": 0.0146,
+     "教堂会众": 0.0086,
+     "井/水池": 0.0078,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.799774066775901,
+    "assort_guild": 0.5688972638270754,
+    "clustering": 0.07082162076999574,
+    "giant_share": 1.0,
+    "avg_path": 3.065049940233797,
+    "diameter_est": 5.0,
+    "modularity": 0.6649115007538656,
+    "n_communities": 9,
+    "office_betw_ratio": 3.2979390493071556,
+    "office_share_top1pct_betw": 0.22560975609756098,
+    "office_base_rate": 0.024553300109395892,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 404
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.17
+  },
+  "60": {
+   "digest": "b28ecd20e93f7a4b",
+   "records": 1453926,
+   "step_sec": 4.98,
+   "survival": 0.8142003368945705,
+   "survival_by_tier": {
+    "强": 0.9800995024875622,
+    "中": 0.9753857165579768,
+    "弱": 0.8789573789267016,
+    "认识": 0.7751777005138185
+   },
+   "metrics": {
+    "n": 16577,
+    "edges": 480514,
+    "median_degree": 60.0,
+    "mean_degree": 57.973577848826686,
+    "cap_share": 0.06100352657303718,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6535166009649834,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1039933184890187,
+    "office_strength_ratio": 1.6374545211620406,
+    "latent_median_degree": 163.0,
+    "latent_max_degree": 496,
+    "latent_degree_skew": 0.40930030618369984,
+    "latent_max_over_median": 3.042944785276074,
+    "office_degree_ratio_full": 1.5637246615320446,
+    "closure_share": 0.14494942527066376,
+    "source_label_share": {
+     "市场": 0.6076,
+     "三元闭合": 0.1449,
+     "亲属": 0.0973,
+     "近邻": 0.0349,
+     "婚姻": 0.027,
+     "职位辖民": 0.0187,
+     "坊": 0.0184,
+     "街段": 0.0183,
+     "门口路口": 0.0146,
+     "教堂会众": 0.0087,
+     "井/水池": 0.008,
+     "行会": 0.001,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.8050774788544593,
+    "assort_guild": 0.5682183785340023,
+    "clustering": 0.07015468882040049,
+    "giant_share": 1.0,
+    "avg_path": 3.071677927927928,
+    "diameter_est": 5.0,
+    "modularity": 0.6620385962440122,
+    "n_communities": 9,
+    "office_betw_ratio": 3.165959969550568,
+    "office_share_top1pct_betw": 0.21818181818181817,
+    "office_base_rate": 0.02497436206792544,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 414
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.87
+  },
+  "61": {
+   "digest": "913ef281bb961874",
+   "records": 1456291,
+   "step_sec": 4.84,
+   "survival": 0.8133040868736395,
+   "survival_by_tier": {
+    "强": 0.9788999525841631,
+    "中": 0.9766240933459477,
+    "弱": 0.8777658344656946,
+    "认识": 0.7741653418124006
+   },
+   "metrics": {
+    "n": 16703,
+    "edges": 484922,
+    "median_degree": 60.0,
+    "mean_degree": 58.0640603484404,
+    "cap_share": 0.05818025434662407,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6600189039990068,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1157222855917828,
+    "office_strength_ratio": 1.6273818458635645,
+    "latent_median_degree": 162.0,
+    "latent_max_degree": 530,
+    "latent_degree_skew": 0.3760288016975048,
+    "latent_max_over_median": 3.271604938271605,
+    "office_degree_ratio_full": 1.5482795982863717,
+    "closure_share": 0.14542600282608067,
+    "source_label_share": {
+     "市场": 0.6057,
+     "三元闭合": 0.1454,
+     "亲属": 0.0972,
+     "近邻": 0.0351,
+     "婚姻": 0.0276,
+     "职位辖民": 0.0199,
+     "坊": 0.0183,
+     "街段": 0.0182,
+     "门口路口": 0.0145,
+     "教堂会众": 0.0087,
+     "井/水池": 0.0079,
+     "行会": 0.0009,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.8089031504933288,
+    "assort_guild": 0.5697759934654717,
+    "clustering": 0.07059680849515862,
+    "giant_share": 1.0,
+    "avg_path": 3.070307947152038,
+    "diameter_est": 5.0,
+    "modularity": 0.657590353567313,
+    "n_communities": 8,
+    "office_betw_ratio": 3.1070215831206878,
+    "office_share_top1pct_betw": 0.25149700598802394,
+    "office_base_rate": 0.025504400407112496,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 426
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.8
+  },
+  "62": {
+   "digest": "1bbae2652319f9a1",
+   "records": 1451697,
+   "step_sec": 4.86,
+   "survival": 0.8165929800527223,
+   "survival_by_tier": {
+    "强": 0.9769748494509387,
+    "中": 0.9739185002157117,
+    "弱": 0.8780732208467869,
+    "认识": 0.778999700473956
+   },
+   "metrics": {
+    "n": 16759,
+    "edges": 487527,
+    "median_degree": 60.0,
+    "mean_degree": 58.180917715854164,
+    "cap_share": 0.06373599461213494,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6599178827225555,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1068507455172294,
+    "office_strength_ratio": 1.6040820482855913,
+    "latent_median_degree": 161.0,
+    "latent_max_degree": 541,
+    "latent_degree_skew": 0.36864786250855885,
+    "latent_max_over_median": 3.360248447204969,
+    "office_degree_ratio_full": 1.5422897385794114,
+    "closure_share": 0.14690436506796173,
+    "source_label_share": {
+     "市场": 0.6058,
+     "三元闭合": 0.1469,
+     "亲属": 0.0969,
+     "近邻": 0.035,
+     "婚姻": 0.0282,
+     "职位辖民": 0.0186,
+     "坊": 0.0184,
+     "街段": 0.018,
+     "门口路口": 0.0144,
+     "教堂会众": 0.0086,
+     "井/水池": 0.0078,
+     "行会": 0.0009,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.8125922588223421,
+    "assort_guild": 0.5699150693142151,
+    "clustering": 0.07024074886115717,
+    "giant_share": 1.0,
+    "avg_path": 3.0922216254923023,
+    "diameter_est": 5.0,
+    "modularity": 0.6534681914487073,
+    "n_communities": 9,
+    "office_betw_ratio": 2.699685404643211,
+    "office_share_top1pct_betw": 0.16766467065868262,
+    "office_base_rate": 0.025419177755235993,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 426
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.87
+  },
+  "63": {
+   "digest": "463811eb44ba648e",
+   "records": 1457588,
+   "step_sec": 5.05,
+   "survival": 0.8144492510158412,
+   "survival_by_tier": {
+    "强": 0.9792806425328833,
+    "中": 0.9745178258328463,
+    "弱": 0.8755582256934015,
+    "认识": 0.7766219077172936
+   },
+   "metrics": {
+    "n": 16869,
+    "edges": 491090,
+    "median_degree": 60.0,
+    "mean_degree": 58.22396111209912,
+    "cap_share": 0.06131617289946576,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6677558262482185,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.118246633828323,
+    "office_strength_ratio": 1.6322872210838908,
+    "latent_median_degree": 160.0,
+    "latent_max_degree": 523,
+    "latent_degree_skew": 0.36672387349497815,
+    "latent_max_over_median": 3.26875,
+    "office_degree_ratio_full": 1.5565340936318783,
+    "closure_share": 0.14841536882502565,
+    "source_label_share": {
+     "市场": 0.6039,
+     "三元闭合": 0.1484,
+     "亲属": 0.0971,
+     "近邻": 0.035,
+     "婚姻": 0.0288,
+     "坊": 0.0184,
+     "职位辖民": 0.0183,
+     "街段": 0.0178,
+     "门口路口": 0.0144,
+     "教堂会众": 0.0086,
+     "井/水池": 0.0079,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8164873631429986,
+    "assort_guild": 0.5793271804753941,
+    "clustering": 0.06977613914903054,
+    "giant_share": 1.0,
+    "avg_path": 3.0800262825073115,
+    "diameter_est": 5.0,
+    "modularity": 0.6564814757122154,
+    "n_communities": 9,
+    "office_betw_ratio": 2.9854188346364094,
+    "office_share_top1pct_betw": 0.18452380952380953,
+    "office_base_rate": 0.023534293674788074,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 397
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.96
+  },
+  "64": {
+   "digest": "0ebd13dc6d3b476a",
+   "records": 1463360,
+   "step_sec": 5.01,
+   "survival": 0.8138426764951434,
+   "survival_by_tier": {
+    "强": 0.9798475574546714,
+    "中": 0.9759241339268434,
+    "弱": 0.8755718751550637,
+    "认识": 0.7755838604495754
+   },
+   "metrics": {
+    "n": 16987,
+    "edges": 495523,
+    "median_degree": 60.0,
+    "mean_degree": 58.3414375699064,
+    "cap_share": 0.06233797552299994,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6702675081768686,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1076198881374029,
+    "office_strength_ratio": 1.621910429089318,
+    "latent_median_degree": 160.0,
+    "latent_max_degree": 513,
+    "latent_degree_skew": 0.3772189795672549,
+    "latent_max_over_median": 3.20625,
+    "office_degree_ratio_full": 1.5541782361365262,
+    "closure_share": 0.1487128018861913,
+    "source_label_share": {
+     "市场": 0.603,
+     "三元闭合": 0.1487,
+     "亲属": 0.0967,
+     "近邻": 0.0349,
+     "婚姻": 0.0293,
+     "职位辖民": 0.0189,
+     "坊": 0.0183,
+     "街段": 0.0177,
+     "门口路口": 0.0143,
+     "教堂会众": 0.0087,
+     "井/水池": 0.008,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8193856393050312,
+    "assort_guild": 0.5821035277783995,
+    "clustering": 0.06957375651346492,
+    "giant_share": 1.0,
+    "avg_path": 3.091025942933396,
+    "diameter_est": 5.0,
+    "modularity": 0.6585021546452542,
+    "n_communities": 9,
+    "office_betw_ratio": 2.539229919402052,
+    "office_share_top1pct_betw": 0.1301775147928994,
+    "office_base_rate": 0.023547418614234414,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 88.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 400
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.77
+  },
+  "65": {
+   "digest": "3a8f681954e3eae9",
+   "records": 1468138,
+   "step_sec": 5.05,
+   "survival": 0.8166718877896461,
+   "survival_by_tier": {
+    "强": 0.9742288613946063,
+    "中": 0.9737226839027393,
+    "弱": 0.876892296775211,
+    "认识": 0.7796334943823436
+   },
+   "metrics": {
+    "n": 17072,
+    "edges": 499347,
+    "median_degree": 60.0,
+    "mean_degree": 58.49894564198688,
+    "cap_share": 0.06403024483917427,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6994017911908609,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1062648411865192,
+    "office_strength_ratio": 1.6357375387658784,
+    "latent_median_degree": 159.0,
+    "latent_max_degree": 524,
+    "latent_degree_skew": 0.3920768940589457,
+    "latent_max_over_median": 3.2955974842767297,
+    "office_degree_ratio_full": 1.5434462360149186,
+    "closure_share": 0.14976883563149462,
+    "source_label_share": {
+     "市场": 0.6029,
+     "三元闭合": 0.1498,
+     "亲属": 0.0965,
+     "近邻": 0.0347,
+     "婚姻": 0.0298,
+     "职位辖民": 0.0183,
+     "坊": 0.018,
+     "街段": 0.0176,
+     "门口路口": 0.0143,
+     "教堂会众": 0.0087,
+     "井/水池": 0.008,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8211843356142666,
+    "assort_guild": 0.5726389568575907,
+    "clustering": 0.06911068532131241,
+    "giant_share": 1.0,
+    "avg_path": 3.075438853416125,
+    "diameter_est": 5.0,
+    "modularity": 0.6468588905081968,
+    "n_communities": 8,
+    "office_betw_ratio": 3.0137662863657284,
+    "office_share_top1pct_betw": 0.18823529411764706,
+    "office_base_rate": 0.023898781630740395,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 86.5,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 408
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.08
+  },
+  "66": {
+   "digest": "9ee46711a02b4951",
+   "records": 1476063,
+   "step_sec": 5.03,
+   "survival": 0.8162660434527493,
+   "survival_by_tier": {
+    "强": 0.9789163454998866,
+    "中": 0.9752176061423847,
+    "弱": 0.877688342934267,
+    "认识": 0.7785143297267144
+   },
+   "metrics": {
+    "n": 17188,
+    "edges": 503420,
+    "median_degree": 60.0,
+    "mean_degree": 58.57807772864789,
+    "cap_share": 0.06628482787423184,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6838524111848141,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.090682736926835,
+    "office_strength_ratio": 1.597101041423184,
+    "latent_median_degree": 159.0,
+    "latent_max_degree": 579,
+    "latent_degree_skew": 0.4260996105411972,
+    "latent_max_over_median": 3.641509433962264,
+    "office_degree_ratio_full": 1.5210250693392235,
+    "closure_share": 0.1515480024788988,
+    "source_label_share": {
+     "市场": 0.6008,
+     "三元闭合": 0.1515,
+     "亲属": 0.0962,
+     "近邻": 0.0347,
+     "婚姻": 0.0304,
+     "职位辖民": 0.0184,
+     "坊": 0.018,
+     "街段": 0.0176,
+     "门口路口": 0.0142,
+     "教堂会众": 0.0088,
+     "井/水池": 0.0079,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8231524478824032,
+    "assort_guild": 0.5730030992868598,
+    "clustering": 0.06908388889750462,
+    "giant_share": 1.0,
+    "avg_path": 3.0639931343457265,
+    "diameter_est": 5.0,
+    "modularity": 0.6491658782780416,
+    "n_communities": 9,
+    "office_betw_ratio": 2.871830409455943,
+    "office_share_top1pct_betw": 0.2046783625730994,
+    "office_base_rate": 0.024842913660693508,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 427
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.04
+  },
+  "67": {
+   "digest": "16a0b0949f9a4f9d",
+   "records": 1484067,
+   "step_sec": 4.79,
+   "survival": 0.816244884986691,
+   "survival_by_tier": {
+    "强": 0.9771086360329099,
+    "中": 0.9766448735875439,
+    "弱": 0.8807884551801933,
+    "认识": 0.77763306367857
+   },
+   "metrics": {
+    "n": 17294,
+    "edges": 506862,
+    "median_degree": 60.0,
+    "mean_degree": 58.61709263328322,
+    "cap_share": 0.06349300450557269,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6859803250360359,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1034784916941502,
+    "office_strength_ratio": 1.6337234101399853,
+    "latent_median_degree": 159.0,
+    "latent_max_degree": 570,
+    "latent_degree_skew": 0.45890204909444693,
+    "latent_max_over_median": 3.5849056603773586,
+    "office_degree_ratio_full": 1.5446229968956449,
+    "closure_share": 0.1534925562506175,
+    "source_label_share": {
+     "市场": 0.5969,
+     "三元闭合": 0.1535,
+     "亲属": 0.0962,
+     "近邻": 0.0349,
+     "婚姻": 0.0309,
+     "职位辖民": 0.0194,
+     "坊": 0.018,
+     "街段": 0.0177,
+     "门口路口": 0.0142,
+     "教堂会众": 0.0088,
+     "井/水池": 0.008,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8227737328974017,
+    "assort_guild": 0.5769002473014501,
+    "clustering": 0.0688529204697735,
+    "giant_share": 1.0,
+    "avg_path": 3.059473968272326,
+    "diameter_est": 5.0,
+    "modularity": 0.6504382985074433,
+    "n_communities": 10,
+    "office_betw_ratio": 3.061446856396302,
+    "office_share_top1pct_betw": 0.1744186046511628,
+    "office_base_rate": 0.024632820631432868,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 426
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.32
+  },
+  "68": {
+   "digest": "5446f9ccb7ead5f0",
+   "records": 1492028,
+   "step_sec": 4.99,
+   "survival": 0.8172323038618007,
+   "survival_by_tier": {
+    "强": 0.9765598839156155,
+    "中": 0.975214953271028,
+    "弱": 0.8788486959542258,
+    "认识": 0.7796739691260755
+   },
+   "metrics": {
+    "n": 17408,
+    "edges": 510433,
+    "median_degree": 60.0,
+    "mean_degree": 58.64349724264706,
+    "cap_share": 0.06480499587604571,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6891790382413508,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.0943714975078844,
+    "office_strength_ratio": 1.6038675213740652,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 609,
+    "latent_degree_skew": 0.4885608964372423,
+    "latent_max_over_median": 3.8544303797468356,
+    "office_degree_ratio_full": 1.5404426733419012,
+    "closure_share": 0.15498320847326272,
+    "source_label_share": {
+     "市场": 0.5955,
+     "三元闭合": 0.155,
+     "亲属": 0.0962,
+     "近邻": 0.0349,
+     "婚姻": 0.0314,
+     "职位辖民": 0.019,
+     "坊": 0.0179,
+     "街段": 0.0176,
+     "门口路口": 0.0142,
+     "教堂会众": 0.0089,
+     "井/水池": 0.008,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8237360738231643,
+    "assort_guild": 0.5766057187994723,
+    "clustering": 0.06832195808248019,
+    "giant_share": 1.0,
+    "avg_path": 3.046401830681144,
+    "diameter_est": 5.0,
+    "modularity": 0.6509342974631369,
+    "n_communities": 9,
+    "office_betw_ratio": 2.5065969726034,
+    "office_share_top1pct_betw": 0.15517241379310345,
+    "office_base_rate": 0.02493106617647059,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 86.5,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 434
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.85
+  },
+  "69": {
+   "digest": "88f861e1c376eba0",
+   "records": 1500602,
+   "step_sec": 5.21,
+   "survival": 0.8150119604335927,
+   "survival_by_tier": {
+    "强": 0.9761786600496278,
+    "中": 0.9772016092981672,
+    "弱": 0.8770663629141101,
+    "认识": 0.7768953108595141
+   },
+   "metrics": {
+    "n": 17529,
+    "edges": 514544,
+    "median_degree": 60.0,
+    "mean_degree": 58.70774145701409,
+    "cap_share": 0.06261704119850187,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     43.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.678040008165158,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.1016956137388398,
+    "office_strength_ratio": 1.6014628604735455,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 623,
+    "latent_degree_skew": 0.5166617694307776,
+    "latent_max_over_median": 3.9430379746835444,
+    "office_degree_ratio_full": 1.5389265534882604,
+    "closure_share": 0.15537078828278617,
+    "source_label_share": {
+     "市场": 0.5946,
+     "三元闭合": 0.1554,
+     "亲属": 0.0961,
+     "近邻": 0.035,
+     "婚姻": 0.0319,
+     "职位辖民": 0.0191,
+     "坊": 0.0179,
+     "街段": 0.0177,
+     "门口路口": 0.0141,
+     "教堂会众": 0.0089,
+     "井/水池": 0.008,
+     "行会": 0.0009,
+     "职位上下级": 0.0005
+    },
+    "assort_faith": 0.8249990595688004,
+    "assort_guild": 0.5754475825113999,
+    "clustering": 0.06808277970664736,
+    "giant_share": 1.0,
+    "avg_path": 3.0609481971702417,
+    "diameter_est": 5.0,
+    "modularity": 0.6515792281972713,
+    "n_communities": 9,
+    "office_betw_ratio": 3.026880656860297,
+    "office_share_top1pct_betw": 0.18285714285714286,
+    "office_base_rate": 0.025158309087797363,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 86.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 441
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 7.89
+  },
+  "70": {
+   "digest": "4a3fba7690faa454",
+   "records": 1508508,
+   "step_sec": 5.27,
+   "survival": 0.8135106035635437,
+   "survival_by_tier": {
+    "强": 0.9781354721749163,
+    "中": 0.9760545220114202,
+    "弱": 0.8777296311078169,
+    "认识": 0.7745863579164858
+   },
+   "metrics": {
+    "n": 17633,
+    "edges": 517817,
+    "median_degree": 60.0,
+    "mean_degree": 58.732717064594794,
+    "cap_share": 0.06512250480125706,
+    "isolates": 0,
+    "median_cum_layer": [
+     2.0,
+     5.0,
+     18.0,
+     60.0
+    ],
+    "median_layer_counts": [
+     2.0,
+     3.0,
+     12.0,
+     42.0
+    ],
+    "inner_median_degree": 18.0,
+    "inner_degree_skew": -0.6712779899680373,
+    "inner_max_over_median": 1.2777777777777777,
+    "office_inner_degree_ratio": 1.0807320648181684,
+    "office_strength_ratio": 1.5687521531473478,
+    "latent_median_degree": 158.0,
+    "latent_max_degree": 487,
+    "latent_degree_skew": 0.5105901676483754,
+    "latent_max_over_median": 3.0822784810126582,
+    "office_degree_ratio_full": 1.524862477455389,
+    "closure_share": 0.1564585750517695,
+    "source_label_share": {
+     "市场": 0.5916,
+     "三元闭合": 0.1565,
+     "亲属": 0.0962,
+     "近邻": 0.035,
+     "婚姻": 0.0324,
+     "职位辖民": 0.0204,
+     "坊": 0.0179,
+     "街段": 0.0177,
+     "门口路口": 0.0141,
+     "教堂会众": 0.0089,
+     "井/水池": 0.0079,
+     "行会": 0.0008,
+     "职位上下级": 0.0006
+    },
+    "assort_faith": 0.827226900515092,
+    "assort_guild": 0.5812313045941049,
+    "clustering": 0.06799009124612787,
+    "giant_share": 1.0,
+    "avg_path": 3.052451981246219,
+    "diameter_est": 5.0,
+    "modularity": 0.6501382949981768,
+    "n_communities": 9,
+    "office_betw_ratio": 2.5723445561550173,
+    "office_share_top1pct_betw": 0.17045454545454544,
+    "office_base_rate": 0.025520331197187093,
+    "dunbar_cum_3": 2.0,
+    "dunbar_cum_7": 5.0,
+    "dunbar_cum_23": 18.0,
+    "dunbar_cum_68": 60.0,
+    "office_median_degree": 87.0,
+    "nonoffice_median_degree": 60.0,
+    "n_office": 450
+   },
+   "hits": {
+    "dunbar_cum_3": false,
+    "dunbar_cum_7": true,
+    "dunbar_cum_23": true,
+    "dunbar_cum_68": true,
+    "clustering": false,
+    "avg_path": true,
+    "latent_degree_skew": true,
+    "latent_max_over_median": true,
+    "modularity": true,
+    "assort_faith": true,
+    "assort_guild": true,
+    "office_strength_ratio": true,
+    "office_betw_ratio": true,
+    "closure_share": true
+   },
+   "sec": 8.04,
+   "diag_clustering": {
+    "clustering_and_mean_degree": {
+     "latent(截断前)": [
+      0.1111,
+      162.9
+     ],
+     "强": [
+      0.0528,
+      2.1
+     ],
+     "强+中": [
+      0.1147,
+      5.2
+     ],
+     "强+中+弱": [
+      0.1505,
+      17.2
+     ],
+     "全部 4 层": [
+      0.068,
+      58.7
+     ]
+    },
+    "source_record_share": {
+     "市场": 0.5916,
+     "三元闭合": 0.1565,
+     "亲属": 0.0962,
+     "近邻": 0.035,
+     "婚姻": 0.0324,
+     "职位辖民": 0.0204,
+     "坊": 0.0179,
+     "街段": 0.0177,
+     "门口路口": 0.0141,
+     "教堂会众": 0.0089,
+     "井/水池": 0.0079,
+     "行会": 0.0008,
+     "职位上下级": 0.0006
+    }
+   }
+  }
+ },
+ "seconds": 235.3
+}

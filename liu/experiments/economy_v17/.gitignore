@@ -1,0 +1,3 @@
+.cache_*.pkl
+__pycache__/
+.sens_*.json

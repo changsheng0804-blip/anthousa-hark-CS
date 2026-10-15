@@ -1,0 +1,21 @@
+{
+ "scope": "xero",
+ "v0": 7035,
+ "v1": 7035,
+ "identical_pairs": 7035,
+ "only_v0": 0,
+ "only_v1": 0,
+ "pattern_diff": 0,
+ "years_diff": 0,
+ "score_diff": 0,
+ "exact_match": 7035,
+ "top8_same": true,
+ "top60_same": true,
+ "examples": {
+  "only_v0": [],
+  "only_v1": [],
+  "pattern_diff": [],
+  "years_diff": [],
+  "score_diff": []
+ }
+}

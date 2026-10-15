@@ -1,0 +1,45 @@
+{
+ "prepare_s": 0.141,
+ "years": {
+  "40": {
+   "tiles": 131,
+   "bytes": 1114000,
+   "gzip_bytes": 92157,
+   "houses_with_record": 10661,
+   "matched_not_standing": 7490,
+   "unmatched_null": 222,
+   "office_holders_in_tiles": 131,
+   "office_holders_city": 132,
+   "standing_ledger": 10713,
+   "build_s": 0.079,
+   "bake_s": 0.187
+  },
+  "50": {
+   "tiles": 131,
+   "bytes": 1529501,
+   "gzip_bytes": 99193,
+   "houses_with_record": 15193,
+   "matched_not_standing": 2958,
+   "unmatched_null": 222,
+   "office_holders_in_tiles": 149,
+   "office_holders_city": 150,
+   "standing_ledger": 15296,
+   "build_s": 0.098,
+   "bake_s": 0.279
+  },
+  "60": {
+   "tiles": 131,
+   "bytes": 1688489,
+   "gzip_bytes": 100408,
+   "houses_with_record": 16449,
+   "matched_not_standing": 1702,
+   "unmatched_null": 222,
+   "office_holders_in_tiles": 151,
+   "office_holders_city": 152,
+   "standing_ledger": 16577,
+   "build_s": 0.124,
+   "bake_s": 0.188
+  }
+ },
+ "total_s": 1.098
+}

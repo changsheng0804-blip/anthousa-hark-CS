@@ -1,0 +1,6586 @@
+{
+ "_doc": "economy_v15 结果（economy.py run 写出）——Hark（刘线）",
+ "params": {
+  "v4": {
+   "tau": 0.5,
+   "rho": 1.0,
+   "delta": 0.3,
+   "omega": 0.3,
+   "alpha": 0.1,
+   "beta": 0.1,
+   "gamma": 0.1,
+   "eps": 0.05,
+   "kappa": 0.4,
+   "alms": 1.0,
+   "sigma": 1.0,
+   "remit": 0.5,
+   "V_h": 30.0,
+   "comp": 0.5,
+   "reloc": 1.0,
+   "levy": 1.0,
+   "corvee_days": 30,
+   "day": 0.015,
+   "lam": 0.0,
+   "skim": 0.5
+  },
+  "v0_landlord": {
+   "cap": 6,
+   "radius": 250,
+   "assume": "租户的房东 = 同街（否则 250px 内）住得最久的有房户，每户最多 6 家租户"
+  },
+  "v0_debt": {
+   "z": 1.0,
+   "base_years": [
+    40,
+    70
+   ],
+   "lender_trades": [
+    "面包师",
+    "酒馆老板"
+   ],
+   "radius": 200,
+   "cap": 4,
+   "years": 4,
+   "assume": "灾年 = 干山当年死亡率高于 AF40–70 均值 + z·标准差 的年份（账本无粮价，以死亡率代）；放债的是有房的面包师/酒馆老板（有存粮或现钱）"
+  },
+  "new": {
+   "head_tax": 0.2,
+   "q_bread": 0.6,
+   "q_water": 0.4,
+   "q_craft": 0.5,
+   "q_harbor": 0.3,
+   "fine_mult": 3.0,
+   "floor": 0.3,
+   "k_price": 0.002,
+   "k_water": 0.004,
+   "wage": 3.0,
+   "wage_share": 0.5,
+   "house_cost": 10.0,
+   "c_in": 2.0,
+   "cash0": {
+    "8": 30.0,
+    "seller": 5.0,
+    "other": 3.0
+   },
+   "treasury0": {
+    "eparch": 20000.0,
+    "bishop_nicene": 3000.0,
+    "bishop_arian": 0.0
+   },
+   "stipend_imperial": {
+    "eparch": 30.0,
+    "annona": 10.0,
+    "aquae": 10.0,
+    "nykteparch": 10.0
+   },
+   "stipend_eparch": {
+    "granary_head": 2.0,
+    "water_head": 2.0,
+    "watch_head": 2.0
+   },
+   "stipend_bishop": 5.0,
+   "soldier_imperial": 2.0,
+   "soldier_pay": 3.0,
+   "alms_budget_share": 0.6,
+   "alms_reserve_draw": 0.5,
+   "poverty": 3.0,
+   "builders_per_work": 20,
+   "R_harbor": 25.0,
+   "R_market": 20.0,
+   "R_gate": 20.0,
+   "R_cistern": 15.0,
+   "R_barracks": 15.0,
+   "ships_base": 600,
+   "ships_mult": 1.0,
+   "cargo": 600.0,
+   "kommerkion": 0.1,
+   "customs_city_share": 0.3333333333333333,
+   "f_handle": 0.04,
+   "f_store": 0.02,
+   "w_horrea": 0.4,
+   "r_ship": 8.0,
+   "f_broker": 0.015,
+   "f_change": 0.01,
+   "local_share": 0.25,
+   "m_reexp": 0.05,
+   "harbor_cost": 0.5,
+   "port_wage_share": 0.5,
+   "R_walk": 150.0,
+   "craft_cost": 0.3,
+   "craft_local_raw": 0.4,
+   "export_work": 10.0,
+   "export_shop": 1.5,
+   "export_elast": 0.5,
+   "q_veg": 0.25,
+   "q_fish": 0.2,
+   "R_field": 30.0,
+   "R_coast": 6.0,
+   "p_farm": 0.7,
+   "p_fish": 0.35,
+   "farm_cost": 0.1,
+   "fish_cost": 0.15,
+   "export_fish": 1.0,
+   "bread_cost": 0.2,
+   "c_surplus": 0.3,
+   "buffer": 6.0,
+   "surplus_mix": {
+    "craft": 0.55,
+    "harbor": 0.35,
+    "fish": 0.1
+   },
+   "retain_bishop": 0.5,
+   "alms_share": 0.3333333333333333,
+   "alms_cap": 2.0,
+   "clergy_share": 0.3333333333333333,
+   "builders_per_church": 25,
+   "retain_eparch": 0.5,
+   "eparch_floor": 5000.0,
+   "pw_share": 0.4,
+   "builders_per_struct": 20,
+   "stip_fang": 1.0,
+   "stip_district": 3.0,
+   "port_split": {
+    "5": 0.35,
+    "10": 0.2,
+    "11": 0.15,
+    "12": 0.12,
+    "13": 0.1,
+    "14": 0.08
+   }
+  }
+ },
+ "livelihood": {
+  "counts": {
+   "雇工": 10066,
+   "码头脚夫": 763,
+   "面包": 1835,
+   "手工铺": 2117,
+   "作坊": 724,
+   "港货商": 183,
+   "运水人": 411,
+   "营造": 492,
+   "体面户": 368,
+   "兵户": 211,
+   "装卸行": 120,
+   "港仓": 68,
+   "船修": 72,
+   "牙人": 61,
+   "兑钱商": 58,
+   "菜农": 279,
+   "渔户": 217
+  },
+  "changed_from_v14": {
+   "港货商→兑钱商": 58,
+   "雇工→渔户": 139,
+   "码头脚夫→渔户": 78,
+   "港货商→船修": 72,
+   "港货商→装卸行": 120,
+   "港货商→港仓": 68,
+   "港货商→牙人": 61,
+   "雇工→菜农": 279
+  },
+  "houses_ever": 18045
+ },
+ "hardware": {
+  "harbors": [
+   "harbor_julian",
+   "harbor_neorion",
+   "harbor_prosphorion",
+   "harbor_theodosius"
+  ],
+  "ports": [
+   "harbor_julian",
+   "harbor_neorion",
+   "harbor_prosphorion",
+   "harbor_theodosius",
+   "warehouse_horn"
+  ],
+  "harbor_area": {
+   "harbor_julian": 825.0,
+   "harbor_neorion": 396.0,
+   "harbor_prosphorion": 532.0,
+   "harbor_theodosius": 308.0
+  },
+  "coast_edges": 25,
+  "walk_tables": 10,
+  "walk_s": 5.02
+ },
+ "years": {
+  "40": {
+   "households": 10713,
+   "poor_share": 0.0555,
+   "poor": 595,
+   "at_or_below_line_share": 0.6913,
+   "rel_poor_share": 0.0351,
+   "gini_income": 0.7479,
+   "gini_networth": 0.0852,
+   "gini_net_income": 0.6963,
+   "net_income_negative": 123,
+   "poor_share_net": 0.1338,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 155,
+    "手工铺": 140,
+    "营造": 65,
+    "体面户": 235
+   },
+   "median_income": 3.0,
+   "mean_income": 13.961,
+   "unfunded_deficits": 6,
+   "loans_active": 56,
+   "treasury": {
+    "eparch": 20009.73,
+    "bishop_nicene": 3024.1,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 6048.2,
+     "spend": 3024.1,
+     "alms": 0.0,
+     "clergy": 1008.03,
+     "church": 2016.07,
+     "poor": 0
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35019.46,
+     "spend": 15009.73,
+     "officials": 326.0,
+     "public_works": 0.0,
+     "maintenance": 14683.73,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 59720.58,
+     "手工": 19617.09,
+     "农渔": 3804.77
+    },
+    "value_added": {
+     "转口": 54310.29,
+     "手工": 13731.96,
+     "农渔": 3234.05
+    },
+    "va_share": {
+     "转口": 0.762,
+     "手工": 0.1927,
+     "农渔": 0.0454
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 6437.0,
+     "农渔": 130.0
+    },
+    "external_payments": {
+     "转口": 5410.29,
+     "手工": 3531.08,
+     "农渔": 570.72
+    },
+    "employment": {
+     "转口": {
+      "households": 308,
+      "hired_workers": 4634,
+      "total": 4942,
+      "share_of_households": 0.4613
+     },
+     "手工": {
+      "households": 1662,
+      "hired_workers": 754,
+      "total": 2416,
+      "share_of_households": 0.2255
+     },
+     "农渔": {
+      "households": 130,
+      "hired_workers": 0,
+      "total": 130,
+      "share_of_households": 0.0121
+     }
+    },
+    "other_hired": 1389,
+    "public_works": 0,
+    "workers": 6777,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 4912
+    },
+    "slots_per_worker": 1.927,
+    "port_hired": 4634
+   },
+   "rows": 112277,
+   "by_type_total": {
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 5356.5,
+    "人头税": 2142.6,
+    "行会钱": 279.6,
+    "税钱上缴(坊长→区长)": 6739.11,
+    "税钱上缴(区长→城市长官)": 6075.28,
+    "行会钱上缴(行会头→城市长官)": 251.64,
+    "上交皇库": 3163.46,
+    "奉献": 3213.9,
+    "奉献截留(长老)": 160.69,
+    "奉献上缴(→主教)": 3053.2,
+    "神职俸给": 1008.03,
+    "教堂营造": 2016.07,
+    "买卖:面包": 7421.78,
+    "买卖:水": 5500.09,
+    "买卖:手工": 13180.09,
+    "买卖:港货": 8466.53,
+    "买卖:鱼": 3674.77,
+    "进货/原料(付城外)": 5586.15,
+    "港货进价(付船商)": 5410.29,
+    "原料(转口货)": 2354.05,
+    "出口:手工(船商付)": 6437.0,
+    "出口:鱼(船商付)": 130.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 6429.0,
+    "工钱:港口": 13902.0,
+    "俸给": 83.0,
+    "官俸(坊长/区长)": 326.0,
+    "兵饷": 756.0,
+    "城防街渠维护": 14683.73,
+    "借贷": 545.9
+   }
+  },
+  "41": {
+   "households": 11204,
+   "poor_share": 0.0501,
+   "poor": 561,
+   "at_or_below_line_share": 0.6782,
+   "rel_poor_share": 0.031,
+   "gini_income": 0.7626,
+   "gini_networth": 0.1021,
+   "gini_net_income": 0.7134,
+   "net_income_negative": 189,
+   "poor_share_net": 0.1049,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 147,
+    "手工铺": 123,
+    "营造": 48,
+    "体面户": 243
+   },
+   "median_income": 3.0,
+   "mean_income": 15.923,
+   "unfunded_deficits": 69,
+   "loans_active": 217,
+   "treasury": {
+    "eparch": 20089.24,
+    "bishop_nicene": 3106.3,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 6212.6,
+     "spend": 3106.3,
+     "alms": 1035.43,
+     "clergy": 1035.43,
+     "church": 1035.43,
+     "poor": 595
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35178.48,
+     "spend": 15089.24,
+     "officials": 325.0,
+     "public_works": 102.0,
+     "maintenance": 14662.24,
+     "unemployed_before": 34
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 66817.62,
+     "手工": 29267.87,
+     "农渔": 5539.51
+    },
+    "value_added": {
+     "转口": 57858.81,
+     "手工": 20487.51,
+     "农渔": 4708.58
+    },
+    "va_share": {
+     "转口": 0.6966,
+     "手工": 0.2467,
+     "农渔": 0.0567
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 6753.5,
+     "农渔": 134.0
+    },
+    "external_payments": {
+     "转口": 8958.81,
+     "手工": 5268.22,
+     "农渔": 830.93
+    },
+    "employment": {
+     "转口": {
+      "households": 326,
+      "hired_workers": 4700,
+      "total": 5026,
+      "share_of_households": 0.4486
+     },
+     "手工": {
+      "households": 1754,
+      "hired_workers": 1032,
+      "total": 2786,
+      "share_of_households": 0.2487
+     },
+     "农渔": {
+      "households": 134,
+      "hired_workers": 0,
+      "total": 134,
+      "share_of_households": 0.012
+     }
+    },
+    "other_hired": 1294,
+    "public_works": 34,
+    "workers": 7060,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9952,
+    "slots_offered": {
+     "port": 8150,
+     "district": 7288
+    },
+    "slots_per_worker": 2.187,
+    "port_hired": 4700
+   },
+   "rows": 119564,
+   "by_type_total": {
+    "公役工钱": 102.0,
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 5602.0,
+    "人头税": 2240.8,
+    "行会钱": 287.4,
+    "税钱上缴(坊长→区长)": 6917.4,
+    "税钱上缴(区长→城市长官)": 6334.02,
+    "行会钱上缴(行会头→城市长官)": 254.88,
+    "上交皇库": 3314.75,
+    "奉献": 3361.2,
+    "奉献截留(长老)": 167.7,
+    "奉献上缴(→主教)": 3193.5,
+    "施舍": 1035.43,
+    "神职俸给": 1035.43,
+    "教堂营造": 1035.43,
+    "租金": 452.0,
+    "买卖:面包": 7610.17,
+    "买卖:水": 5496.48,
+    "买卖:手工": 22514.37,
+    "买卖:港货": 14405.47,
+    "买卖:鱼": 5405.51,
+    "进货/原料(付城外)": 7621.18,
+    "港货进价(付船商)": 8958.81,
+    "原料(转口货)": 3512.14,
+    "出口:手工(船商付)": 6753.5,
+    "出口:鱼(船商付)": 134.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 6978.0,
+    "工钱:港口": 14100.0,
+    "俸给": 81.0,
+    "官俸(坊长/区长)": 325.0,
+    "兵饷": 780.0,
+    "城防街渠维护": 14662.24,
+    "借贷": 833.04,
+    "还款": 136.47,
+    "建设:新房": 4520.0,
+    "建设:公共工程": 3780.0,
+    "迁入带钱": 982.0
+   }
+  },
+  "42": {
+   "households": 11693,
+   "poor_share": 0.0551,
+   "poor": 644,
+   "at_or_below_line_share": 0.678,
+   "rel_poor_share": 0.0078,
+   "gini_income": 0.7664,
+   "gini_networth": 0.1094,
+   "gini_net_income": 0.7133,
+   "net_income_negative": 205,
+   "poor_share_net": 0.1025,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 170,
+    "手工铺": 167,
+    "营造": 53,
+    "体面户": 254
+   },
+   "median_income": 3.0,
+   "mean_income": 16.599,
+   "unfunded_deficits": 105,
+   "loans_active": 469,
+   "treasury": {
+    "eparch": 20202.82,
+    "bishop_nicene": 3217.35,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 6434.69,
+     "spend": 3217.35,
+     "alms": 1072.45,
+     "clergy": 1072.45,
+     "church": 1072.45,
+     "poor": 561
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35405.64,
+     "spend": 15202.82,
+     "officials": 326.0,
+     "public_works": 123.0,
+     "maintenance": 14753.82,
+     "unemployed_before": 41
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 73376.54,
+     "手工": 38215.94,
+     "农渔": 7158.5
+    },
+    "value_added": {
+     "转口": 61138.27,
+     "手工": 26751.16,
+     "农渔": 6084.73
+    },
+    "va_share": {
+     "转口": 0.6506,
+     "手工": 0.2847,
+     "农渔": 0.0647
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 7081.5,
+     "农渔": 138.0
+    },
+    "external_payments": {
+     "转口": 12238.27,
+     "手工": 6878.87,
+     "农渔": 1073.78
+    },
+    "employment": {
+     "转口": {
+      "households": 341,
+      "hired_workers": 4765,
+      "total": 5106,
+      "share_of_households": 0.4367
+     },
+     "手工": {
+      "households": 1848,
+      "hired_workers": 1328,
+      "total": 3176,
+      "share_of_households": 0.2716
+     },
+     "农渔": {
+      "households": 138,
+      "hired_workers": 0,
+      "total": 138,
+      "share_of_households": 0.0118
+     }
+    },
+    "other_hired": 1197,
+    "public_works": 41,
+    "workers": 7331,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9944,
+    "slots_offered": {
+     "port": 8150,
+     "district": 10144
+    },
+    "slots_per_worker": 2.495,
+    "port_hired": 4765
+   },
+   "rows": 125270,
+   "by_type_total": {
+    "公役工钱": 123.0,
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 5846.5,
+    "人头税": 2338.6,
+    "行会钱": 297.3,
+    "税钱上缴(坊长→区长)": 7102.62,
+    "税钱上缴(区长→城市长官)": 6585.14,
+    "行会钱上缴(行会头→城市长官)": 258.66,
+    "上交皇库": 3466.4,
+    "奉献": 3507.9,
+    "奉献截留(长老)": 174.51,
+    "奉献上缴(→主教)": 3333.39,
+    "施舍": 1072.45,
+    "神职俸给": 1072.45,
+    "教堂营造": 1072.45,
+    "租金": 893.0,
+    "买卖:面包": 7881.6,
+    "买卖:水": 5714.36,
+    "买卖:手工": 31134.44,
+    "买卖:港货": 19890.63,
+    "买卖:鱼": 7020.5,
+    "进货/原料(付城外)": 9528.96,
+    "港货进价(付船商)": 12238.27,
+    "原料(转口货)": 4585.91,
+    "出口:手工(船商付)": 7081.5,
+    "出口:鱼(船商付)": 138.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 7575.0,
+    "工钱:港口": 14295.0,
+    "俸给": 81.0,
+    "官俸(坊长/区长)": 326.0,
+    "兵饷": 804.0,
+    "城防街渠维护": 14753.82,
+    "借贷": 2027.99,
+    "还款": 344.73,
+    "建设:新房": 4410.0,
+    "迁入带钱": 978.0
+   }
+  },
+  "43": {
+   "households": 12169,
+   "poor_share": 0.0583,
+   "poor": 710,
+   "at_or_below_line_share": 0.6763,
+   "rel_poor_share": 0.0326,
+   "gini_income": 0.7786,
+   "gini_networth": 0.1355,
+   "gini_net_income": 0.7284,
+   "net_income_negative": 215,
+   "poor_share_net": 0.1048,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 224,
+    "手工铺": 174,
+    "营造": 56,
+    "体面户": 256
+   },
+   "median_income": 3.0,
+   "mean_income": 17.743,
+   "unfunded_deficits": 164,
+   "loans_active": 781,
+   "treasury": {
+    "eparch": 20336.66,
+    "bishop_nicene": 3340.6,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 6681.2,
+     "spend": 3340.6,
+     "alms": 1113.53,
+     "clergy": 1113.53,
+     "church": 1113.53,
+     "poor": 644
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35673.32,
+     "spend": 15336.66,
+     "officials": 254.0,
+     "public_works": 39.0,
+     "maintenance": 15043.66,
+     "unemployed_before": 13
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 79404.75,
+     "手工": 46422.14,
+     "农渔": 12553.58
+    },
+    "value_added": {
+     "转口": 64152.37,
+     "手工": 32495.5,
+     "农渔": 10866.19
+    },
+    "va_share": {
+     "转口": 0.5967,
+     "手工": 0.3022,
+     "农渔": 0.1011
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 7361.5,
+     "农渔": 146.0
+    },
+    "external_payments": {
+     "转口": 15252.37,
+     "手工": 8355.99,
+     "农渔": 1687.39
+    },
+    "employment": {
+     "转口": {
+      "households": 356,
+      "hired_workers": 4822,
+      "total": 5178,
+      "share_of_households": 0.4255
+     },
+     "手工": {
+      "households": 1927,
+      "hired_workers": 1619,
+      "total": 3546,
+      "share_of_households": 0.2914
+     },
+     "农渔": {
+      "households": 147,
+      "hired_workers": 0,
+      "total": 147,
+      "share_of_households": 0.0121
+     }
+    },
+    "other_hired": 1151,
+    "public_works": 13,
+    "workers": 7605,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9983,
+    "slots_offered": {
+     "port": 8150,
+     "district": 11053
+    },
+    "slots_per_worker": 2.525,
+    "port_hired": 4822
+   },
+   "rows": 143052,
+   "by_type_total": {
+    "公役工钱": 39.0,
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 6084.5,
+    "人头税": 2433.8,
+    "行会钱": 305.4,
+    "税钱上缴(坊长→区长)": 7082.46,
+    "税钱上缴(区长→城市长官)": 6845.45,
+    "行会钱上缴(行会头→城市长官)": 262.44,
+    "上交皇库": 3623.5,
+    "奉献": 3650.7,
+    "奉献截留(长老)": 181.84,
+    "奉献上缴(→主教)": 3468.85,
+    "施舍": 1113.53,
+    "神职俸给": 1113.53,
+    "教堂营造": 1113.53,
+    "租金": 1331.0,
+    "买卖:面包": 8068.08,
+    "买卖:水": 5863.33,
+    "买卖:手工": 39060.64,
+    "买卖:港货": 24934.09,
+    "买卖:菜蔬": 3912.9,
+    "买卖:鱼": 8494.68,
+    "进货/原料(付城外)": 11656.99,
+    "港货进价(付船商)": 15252.37,
+    "原料(转口货)": 5570.66,
+    "出口:手工(船商付)": 7361.5,
+    "出口:鱼(船商付)": 146.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 8310.0,
+    "工钱:港口": 14466.0,
+    "俸给": 81.0,
+    "官俸(坊长/区长)": 254.0,
+    "兵饷": 822.0,
+    "城防街渠维护": 15043.66,
+    "借贷": 1757.39,
+    "还款": 851.73,
+    "建设:新房": 4380.0,
+    "迁入带钱": 952.0
+   }
+  },
+  "44": {
+   "households": 12663,
+   "poor_share": 0.0592,
+   "poor": 750,
+   "at_or_below_line_share": 0.6716,
+   "rel_poor_share": 0.0322,
+   "gini_income": 0.7854,
+   "gini_networth": 0.1609,
+   "gini_net_income": 0.7375,
+   "net_income_negative": 246,
+   "poor_share_net": 0.1049,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 236,
+    "手工铺": 197,
+    "营造": 47,
+    "体面户": 270
+   },
+   "median_income": 3.0,
+   "mean_income": 18.632,
+   "unfunded_deficits": 204,
+   "loans_active": 1120,
+   "treasury": {
+    "eparch": 20430.41,
+    "bishop_nicene": 3472.74,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 6945.47,
+     "spend": 3472.74,
+     "alms": 1157.58,
+     "clergy": 1157.58,
+     "church": 1157.58,
+     "poor": 710
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35860.81,
+     "spend": 15430.41,
+     "officials": 313.0,
+     "public_works": 3.0,
+     "maintenance": 15114.41,
+     "unemployed_before": 1
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 85377.84,
+     "手工": 54583.65,
+     "农渔": 14081.39
+    },
+    "value_added": {
+     "转口": 67138.92,
+     "手工": 38208.55,
+     "农渔": 12168.19
+    },
+    "va_share": {
+     "转口": 0.5713,
+     "手工": 0.3251,
+     "农渔": 0.1035
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 7675.0,
+     "农渔": 153.0
+    },
+    "external_payments": {
+     "转口": 18238.92,
+     "手工": 9825.06,
+     "农渔": 1913.21
+    },
+    "employment": {
+     "转口": {
+      "households": 364,
+      "hired_workers": 4908,
+      "total": 5272,
+      "share_of_households": 0.4163
+     },
+     "手工": {
+      "households": 2017,
+      "hired_workers": 1799,
+      "total": 3816,
+      "share_of_households": 0.3014
+     },
+     "农渔": {
+      "households": 155,
+      "hired_workers": 0,
+      "total": 155,
+      "share_of_households": 0.0122
+     }
+    },
+    "other_hired": 1187,
+    "public_works": 1,
+    "workers": 7895,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9999,
+    "slots_offered": {
+     "port": 8150,
+     "district": 12502
+    },
+    "slots_per_worker": 2.616,
+    "port_hired": 4908
+   },
+   "rows": 149784,
+   "by_type_total": {
+    "公役工钱": 3.0,
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 6331.5,
+    "人头税": 2532.6,
+    "行会钱": 313.8,
+    "税钱上缴(坊长→区长)": 7262.01,
+    "税钱上缴(区长→城市长官)": 7101.55,
+    "行会钱上缴(行会头→城市长官)": 266.76,
+    "上交皇库": 3776.15,
+    "奉献": 3798.9,
+    "奉献截留(长老)": 189.03,
+    "奉献上缴(→主教)": 3609.87,
+    "施舍": 1157.58,
+    "神职俸给": 1157.58,
+    "教堂营造": 1157.58,
+    "租金": 1792.0,
+    "买卖:面包": 8210.81,
+    "买卖:水": 5976.47,
+    "买卖:手工": 46908.65,
+    "买卖:港货": 29927.8,
+    "买卖:菜蔬": 3980.01,
+    "买卖:鱼": 9948.38,
+    "进货/原料(付城外)": 13380.43,
+    "港货进价(付船商)": 18238.92,
+    "原料(转口货)": 6550.04,
+    "出口:手工(船商付)": 7675.0,
+    "出口:鱼(船商付)": 153.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 8958.0,
+    "工钱:港口": 14724.0,
+    "俸给": 85.0,
+    "官俸(坊长/区长)": 313.0,
+    "兵饷": 852.0,
+    "城防街渠维护": 15114.41,
+    "借贷": 2955.66,
+    "还款": 1291.08,
+    "拆迁补偿": 90.0,
+    "建设:新房": 4610.0,
+    "建设:公共工程": 1759.2,
+    "迁入带钱": 1000.0,
+    "迁出带钱": 101.32
+   }
+  },
+  "45": {
+   "households": 13136,
+   "poor_share": 0.0644,
+   "poor": 846,
+   "at_or_below_line_share": 0.6722,
+   "rel_poor_share": 0.0347,
+   "gini_income": 0.7887,
+   "gini_networth": 0.1807,
+   "gini_net_income": 0.7395,
+   "net_income_negative": 274,
+   "poor_share_net": 0.11,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 274,
+    "手工铺": 230,
+    "营造": 56,
+    "体面户": 286
+   },
+   "median_income": 3.0,
+   "mean_income": 18.913,
+   "unfunded_deficits": 260,
+   "loans_active": 1420,
+   "treasury": {
+    "eparch": 20590.27,
+    "bishop_nicene": 3606.27,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7212.55,
+     "spend": 3606.27,
+     "alms": 1202.09,
+     "clergy": 1202.09,
+     "church": 1202.09,
+     "poor": 750
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 36180.54,
+     "spend": 15590.27,
+     "officials": 321.0,
+     "public_works": 0.0,
+     "maintenance": 15269.27,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 90194.03,
+     "手工": 61125.8,
+     "农渔": 15246.73
+    },
+    "value_added": {
+     "转口": 69547.01,
+     "手工": 42788.06,
+     "农渔": 13158.16
+    },
+    "va_share": {
+     "转口": 0.5542,
+     "手工": 0.341,
+     "农渔": 0.1049
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 7870.5,
+     "农渔": 158.0
+    },
+    "external_payments": {
+     "转口": 20647.01,
+     "手工": 11002.64,
+     "农渔": 2088.58
+    },
+    "employment": {
+     "转口": {
+      "households": 383,
+      "hired_workers": 4976,
+      "total": 5359,
+      "share_of_households": 0.408
+     },
+     "手工": {
+      "households": 2085,
+      "hired_workers": 1841,
+      "total": 3926,
+      "share_of_households": 0.2989
+     },
+     "农渔": {
+      "households": 161,
+      "hired_workers": 0,
+      "total": 161,
+      "share_of_households": 0.0123
+     }
+    },
+    "other_hired": 1353,
+    "public_works": 0,
+    "workers": 8170,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 14237
+    },
+    "slots_per_worker": 2.74,
+    "port_hired": 4976
+   },
+   "rows": 155912,
+   "by_type_total": {
+    "口粮调拨": 153202.0,
+    "口粮下仓": 153202.0,
+    "口粮配给": 153202.0,
+    "房税": 6568.0,
+    "人头税": 2627.2,
+    "行会钱": 317.4,
+    "税钱上缴(坊长→区长)": 7434.0,
+    "税钱上缴(区长→城市长官)": 7348.32,
+    "行会钱上缴(行会头→城市长官)": 268.65,
+    "上交皇库": 3920.13,
+    "奉献": 3940.8,
+    "奉献截留(长老)": 195.99,
+    "奉献上缴(→主教)": 3744.81,
+    "施舍": 1202.09,
+    "神职俸给": 1202.09,
+    "教堂营造": 1202.09,
+    "租金": 2224.0,
+    "买卖:面包": 8187.68,
+    "买卖:水": 5984.86,
+    "买卖:手工": 53255.3,
+    "买卖:港货": 33958.93,
+    "买卖:菜蔬": 3968.63,
+    "买卖:鱼": 11120.1,
+    "进货/原料(付城外)": 14728.76,
+    "港货进价(付船商)": 20647.01,
+    "原料(转口货)": 7335.1,
+    "出口:手工(船商付)": 7870.5,
+    "出口:鱼(船商付)": 158.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 9582.0,
+    "工钱:港口": 14928.0,
+    "俸给": 85.0,
+    "官俸(坊长/区长)": 321.0,
+    "兵饷": 900.0,
+    "城防街渠维护": 15269.27,
+    "借贷": 3067.75,
+    "还款": 1893.52,
+    "建设:新房": 4320.0,
+    "迁入带钱": 946.0
+   }
+  },
+  "46": {
+   "households": 13609,
+   "poor_share": 0.0754,
+   "poor": 1026,
+   "at_or_below_line_share": 0.6801,
+   "rel_poor_share": 0.0356,
+   "gini_income": 0.7919,
+   "gini_networth": 0.2053,
+   "gini_net_income": 0.7437,
+   "net_income_negative": 275,
+   "poor_share_net": 0.1149,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 409,
+    "手工铺": 278,
+    "营造": 43,
+    "体面户": 296
+   },
+   "median_income": 3.0,
+   "mean_income": 19.301,
+   "unfunded_deficits": 351,
+   "loans_active": 1620,
+   "treasury": {
+    "eparch": 20623.73,
+    "bishop_nicene": 3739.92,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7479.84,
+     "spend": 3739.92,
+     "alms": 1246.64,
+     "clergy": 1246.64,
+     "church": 1246.64,
+     "poor": 845
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 36247.47,
+     "spend": 15623.73,
+     "officials": 346.0,
+     "public_works": 0.0,
+     "maintenance": 15277.73,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 94635.11,
+     "手工": 67355.32,
+     "农渔": 16172.61
+    },
+    "value_added": {
+     "转口": 71767.55,
+     "手工": 47148.72,
+     "农渔": 13940.0
+    },
+    "va_share": {
+     "转口": 0.5402,
+     "手工": 0.3549,
+     "农渔": 0.1049
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 8285.5,
+     "农渔": 161.0
+    },
+    "external_payments": {
+     "转口": 22867.55,
+     "手工": 12123.96,
+     "农渔": 2232.62
+    },
+    "employment": {
+     "转口": {
+      "households": 401,
+      "hired_workers": 5025,
+      "total": 5426,
+      "share_of_households": 0.3987
+     },
+     "手工": {
+      "households": 2186,
+      "hired_workers": 2071,
+      "total": 4257,
+      "share_of_households": 0.3128
+     },
+     "农渔": {
+      "households": 165,
+      "hired_workers": 0,
+      "total": 165,
+      "share_of_households": 0.0121
+     }
+    },
+    "other_hired": 1337,
+    "public_works": 0,
+    "workers": 8433,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 15010
+    },
+    "slots_per_worker": 2.746,
+    "port_hired": 5025
+   },
+   "rows": 162296,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 6804.5,
+    "人头税": 2721.8,
+    "行会钱": 325.8,
+    "税钱上缴(坊长→区长)": 7316.19,
+    "税钱上缴(区长→城市长官)": 7705.97,
+    "行会钱上缴(行会头→城市长官)": 293.22,
+    "上交皇库": 4075.2,
+    "奉献": 4082.7,
+    "奉献截留(长老)": 204.13,
+    "奉献上缴(→主教)": 3878.56,
+    "施舍": 1246.64,
+    "神职俸给": 1246.64,
+    "教堂营造": 1246.64,
+    "租金": 2666.0,
+    "买卖:面包": 7478.14,
+    "买卖:水": 5865.44,
+    "买卖:手工": 59069.82,
+    "买卖:港货": 37652.47,
+    "买卖:菜蔬": 3865.52,
+    "买卖:鱼": 12146.09,
+    "进货/原料(付城外)": 15852.2,
+    "港货进价(付船商)": 22867.55,
+    "原料(转口货)": 8082.64,
+    "出口:手工(船商付)": 8285.5,
+    "出口:鱼(船商付)": 161.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 10224.0,
+    "工钱:港口": 15075.0,
+    "俸给": 87.0,
+    "官俸(坊长/区长)": 346.0,
+    "兵饷": 936.0,
+    "城防街渠维护": 15277.73,
+    "借贷": 2846.0,
+    "还款": 2451.66,
+    "拆迁补偿": 240.0,
+    "建设:新房": 4420.0,
+    "建设:公共工程": 1634.4,
+    "迁入带钱": 978.0,
+    "迁出带钱": 1042.45
+   }
+  },
+  "47": {
+   "households": 14113,
+   "poor_share": 0.0741,
+   "poor": 1046,
+   "at_or_below_line_share": 0.6768,
+   "rel_poor_share": 0.0368,
+   "gini_income": 0.7931,
+   "gini_networth": 0.218,
+   "gini_net_income": 0.7434,
+   "net_income_negative": 264,
+   "poor_share_net": 0.1183,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 420,
+    "手工铺": 274,
+    "营造": 54,
+    "体面户": 298
+   },
+   "median_income": 3.0,
+   "mean_income": 19.375,
+   "unfunded_deficits": 482,
+   "loans_active": 1893,
+   "treasury": {
+    "eparch": 20834.65,
+    "bishop_nicene": 3878.56,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7757.12,
+     "spend": 3878.56,
+     "alms": 1292.85,
+     "clergy": 1292.85,
+     "church": 1292.85,
+     "poor": 1026
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 36669.31,
+     "spend": 15834.65,
+     "officials": 301.0,
+     "public_works": 0.0,
+     "maintenance": 15533.65,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 98410.01,
+     "手工": 72588.7,
+     "农渔": 17047.0
+    },
+    "value_added": {
+     "转口": 73655.0,
+     "手工": 50812.09,
+     "农渔": 14682.05
+    },
+    "va_share": {
+     "转口": 0.5293,
+     "手工": 0.3652,
+     "农渔": 0.1055
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 8569.0,
+     "农渔": 167.0
+    },
+    "external_payments": {
+     "转口": 24755.0,
+     "手工": 13065.97,
+     "农渔": 2364.95
+    },
+    "employment": {
+     "转口": {
+      "households": 427,
+      "hired_workers": 5099,
+      "total": 5526,
+      "share_of_households": 0.3916
+     },
+     "手工": {
+      "households": 2273,
+      "hired_workers": 2281,
+      "total": 4554,
+      "share_of_households": 0.3227
+     },
+     "农渔": {
+      "households": 171,
+      "hired_workers": 0,
+      "total": 171,
+      "share_of_households": 0.0121
+     }
+    },
+    "other_hired": 1349,
+    "public_works": 0,
+    "workers": 8729,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 16234
+    },
+    "slots_per_worker": 2.793,
+    "port_hired": 5099
+   },
+   "rows": 168926,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7056.5,
+    "人头税": 2822.6,
+    "行会钱": 335.4,
+    "税钱上缴(坊长→区长)": 7550.55,
+    "税钱上缴(区长→城市长官)": 7981.79,
+    "行会钱上缴(行会头→城市长官)": 301.86,
+    "上交皇库": 4227.57,
+    "奉献": 4233.9,
+    "奉献截留(长老)": 211.69,
+    "奉献上缴(→主教)": 4022.2,
+    "施舍": 1292.85,
+    "神职俸给": 1292.85,
+    "教堂营造": 1292.85,
+    "租金": 3134.0,
+    "买卖:面包": 7446.77,
+    "买卖:水": 5853.47,
+    "买卖:手工": 64019.7,
+    "买卖:港货": 40799.36,
+    "买卖:菜蔬": 3842.04,
+    "买卖:鱼": 13037.96,
+    "进货/原料(付城外)": 16920.27,
+    "港货进价(付船商)": 24755.0,
+    "原料(转口货)": 8710.64,
+    "出口:手工(船商付)": 8569.0,
+    "出口:鱼(船商付)": 167.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 10890.0,
+    "工钱:港口": 15297.0,
+    "俸给": 87.0,
+    "官俸(坊长/区长)": 301.0,
+    "兵饷": 960.0,
+    "城防街渠维护": 15533.65,
+    "借贷": 3067.6,
+    "还款": 2656.16,
+    "建设:新房": 4680.0,
+    "迁入带钱": 1008.0
+   }
+  },
+  "48": {
+   "households": 14287,
+   "poor_share": 0.0778,
+   "poor": 1112,
+   "at_or_below_line_share": 0.6759,
+   "rel_poor_share": 0.0368,
+   "gini_income": 0.7942,
+   "gini_networth": 0.2171,
+   "gini_net_income": 0.7435,
+   "net_income_negative": 276,
+   "poor_share_net": 0.1229,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 432,
+    "手工铺": 320,
+    "营造": 56,
+    "体面户": 304
+   },
+   "median_income": 3.0,
+   "mean_income": 19.44,
+   "unfunded_deficits": 604,
+   "loans_active": 2025,
+   "treasury": {
+    "eparch": 18931.38,
+    "bishop_nicene": 3972.68,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7945.36,
+     "spend": 3972.68,
+     "alms": 1324.23,
+     "clergy": 1324.23,
+     "church": 1324.23,
+     "poor": 1045
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 32862.75,
+     "spend": 13931.38,
+     "officials": 343.0,
+     "public_works": 0.0,
+     "maintenance": 13588.38,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 100249.34,
+     "手工": 75224.09,
+     "农渔": 17387.75
+    },
+    "value_added": {
+     "转口": 74574.67,
+     "手工": 52656.86,
+     "农渔": 14968.25
+    },
+    "va_share": {
+     "转口": 0.5244,
+     "手工": 0.3703,
+     "农渔": 0.1053
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 8821.0,
+     "农渔": 168.0
+    },
+    "external_payments": {
+     "转口": 25674.67,
+     "手工": 13540.34,
+     "农渔": 2419.5
+    },
+    "employment": {
+     "转口": {
+      "households": 395,
+      "hired_workers": 5152,
+      "total": 5547,
+      "share_of_households": 0.3883
+     },
+     "手工": {
+      "households": 2356,
+      "hired_workers": 2247,
+      "total": 4603,
+      "share_of_households": 0.3222
+     },
+     "农渔": {
+      "households": 172,
+      "hired_workers": 0,
+      "total": 172,
+      "share_of_households": 0.012
+     }
+    },
+    "other_hired": 1394,
+    "public_works": 0,
+    "workers": 8793,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 16378
+    },
+    "slots_per_worker": 2.789,
+    "port_hired": 5152
+   },
+   "rows": 172072,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7143.5,
+    "人头税": 2857.4,
+    "行会钱": 336.3,
+    "税钱上缴(坊长→区长)": 7616.07,
+    "税钱上缴(区长→城市长官)": 8164.23,
+    "行会钱上缴(行会头→城市长官)": 302.67,
+    "上交皇库": 4275.1,
+    "奉献": 4286.1,
+    "奉献截留(长老)": 214.3,
+    "奉献上缴(→主教)": 4071.79,
+    "施舍": 1324.23,
+    "神职俸给": 1324.23,
+    "教堂营造": 1324.23,
+    "租金": 3416.0,
+    "买卖:面包": 7307.0,
+    "买卖:水": 5715.79,
+    "买卖:手工": 66403.09,
+    "买卖:港货": 42322.45,
+    "买卖:菜蔬": 3773.19,
+    "买卖:鱼": 13446.57,
+    "进货/原料(付城外)": 17421.24,
+    "港货进价(付船商)": 25674.67,
+    "原料(转口货)": 9026.89,
+    "出口:手工(船商付)": 8821.0,
+    "出口:鱼(船商付)": 168.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 10923.0,
+    "工钱:港口": 15456.0,
+    "俸给": 87.0,
+    "官俸(坊长/区长)": 343.0,
+    "兵饷": 990.0,
+    "城防街渠维护": 13588.38,
+    "借贷": 2323.7,
+    "还款": 2961.43,
+    "拆迁补偿": 3945.0,
+    "搬迁费": 115.0,
+    "建设:新房": 3970.0,
+    "迁入带钱": 874.0,
+    "迁出带钱": 14851.33
+   }
+  },
+  "49": {
+   "households": 14788,
+   "poor_share": 0.0801,
+   "poor": 1185,
+   "at_or_below_line_share": 0.6743,
+   "rel_poor_share": 0.0386,
+   "gini_income": 0.7959,
+   "gini_networth": 0.2261,
+   "gini_net_income": 0.7459,
+   "net_income_negative": 288,
+   "poor_share_net": 0.1248,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 499,
+    "手工铺": 312,
+    "营造": 64,
+    "体面户": 310
+   },
+   "median_income": 3.0,
+   "mean_income": 19.494,
+   "unfunded_deficits": 741,
+   "loans_active": 2106,
+   "treasury": {
+    "eparch": 20024.15,
+    "bishop_nicene": 3949.7,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7899.4,
+     "spend": 3949.7,
+     "alms": 1316.57,
+     "clergy": 1316.57,
+     "church": 1316.57,
+     "poor": 1111
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 35048.31,
+     "spend": 15024.15,
+     "officials": 350.0,
+     "public_works": 24.0,
+     "maintenance": 14650.15,
+     "unemployed_before": 8
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 103334.58,
+     "手工": 79449.31,
+     "农渔": 18209.69
+    },
+    "value_added": {
+     "转口": 76117.29,
+     "手工": 55614.52,
+     "农渔": 15669.92
+    },
+    "va_share": {
+     "转口": 0.5164,
+     "手工": 0.3773,
+     "农渔": 0.1063
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 8998.0,
+     "农渔": 171.0
+    },
+    "external_payments": {
+     "转口": 27217.29,
+     "手工": 14300.88,
+     "农渔": 2539.78
+    },
+    "employment": {
+     "转口": {
+      "households": 412,
+      "hired_workers": 5210,
+      "total": 5622,
+      "share_of_households": 0.3802
+     },
+     "手工": {
+      "households": 2423,
+      "hired_workers": 2602,
+      "total": 5025,
+      "share_of_households": 0.3398
+     },
+     "农渔": {
+      "households": 176,
+      "hired_workers": 0,
+      "total": 176,
+      "share_of_households": 0.0119
+     }
+    },
+    "other_hired": 1268,
+    "public_works": 8,
+    "workers": 9088,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9991,
+    "slots_offered": {
+     "port": 8150,
+     "district": 16885
+    },
+    "slots_per_worker": 2.755,
+    "port_hired": 5210
+   },
+   "rows": 177924,
+   "by_type_total": {
+    "公役工钱": 24.0,
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7394.0,
+    "人头税": 2957.6,
+    "行会钱": 341.1,
+    "税钱上缴(坊长→区长)": 7836.57,
+    "税钱上缴(区长→城市长官)": 8351.97,
+    "行会钱上缴(行会头→城市长官)": 306.99,
+    "上交皇库": 4429.93,
+    "奉献": 4436.4,
+    "奉献截留(长老)": 144.67,
+    "奉献上缴(→主教)": 4291.72,
+    "施舍": 1316.57,
+    "神职俸给": 1316.57,
+    "教堂营造": 1316.57,
+    "租金": 3868.0,
+    "买卖:面包": 7429.6,
+    "买卖:水": 5820.5,
+    "买卖:手工": 70451.31,
+    "买卖:港货": 44900.66,
+    "买卖:菜蔬": 3833.51,
+    "买卖:鱼": 14205.18,
+    "进货/原料(付城外)": 18326.57,
+    "港货进价(付船商)": 27217.29,
+    "原料(转口货)": 9533.92,
+    "出口:手工(船商付)": 8998.0,
+    "出口:鱼(船商付)": 171.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 11610.0,
+    "工钱:港口": 15630.0,
+    "俸给": 87.0,
+    "官俸(坊长/区长)": 350.0,
+    "兵饷": 1026.0,
+    "城防街渠维护": 14650.15,
+    "借贷": 2604.04,
+    "还款": 2781.97,
+    "拆迁补偿": 120.0,
+    "建设:新房": 4520.0,
+    "建设:公共工程": 360.0,
+    "迁入带钱": 1018.0,
+    "迁出带钱": 306.56
+   }
+  },
+  "50": {
+   "households": 15296,
+   "poor_share": 0.0786,
+   "poor": 1203,
+   "at_or_below_line_share": 0.6713,
+   "rel_poor_share": 0.0378,
+   "gini_income": 0.7948,
+   "gini_networth": 0.2499,
+   "gini_net_income": 0.7442,
+   "net_income_negative": 300,
+   "poor_share_net": 0.1243,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 483,
+    "手工铺": 338,
+    "营造": 70,
+    "体面户": 312
+   },
+   "median_income": 3.0,
+   "mean_income": 19.512,
+   "unfunded_deficits": 841,
+   "loans_active": 2200,
+   "treasury": {
+    "eparch": 20702.19,
+    "bishop_nicene": 4191.35,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8382.71,
+     "spend": 4191.35,
+     "alms": 1397.12,
+     "clergy": 1397.12,
+     "church": 1397.12,
+     "poor": 1185
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 36404.38,
+     "spend": 15702.19,
+     "officials": 359.0,
+     "public_works": 111.0,
+     "maintenance": 15232.19,
+     "unemployed_before": 37
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 106054.53,
+     "手工": 83202.01,
+     "农渔": 19010.96
+    },
+    "value_added": {
+     "转口": 77477.27,
+     "手工": 58241.41,
+     "农渔": 16356.33
+    },
+    "va_share": {
+     "转口": 0.5095,
+     "手工": 0.383,
+     "农渔": 0.1076
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9186.0,
+     "农渔": 177.0
+    },
+    "external_payments": {
+     "转口": 28577.27,
+     "手工": 14976.36,
+     "农渔": 2654.63
+    },
+    "employment": {
+     "转口": {
+      "households": 424,
+      "hired_workers": 5283,
+      "total": 5707,
+      "share_of_households": 0.3731
+     },
+     "手工": {
+      "households": 2503,
+      "hired_workers": 2758,
+      "total": 5261,
+      "share_of_households": 0.3439
+     },
+     "农渔": {
+      "households": 182,
+      "hired_workers": 0,
+      "total": 182,
+      "share_of_households": 0.0119
+     }
+    },
+    "other_hired": 1322,
+    "public_works": 37,
+    "workers": 9400,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9961,
+    "slots_offered": {
+     "port": 8150,
+     "district": 17952
+    },
+    "slots_per_worker": 2.777,
+    "port_hired": 5283
+   },
+   "rows": 184252,
+   "by_type_total": {
+    "公役工钱": 111.0,
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7648.0,
+    "人头税": 3059.2,
+    "行会钱": 346.8,
+    "税钱上缴(坊长→区长)": 8074.71,
+    "税钱上缴(区长→城市长官)": 8691.04,
+    "行会钱上缴(行会头→城市长官)": 312.12,
+    "上交皇库": 4578.23,
+    "奉献": 4588.8,
+    "奉献截留(长老)": 150.79,
+    "奉献上缴(→主教)": 4438.0,
+    "施舍": 1397.12,
+    "神职俸给": 1397.12,
+    "教堂营造": 1397.12,
+    "租金": 4318.0,
+    "买卖:面包": 7645.47,
+    "买卖:水": 6000.32,
+    "买卖:手工": 74016.01,
+    "买卖:港货": 47170.29,
+    "买卖:菜蔬": 3940.36,
+    "买卖:鱼": 14893.6,
+    "进货/原料(付城外)": 19160.08,
+    "港货进价(付船商)": 28577.27,
+    "原料(转口货)": 9984.24,
+    "出口:手工(船商付)": 9186.0,
+    "出口:鱼(船商付)": 177.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 12240.0,
+    "工钱:港口": 15849.0,
+    "俸给": 87.0,
+    "官俸(坊长/区长)": 359.0,
+    "兵饷": 1056.0,
+    "城防街渠维护": 15232.19,
+    "借贷": 3534.84,
+    "还款": 2676.76,
+    "建设:新房": 4500.0,
+    "迁入带钱": 1016.0
+   }
+  },
+  "51": {
+   "households": 15417,
+   "poor_share": 0.0785,
+   "poor": 1210,
+   "at_or_below_line_share": 0.6708,
+   "rel_poor_share": 0.0394,
+   "gini_income": 0.7964,
+   "gini_networth": 0.2572,
+   "gini_net_income": 0.7445,
+   "net_income_negative": 307,
+   "poor_share_net": 0.1273,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 460,
+    "手工铺": 338,
+    "营造": 100,
+    "体面户": 312
+   },
+   "median_income": 3.0,
+   "mean_income": 19.635,
+   "unfunded_deficits": 962,
+   "loans_active": 2053,
+   "treasury": {
+    "eparch": 21025.75,
+    "bishop_nicene": 4329.61,
+    "bishop_arian": 0.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8659.22,
+     "spend": 4329.61,
+     "alms": 1443.2,
+     "clergy": 1443.2,
+     "church": 1443.2,
+     "poor": 1203
+    },
+    "bishop_arian": {
+     "available": 0.0,
+     "spend": 0.0,
+     "alms": 0.0,
+     "clergy": 0.0,
+     "church": 0.0,
+     "poor": 0
+    },
+    "eparch": {
+     "available": 37051.5,
+     "spend": 16025.75,
+     "officials": 332.0,
+     "public_works": 0.0,
+     "maintenance": 15693.75,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 108065.26,
+     "手工": 85912.79,
+     "农渔": 19513.57
+    },
+    "value_added": {
+     "转口": 78482.63,
+     "手工": 60138.95,
+     "农渔": 16784.27
+    },
+    "va_share": {
+     "转口": 0.505,
+     "手工": 0.387,
+     "农渔": 0.108
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9247.0,
+     "农渔": 178.0
+    },
+    "external_payments": {
+     "转口": 29582.63,
+     "手工": 15464.3,
+     "农渔": 2729.29
+    },
+    "employment": {
+     "转口": {
+      "households": 434,
+      "hired_workers": 5292,
+      "total": 5726,
+      "share_of_households": 0.3714
+     },
+     "手工": {
+      "households": 2521,
+      "hired_workers": 2776,
+      "total": 5297,
+      "share_of_households": 0.3436
+     },
+     "农渔": {
+      "households": 183,
+      "hired_workers": 0,
+      "total": 183,
+      "share_of_households": 0.0119
+     }
+    },
+    "other_hired": 1406,
+    "public_works": 0,
+    "workers": 9474,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 18662
+    },
+    "slots_per_worker": 2.83,
+    "port_hired": 5292
+   },
+   "rows": 184961,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7708.5,
+    "人头税": 3083.4,
+    "行会钱": 348.9,
+    "税钱上缴(坊长→区长)": 9261.0,
+    "税钱上缴(区长→城市长官)": 8786.61,
+    "行会钱上缴(行会头→城市长官)": 314.01,
+    "上交皇库": 4550.31,
+    "奉献": 4625.1,
+    "奉献截留(长老)": 152.23,
+    "奉献上缴(→主教)": 4472.86,
+    "施舍": 1443.2,
+    "神职俸给": 1443.2,
+    "教堂营造": 1443.2,
+    "租金": 4432.0,
+    "买卖:面包": 7676.23,
+    "买卖:水": 6027.22,
+    "买卖:手工": 76665.79,
+    "买卖:港货": 48855.72,
+    "买卖:菜蔬": 3954.82,
+    "买卖:鱼": 15380.75,
+    "进货/原料(付城外)": 19728.84,
+    "港货进价(付船商)": 29582.63,
+    "原料(转口货)": 10309.53,
+    "出口:手工(船商付)": 9247.0,
+    "出口:鱼(船商付)": 178.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 12546.0,
+    "工钱:港口": 15876.0,
+    "俸给": 89.0,
+    "官俸(坊长/区长)": 332.0,
+    "兵饷": 1062.0,
+    "城防街渠维护": 15693.75,
+    "借贷": 2306.46,
+    "还款": 2858.4,
+    "建设:新房": 1140.0,
+    "迁入带钱": 242.0
+   }
+  },
+  "52": {
+   "households": 15569,
+   "poor_share": 0.0803,
+   "poor": 1250,
+   "at_or_below_line_share": 0.6718,
+   "rel_poor_share": 0.0388,
+   "gini_income": 0.7972,
+   "gini_networth": 0.2643,
+   "gini_net_income": 0.7463,
+   "net_income_negative": 319,
+   "poor_share_net": 0.1261,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 506,
+    "手工铺": 334,
+    "营造": 96,
+    "体面户": 314
+   },
+   "median_income": 3.0,
+   "mean_income": 19.878,
+   "unfunded_deficits": 966,
+   "loans_active": 1967,
+   "treasury": {
+    "eparch": 21208.66,
+    "bishop_nicene": 4074.52,
+    "bishop_arian": 253.35
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8149.04,
+     "spend": 4074.52,
+     "alms": 1358.17,
+     "clergy": 1358.17,
+     "church": 1358.17,
+     "poor": 1172
+    },
+    "bishop_arian": {
+     "available": 506.69,
+     "spend": 253.35,
+     "alms": 76.0,
+     "clergy": 84.45,
+     "church": 92.9,
+     "poor": 38
+    },
+    "eparch": {
+     "available": 37417.31,
+     "spend": 16208.66,
+     "officials": 358.0,
+     "public_works": 0.0,
+     "maintenance": 15850.66,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 110135.81,
+     "手工": 88739.58,
+     "农渔": 20033.97
+    },
+    "value_added": {
+     "转口": 79517.91,
+     "手工": 62117.7,
+     "农渔": 17227.47
+    },
+    "va_share": {
+     "转口": 0.5005,
+     "手工": 0.391,
+     "农渔": 0.1084
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9354.0,
+     "农渔": 180.0
+    },
+    "external_payments": {
+     "转口": 30617.91,
+     "手工": 15973.12,
+     "农渔": 2806.5
+    },
+    "employment": {
+     "转口": {
+      "households": 437,
+      "hired_workers": 5320,
+      "total": 5757,
+      "share_of_households": 0.3698
+     },
+     "手工": {
+      "households": 2547,
+      "hired_workers": 3024,
+      "total": 5571,
+      "share_of_households": 0.3578
+     },
+     "农渔": {
+      "households": 185,
+      "hired_workers": 0,
+      "total": 185,
+      "share_of_households": 0.0119
+     }
+    },
+    "other_hired": 1218,
+    "public_works": 0,
+    "workers": 9562,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 18643
+    },
+    "slots_per_worker": 2.802,
+    "port_hired": 5320
+   },
+   "rows": 186869,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7784.5,
+    "人头税": 3113.8,
+    "行会钱": 350.1,
+    "税钱上缴(坊长→区长)": 9364.32,
+    "税钱上缴(区长→城市长官)": 8872.04,
+    "行会钱上缴(行会头→城市长官)": 315.09,
+    "上交皇库": 4593.56,
+    "奉献": 4670.7,
+    "奉献截留(长老)": 154.57,
+    "奉献上缴(→主教)": 4516.12,
+    "施舍": 1434.17,
+    "神职俸给": 1442.62,
+    "教堂营造": 1451.07,
+    "租金": 4575.0,
+    "买卖:面包": 7710.27,
+    "买卖:水": 6055.33,
+    "买卖:手工": 79385.58,
+    "买卖:港货": 50587.06,
+    "买卖:菜蔬": 3971.87,
+    "买卖:鱼": 15882.1,
+    "进货/原料(付城外)": 20321.68,
+    "港货进价(付船商)": 30617.91,
+    "原料(转口货)": 10648.75,
+    "出口:手工(船商付)": 9354.0,
+    "出口:鱼(船商付)": 180.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 12726.0,
+    "工钱:港口": 15960.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 358.0,
+    "兵饷": 1068.0,
+    "城防街渠维护": 15850.66,
+    "借贷": 2647.01,
+    "还款": 2685.82,
+    "建设:新房": 1430.0,
+    "建设:公共工程": 180.0,
+    "迁入带钱": 304.0
+   }
+  },
+  "53": {
+   "households": 15708,
+   "poor_share": 0.0828,
+   "poor": 1301,
+   "at_or_below_line_share": 0.6731,
+   "rel_poor_share": 0.0386,
+   "gini_income": 0.7987,
+   "gini_networth": 0.27,
+   "gini_net_income": 0.7468,
+   "net_income_negative": 269,
+   "poor_share_net": 0.1287,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 531,
+    "手工铺": 346,
+    "营造": 105,
+    "体面户": 319
+   },
+   "median_income": 3.0,
+   "mean_income": 20.043,
+   "unfunded_deficits": 942,
+   "loans_active": 1910,
+   "treasury": {
+    "eparch": 21313.7,
+    "bishop_nicene": 3960.07,
+    "bishop_arian": 477.0
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7920.14,
+     "spend": 3960.07,
+     "alms": 1320.02,
+     "clergy": 1320.02,
+     "church": 1320.02,
+     "poor": 1214
+    },
+    "bishop_arian": {
+     "available": 954.01,
+     "spend": 477.0,
+     "alms": 72.0,
+     "clergy": 159.0,
+     "church": 246.0,
+     "poor": 36
+    },
+    "eparch": {
+     "available": 37627.41,
+     "spend": 16313.7,
+     "officials": 381.0,
+     "public_works": 39.0,
+     "maintenance": 15893.7,
+     "unemployed_before": 13
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 111890.89,
+     "手工": 91119.29,
+     "农渔": 20497.08
+    },
+    "value_added": {
+     "转口": 80395.44,
+     "手工": 63783.5,
+     "农渔": 17622.62
+    },
+    "va_share": {
+     "转口": 0.4969,
+     "手工": 0.3942,
+     "农渔": 0.1089
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9425.0,
+     "农渔": 182.0
+    },
+    "external_payments": {
+     "转口": 31495.44,
+     "手工": 16401.47,
+     "农渔": 2874.46
+    },
+    "employment": {
+     "转口": {
+      "households": 442,
+      "hired_workers": 5318,
+      "total": 5760,
+      "share_of_households": 0.3667
+     },
+     "手工": {
+      "households": 2566,
+      "hired_workers": 2991,
+      "total": 5557,
+      "share_of_households": 0.3538
+     },
+     "农渔": {
+      "households": 187,
+      "hired_workers": 0,
+      "total": 187,
+      "share_of_households": 0.0119
+     }
+    },
+    "other_hired": 1315,
+    "public_works": 13,
+    "workers": 9637,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9987,
+    "slots_offered": {
+     "port": 8150,
+     "district": 19225
+    },
+    "slots_per_worker": 2.841,
+    "port_hired": 5318
+   },
+   "rows": 188531,
+   "by_type_total": {
+    "公役工钱": 39.0,
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7854.0,
+    "人头税": 3141.6,
+    "行会钱": 352.8,
+    "税钱上缴(坊长→区长)": 9680.58,
+    "税钱上缴(区长→城市长官)": 8927.98,
+    "行会钱上缴(行会头→城市长官)": 317.52,
+    "上交皇库": 4622.75,
+    "奉献": 4712.4,
+    "奉献截留(长老)": 156.12,
+    "奉献上缴(→主教)": 4556.28,
+    "施舍": 1392.02,
+    "神职俸给": 1479.02,
+    "教堂营造": 1566.03,
+    "租金": 4706.0,
+    "买卖:面包": 7770.2,
+    "买卖:水": 6105.16,
+    "买卖:手工": 81694.29,
+    "买卖:港货": 52056.57,
+    "买卖:菜蔬": 4002.07,
+    "买卖:鱼": 16313.01,
+    "进货/原料(付城外)": 20829.97,
+    "港货进价(付船商)": 31495.44,
+    "原料(转口货)": 10934.32,
+    "出口:手工(船商付)": 9425.0,
+    "出口:鱼(船商付)": 182.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 12918.0,
+    "工钱:港口": 15954.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 381.0,
+    "兵饷": 1080.0,
+    "城防街渠维护": 15893.7,
+    "借贷": 2344.55,
+    "还款": 2773.09,
+    "建设:新房": 1310.0,
+    "迁入带钱": 278.0
+   }
+  },
+  "54": {
+   "households": 15832,
+   "poor_share": 0.0806,
+   "poor": 1276,
+   "at_or_below_line_share": 0.6698,
+   "rel_poor_share": 0.039,
+   "gini_income": 0.8013,
+   "gini_networth": 0.2578,
+   "gini_net_income": 0.7497,
+   "net_income_negative": 321,
+   "poor_share_net": 0.1277,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 515,
+    "手工铺": 333,
+    "营造": 106,
+    "体面户": 322
+   },
+   "median_income": 3.0,
+   "mean_income": 20.31,
+   "unfunded_deficits": 1777,
+   "loans_active": 1948,
+   "treasury": {
+    "eparch": 21587.28,
+    "bishop_nicene": 3877.2,
+    "bishop_arian": 592.39
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7754.4,
+     "spend": 3877.2,
+     "alms": 1292.4,
+     "clergy": 1292.4,
+     "church": 1292.4,
+     "poor": 1256
+    },
+    "bishop_arian": {
+     "available": 1184.79,
+     "spend": 592.39,
+     "alms": 90.0,
+     "clergy": 197.46,
+     "church": 304.93,
+     "poor": 45
+    },
+    "eparch": {
+     "available": 38174.57,
+     "spend": 16587.28,
+     "officials": 404.0,
+     "public_works": 0.0,
+     "maintenance": 16183.28,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 113560.16,
+     "手工": 93359.4,
+     "农渔": 20718.54
+    },
+    "value_added": {
+     "转口": 81230.08,
+     "手工": 65351.58,
+     "农渔": 17804.35
+    },
+    "va_share": {
+     "转口": 0.4941,
+     "手工": 0.3975,
+     "农渔": 0.1083
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9482.0,
+     "农渔": 185.0
+    },
+    "external_payments": {
+     "转口": 32330.08,
+     "手工": 16804.69,
+     "农渔": 2914.19
+    },
+    "employment": {
+     "转口": {
+      "households": 448,
+      "hired_workers": 5329,
+      "total": 5777,
+      "share_of_households": 0.3649
+     },
+     "手工": {
+      "households": 2587,
+      "hired_workers": 3168,
+      "total": 5755,
+      "share_of_households": 0.3635
+     },
+     "农渔": {
+      "households": 190,
+      "hired_workers": 0,
+      "total": 190,
+      "share_of_households": 0.012
+     }
+    },
+    "other_hired": 1211,
+    "public_works": 0,
+    "workers": 9708,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 19607
+    },
+    "slots_per_worker": 2.859,
+    "port_hired": 5329
+   },
+   "rows": 193086,
+   "by_type_total": {
+    "口粮调拨": 173202.0,
+    "口粮下仓": 173202.0,
+    "口粮配给": 173202.0,
+    "房税": 7916.0,
+    "人头税": 3166.4,
+    "行会钱": 354.9,
+    "税钱上缴(坊长→区长)": 9958.41,
+    "税钱上缴(区长→城市长官)": 8978.32,
+    "行会钱上缴(行会头→城市长官)": 319.41,
+    "上交皇库": 4648.86,
+    "奉献": 4749.6,
+    "奉献截留(长老)": 237.48,
+    "奉献上缴(→主教)": 4512.12,
+    "施舍": 1382.4,
+    "神职俸给": 1489.87,
+    "教堂营造": 1597.33,
+    "租金": 4839.0,
+    "买卖:面包": 7489.33,
+    "买卖:水": 5679.31,
+    "买卖:手工": 83877.4,
+    "买卖:港货": 53457.03,
+    "买卖:菜蔬": 3871.81,
+    "买卖:鱼": 16661.73,
+    "进货/原料(付城外)": 21216.75,
+    "港货进价(付船商)": 32330.08,
+    "原料(转口货)": 11203.13,
+    "出口:手工(船商付)": 9482.0,
+    "出口:鱼(船商付)": 185.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13137.0,
+    "工钱:港口": 15987.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 404.0,
+    "兵饷": 1086.0,
+    "城防街渠维护": 16183.28,
+    "借贷": 2733.04,
+    "还款": 2708.21,
+    "拆迁补偿": 255.0,
+    "搬迁费": 17.0,
+    "建设:新房": 1340.0,
+    "建设:公共工程": 2100.0,
+    "修水摊派": 2789.0,
+    "迁入带钱": 282.0,
+    "迁出带钱": 509.7
+   }
+  },
+  "55": {
+   "households": 15950,
+   "poor_share": 0.0821,
+   "poor": 1310,
+   "at_or_below_line_share": 0.6704,
+   "rel_poor_share": 0.0395,
+   "gini_income": 0.8013,
+   "gini_networth": 0.2589,
+   "gini_net_income": 0.749,
+   "net_income_negative": 282,
+   "poor_share_net": 0.1249,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 533,
+    "手工铺": 345,
+    "营造": 115,
+    "体面户": 317
+   },
+   "median_income": 3.0,
+   "mean_income": 20.468,
+   "unfunded_deficits": 961,
+   "loans_active": 1998,
+   "treasury": {
+    "eparch": 21492.89,
+    "bishop_nicene": 3850.16,
+    "bishop_arian": 652.51
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7700.32,
+     "spend": 3850.16,
+     "alms": 1283.39,
+     "clergy": 1283.39,
+     "church": 1283.39,
+     "poor": 1220
+    },
+    "bishop_arian": {
+     "available": 1305.02,
+     "spend": 652.51,
+     "alms": 112.0,
+     "clergy": 217.5,
+     "church": 323.01,
+     "poor": 56
+    },
+    "eparch": {
+     "available": 37985.78,
+     "spend": 16492.89,
+     "officials": 377.0,
+     "public_works": 105.0,
+     "maintenance": 16010.89,
+     "unemployed_before": 35
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 115245.78,
+     "手工": 95639.83,
+     "农渔": 21366.09
+    },
+    "value_added": {
+     "转口": 82072.89,
+     "手工": 66947.88,
+     "农渔": 18363.55
+    },
+    "va_share": {
+     "转口": 0.4903,
+     "手工": 0.4,
+     "农渔": 0.1097
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9530.0,
+     "农渔": 186.0
+    },
+    "external_payments": {
+     "转口": 33172.89,
+     "手工": 17215.17,
+     "农渔": 3002.54
+    },
+    "employment": {
+     "转口": {
+      "households": 453,
+      "hired_workers": 5360,
+      "total": 5813,
+      "share_of_households": 0.3645
+     },
+     "手工": {
+      "households": 2602,
+      "hired_workers": 3170,
+      "total": 5772,
+      "share_of_households": 0.3619
+     },
+     "农渔": {
+      "households": 192,
+      "hired_workers": 0,
+      "total": 192,
+      "share_of_households": 0.012
+     }
+    },
+    "other_hired": 1208,
+    "public_works": 35,
+    "workers": 9773,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9964,
+    "slots_offered": {
+     "port": 8150,
+     "district": 20343
+    },
+    "slots_per_worker": 2.915,
+    "port_hired": 5360
+   },
+   "rows": 191526,
+   "by_type_total": {
+    "公役工钱": 105.0,
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 7975.0,
+    "人头税": 3190.0,
+    "行会钱": 356.4,
+    "税钱上缴(坊长→区长)": 10022.67,
+    "税钱上缴(区长→城市长官)": 9046.23,
+    "行会钱上缴(行会头→城市长官)": 320.76,
+    "上交皇库": 4683.5,
+    "奉献": 4785.0,
+    "奉献截留(长老)": 239.25,
+    "奉献上缴(→主教)": 4545.75,
+    "施舍": 1395.39,
+    "神职俸给": 1500.89,
+    "教堂营造": 1606.4,
+    "租金": 4956.0,
+    "买卖:面包": 7853.85,
+    "买卖:水": 5965.64,
+    "买卖:手工": 86109.83,
+    "买卖:港货": 54869.0,
+    "买卖:菜蔬": 4047.45,
+    "买卖:鱼": 17132.64,
+    "进货/原料(付城外)": 21788.48,
+    "港货进价(付船商)": 33172.89,
+    "原料(转口货)": 11476.78,
+    "出口:手工(船商付)": 9530.0,
+    "出口:鱼(船商付)": 186.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13134.0,
+    "工钱:港口": 16080.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 377.0,
+    "兵饷": 1110.0,
+    "城防街渠维护": 16010.89,
+    "借贷": 3380.47,
+    "还款": 2507.71,
+    "拆迁补偿": 75.0,
+    "搬迁费": 1.0,
+    "建设:新房": 1180.0,
+    "建设:公共工程": 1620.0,
+    "迁入带钱": 246.0,
+    "迁出带钱": 704.42
+   }
+  },
+  "56": {
+   "households": 16097,
+   "poor_share": 0.0801,
+   "poor": 1289,
+   "at_or_below_line_share": 0.668,
+   "rel_poor_share": 0.0387,
+   "gini_income": 0.8007,
+   "gini_networth": 0.2574,
+   "gini_net_income": 0.7494,
+   "net_income_negative": 308,
+   "poor_share_net": 0.1242,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 514,
+    "手工铺": 334,
+    "营造": 126,
+    "体面户": 315
+   },
+   "median_income": 3.0,
+   "mean_income": 20.469,
+   "unfunded_deficits": 1022,
+   "loans_active": 1945,
+   "treasury": {
+    "eparch": 21504.73,
+    "bishop_nicene": 3850.89,
+    "bishop_arian": 689.27
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7701.78,
+     "spend": 3850.89,
+     "alms": 1283.63,
+     "clergy": 1283.63,
+     "church": 1283.63,
+     "poor": 1262
+    },
+    "bishop_arian": {
+     "available": 1378.54,
+     "spend": 689.27,
+     "alms": 96.0,
+     "clergy": 229.76,
+     "church": 363.51,
+     "poor": 48
+    },
+    "eparch": {
+     "available": 38009.45,
+     "spend": 16504.73,
+     "officials": 389.0,
+     "public_works": 0.0,
+     "maintenance": 16115.73,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 116518.45,
+     "手工": 97361.26,
+     "农渔": 21771.67
+    },
+    "value_added": {
+     "转口": 82709.23,
+     "手工": 68152.88,
+     "农渔": 18711.92
+    },
+    "va_share": {
+     "转口": 0.4877,
+     "手工": 0.4019,
+     "农渔": 0.1103
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9573.5,
+     "农渔": 187.0
+    },
+    "external_payments": {
+     "转口": 33809.23,
+     "手工": 17525.03,
+     "农渔": 3059.74
+    },
+    "employment": {
+     "转口": {
+      "households": 461,
+      "hired_workers": 5395,
+      "total": 5856,
+      "share_of_households": 0.3638
+     },
+     "手工": {
+      "households": 2614,
+      "hired_workers": 3280,
+      "total": 5894,
+      "share_of_households": 0.3662
+     },
+     "农渔": {
+      "households": 193,
+      "hired_workers": 0,
+      "total": 193,
+      "share_of_households": 0.012
+     }
+    },
+    "other_hired": 1192,
+    "public_works": 0,
+    "workers": 9867,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 20650
+    },
+    "slots_per_worker": 2.919,
+    "port_hired": 5395
+   },
+   "rows": 193352,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8048.5,
+    "人头税": 3219.4,
+    "行会钱": 357.9,
+    "税钱上缴(坊长→区长)": 10120.95,
+    "税钱上缴(区长→城市长官)": 9129.01,
+    "行会钱上缴(行会头→城市长官)": 322.11,
+    "上交皇库": 4725.56,
+    "奉献": 4829.1,
+    "奉献截留(长老)": 241.45,
+    "奉献上缴(→主教)": 4587.64,
+    "施舍": 1379.63,
+    "神职俸给": 1513.39,
+    "教堂营造": 1647.14,
+    "租金": 5094.0,
+    "买卖:面包": 8002.07,
+    "买卖:水": 6082.21,
+    "买卖:手工": 87787.76,
+    "买卖:港货": 55935.1,
+    "买卖:菜蔬": 4120.16,
+    "买卖:鱼": 17464.5,
+    "进货/原料(付城外)": 22185.18,
+    "港货进价(付船商)": 33809.23,
+    "原料(转口货)": 11683.35,
+    "出口:手工(船商付)": 9573.5,
+    "出口:鱼(船商付)": 187.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13416.0,
+    "工钱:港口": 16185.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 389.0,
+    "兵饷": 1110.0,
+    "城防街渠维护": 16115.73,
+    "借贷": 2253.67,
+    "还款": 2776.21,
+    "建设:新房": 1380.0,
+    "迁入带钱": 294.0
+   }
+  },
+  "57": {
+   "households": 16206,
+   "poor_share": 0.0789,
+   "poor": 1278,
+   "at_or_below_line_share": 0.6652,
+   "rel_poor_share": 0.0383,
+   "gini_income": 0.8068,
+   "gini_networth": 0.2496,
+   "gini_net_income": 0.7621,
+   "net_income_negative": 347,
+   "poor_share_net": 0.1255,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 505,
+    "手工铺": 328,
+    "营造": 131,
+    "体面户": 314
+   },
+   "median_income": 3.0,
+   "mean_income": 21.33,
+   "unfunded_deficits": 898,
+   "loans_active": 1971,
+   "treasury": {
+    "eparch": 21306.28,
+    "bishop_nicene": 3859.52,
+    "bishop_arian": 714.91
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7719.04,
+     "spend": 3859.52,
+     "alms": 1286.51,
+     "clergy": 1286.51,
+     "church": 1286.51,
+     "poor": 1237
+    },
+    "bishop_arian": {
+     "available": 1429.83,
+     "spend": 714.91,
+     "alms": 102.0,
+     "clergy": 238.3,
+     "church": 374.61,
+     "poor": 51
+    },
+    "eparch": {
+     "available": 37612.56,
+     "spend": 16306.28,
+     "officials": 400.0,
+     "public_works": 0.0,
+     "maintenance": 15906.28,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 118919.33,
+     "手工": 100482.05,
+     "农渔": 22383.12
+    },
+    "value_added": {
+     "转口": 83909.67,
+     "手工": 70337.43,
+     "农渔": 19231.44
+    },
+    "va_share": {
+     "转口": 0.4837,
+     "手工": 0.4055,
+     "农渔": 0.1109
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9621.5,
+     "农渔": 191.0
+    },
+    "external_payments": {
+     "转口": 35009.67,
+     "手工": 18086.77,
+     "农渔": 3151.69
+    },
+    "employment": {
+     "转口": {
+      "households": 470,
+      "hired_workers": 5386,
+      "total": 5856,
+      "share_of_households": 0.3613
+     },
+     "手工": {
+      "households": 2629,
+      "hired_workers": 3300,
+      "total": 5929,
+      "share_of_households": 0.3659
+     },
+     "农渔": {
+      "households": 198,
+      "hired_workers": 0,
+      "total": 198,
+      "share_of_households": 0.0122
+     }
+    },
+    "other_hired": 1238,
+    "public_works": 0,
+    "workers": 9924,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 20689
+    },
+    "slots_per_worker": 2.906,
+    "port_hired": 5386
+   },
+   "rows": 194820,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8103.0,
+    "人头税": 3241.2,
+    "行会钱": 359.7,
+    "税钱上缴(坊长→区长)": 10198.44,
+    "税钱上缴(区长→城市长官)": 9189.94,
+    "行会钱上缴(行会头→城市长官)": 323.73,
+    "上交皇库": 4756.83,
+    "奉献": 4861.8,
+    "奉献截留(长老)": 243.09,
+    "奉献上缴(→主教)": 4618.71,
+    "施舍": 1388.51,
+    "神职俸给": 1524.81,
+    "教堂营造": 1661.12,
+    "租金": 5220.0,
+    "买卖:面包": 8117.39,
+    "买卖:水": 6114.62,
+    "买卖:手工": 90860.55,
+    "买卖:港货": 57961.49,
+    "买卖:菜蔬": 4115.61,
+    "买卖:鱼": 18076.51,
+    "进货/原料(付城外)": 22861.93,
+    "港货进价(付船商)": 35009.67,
+    "原料(转口货)": 12057.85,
+    "出口:手工(船商付)": 9621.5,
+    "出口:鱼(船商付)": 191.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13614.0,
+    "工钱:港口": 16158.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 400.0,
+    "兵饷": 1110.0,
+    "城防街渠维护": 15906.28,
+    "借贷": 2908.94,
+    "还款": 2639.75,
+    "拆迁补偿": 435.0,
+    "搬迁费": 5.0,
+    "建设:新房": 1310.0,
+    "建设:公共工程": 9600.0,
+    "迁入带钱": 276.0,
+    "迁出带钱": 1634.67
+   }
+  },
+  "58": {
+   "households": 16331,
+   "poor_share": 0.0771,
+   "poor": 1259,
+   "at_or_below_line_share": 0.6629,
+   "rel_poor_share": 0.0385,
+   "gini_income": 0.8026,
+   "gini_networth": 0.2236,
+   "gini_net_income": 0.7525,
+   "net_income_negative": 304,
+   "poor_share_net": 0.1253,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 496,
+    "手工铺": 300,
+    "营造": 145,
+    "体面户": 318
+   },
+   "median_income": 3.0,
+   "mean_income": 20.773,
+   "unfunded_deficits": 884,
+   "loans_active": 1898,
+   "treasury": {
+    "eparch": 21444.76,
+    "bishop_nicene": 3875.81,
+    "bishop_arian": 733.58
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7751.61,
+     "spend": 3875.81,
+     "alms": 1291.94,
+     "clergy": 1291.94,
+     "church": 1291.94,
+     "poor": 1224
+    },
+    "bishop_arian": {
+     "available": 1467.16,
+     "spend": 733.58,
+     "alms": 108.0,
+     "clergy": 244.53,
+     "church": 381.05,
+     "poor": 54
+    },
+    "eparch": {
+     "available": 37889.51,
+     "spend": 16444.76,
+     "officials": 408.0,
+     "public_works": 0.0,
+     "maintenance": 16036.76,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 119884.41,
+     "手工": 101803.32,
+     "农渔": 22667.69
+    },
+    "value_added": {
+     "转口": 84392.2,
+     "手工": 71262.32,
+     "农渔": 19475.17
+    },
+    "va_share": {
+     "转口": 0.4819,
+     "手工": 0.4069,
+     "农渔": 0.1112
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9677.0,
+     "农渔": 193.0
+    },
+    "external_payments": {
+     "转口": 35492.2,
+     "手工": 18324.6,
+     "农渔": 3192.52
+    },
+    "employment": {
+     "转口": {
+      "households": 474,
+      "hired_workers": 5408,
+      "total": 5882,
+      "share_of_households": 0.3602
+     },
+     "手工": {
+      "households": 2649,
+      "hired_workers": 2712,
+      "total": 5361,
+      "share_of_households": 0.3283
+     },
+     "农渔": {
+      "households": 200,
+      "hired_workers": 0,
+      "total": 200,
+      "share_of_households": 0.0122
+     }
+    },
+    "other_hired": 1872,
+    "public_works": 0,
+    "workers": 9992,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22844
+    },
+    "slots_per_worker": 3.102,
+    "port_hired": 5408
+   },
+   "rows": 196261,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8165.5,
+    "人头税": 3266.2,
+    "行会钱": 362.4,
+    "税钱上缴(坊长→区长)": 10282.23,
+    "税钱上缴(区长→城市长官)": 9260.31,
+    "行会钱上缴(行会头→城市长官)": 326.16,
+    "上交皇库": 4793.23,
+    "奉献": 4899.3,
+    "奉献截留(长老)": 244.96,
+    "奉献上缴(→主教)": 4654.33,
+    "施舍": 1399.94,
+    "神职俸给": 1536.46,
+    "教堂营造": 1672.99,
+    "租金": 5338.0,
+    "买卖:面包": 8194.82,
+    "买卖:水": 6171.92,
+    "买卖:手工": 92126.32,
+    "买卖:港货": 58768.01,
+    "买卖:菜蔬": 4152.63,
+    "买卖:鱼": 18322.06,
+    "进货/原料(付城外)": 23156.08,
+    "港货进价(付船商)": 35492.2,
+    "原料(转口货)": 12216.4,
+    "出口:手工(船商付)": 9677.0,
+    "出口:鱼(船商付)": 193.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13752.0,
+    "工钱:港口": 16224.0,
+    "俸给": 94.0,
+    "官俸(坊长/区长)": 408.0,
+    "兵饷": 1116.0,
+    "城防街渠维护": 16036.76,
+    "借贷": 2427.95,
+    "还款": 2788.95,
+    "建设:新房": 1180.0,
+    "迁入带钱": 250.0
+   }
+  },
+  "59": {
+   "households": 16454,
+   "poor_share": 0.0774,
+   "poor": 1274,
+   "at_or_below_line_share": 0.6637,
+   "rel_poor_share": 0.0393,
+   "gini_income": 0.8033,
+   "gini_networth": 0.229,
+   "gini_net_income": 0.7513,
+   "net_income_negative": 292,
+   "poor_share_net": 0.1246,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 493,
+    "手工铺": 306,
+    "营造": 154,
+    "体面户": 321
+   },
+   "median_income": 3.0,
+   "mean_income": 20.81,
+   "unfunded_deficits": 852,
+   "loans_active": 1942,
+   "treasury": {
+    "eparch": 21530.64,
+    "bishop_nicene": 3894.78,
+    "bishop_arian": 749.61
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7789.56,
+     "spend": 3894.78,
+     "alms": 1298.26,
+     "clergy": 1298.26,
+     "church": 1298.26,
+     "poor": 1196
+    },
+    "bishop_arian": {
+     "available": 1499.22,
+     "spend": 749.61,
+     "alms": 126.0,
+     "clergy": 249.87,
+     "church": 373.74,
+     "poor": 63
+    },
+    "eparch": {
+     "available": 38061.28,
+     "spend": 16530.64,
+     "officials": 382.0,
+     "public_works": 0.0,
+     "maintenance": 16148.64,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 120818.11,
+     "手工": 103056.87,
+     "农渔": 22943.91
+    },
+    "value_added": {
+     "转口": 84859.06,
+     "手工": 72139.81,
+     "农渔": 19711.65
+    },
+    "va_share": {
+     "转口": 0.4802,
+     "手工": 0.4082,
+     "农渔": 0.1115
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9701.0,
+     "农渔": 198.0
+    },
+    "external_payments": {
+     "转口": 35959.06,
+     "手工": 18550.24,
+     "农渔": 3232.25
+    },
+    "employment": {
+     "转口": {
+      "households": 476,
+      "hired_workers": 5428,
+      "total": 5904,
+      "share_of_households": 0.3588
+     },
+     "手工": {
+      "households": 2665,
+      "hired_workers": 3228,
+      "total": 5893,
+      "share_of_households": 0.3581
+     },
+     "农渔": {
+      "households": 205,
+      "hired_workers": 0,
+      "total": 205,
+      "share_of_households": 0.0125
+     }
+    },
+    "other_hired": 1411,
+    "public_works": 0,
+    "workers": 10067,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 21480
+    },
+    "slots_per_worker": 2.943,
+    "port_hired": 5428
+   },
+   "rows": 197639,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8227.0,
+    "人头税": 3290.8,
+    "行会钱": 363.6,
+    "税钱上缴(坊长→区长)": 10342.08,
+    "税钱上缴(区长→城市长官)": 9331.81,
+    "行会钱上缴(行会头→城市长官)": 327.24,
+    "上交皇库": 4829.53,
+    "奉献": 4936.2,
+    "奉献截留(长老)": 246.81,
+    "奉献上缴(→主教)": 4689.39,
+    "施舍": 1424.26,
+    "神职俸给": 1548.13,
+    "教堂营造": 1672.0,
+    "租金": 5453.0,
+    "买卖:面包": 8265.09,
+    "买卖:水": 6225.56,
+    "买卖:手工": 93355.87,
+    "买卖:港货": 59551.29,
+    "买卖:菜蔬": 4186.63,
+    "买卖:鱼": 18559.27,
+    "进货/原料(付城外)": 23435.51,
+    "港货进价(付船商)": 35959.06,
+    "原料(转口货)": 12366.82,
+    "出口:手工(船商付)": 9701.0,
+    "出口:鱼(船商付)": 198.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 13917.0,
+    "工钱:港口": 16284.0,
+    "俸给": 96.0,
+    "官俸(坊长/区长)": 382.0,
+    "兵饷": 1122.0,
+    "城防街渠维护": 16148.64,
+    "借贷": 2693.5,
+    "还款": 2720.81,
+    "建设:新房": 1150.0,
+    "迁入带钱": 246.0
+   }
+  },
+  "60": {
+   "households": 16577,
+   "poor_share": 0.0768,
+   "poor": 1273,
+   "at_or_below_line_share": 0.6628,
+   "rel_poor_share": 0.0393,
+   "gini_income": 0.8032,
+   "gini_networth": 0.2361,
+   "gini_net_income": 0.7524,
+   "net_income_negative": 314,
+   "poor_share_net": 0.1248,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 494,
+    "手工铺": 291,
+    "营造": 164,
+    "体面户": 324
+   },
+   "median_income": 3.0,
+   "mean_income": 20.836,
+   "unfunded_deficits": 840,
+   "loans_active": 2073,
+   "treasury": {
+    "eparch": 21589.16,
+    "bishop_nicene": 3914.67,
+    "bishop_arian": 764.75
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7829.33,
+     "spend": 3914.67,
+     "alms": 1304.89,
+     "clergy": 1304.89,
+     "church": 1304.89,
+     "poor": 1205
+    },
+    "bishop_arian": {
+     "available": 1529.5,
+     "spend": 764.75,
+     "alms": 138.0,
+     "clergy": 254.92,
+     "church": 371.83,
+     "poor": 69
+    },
+    "eparch": {
+     "available": 38178.33,
+     "spend": 16589.16,
+     "officials": 391.0,
+     "public_works": 0.0,
+     "maintenance": 16198.16,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 121662.57,
+     "手工": 104189.36,
+     "农渔": 23188.69
+    },
+    "value_added": {
+     "转口": 85281.28,
+     "手工": 72932.55,
+     "农渔": 19921.15
+    },
+    "va_share": {
+     "转口": 0.4787,
+     "手工": 0.4094,
+     "农渔": 0.1118
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9720.5,
+     "农渔": 201.0
+    },
+    "external_payments": {
+     "转口": 36381.28,
+     "手工": 18754.08,
+     "农渔": 3267.54
+    },
+    "employment": {
+     "转口": {
+      "households": 483,
+      "hired_workers": 5431,
+      "total": 5914,
+      "share_of_households": 0.3568
+     },
+     "手工": {
+      "households": 2678,
+      "hired_workers": 3265,
+      "total": 5943,
+      "share_of_households": 0.3585
+     },
+     "农渔": {
+      "households": 208,
+      "hired_workers": 0,
+      "total": 208,
+      "share_of_households": 0.0125
+     }
+    },
+    "other_hired": 1444,
+    "public_works": 0,
+    "workers": 10140,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 21714
+    },
+    "slots_per_worker": 2.945,
+    "port_hired": 5431
+   },
+   "rows": 199226,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8288.5,
+    "人头税": 3315.4,
+    "行会钱": 364.8,
+    "税钱上缴(坊长→区长)": 10424.61,
+    "税钱上缴(区长→城市长官)": 9401.05,
+    "行会钱上缴(行会头→城市长官)": 328.32,
+    "上交皇库": 4864.68,
+    "奉献": 4973.1,
+    "奉献截留(长老)": 248.65,
+    "奉献上缴(→主教)": 4724.44,
+    "施舍": 1442.89,
+    "神职俸给": 1559.81,
+    "教堂营造": 1676.72,
+    "租金": 5573.0,
+    "买卖:面包": 8322.83,
+    "买卖:水": 6270.94,
+    "买卖:手工": 94468.86,
+    "买卖:港货": 60259.84,
+    "买卖:菜蔬": 4215.22,
+    "买卖:鱼": 18772.47,
+    "进货/原料(付城外)": 23686.19,
+    "港货进价(付船商)": 36381.28,
+    "原料(转口货)": 12502.72,
+    "出口:手工(船商付)": 9720.5,
+    "出口:鱼(船商付)": 201.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14127.0,
+    "工钱:港口": 16293.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 391.0,
+    "兵饷": 1134.0,
+    "城防街渠维护": 16198.16,
+    "借贷": 2964.12,
+    "还款": 2559.92,
+    "建设:新房": 1200.0,
+    "迁入带钱": 246.0
+   }
+  },
+  "61": {
+   "households": 16703,
+   "poor_share": 0.0786,
+   "poor": 1313,
+   "at_or_below_line_share": 0.6618,
+   "rel_poor_share": 0.0406,
+   "gini_income": 0.8022,
+   "gini_networth": 0.2407,
+   "gini_net_income": 0.7503,
+   "net_income_negative": 315,
+   "poor_share_net": 0.1252,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 502,
+    "手工铺": 304,
+    "营造": 184,
+    "体面户": 323
+   },
+   "median_income": 3.0,
+   "mean_income": 20.799,
+   "unfunded_deficits": 914,
+   "loans_active": 2021,
+   "treasury": {
+    "eparch": 21637.37,
+    "bishop_nicene": 3937.27,
+    "bishop_arian": 777.88
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7874.54,
+     "spend": 3937.27,
+     "alms": 1312.42,
+     "clergy": 1312.42,
+     "church": 1312.42,
+     "poor": 1197
+    },
+    "bishop_arian": {
+     "available": 1555.75,
+     "spend": 777.88,
+     "alms": 152.0,
+     "clergy": 259.29,
+     "church": 366.58,
+     "poor": 76
+    },
+    "eparch": {
+     "available": 38274.75,
+     "spend": 16637.37,
+     "officials": 403.0,
+     "public_works": 174.0,
+     "maintenance": 16060.37,
+     "unemployed_before": 58
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 122442.3,
+     "手工": 105274.5,
+     "农渔": 23399.31
+    },
+    "value_added": {
+     "转口": 85671.15,
+     "手工": 73692.15,
+     "农渔": 20101.06
+    },
+    "va_share": {
+     "转口": 0.4774,
+     "手工": 0.4106,
+     "农渔": 0.112
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9787.0,
+     "农渔": 202.0
+    },
+    "external_payments": {
+     "转口": 36771.15,
+     "手工": 18949.41,
+     "农渔": 3298.25
+    },
+    "employment": {
+     "转口": {
+      "households": 486,
+      "hired_workers": 5441,
+      "total": 5927,
+      "share_of_households": 0.3548
+     },
+     "手工": {
+      "households": 2694,
+      "hired_workers": 3145,
+      "total": 5839,
+      "share_of_households": 0.3496
+     },
+     "农渔": {
+      "households": 238,
+      "hired_workers": 0,
+      "total": 238,
+      "share_of_households": 0.0142
+     }
+    },
+    "other_hired": 1538,
+    "public_works": 58,
+    "workers": 10182,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 0.9943,
+    "slots_offered": {
+     "port": 8150,
+     "district": 21929
+    },
+    "slots_per_worker": 2.954,
+    "port_hired": 5441
+   },
+   "rows": 200754,
+   "by_type_total": {
+    "公役工钱": 174.0,
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8351.5,
+    "人头税": 3340.6,
+    "行会钱": 364.8,
+    "税钱上缴(坊长→区长)": 10478.16,
+    "税钱上缴(区长→城市长官)": 9441.05,
+    "行会钱上缴(行会头→城市长官)": 328.32,
+    "上交皇库": 4903.59,
+    "奉献": 5010.9,
+    "奉献截留(长老)": 250.02,
+    "奉献上缴(→主教)": 4760.88,
+    "施舍": 1464.42,
+    "神职俸给": 1571.72,
+    "教堂营造": 1679.01,
+    "租金": 5656.0,
+    "买卖:面包": 8359.35,
+    "买卖:水": 6298.62,
+    "买卖:手工": 95487.5,
+    "买卖:港货": 60909.36,
+    "买卖:菜蔬": 4232.98,
+    "买卖:鱼": 18964.33,
+    "进货/原料(付城外)": 23919.53,
+    "港货进价(付船商)": 36771.15,
+    "原料(转口货)": 12632.94,
+    "出口:手工(船商付)": 9787.0,
+    "出口:鱼(船商付)": 202.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14049.0,
+    "工钱:港口": 16323.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 403.0,
+    "兵饷": 1140.0,
+    "城防街渠维护": 16060.37,
+    "借贷": 2280.43,
+    "还款": 2748.63,
+    "建设:新房": 830.0,
+    "迁入带钱": 252.0
+   }
+  },
+  "62": {
+   "households": 16759,
+   "poor_share": 0.0773,
+   "poor": 1296,
+   "at_or_below_line_share": 0.6582,
+   "rel_poor_share": 0.039,
+   "gini_income": 0.8021,
+   "gini_networth": 0.2398,
+   "gini_net_income": 0.7518,
+   "net_income_negative": 340,
+   "poor_share_net": 0.1264,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 512,
+    "手工铺": 277,
+    "营造": 182,
+    "体面户": 325
+   },
+   "median_income": 3.0,
+   "mean_income": 20.961,
+   "unfunded_deficits": 957,
+   "loans_active": 2073,
+   "treasury": {
+    "eparch": 20229.09,
+    "bishop_nicene": 3959.28,
+    "bishop_arian": 781.88
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7918.57,
+     "spend": 3959.28,
+     "alms": 1319.76,
+     "clergy": 1319.76,
+     "church": 1319.76,
+     "poor": 1214
+    },
+    "bishop_arian": {
+     "available": 1563.75,
+     "spend": 781.88,
+     "alms": 198.0,
+     "clergy": 260.63,
+     "church": 323.25,
+     "poor": 99
+    },
+    "eparch": {
+     "available": 35458.18,
+     "spend": 15229.09,
+     "officials": 403.0,
+     "public_works": 0.0,
+     "maintenance": 14826.09,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 123345.31,
+     "手工": 106518.28,
+     "农渔": 23636.94
+    },
+    "value_added": {
+     "转口": 86122.66,
+     "手工": 74562.8,
+     "农渔": 20303.8
+    },
+    "va_share": {
+     "转口": 0.4758,
+     "手工": 0.412,
+     "农渔": 0.1122
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9844.5,
+     "农渔": 204.0
+    },
+    "external_payments": {
+     "转口": 37222.66,
+     "手工": 19173.29,
+     "农渔": 3333.15
+    },
+    "employment": {
+     "转口": {
+      "households": 489,
+      "hired_workers": 5449,
+      "total": 5938,
+      "share_of_households": 0.3543
+     },
+     "手工": {
+      "households": 2704,
+      "hired_workers": 3215,
+      "total": 5919,
+      "share_of_households": 0.3532
+     },
+     "农渔": {
+      "households": 266,
+      "hired_workers": 0,
+      "total": 266,
+      "share_of_households": 0.0159
+     }
+    },
+    "other_hired": 1521,
+    "public_works": 0,
+    "workers": 10185,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22024
+    },
+    "slots_per_worker": 2.963,
+    "port_hired": 5449
+   },
+   "rows": 201923,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8379.5,
+    "人头税": 3351.8,
+    "行会钱": 363.9,
+    "税钱上缴(坊长→区长)": 10325.07,
+    "税钱上缴(区长→城市长官)": 9467.7,
+    "行会钱上缴(行会头→城市长官)": 327.51,
+    "上交皇库": 4929.81,
+    "奉献": 5027.7,
+    "奉献截留(长老)": 250.53,
+    "奉献上缴(→主教)": 4777.17,
+    "施舍": 1517.76,
+    "神职俸给": 1580.39,
+    "教堂营造": 1643.01,
+    "租金": 5715.0,
+    "买卖:面包": 8388.57,
+    "买卖:水": 6323.37,
+    "买卖:手工": 96673.78,
+    "买卖:港货": 61663.12,
+    "买卖:菜蔬": 4247.92,
+    "买卖:鱼": 19185.02,
+    "进货/原料(付城外)": 24184.15,
+    "港货进价(付船商)": 37222.66,
+    "原料(转口货)": 12782.19,
+    "出口:手工(船商付)": 9844.5,
+    "出口:鱼(船商付)": 204.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14208.0,
+    "工钱:港口": 16347.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 403.0,
+    "兵饷": 1158.0,
+    "城防街渠维护": 14826.09,
+    "借贷": 3198.62,
+    "还款": 2591.5,
+    "拆迁补偿": 825.0,
+    "搬迁费": 55.0,
+    "建设:新房": 810.0,
+    "建设:公共工程": 2178.0,
+    "修水摊派": 170.0,
+    "迁入带钱": 222.0,
+    "迁出带钱": 648.59
+   }
+  },
+  "63": {
+   "households": 16869,
+   "poor_share": 0.0777,
+   "poor": 1310,
+   "at_or_below_line_share": 0.6585,
+   "rel_poor_share": 0.0375,
+   "gini_income": 0.8011,
+   "gini_networth": 0.2359,
+   "gini_net_income": 0.7507,
+   "net_income_negative": 352,
+   "poor_share_net": 0.1293,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 491,
+    "手工铺": 310,
+    "营造": 181,
+    "体面户": 328
+   },
+   "median_income": 3.0,
+   "mean_income": 20.809,
+   "unfunded_deficits": 825,
+   "loans_active": 2061,
+   "treasury": {
+    "eparch": 20745.97,
+    "bishop_nicene": 3973.66,
+    "bishop_arian": 795.99
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7947.33,
+     "spend": 3973.66,
+     "alms": 1324.55,
+     "clergy": 1324.55,
+     "church": 1324.55,
+     "poor": 1200
+    },
+    "bishop_arian": {
+     "available": 1591.98,
+     "spend": 795.99,
+     "alms": 192.0,
+     "clergy": 265.33,
+     "church": 338.66,
+     "poor": 96
+    },
+    "eparch": {
+     "available": 36491.95,
+     "spend": 15745.97,
+     "officials": 374.0,
+     "public_works": 0.0,
+     "maintenance": 15371.97,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 123782.47,
+     "手工": 107133.86,
+     "农渔": 23806.53
+    },
+    "value_added": {
+     "转口": 86341.23,
+     "手工": 74993.7,
+     "农渔": 20450.3
+    },
+    "va_share": {
+     "转口": 0.475,
+     "手工": 0.4125,
+     "农渔": 0.1125
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 9889.5,
+     "农渔": 205.0
+    },
+    "external_payments": {
+     "转口": 37441.23,
+     "手工": 19284.1,
+     "农渔": 3356.23
+    },
+    "employment": {
+     "转口": {
+      "households": 491,
+      "hired_workers": 5461,
+      "total": 5952,
+      "share_of_households": 0.3528
+     },
+     "手工": {
+      "households": 2717,
+      "hired_workers": 3251,
+      "total": 5968,
+      "share_of_households": 0.3538
+     },
+     "农渔": {
+      "households": 287,
+      "hired_workers": 0,
+      "total": 287,
+      "share_of_households": 0.017
+     }
+    },
+    "other_hired": 1530,
+    "public_works": 0,
+    "workers": 10242,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22391
+    },
+    "slots_per_worker": 2.982,
+    "port_hired": 5461
+   },
+   "rows": 202810,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8434.5,
+    "人头税": 3373.8,
+    "行会钱": 363.9,
+    "税钱上缴(坊长→区长)": 10255.77,
+    "税钱上缴(区长→城市长官)": 9505.5,
+    "行会钱上缴(行会头→城市长官)": 327.51,
+    "上交皇库": 4970.06,
+    "奉献": 5060.7,
+    "奉献截留(长老)": 252.55,
+    "奉献上缴(→主教)": 4808.14,
+    "施舍": 1516.55,
+    "神职俸给": 1589.88,
+    "教堂营造": 1663.21,
+    "租金": 5781.0,
+    "买卖:面包": 8484.74,
+    "买卖:水": 6393.17,
+    "买卖:手工": 97244.36,
+    "买卖:港货": 62026.4,
+    "买卖:菜蔬": 4294.94,
+    "买卖:鱼": 19306.59,
+    "进货/原料(付城外)": 24337.28,
+    "港货进价(付船商)": 37441.23,
+    "原料(转口货)": 12856.06,
+    "出口:手工(船商付)": 9889.5,
+    "出口:鱼(船商付)": 205.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14343.0,
+    "工钱:港口": 16383.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 374.0,
+    "兵饷": 1182.0,
+    "城防街渠维护": 15371.97,
+    "借贷": 2796.18,
+    "还款": 2784.17,
+    "建设:新房": 660.0,
+    "建设:公共工程": 482.2,
+    "迁入带钱": 220.0
+   }
+  },
+  "64": {
+   "households": 16987,
+   "poor_share": 0.0775,
+   "poor": 1317,
+   "at_or_below_line_share": 0.658,
+   "rel_poor_share": 0.0434,
+   "gini_income": 0.8011,
+   "gini_networth": 0.237,
+   "gini_net_income": 0.751,
+   "net_income_negative": 318,
+   "poor_share_net": 0.1302,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 503,
+    "手工铺": 298,
+    "营造": 186,
+    "体面户": 330
+   },
+   "median_income": 3.0,
+   "mean_income": 20.835,
+   "unfunded_deficits": 828,
+   "loans_active": 2067,
+   "treasury": {
+    "eparch": 21263.15,
+    "bishop_nicene": 3991.15,
+    "bishop_arian": 269.74
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7982.3,
+     "spend": 3991.15,
+     "alms": 1330.38,
+     "clergy": 1330.38,
+     "church": 1330.38,
+     "poor": 1213
+    },
+    "bishop_arian": {
+     "available": 539.48,
+     "spend": 269.74,
+     "alms": 89.91,
+     "clergy": 89.91,
+     "church": 89.91,
+     "poor": 97
+    },
+    "eparch": {
+     "available": 37526.31,
+     "spend": 16263.15,
+     "officials": 376.0,
+     "public_works": 0.0,
+     "maintenance": 15887.15,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 124451.81,
+     "手工": 108128.84,
+     "农渔": 24007.8
+    },
+    "value_added": {
+     "转口": 86675.9,
+     "手工": 75690.19,
+     "农渔": 20622.93
+    },
+    "va_share": {
+     "转口": 0.4737,
+     "手工": 0.4136,
+     "农渔": 0.1127
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10019.0,
+     "农渔": 206.0
+    },
+    "external_payments": {
+     "转口": 37775.9,
+     "手工": 19463.19,
+     "农渔": 3384.87
+    },
+    "employment": {
+     "转口": {
+      "households": 492,
+      "hired_workers": 5469,
+      "total": 5961,
+      "share_of_households": 0.3509
+     },
+     "手工": {
+      "households": 2741,
+      "hired_workers": 3390,
+      "total": 6131,
+      "share_of_households": 0.3609
+     },
+     "农渔": {
+      "households": 311,
+      "hired_workers": 0,
+      "total": 311,
+      "share_of_households": 0.0183
+     }
+    },
+    "other_hired": 1434,
+    "public_works": 0,
+    "workers": 10293,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22297
+    },
+    "slots_per_worker": 2.958,
+    "port_hired": 5469
+   },
+   "rows": 204292,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8493.5,
+    "人头税": 3397.4,
+    "行会钱": 363.9,
+    "税钱上缴(坊长→区长)": 10293.57,
+    "税钱上缴(区长→城市长官)": 9540.15,
+    "行会钱上缴(行会头→城市长官)": 327.51,
+    "上交皇库": 5007.33,
+    "奉献": 5096.1,
+    "奉献截留(长老)": 253.96,
+    "奉献上缴(→主教)": 4842.13,
+    "施舍": 1420.3,
+    "神职俸给": 1420.3,
+    "教堂营造": 1420.3,
+    "租金": 5847.0,
+    "买卖:面包": 8548.68,
+    "买卖:水": 6440.57,
+    "买卖:手工": 98109.84,
+    "买卖:港货": 62576.35,
+    "买卖:菜蔬": 4326.08,
+    "买卖:鱼": 19475.72,
+    "进货/原料(付城外)": 24557.79,
+    "港货进价(付船商)": 37775.9,
+    "原料(转口货)": 12975.46,
+    "出口:手工(船商付)": 10019.0,
+    "出口:鱼(船商付)": 206.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14472.0,
+    "工钱:港口": 16407.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 376.0,
+    "兵饷": 1194.0,
+    "城防街渠维护": 15887.15,
+    "借贷": 2861.71,
+    "还款": 2809.84,
+    "建设:新房": 660.0,
+    "建设:公共工程": 1080.0,
+    "迁入带钱": 236.0
+   }
+  },
+  "65": {
+   "households": 17072,
+   "poor_share": 0.0776,
+   "poor": 1325,
+   "at_or_below_line_share": 0.6572,
+   "rel_poor_share": 0.0428,
+   "gini_income": 0.8006,
+   "gini_networth": 0.2353,
+   "gini_net_income": 0.7492,
+   "net_income_negative": 351,
+   "poor_share_net": 0.1292,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 508,
+    "手工铺": 294,
+    "营造": 191,
+    "体面户": 332
+   },
+   "median_income": 3.0,
+   "mean_income": 20.821,
+   "unfunded_deficits": 857,
+   "loans_active": 2139,
+   "treasury": {
+    "eparch": 21280.25,
+    "bishop_nicene": 3857.22,
+    "bishop_arian": 551.46
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7714.45,
+     "spend": 3857.22,
+     "alms": 1285.74,
+     "clergy": 1285.74,
+     "church": 1285.74,
+     "poor": 1213
+    },
+    "bishop_arian": {
+     "available": 1102.93,
+     "spend": 551.46,
+     "alms": 183.82,
+     "clergy": 183.82,
+     "church": 183.82,
+     "poor": 104
+    },
+    "eparch": {
+     "available": 37560.5,
+     "spend": 16280.25,
+     "officials": 384.0,
+     "public_works": 0.0,
+     "maintenance": 15896.25,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 124956.84,
+     "手工": 108849.42,
+     "农渔": 24155.6
+    },
+    "value_added": {
+     "转口": 86928.42,
+     "手工": 76194.59,
+     "农渔": 20749.51
+    },
+    "va_share": {
+     "转口": 0.4728,
+     "手工": 0.4144,
+     "农渔": 0.1128
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10081.0,
+     "农渔": 208.0
+    },
+    "external_payments": {
+     "转口": 38028.42,
+     "手工": 19592.9,
+     "农渔": 3406.08
+    },
+    "employment": {
+     "转口": {
+      "households": 496,
+      "hired_workers": 5483,
+      "total": 5979,
+      "share_of_households": 0.3502
+     },
+     "手工": {
+      "households": 2754,
+      "hired_workers": 3343,
+      "total": 6097,
+      "share_of_households": 0.3571
+     },
+     "农渔": {
+      "households": 332,
+      "hired_workers": 0,
+      "total": 332,
+      "share_of_households": 0.0194
+     }
+    },
+    "other_hired": 1501,
+    "public_works": 0,
+    "workers": 10327,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22616
+    },
+    "slots_per_worker": 2.979,
+    "port_hired": 5483
+   },
+   "rows": 205362,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8536.0,
+    "人头税": 3414.4,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10332.0,
+    "税钱上缴(区长→城市长官)": 9564.03,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5033.35,
+    "奉献": 5121.6,
+    "奉献截留(长老)": 255.12,
+    "奉献上缴(→主教)": 4866.48,
+    "施舍": 1469.56,
+    "神职俸给": 1469.56,
+    "教堂营造": 1469.56,
+    "租金": 5903.0,
+    "买卖:面包": 8587.08,
+    "买卖:水": 6469.89,
+    "买卖:手工": 98768.42,
+    "买卖:港货": 62994.91,
+    "买卖:菜蔬": 4345.15,
+    "买卖:鱼": 19602.44,
+    "进货/原料(付城外)": 24716.39,
+    "港货进价(付船商)": 38028.42,
+    "原料(转口货)": 13061.93,
+    "出口:手工(船商付)": 10081.0,
+    "出口:鱼(船商付)": 208.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14532.0,
+    "工钱:港口": 16449.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 384.0,
+    "兵饷": 1200.0,
+    "城防街渠维护": 15896.25,
+    "借贷": 3185.07,
+    "还款": 2784.24,
+    "拆迁补偿": 195.0,
+    "搬迁费": 13.0,
+    "建设:新房": 670.0,
+    "建设:公共工程": 600.0,
+    "迁入带钱": 196.0,
+    "迁出带钱": 160.94
+   }
+  },
+  "66": {
+   "households": 17188,
+   "poor_share": 0.0776,
+   "poor": 1334,
+   "at_or_below_line_share": 0.655,
+   "rel_poor_share": 0.0382,
+   "gini_income": 0.7999,
+   "gini_networth": 0.2324,
+   "gini_net_income": 0.7475,
+   "net_income_negative": 333,
+   "poor_share_net": 0.1285,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 519,
+    "手工铺": 285,
+    "营造": 196,
+    "体面户": 334
+   },
+   "median_income": 3.0,
+   "mean_income": 20.756,
+   "unfunded_deficits": 936,
+   "loans_active": 2062,
+   "treasury": {
+    "eparch": 21558.16,
+    "bishop_nicene": 3947.47,
+    "bishop_arian": 701.16
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 7894.95,
+     "spend": 3947.47,
+     "alms": 1315.82,
+     "clergy": 1315.82,
+     "church": 1315.82,
+     "poor": 1220
+    },
+    "bishop_arian": {
+     "available": 1402.32,
+     "spend": 701.16,
+     "alms": 210.0,
+     "clergy": 233.72,
+     "church": 257.44,
+     "poor": 105
+    },
+    "eparch": {
+     "available": 38116.31,
+     "spend": 16558.16,
+     "officials": 402.0,
+     "public_works": 0.0,
+     "maintenance": 16156.16,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 125365.54,
+     "手工": 109419.89,
+     "农渔": 24284.99
+    },
+    "value_added": {
+     "转口": 87132.77,
+     "手工": 76593.92,
+     "农渔": 20860.63
+    },
+    "va_share": {
+     "转口": 0.472,
+     "手工": 0.4149,
+     "农渔": 0.113
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10116.0,
+     "农渔": 209.0
+    },
+    "external_payments": {
+     "转口": 38232.77,
+     "手工": 19695.58,
+     "农渔": 3424.36
+    },
+    "employment": {
+     "转口": {
+      "households": 503,
+      "hired_workers": 5496,
+      "total": 5999,
+      "share_of_households": 0.349
+     },
+     "手工": {
+      "households": 2766,
+      "hired_workers": 3411,
+      "total": 6177,
+      "share_of_households": 0.3594
+     },
+     "农渔": {
+      "households": 359,
+      "hired_workers": 0,
+      "total": 359,
+      "share_of_households": 0.0209
+     }
+    },
+    "other_hired": 1463,
+    "public_works": 0,
+    "workers": 10370,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22676
+    },
+    "slots_per_worker": 2.973,
+    "port_hired": 5496
+   },
+   "rows": 206714,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8594.0,
+    "人头税": 3437.6,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10376.73,
+    "税钱上缴(区长→城市长官)": 9679.26,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5065.06,
+    "奉献": 5156.4,
+    "奉献截留(长老)": 257.82,
+    "奉献上缴(→主教)": 4898.58,
+    "施舍": 1525.82,
+    "神职俸给": 1549.54,
+    "教堂营造": 1573.26,
+    "租金": 5968.0,
+    "买卖:面包": 8633.88,
+    "买卖:水": 6506.66,
+    "买卖:手工": 99303.89,
+    "买卖:港货": 63335.16,
+    "买卖:菜蔬": 4367.81,
+    "买卖:鱼": 19708.18,
+    "进货/原料(付城外)": 24846.72,
+    "港货进价(付船商)": 38232.77,
+    "原料(转口货)": 13130.39,
+    "出口:手工(船商付)": 10116.0,
+    "出口:鱼(船商付)": 209.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14622.0,
+    "工钱:港口": 16488.0,
+    "俸给": 98.0,
+    "官俸(坊长/区长)": 402.0,
+    "兵饷": 1206.0,
+    "城防街渠维护": 16156.16,
+    "借贷": 2526.82,
+    "还款": 3010.4,
+    "建设:新房": 650.0,
+    "迁入带钱": 232.0
+   }
+  },
+  "67": {
+   "households": 17294,
+   "poor_share": 0.0758,
+   "poor": 1311,
+   "at_or_below_line_share": 0.6506,
+   "rel_poor_share": 0.0387,
+   "gini_income": 0.7991,
+   "gini_networth": 0.2345,
+   "gini_net_income": 0.7471,
+   "net_income_negative": 330,
+   "poor_share_net": 0.1246,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 492,
+    "手工铺": 277,
+    "营造": 206,
+    "体面户": 336
+   },
+   "median_income": 3.0,
+   "mean_income": 20.738,
+   "unfunded_deficits": 867,
+   "loans_active": 2090,
+   "treasury": {
+    "eparch": 21706.98,
+    "bishop_nicene": 4000.86,
+    "bishop_arian": 782.85
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8001.73,
+     "spend": 4000.86,
+     "alms": 1333.62,
+     "clergy": 1333.62,
+     "church": 1333.62,
+     "poor": 1221
+    },
+    "bishop_arian": {
+     "available": 1565.69,
+     "spend": 782.85,
+     "alms": 226.0,
+     "clergy": 260.95,
+     "church": 295.9,
+     "poor": 113
+    },
+    "eparch": {
+     "available": 38413.96,
+     "spend": 16706.98,
+     "officials": 400.0,
+     "public_works": 0.0,
+     "maintenance": 16306.98,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 125778.74,
+     "手工": 110021.22,
+     "农渔": 24426.16
+    },
+    "value_added": {
+     "转口": 87339.37,
+     "手工": 77014.85,
+     "农渔": 20982.22
+    },
+    "va_share": {
+     "转口": 0.4712,
+     "手工": 0.4155,
+     "农渔": 0.1132
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10181.0,
+     "农渔": 209.0
+    },
+    "external_payments": {
+     "转口": 38439.37,
+     "手工": 19803.82,
+     "农渔": 3443.93
+    },
+    "employment": {
+     "转口": {
+      "households": 505,
+      "hired_workers": 5504,
+      "total": 6009,
+      "share_of_households": 0.3475
+     },
+     "手工": {
+      "households": 2781,
+      "hired_workers": 3482,
+      "total": 6263,
+      "share_of_households": 0.3621
+     },
+     "农渔": {
+      "households": 393,
+      "hired_workers": 0,
+      "total": 393,
+      "share_of_households": 0.0227
+     }
+    },
+    "other_hired": 1420,
+    "public_works": 0,
+    "workers": 10406,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22737
+    },
+    "slots_per_worker": 2.968,
+    "port_hired": 5504
+   },
+   "rows": 207929,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8647.0,
+    "人头税": 3458.8,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10564.47,
+    "税钱上缴(区长→城市长官)": 9714.03,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5089.8,
+    "奉献": 5188.2,
+    "奉献截留(长老)": 259.41,
+    "奉献上缴(→主教)": 4928.79,
+    "施舍": 1559.62,
+    "神职俸给": 1594.57,
+    "教堂营造": 1629.52,
+    "租金": 6024.0,
+    "买卖:面包": 8700.13,
+    "买卖:水": 6557.25,
+    "买卖:手工": 99840.22,
+    "买卖:港货": 63676.19,
+    "买卖:菜蔬": 4399.84,
+    "买卖:鱼": 19817.31,
+    "进货/原料(付城外)": 24987.78,
+    "港货进价(付船商)": 38439.37,
+    "原料(转口货)": 13202.55,
+    "出口:手工(船商付)": 10181.0,
+    "出口:鱼(船商付)": 209.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14706.0,
+    "工钱:港口": 16512.0,
+    "俸给": 100.0,
+    "官俸(坊长/区长)": 400.0,
+    "兵饷": 1224.0,
+    "城防街渠维护": 16306.98,
+    "借贷": 3376.66,
+    "还款": 2842.45,
+    "建设:新房": 560.0,
+    "迁入带钱": 212.0
+   }
+  },
+  "68": {
+   "households": 17408,
+   "poor_share": 0.0757,
+   "poor": 1318,
+   "at_or_below_line_share": 0.649,
+   "rel_poor_share": 0.0392,
+   "gini_income": 0.7988,
+   "gini_networth": 0.2329,
+   "gini_net_income": 0.7458,
+   "net_income_negative": 317,
+   "poor_share_net": 0.1255,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 509,
+    "手工铺": 272,
+    "营造": 201,
+    "体面户": 336
+   },
+   "median_income": 3.0,
+   "mean_income": 20.717,
+   "unfunded_deficits": 853,
+   "loans_active": 2106,
+   "treasury": {
+    "eparch": 21792.99,
+    "bishop_nicene": 4035.25,
+    "bishop_arian": 832.24
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8070.51,
+     "spend": 4035.25,
+     "alms": 1345.08,
+     "clergy": 1345.08,
+     "church": 1345.08,
+     "poor": 1191
+    },
+    "bishop_arian": {
+     "available": 1664.48,
+     "spend": 832.24,
+     "alms": 240.0,
+     "clergy": 277.41,
+     "church": 314.83,
+     "poor": 120
+    },
+    "eparch": {
+     "available": 38585.97,
+     "spend": 16792.99,
+     "officials": 408.0,
+     "public_works": 0.0,
+     "maintenance": 16384.99,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 126167.83,
+     "手工": 110568.3,
+     "农渔": 24562.01
+    },
+    "value_added": {
+     "转口": 87533.91,
+     "手工": 77397.81,
+     "农渔": 21099.24
+    },
+    "va_share": {
+     "转口": 0.4705,
+     "手工": 0.416,
+     "农渔": 0.1134
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10219.0,
+     "农渔": 210.0
+    },
+    "external_payments": {
+     "转口": 38633.91,
+     "手工": 19902.29,
+     "农渔": 3462.77
+    },
+    "employment": {
+     "转口": {
+      "households": 507,
+      "hired_workers": 5506,
+      "total": 6013,
+      "share_of_households": 0.3454
+     },
+     "手工": {
+      "households": 2795,
+      "hired_workers": 3560,
+      "total": 6355,
+      "share_of_households": 0.3651
+     },
+     "农渔": {
+      "households": 428,
+      "hired_workers": 0,
+      "total": 428,
+      "share_of_households": 0.0246
+     }
+    },
+    "other_hired": 1387,
+    "public_works": 0,
+    "workers": 10453,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 22866
+    },
+    "slots_per_worker": 2.967,
+    "port_hired": 5506
+   },
+   "rows": 209352,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8704.0,
+    "人头税": 3481.6,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10664.01,
+    "税钱上缴(区长→城市长官)": 9879.22,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5114.99,
+    "奉献": 5222.4,
+    "奉献截留(长老)": 261.12,
+    "奉献上缴(→主教)": 4961.28,
+    "施舍": 1585.08,
+    "神职俸给": 1622.5,
+    "教堂营造": 1659.91,
+    "租金": 6093.0,
+    "买卖:面包": 8764.36,
+    "买卖:水": 6606.84,
+    "买卖:手工": 100349.3,
+    "买卖:港货": 63999.63,
+    "买卖:菜蔬": 4430.68,
+    "买卖:鱼": 19921.33,
+    "进货/原料(付城外)": 25117.93,
+    "港货进价(付船商)": 38633.91,
+    "原料(转口货)": 13268.2,
+    "出口:手工(船商付)": 10219.0,
+    "出口:鱼(船商付)": 210.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14841.0,
+    "工钱:港口": 16518.0,
+    "俸给": 100.0,
+    "官俸(坊长/区长)": 408.0,
+    "兵饷": 1236.0,
+    "城防街渠维护": 16384.99,
+    "借贷": 3014.93,
+    "还款": 2987.56,
+    "建设:新房": 690.0,
+    "迁入带钱": 228.0
+   }
+  },
+  "69": {
+   "households": 17529,
+   "poor_share": 0.075,
+   "poor": 1314,
+   "at_or_below_line_share": 0.6464,
+   "rel_poor_share": 0.0369,
+   "gini_income": 0.7984,
+   "gini_networth": 0.2318,
+   "gini_net_income": 0.7466,
+   "net_income_negative": 376,
+   "poor_share_net": 0.1263,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 494,
+    "手工铺": 285,
+    "营造": 198,
+    "体面户": 337
+   },
+   "median_income": 3.0,
+   "mean_income": 20.675,
+   "unfunded_deficits": 862,
+   "loans_active": 2110,
+   "treasury": {
+    "eparch": 21852.45,
+    "bishop_nicene": 4060.0,
+    "bishop_arian": 866.63
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8120.0,
+     "spend": 4060.0,
+     "alms": 1353.33,
+     "clergy": 1353.33,
+     "church": 1353.33,
+     "poor": 1200
+    },
+    "bishop_arian": {
+     "available": 1733.26,
+     "spend": 866.63,
+     "alms": 236.0,
+     "clergy": 288.88,
+     "church": 341.75,
+     "poor": 118
+    },
+    "eparch": {
+     "available": 38704.89,
+     "spend": 16852.45,
+     "officials": 415.0,
+     "public_works": 0.0,
+     "maintenance": 16437.45,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 126601.49,
+     "手工": 111221.29,
+     "农渔": 24707.33
+    },
+    "value_added": {
+     "转口": 87750.75,
+     "手工": 77854.9,
+     "农渔": 21224.27
+    },
+    "va_share": {
+     "转口": 0.4697,
+     "手工": 0.4167,
+     "农渔": 0.1136
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10312.5,
+     "农渔": 212.0
+    },
+    "external_payments": {
+     "转口": 38850.75,
+     "手工": 20019.83,
+     "农渔": 3483.05
+    },
+    "employment": {
+     "转口": {
+      "households": 512,
+      "hired_workers": 5497,
+      "total": 6009,
+      "share_of_households": 0.3428
+     },
+     "手工": {
+      "households": 2812,
+      "hired_workers": 3567,
+      "total": 6379,
+      "share_of_households": 0.3639
+     },
+     "农渔": {
+      "households": 466,
+      "hired_workers": 0,
+      "total": 466,
+      "share_of_households": 0.0266
+     }
+    },
+    "other_hired": 1431,
+    "public_works": 0,
+    "workers": 10495,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 23009
+    },
+    "slots_per_worker": 2.969,
+    "port_hired": 5497
+   },
+   "rows": 210779,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8764.5,
+    "人头税": 3505.8,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10704.96,
+    "税钱上缴(区长→城市长官)": 9972.14,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5149.91,
+    "奉献": 5258.7,
+    "奉献截留(长老)": 262.93,
+    "奉献上缴(→主教)": 4995.76,
+    "施舍": 1589.33,
+    "神职俸给": 1642.21,
+    "教堂营造": 1695.09,
+    "租金": 6159.0,
+    "买卖:面包": 8826.95,
+    "买卖:水": 6654.79,
+    "买卖:手工": 100908.79,
+    "买卖:港货": 64354.94,
+    "买卖:菜蔬": 4460.91,
+    "买卖:鱼": 20034.42,
+    "进货/原料(付城外)": 25268.28,
+    "港货进价(付船商)": 38850.75,
+    "原料(转口货)": 13346.56,
+    "出口:手工(船商付)": 10312.5,
+    "出口:鱼(船商付)": 212.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 14994.0,
+    "工钱:港口": 16491.0,
+    "俸给": 100.0,
+    "官俸(坊长/区长)": 415.0,
+    "兵饷": 1248.0,
+    "城防街渠维护": 16437.45,
+    "借贷": 3056.32,
+    "还款": 3025.87,
+    "建设:新房": 660.0,
+    "迁入带钱": 242.0
+   }
+  },
+  "70": {
+   "households": 17633,
+   "poor_share": 0.0773,
+   "poor": 1363,
+   "at_or_below_line_share": 0.6484,
+   "rel_poor_share": 0.0381,
+   "gini_income": 0.7987,
+   "gini_networth": 0.2338,
+   "gini_net_income": 0.7462,
+   "net_income_negative": 360,
+   "poor_share_net": 0.1274,
+   "median_net_income": 3.0,
+   "poor_by_livelihood": {
+    "面包": 526,
+    "手工铺": 294,
+    "营造": 205,
+    "体面户": 338
+   },
+   "median_income": 3.0,
+   "mean_income": 20.646,
+   "unfunded_deficits": 892,
+   "loans_active": 2190,
+   "treasury": {
+    "eparch": 21896.5,
+    "bishop_nicene": 4080.21,
+    "bishop_arian": 890.8
+   },
+   "spend": {
+    "bishop_nicene": {
+     "available": 8160.43,
+     "spend": 4080.21,
+     "alms": 1360.07,
+     "clergy": 1360.07,
+     "church": 1360.07,
+     "poor": 1197
+    },
+    "bishop_arian": {
+     "available": 1781.61,
+     "spend": 890.8,
+     "alms": 234.0,
+     "clergy": 296.93,
+     "church": 359.87,
+     "poor": 117
+    },
+    "eparch": {
+     "available": 38793.01,
+     "spend": 16896.5,
+     "officials": 424.0,
+     "public_works": 0.0,
+     "maintenance": 16472.5,
+     "unemployed_before": 0
+    }
+   },
+   "sector": {
+    "ships": 600.0,
+    "throughput": 360000.0,
+    "customs": 36000.0,
+    "customs_city": 12000.0,
+    "customs_imperial": 24000.0,
+    "gross": {
+     "转口": 127004.84,
+     "手工": 111802.25,
+     "农渔": 24832.58
+    },
+    "value_added": {
+     "转口": 87952.42,
+     "手工": 78261.58,
+     "农渔": 21331.78
+    },
+    "va_share": {
+     "转口": 0.469,
+     "手工": 0.4173,
+     "农渔": 0.1137
+    },
+    "port_fees": {
+     "港费:装卸": 14400.0,
+     "港费:仓储": 7200.0,
+     "港费:船修": 4800.0,
+     "港费:牙佣": 5400.0,
+     "港费:兑钱": 3600.0,
+     "转口差价(船商付)": 13500.0
+    },
+    "external_receipts": {
+     "转口": 48900.0,
+     "手工": 10367.5,
+     "农渔": 213.0
+    },
+    "external_payments": {
+     "转口": 39052.42,
+     "手工": 20124.41,
+     "农渔": 3500.8
+    },
+    "employment": {
+     "转口": {
+      "households": 513,
+      "hired_workers": 5504,
+      "total": 6017,
+      "share_of_households": 0.3412
+     },
+     "手工": {
+      "households": 2826,
+      "hired_workers": 3481,
+      "total": 6307,
+      "share_of_households": 0.3577
+     },
+     "农渔": {
+      "households": 492,
+      "hired_workers": 0,
+      "total": 492,
+      "share_of_households": 0.0279
+     }
+    },
+    "other_hired": 1558,
+    "public_works": 0,
+    "workers": 10543,
+    "unemployed_workers": 0,
+    "private_slot_coverage": 1.0,
+    "slots_offered": {
+     "port": 8150,
+     "district": 23138
+    },
+    "slots_per_worker": 2.968,
+    "port_hired": 5504
+   },
+   "rows": 212042,
+   "by_type_total": {
+    "口粮调拨": 193202.0,
+    "口粮下仓": 193202.0,
+    "口粮配给": 193202.0,
+    "房税": 8816.5,
+    "人头税": 3526.6,
+    "行会钱": 363.3,
+    "税钱上缴(坊长→区长)": 10747.8,
+    "税钱上缴(区长→城市长官)": 10032.75,
+    "行会钱上缴(行会头→城市长官)": 326.97,
+    "上交皇库": 5180.56,
+    "奉献": 5289.9,
+    "奉献截留(长老)": 264.49,
+    "奉献上缴(→主教)": 5025.4,
+    "施舍": 1594.07,
+    "神职俸给": 1657.01,
+    "教堂营造": 1719.94,
+    "租金": 6227.0,
+    "买卖:面包": 8869.67,
+    "买卖:水": 6687.27,
+    "买卖:手工": 101434.75,
+    "买卖:港货": 64688.57,
+    "买卖:菜蔬": 4481.75,
+    "买卖:鱼": 20137.83,
+    "进货/原料(付城外)": 25399.14,
+    "港货进价(付船商)": 39052.42,
+    "原料(转口货)": 13416.27,
+    "出口:手工(船商付)": 10367.5,
+    "出口:鱼(船商付)": 213.0,
+    "港费:装卸": 14400.0,
+    "港费:仓储": 7200.0,
+    "港费:船修": 4800.0,
+    "港费:牙佣": 5400.0,
+    "港费:兑钱": 3600.0,
+    "转口差价(船商付)": 13500.0,
+    "关税": 36000.0,
+    "关税分成(→城市长官)": 12000.0,
+    "关税上解(→皇库)": 24000.0,
+    "工钱": 15117.0,
+    "工钱:港口": 16512.0,
+    "俸给": 100.0,
+    "官俸(坊长/区长)": 424.0,
+    "兵饷": 1260.0,
+    "城防街渠维护": 16472.5,
+    "借贷": 3218.26,
+    "还款": 2993.68,
+    "建设:新房": 680.0,
+    "迁入带钱": 208.0
+   }
+  }
+ },
+ "treasury_curves": {
+  "eparch": {
+   "series": [
+    20009.7,
+    20089.2,
+    20202.8,
+    20336.7,
+    20430.4,
+    20590.3,
+    20623.7,
+    20834.7,
+    18931.4,
+    20024.2,
+    20702.2,
+    21025.8,
+    21208.7,
+    21313.7,
+    21587.3,
+    21492.9,
+    21504.7,
+    21306.3,
+    21444.8,
+    21530.6,
+    21589.2,
+    21637.4,
+    20229.1,
+    20746.0,
+    21263.2,
+    21280.3,
+    21558.2,
+    21707.0,
+    21793.0,
+    21852.4,
+    21896.5
+   ],
+   "summary": {
+    "AF40": 20009.7,
+    "AF45": 20590.3,
+    "AF50": 20702.2,
+    "AF55": 21492.9,
+    "AF60": 21589.2,
+    "AF65": 21280.3,
+    "AF70": 21896.5,
+    "max": 21896.5,
+    "max_year": 70,
+    "min": 18931.4,
+    "years_up": 26,
+    "years_down": 4,
+    "monotone_up": false,
+    "last10_slope_per_year": 124.5
+   }
+  },
+  "bishop_nicene": {
+   "series": [
+    3024.1,
+    3106.3,
+    3217.3,
+    3340.6,
+    3472.7,
+    3606.3,
+    3739.9,
+    3878.6,
+    3972.7,
+    3949.7,
+    4191.4,
+    4329.6,
+    4074.5,
+    3960.1,
+    3877.2,
+    3850.2,
+    3850.9,
+    3859.5,
+    3875.8,
+    3894.8,
+    3914.7,
+    3937.3,
+    3959.3,
+    3973.7,
+    3991.2,
+    3857.2,
+    3947.5,
+    4000.9,
+    4035.3,
+    4060.0,
+    4080.2
+   ],
+   "summary": {
+    "AF40": 3024.1,
+    "AF45": 3606.3,
+    "AF50": 4191.4,
+    "AF55": 3850.2,
+    "AF60": 3914.7,
+    "AF65": 3857.2,
+    "AF70": 4080.2,
+    "max": 4329.6,
+    "max_year": 51,
+    "min": 3024.1,
+    "years_up": 24,
+    "years_down": 6,
+    "monotone_up": false,
+    "last10_slope_per_year": 14.7
+   }
+  },
+  "bishop_arian": {
+   "series": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    253.3,
+    477.0,
+    592.4,
+    652.5,
+    689.3,
+    714.9,
+    733.6,
+    749.6,
+    764.7,
+    777.9,
+    781.9,
+    796.0,
+    269.7,
+    551.5,
+    701.2,
+    782.8,
+    832.2,
+    866.6,
+    890.8
+   ],
+   "summary": {
+    "AF40": 0.0,
+    "AF45": 0.0,
+    "AF50": 0.0,
+    "AF55": 652.5,
+    "AF60": 764.7,
+    "AF65": 551.5,
+    "AF70": 890.8,
+    "max": 890.8,
+    "max_year": 70,
+    "min": 0.0,
+    "years_up": 18,
+    "years_down": 1,
+    "monotone_up": false,
+    "last10_slope_per_year": 21.1
+   }
+  }
+ },
+ "conservation": {
+  "max_per_type_err": 1.8655555322766304e-08,
+  "max_money_err": 8.440110832452774e-10,
+  "grain_all_years_ok": true,
+  "house_tax_all_years_ok": true,
+  "houses_all_years_ok": true
+ },
+ "per_type_AF70": {
+  "口粮调拨": {
+   "rows": 1,
+   "paid": 193202.0,
+   "received": 193202.0,
+   "err": 0.0
+  },
+  "口粮下仓": {
+   "rows": 4,
+   "paid": 193202.0,
+   "received": 193202.0,
+   "err": 0.0
+  },
+  "口粮配给": {
+   "rows": 17633,
+   "paid": 193202.0,
+   "received": 193202.0,
+   "err": 6.868503987789154e-09
+  },
+  "房税": {
+   "rows": 17633,
+   "paid": 8816.5,
+   "received": 8816.5,
+   "err": 0.0
+  },
+  "人头税": {
+   "rows": 17633,
+   "paid": 3526.6,
+   "received": 3526.6,
+   "err": 1.000444171950221e-11
+  },
+  "行会钱": {
+   "rows": 1211,
+   "paid": 363.3,
+   "received": 363.3,
+   "err": 1.5347723092418164e-12
+  },
+  "税钱上缴(坊长→区长)": {
+   "rows": 399,
+   "paid": 10747.8,
+   "received": 10747.8,
+   "err": 2.000888343900442e-11
+  },
+  "税钱上缴(区长→城市长官)": {
+   "rows": 17,
+   "paid": 10032.75,
+   "received": 10032.75,
+   "err": 0.0
+  },
+  "行会钱上缴(行会头→城市长官)": {
+   "rows": 6,
+   "paid": 326.97,
+   "received": 326.97,
+   "err": 5.684341886080802e-14
+  },
+  "上交皇库": {
+   "rows": 1,
+   "paid": 5180.56,
+   "received": 5180.56,
+   "err": 0.0
+  },
+  "奉献": {
+   "rows": 17633,
+   "paid": 5289.9,
+   "received": 5289.9,
+   "err": 3.67435859516263e-10
+  },
+  "奉献截留(长老)": {
+   "rows": 7,
+   "paid": 264.495,
+   "received": 264.495,
+   "err": 0.0
+  },
+  "奉献上缴(→主教)": {
+   "rows": 7,
+   "paid": 5025.405,
+   "received": 5025.405,
+   "err": 9.094947017729282e-13
+  },
+  "施舍": {
+   "rows": 1314,
+   "paid": 1594.071,
+   "received": 1594.071,
+   "err": 2.751221472863108e-11
+  },
+  "神职俸给": {
+   "rows": 7,
+   "paid": 1657.006,
+   "received": 1657.006,
+   "err": 0.0
+  },
+  "教堂营造": {
+   "rows": 175,
+   "paid": 1719.941,
+   "received": 1719.941,
+   "err": 1.3642420526593924e-12
+  },
+  "租金": {
+   "rows": 6227,
+   "paid": 6227.0,
+   "received": 6227.0,
+   "err": 0.0
+  },
+  "买卖:面包": {
+   "rows": 17633,
+   "paid": 8869.668,
+   "received": 8869.668,
+   "err": 0.0
+  },
+  "买卖:水": {
+   "rows": 17633,
+   "paid": 6687.268,
+   "received": 6687.268,
+   "err": 0.0
+  },
+  "买卖:手工": {
+   "rows": 17633,
+   "paid": 101434.754,
+   "received": 101434.754,
+   "err": 0.0
+  },
+  "买卖:港货": {
+   "rows": 17633,
+   "paid": 64688.57,
+   "received": 64688.57,
+   "err": 1.4551915228366852e-11
+  },
+  "买卖:菜蔬": {
+   "rows": 17633,
+   "paid": 4481.748,
+   "received": 4481.748,
+   "err": 0.0
+  },
+  "买卖:鱼": {
+   "rows": 17633,
+   "paid": 20137.83,
+   "received": 20137.83,
+   "err": 0.0
+  },
+  "进货/原料(付城外)": {
+   "rows": 5130,
+   "paid": 25399.139,
+   "received": 25399.139,
+   "err": 4.3655745685100555e-11
+  },
+  "港货进价(付船商)": {
+   "rows": 170,
+   "paid": 39052.42,
+   "received": 39052.42,
+   "err": 7.275957614183426e-12
+  },
+  "原料(转口货)": {
+   "rows": 2826,
+   "paid": 13416.27,
+   "received": 13416.27,
+   "err": 1.8189894035458565e-12
+  },
+  "出口:手工(船商付)": {
+   "rows": 2826,
+   "paid": 10367.5,
+   "received": 10367.5,
+   "err": 0.0
+  },
+  "出口:鱼(船商付)": {
+   "rows": 213,
+   "paid": 213.0,
+   "received": 213.0,
+   "err": 0.0
+  },
+  "港费:装卸": {
+   "rows": 110,
+   "paid": 14400.0,
+   "received": 14400.0,
+   "err": 5.093170329928398e-11
+  },
+  "港费:仓储": {
+   "rows": 62,
+   "paid": 7200.0,
+   "received": 7200.0,
+   "err": 2.7284841053187847e-12
+  },
+  "港费:船修": {
+   "rows": 64,
+   "paid": 4800.0,
+   "received": 4800.0,
+   "err": 1.8189894035458565e-12
+  },
+  "港费:牙佣": {
+   "rows": 55,
+   "paid": 5400.0,
+   "received": 5400.0,
+   "err": 7.275957614183426e-12
+  },
+  "港费:兑钱": {
+   "rows": 52,
+   "paid": 3600.0,
+   "received": 3600.0,
+   "err": 1.3642420526593924e-12
+  },
+  "转口差价(船商付)": {
+   "rows": 170,
+   "paid": 13500.0,
+   "received": 13500.0,
+   "err": 5.093170329928398e-11
+  },
+  "关税": {
+   "rows": 4,
+   "paid": 36000.0,
+   "received": 36000.0,
+   "err": 0.0
+  },
+  "关税分成(→城市长官)": {
+   "rows": 4,
+   "paid": 12000.0,
+   "received": 12000.0,
+   "err": 0.0
+  },
+  "关税上解(→皇库)": {
+   "rows": 4,
+   "paid": 24000.0,
+   "received": 24000.0,
+   "err": 0.0
+  },
+  "工钱": {
+   "rows": 5039,
+   "paid": 15117.0,
+   "received": 15117.0,
+   "err": 0.0
+  },
+  "工钱:港口": {
+   "rows": 5504,
+   "paid": 16512.0,
+   "received": 16512.0,
+   "err": 0.0
+  },
+  "俸给": {
+   "rows": 21,
+   "paid": 100.0,
+   "received": 100.0,
+   "err": 0.0
+  },
+  "官俸(坊长/区长)": {
+   "rows": 416,
+   "paid": 424.0,
+   "received": 424.0,
+   "err": 0.0
+  },
+  "兵饷": {
+   "rows": 212,
+   "paid": 1260.0,
+   "received": 1260.0,
+   "err": 0.0
+  },
+  "城防街渠维护": {
+   "rows": 620,
+   "paid": 16472.503,
+   "received": 16472.503,
+   "err": 1.2005330063402653e-10
+  },
+  "借贷": {
+   "rows": 552,
+   "paid": 3218.256,
+   "received": 3218.256,
+   "err": 0.0
+  },
+  "还款": {
+   "rows": 2110,
+   "paid": 2993.682,
+   "received": 2993.682,
+   "err": 4.547473508864641e-13
+  },
+  "建设:新房": {
+   "rows": 68,
+   "paid": 680.0,
+   "received": 680.0,
+   "err": 0.0
+  },
+  "迁入带钱": {
+   "rows": 104,
+   "paid": 208.0,
+   "received": 208.0,
+   "err": 0.0
+  }
+ },
+ "timing": {
+  "total_s": 21.16,
+  "prep_s": 3.03,
+  "step_median_s": 0.23,
+  "step_max_s": 0.813
+ },
+ "files": {
+  "flows_AF40.json.gz": 689642,
+  "flows_AF50.json.gz": 1113007,
+  "flows_AF60.json.gz": 1215665,
+  "flows_AF70.json.gz": 1319009
+ },
+ "sample": {
+  "house": "h11604",
+  "text": {
+   "41": "AF41 瞎子巷 41B号（房屋 h11604，生计 雇工，租户）\n  收 口粮配给         13.674 份粮  ← 仓:horrea_theodosius@牧羊人巷 276A号\n  付 人头税           0.200 份  → 山羊坡2 29号\n  付 奉献            0.300 份  → 官:堂区长老|church_apostles@台阶巷 204AW号\n  付 租金            1.000 份  → 瞎子巷 192D号\n  付 买卖:面包         0.794 份  → 路·north3 393号\n  付 买卖:水          0.462 份  → 水池街 23号\n  付 买卖:手工         0.500 份  → 三棵松二巷 29D号\n  付 买卖:港货         0.343 份  → 路·north3 279号\n  付 买卖:鱼          0.229 份  → 路·acropolis 336号\n  收 工钱            3.000 份  ← 瞎子巷 199B号\n  收 迁入带钱          2.000 份  ← 外:迁入\n  年收入 3.000，年支出 3.828，年初现钱 0.000，年末现钱 1.172",
+   "48": "AF48 瞎子巷 41B号（房屋 h11604，生计 雇工，租户）\n  收 口粮配给         12.123 份粮  ← 仓:horrea_theodosius@牧羊人巷 276A号\n  付 人头税           0.200 份  → 瞎子巷 41A号\n  付 奉献            0.300 份  → 官:堂区长老|church_apostles@台阶巷 204AW号\n  付 租金            1.000 份  → 瞎子巷 192D号\n  付 买卖:面包         0.408 份  → 路·north3 39号\n  付 买卖:水          0.268 份  → 城墙根街 153B号\n  付 买卖:手工         0.290 份  → 路·north3 34号\n  付 买卖:港货         0.199 份  → 路·north3 725号\n  付 买卖:菜蔬         0.201 份  → 路·north3 559GQ号\n  付 买卖:鱼          0.133 份  → 路·acropolis 853号\n  收 工钱            3.000 份  ← 瞎子巷 318号\n  年收入 3.000，年支出 3.000，年初现钱 -0.000，年末现钱 -0.000",
+   "60": "AF60 瞎子巷 41B号（房屋 h11604，生计 雇工，租户）\n  收 口粮配给         11.655 份粮  ← 仓:horrea_theodosius@牧羊人巷 276A号\n  付 人头税           0.200 份  → 瞎子巷 41A号\n  付 奉献            0.300 份  → 官:堂区长老|church_apostles@台阶巷 204AW号\n  付 租金            1.000 份  → 瞎子巷 192D号\n  付 买卖:面包         0.408 份  → 路·north3 567号\n  付 买卖:水          0.268 份  → 水池街 3U号\n  付 买卖:手工         0.290 份  → 路·north3 559K号\n  付 买卖:港货         0.199 份  → 路·north3 559CB号\n  付 买卖:菜蔬         0.201 份  → 路·north3 559LC号\n  付 买卖:鱼          0.133 份  → 路·acropolis 286号\n  收 工钱            3.000 份  ← 瞎子巷 192A号\n  年收入 3.000，年支出 3.000，年初现钱 -0.000，年末现钱 -0.000",
+   "70": "AF70 瞎子巷 41B号（房屋 h11604，生计 雇工，租户）\n  收 口粮配给         10.957 份粮  ← 仓:horrea_theodosius@牧羊人巷 276A号\n  付 人头税           0.200 份  → 瞎子巷 41a号\n  付 奉献            0.300 份  → 官:堂区长老|church_apostles@台阶巷 204AW号\n  付 租金            1.000 份  → 瞎子巷 192D号\n  付 买卖:面包         0.408 份  → 路·north3 502号\n  付 买卖:水          0.268 份  → 水池街 3P号\n  付 买卖:手工         0.290 份  → 路·north3 310号\n  付 买卖:港货         0.199 份  → 路·north3 559PL号\n  付 买卖:菜蔬         0.201 份  → 路·mocius 25号\n  付 买卖:鱼          0.133 份  → 新三街 95EF号\n  收 工钱            3.000 份  ← 瞎子巷 192A号\n  年收入 3.000，年支出 3.000，年初现钱 -0.000，年末现钱 -0.000"
+  }
+ },
+ "events": {
+  "fire48": {
+   "year": 48,
+   "desc": "AF48 火灾：账本本年拆毁 263 栋（world.json destroyed=48）；反事实 = 这些房屋与户照 AF47 在册",
+   "hardware": {
+    "households_ev": 14287,
+    "households_cf": 14550,
+    "changed_inputs": 471,
+    "dirty_households_K1": 471,
+    "dirty_districts": [
+     "d_byzas",
+     "d_forum",
+     "d_harbor",
+     "d_xerolophos"
+    ],
+    "dirty_buyers_K3": 14118
+   },
+   "affected_households_money": 14169,
+   "income_change": {
+    "n": 2609,
+    "total": 428.82,
+    "down": 1820,
+    "up": 789,
+    "min": -279.639,
+    "max": 239.605
+   },
+   "jobs": {
+    "lost": 178,
+    "gained": 0
+   },
+   "poor_ev": 1112,
+   "poor_cf": 1118,
+   "totals_ev_minus_cf": {
+    "房税": -131.5,
+    "人头税": -52.6,
+    "行会钱": -5.7,
+    "税钱上缴(坊长→区长)": -144.9,
+    "税钱上缴(区长→城市长官)": -151.2,
+    "行会钱上缴(行会头→城市长官)": -5.13,
+    "上交皇库": -78.16,
+    "奉献": -78.9,
+    "奉献截留(长老)": -3.95,
+    "奉献上缴(→主教)": -74.96,
+    "施舍": -12.49,
+    "神职俸给": -12.49,
+    "教堂营造": -12.49,
+    "租金": -115.0,
+    "买卖:面包": -120.43,
+    "买卖:水": -123.25,
+    "买卖:手工": -1876.11,
+    "买卖:港货": -1190.24,
+    "买卖:菜蔬": -56.68,
+    "买卖:鱼": -362.16,
+    "进货/原料(付城外)": -424.66,
+    "港货进价(付船商)": -708.5,
+    "原料(转口货)": -226.75,
+    "出口:手工(船商付)": -13.5,
+    "出口:鱼(船商付)": -3.0,
+    "工钱": -540.0,
+    "工钱:港口": 6.0,
+    "城防街渠维护": -2069.08,
+    "借贷": 78.59,
+    "还款": -22.27,
+    "拆迁补偿": 3945.0,
+    "搬迁费": 115.0,
+    "迁出带钱": 14851.33
+   },
+   "incremental_equals_rebuild": true,
+   "rows": 172072,
+   "rows_hash": "324d1db51abbbb9d",
+   "timing_ms": {
+    "full_rebuild": 211.8,
+    "incremental": 238.9,
+    "counterfactual": 205.4,
+    "dirty_detect": 84.9
+   }
+  },
+  "granary55": {
+   "year": 55,
+   "desc": "AF55 新粮仓 horrea_alexandrina：v7 配给点改到新仓 2206 户；账本 food_cap 173,202→193,202 同年（归因于新仓，假设）；反事实 = 无此仓、配给点回 AF54、food_cap 173,202",
+   "hardware": {
+    "households_ev": 15950,
+    "households_cf": 15950,
+    "changed_inputs": 2318,
+    "dirty_households_K1": 2318,
+    "dirty_districts": [
+     "d_byzas",
+     "d_forum",
+     "d_harbor",
+     "d_xerolophos"
+    ],
+    "dirty_buyers_K3": 3490
+   },
+   "affected_households_money": 3820,
+   "income_change": {
+    "n": 1187,
+    "total": 2134.83,
+    "down": 308,
+    "up": 879,
+    "min": -0.026,
+    "max": 81.0
+   },
+   "jobs": {
+    "lost": 0,
+    "gained": 0
+   },
+   "poor_ev": 1310,
+   "poor_cf": 1315,
+   "totals_ev_minus_cf": {
+    "口粮调拨": 20000.0,
+    "口粮下仓": 20000.0,
+    "口粮配给": 20000.0,
+    "买卖:面包": -3.37,
+    "买卖:水": 0.88,
+    "买卖:手工": 266.56,
+    "买卖:港货": 169.6,
+    "买卖:菜蔬": 0.51,
+    "买卖:鱼": 48.66,
+    "进货/原料(付城外)": 54.66,
+    "港货进价(付船商)": 100.79,
+    "原料(转口货)": 31.99,
+    "借贷": 0.1,
+    "建设:公共工程": 1620.0
+   },
+   "incremental_equals_rebuild": true,
+   "rows": 191526,
+   "rows_hash": "61c679c9ace34932",
+   "timing_ms": {
+    "full_rebuild": 215.7,
+    "incremental": 248.6,
+    "counterfactual": 220.5,
+    "dirty_detect": 101.3
+   }
+  },
+  "forum57": {
+   "year": 57,
+   "desc": "AF57 新市场 forum_theodosius（皇帝出资 9,600 份工程）；反事实 = 无此市场、无此工程",
+   "hardware": {
+    "households_ev": 16206,
+    "households_cf": 16206,
+    "changed_inputs": 138,
+    "dirty_households_K1": 138,
+    "dirty_districts": [
+     "d_byzas",
+     "d_forum",
+     "d_harbor",
+     "d_xerolophos"
+    ],
+    "dirty_buyers_K3": 13391
+   },
+   "affected_households_money": 13542,
+   "income_change": {
+    "n": 4427,
+    "total": 12709.34,
+    "down": 2164,
+    "up": 2263,
+    "min": -2038.345,
+    "max": 1613.826
+   },
+   "jobs": {
+    "lost": 0,
+    "gained": 0
+   },
+   "poor_ev": 1278,
+   "poor_cf": 1291,
+   "totals_ev_minus_cf": {
+    "买卖:面包": 44.76,
+    "买卖:水": -20.59,
+    "买卖:手工": 1554.46,
+    "买卖:港货": 1060.19,
+    "买卖:菜蔬": -39.04,
+    "买卖:鱼": 323.02,
+    "进货/原料(付城外)": 333.3,
+    "港货进价(付船商)": 623.36,
+    "原料(转口货)": 186.54,
+    "借贷": -185.77,
+    "建设:公共工程": 9600.0
+   },
+   "incremental_equals_rebuild": true,
+   "rows": 194820,
+   "rows_hash": "78a293bccec0765c",
+   "timing_ms": {
+    "full_rebuild": 223.2,
+    "incremental": 244.7,
+    "counterfactual": 220.8,
+    "dirty_detect": 101.4
+   }
+  },
+  "street62": {
+   "year": 62,
+   "desc": "AF62 新街 r_carriers：v7 门口改到新街 7 户（门牌改址）；反事实 = 这些户照 AF61 的街、坊、门牌，且无此路工程",
+   "hardware": {
+    "households_ev": 16759,
+    "households_cf": 16759,
+    "changed_inputs": 118,
+    "dirty_households_K1": 118,
+    "dirty_districts": [
+     "d_byzas",
+     "d_exokionion",
+     "d_forum",
+     "d_harbor",
+     "d_xerolophos"
+    ],
+    "dirty_buyers_K3": 1758
+   },
+   "affected_households_money": 2191,
+   "income_change": {
+    "n": 545,
+    "total": 305.63,
+    "down": 362,
+    "up": 183,
+    "min": -212.971,
+    "max": 174.741
+   },
+   "jobs": {
+    "lost": 0,
+    "gained": 0
+   },
+   "poor_ev": 1296,
+   "poor_cf": 1295,
+   "totals_ev_minus_cf": {
+    "税钱上缴(坊长→区长)": -2.52,
+    "税钱上缴(区长→城市长官)": 0.25,
+    "上交皇库": 0.13,
+    "买卖:面包": -1.12,
+    "买卖:水": -0.73,
+    "买卖:手工": 61.47,
+    "买卖:港货": 39.15,
+    "买卖:菜蔬": -0.53,
+    "买卖:鱼": 10.98,
+    "进货/原料(付城外)": 12.43,
+    "港货进价(付船商)": 23.26,
+    "原料(转口货)": 7.38,
+    "城防街渠维护": -186.44,
+    "建设:公共工程": 378.0,
+    "修水摊派": 5.0
+   },
+   "incremental_equals_rebuild": true,
+   "rows": 201923,
+   "rows_hash": "3c26562bb2a44214",
+   "timing_ms": {
+    "full_rebuild": 220.9,
+    "incremental": 246.0,
+    "counterfactual": 222.5,
+    "dirty_detect": 99.6
+   }
+  },
+  "ships_drop65": {
+   "year": 65,
+   "desc": "合成事件 AF65：到港商船骤降到 30%（一年，如海战/瘟疫/封港）；反事实 = 基准到港量",
+   "hardware": {
+    "households_ev": 17072,
+    "households_cf": 17072,
+    "changed_inputs": 3045,
+    "dirty_households_K1": 3045,
+    "dirty_districts": [
+     "d_byzas",
+     "d_exokionion",
+     "d_forum",
+     "d_harbor",
+     "d_xerolophos"
+    ],
+    "dirty_buyers_K3": 3165
+   },
+   "affected_households_money": 12199,
+   "income_change": {
+    "n": 4014,
+    "total": -55845.79,
+    "down": 4014,
+    "up": 0,
+    "min": -1179.051,
+    "max": 0.0
+   },
+   "jobs": {
+    "lost": 0,
+    "gained": 0
+   },
+   "poor_ev": 1502,
+   "poor_cf": 1325,
+   "totals_ev_minus_cf": {
+    "买卖:面包": -34.34,
+    "买卖:水": -24.4,
+    "买卖:手工": -6259.3,
+    "买卖:港货": -3984.51,
+    "买卖:菜蔬": -16.52,
+    "买卖:鱼": -1144.99,
+    "进货/原料(付城外)": -2141.75,
+    "港货进价(付船商)": -2641.38,
+    "原料(转口货)": -1298.24,
+    "出口:手工(船商付)": -4559.41,
+    "出口:鱼(船商付)": -94.07,
+    "港费:装卸": -10080.0,
+    "港费:仓储": -5040.0,
+    "港费:船修": -3360.0,
+    "港费:牙佣": -3780.0,
+    "港费:兑钱": -2520.0,
+    "转口差价(船商付)": -9450.0,
+    "关税": -25200.0,
+    "关税分成(→城市长官)": -8400.0,
+    "关税上解(→皇库)": -16800.0,
+    "工钱": 9114.0,
+    "工钱:港口": -9114.0,
+    "城防街渠维护": -4200.0,
+    "借贷": -64.45
+   },
+   "incremental_equals_rebuild": true,
+   "rows": 205364,
+   "rows_hash": "20a632e280558ab4",
+   "timing_ms": {
+    "full_rebuild": 227.8,
+    "incremental": 259.9,
+    "counterfactual": 223.1,
+    "dirty_detect": 106.4
+   }
+  }
+ },
+ "sensitivity": {
+  "x0.5": {
+   "ships_AF70": 300.0,
+   "poor_share_AF70": 0.0928,
+   "gini_income_AF70": 0.7175,
+   "gini_networth_AF70": 0.1724,
+   "coverage_AF70": 0.9929,
+   "unemployed_AF70": 0,
+   "public_works_AF70": 75,
+   "va": {
+    "转口": 43545.99,
+    "手工": 39547.17,
+    "农渔": 12976.16
+   },
+   "va_share": {
+    "转口": 0.4533,
+    "手工": 0.4117,
+    "农渔": 0.1351
+   },
+   "gross": {
+    "转口": 62641.98,
+    "手工": 56495.96,
+    "农渔": 15013.02
+   },
+   "employment": {
+    "转口": 0.2556,
+    "手工": 0.4148,
+    "农渔": 0.0279
+   },
+   "treasury_AF70": {
+    "eparch": 15896.5,
+    "bishop_nicene": 4080.21,
+    "bishop_arian": 890.8
+   },
+   "poor_share_by_year": {
+    "40": 0.0698,
+    "50": 0.0925,
+    "60": 0.0924,
+    "70": 0.0928
+   },
+   "max_money_err": 6.912159733474255e-10,
+   "checks_ok": true
+  },
+  "x1.0": {
+   "ships_AF70": 600.0,
+   "poor_share_AF70": 0.0773,
+   "gini_income_AF70": 0.7987,
+   "gini_networth_AF70": 0.2338,
+   "coverage_AF70": 1.0,
+   "unemployed_AF70": 0,
+   "public_works_AF70": 0,
+   "va": {
+    "转口": 87952.42,
+    "手工": 78261.58,
+    "农渔": 21331.78
+   },
+   "va_share": {
+    "转口": 0.469,
+    "手工": 0.4173,
+    "农渔": 0.1137
+   },
+   "gross": {
+    "转口": 127004.84,
+    "手工": 111802.25,
+    "农渔": 24832.58
+   },
+   "employment": {
+    "转口": 0.3412,
+    "手工": 0.3577,
+    "农渔": 0.0279
+   },
+   "treasury_AF70": {
+    "eparch": 21896.5,
+    "bishop_nicene": 4080.21,
+    "bishop_arian": 890.8
+   },
+   "poor_share_by_year": {
+    "40": 0.0555,
+    "50": 0.0786,
+    "60": 0.0768,
+    "70": 0.0773
+   },
+   "max_money_err": 8.440110832452774e-10,
+   "checks_ok": true
+  },
+  "x1.5": {
+   "ships_AF70": 900.0,
+   "poor_share_AF70": 0.0707,
+   "gini_income_AF70": 0.8377,
+   "gini_networth_AF70": 0.2873,
+   "coverage_AF70": 1.0,
+   "unemployed_AF70": 0,
+   "public_works_AF70": 0,
+   "va": {
+    "转口": 132213.84,
+    "手工": 116298.94,
+    "农渔": 29503.31
+   },
+   "va_share": {
+    "转口": 0.4756,
+    "手工": 0.4183,
+    "农渔": 0.1061
+   },
+   "gross": {
+    "转口": 191077.69,
+    "手工": 166141.34,
+    "农渔": 34441.78
+   },
+   "employment": {
+    "转口": 0.3793,
+    "手工": 0.3322,
+    "农渔": 0.0279
+   },
+   "treasury_AF70": {
+    "eparch": 27896.5,
+    "bishop_nicene": 4080.21,
+    "bishop_arian": 890.8
+   },
+   "poor_share_by_year": {
+    "40": 0.0529,
+    "50": 0.0688,
+    "60": 0.0694,
+    "70": 0.0707
+   },
+   "max_money_err": 8.440110832452774e-10,
+   "checks_ok": true
+  }
+ },
+ "events_total_s": 12.3
+}

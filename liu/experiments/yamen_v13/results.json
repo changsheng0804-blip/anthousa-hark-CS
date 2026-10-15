@@ -1,0 +1,361 @@
+{
+ "params": {
+  "ODD_LEFT": false,
+  "affine_det": 0.004975763553470548,
+  "letters": "大写附号=位于基号之后插入；小写附号=位于本侧首户之前插入",
+  "ledger_street_name": "路·<道路id去掉 r_>"
+ },
+ "addresses": {
+  "entities_by_year": {
+   "AF40": 10730,
+   "AF50": 15316,
+   "AF60": 16600,
+   "AF70": 17658
+  },
+  "households_by_year": {
+   "AF40": 10713,
+   "AF50": 15296,
+   "AF60": 16577,
+   "AF70": 17633
+  },
+  "households_without_address": {
+   "AF40": 0,
+   "AF50": 0,
+   "AF60": 0,
+   "AF70": 0
+  },
+  "streets_with_numbers": {
+   "AF40": 85,
+   "AF50": 98,
+   "AF60": 99,
+   "AF70": 101
+  },
+  "suffix_numbers": {
+   "AF40": 1522,
+   "AF50": 5760,
+   "AF60": 6958,
+   "AF70": 7899
+  },
+  "events_by_kind_AF41_70": {
+   "新编": 7340,
+   "改址": 162,
+   "注销": 412,
+   "改名": 360
+  },
+  "events_by_kind_reason_AF41_70": {
+   "新编|上游门牌": 352,
+   "新编|新号": 342,
+   "新编|插号": 6559,
+   "新编|插号(街头前)": 87,
+   "改址|新街开通": 162,
+   "注销|拆毁": 412,
+   "改名|改名": 360
+  },
+  "new_number_how_AF40_70": {
+   "新号": 9074,
+   "上游门牌": 826,
+   "插号(街头前)": 164,
+   "插号": 8006
+  },
+  "renames": {
+   "48": [
+    "u:弯弯巷",
+    "u:酸酒二巷",
+    "u:铁匠巷",
+    "u:香料巷",
+    "u:黑狗二巷"
+   ],
+   "54": [
+    "u:运水人巷"
+   ]
+  },
+  "upstream_agreement": {
+   "AF40": {
+    "可比": 2580,
+    "街同": 909,
+    "门牌全同": 474,
+    "单双同": 474,
+    "上游当年无街": 6,
+    "街一致率": 0.3523,
+    "门牌一致率(占可比)": 0.1837,
+    "单双一致率(占街同)": 0.5215
+   },
+   "AF50": {
+    "可比": 3992,
+    "街同": 1428,
+    "门牌全同": 730,
+    "单双同": 730,
+    "上游当年无街": 1,
+    "街一致率": 0.3577,
+    "门牌一致率(占可比)": 0.1829,
+    "单双一致率(占街同)": 0.5112
+   },
+   "AF60": {
+    "可比": 4359,
+    "街同": 1546,
+    "门牌全同": 784,
+    "单双同": 784,
+    "上游当年无街": 1,
+    "街一致率": 0.3547,
+    "门牌一致率(占可比)": 0.1799,
+    "单双一致率(占街同)": 0.5071
+   },
+   "AF70": {
+    "可比": 4291,
+    "街同": 1517,
+    "门牌全同": 771,
+    "单双同": 771,
+    "上游当年无街": 1,
+    "街一致率": 0.3535,
+    "门牌一致率(占可比)": 0.1797,
+    "单双一致率(占街同)": 0.5082
+   }
+  }
+ },
+ "upstream_3168": {
+  "reproduced_count": 3168,
+  "definition": "上游门牌表刷新（04c3bec 前后两版 addr.json）中，同一栋房 AF60 所在街（按街现名）不同的户数；是事实版本差（上游地块挪位/街线重画），不是城里某年发生的改名",
+  "model_AF60_street_key_differs_from_AF40": 25,
+  "in_ledger_houses": 3168,
+  "model_houses_with_rename_or_readdress_AF41_60": 449,
+  "model_AF60_streetname_differs_from_AF40": 176,
+  "overlap_with_3168": 128,
+  "jaccard": 0.0398
+ },
+ "addr_history": {
+  "rows": 19004,
+  "gzip_bytes": 153169,
+  "readdress_with_heads": 393
+ },
+ "offices_seated": {
+  "AF40": {
+   "instances": 353,
+   "vacant": 12,
+   "seat_missing_address": 12,
+   "seat_missing_address_nonvacant": 0,
+   "seat_basis": {
+    "中心性代理": 1,
+    "对应建筑": 4,
+    "任职户门牌": 336,
+    "辖区设施本身（教堂/蓄水池/粮仓/城门或城墙段，v7 设施门口）": 12
+   },
+   "ranges_decode_ok": 353,
+   "range_segments_median": 4.0,
+   "range_segments_max": 242,
+   "range_segments_total": 4260,
+   "fang_head_ranges_median": 3.0
+  },
+  "AF50": {
+   "instances": 433,
+   "vacant": 54,
+   "seat_missing_address": 52,
+   "seat_missing_address_nonvacant": 0,
+   "seat_basis": {
+    "中心性代理": 1,
+    "对应建筑": 4,
+    "任职户门牌": 411,
+    "辖区设施本身（教堂/蓄水池/粮仓/城门或城墙段，v7 设施门口）": 17
+   },
+   "ranges_decode_ok": 433,
+   "range_segments_median": 4.0,
+   "range_segments_max": 306,
+   "range_segments_total": 6795,
+   "fang_head_ranges_median": 4.0
+  },
+  "AF60": {
+   "instances": 442,
+   "vacant": 28,
+   "seat_missing_address": 28,
+   "seat_missing_address_nonvacant": 0,
+   "seat_basis": {
+    "中心性代理": 1,
+    "对应建筑": 5,
+    "任职户门牌": 417,
+    "辖区设施本身（教堂/蓄水池/粮仓/城门或城墙段，v7 设施门口）": 19
+   },
+   "ranges_decode_ok": 442,
+   "range_segments_median": 5.0,
+   "range_segments_max": 316,
+   "range_segments_total": 7815,
+   "fang_head_ranges_median": 4.0
+  },
+  "AF70": {
+   "instances": 465,
+   "vacant": 15,
+   "seat_missing_address": 15,
+   "seat_missing_address_nonvacant": 0,
+   "seat_basis": {
+    "中心性代理": 1,
+    "对应建筑": 5,
+    "任职户门牌": 437,
+    "辖区设施本身（教堂/蓄水池/粮仓/城门或城墙段，v7 设施门口）": 22
+   },
+   "ranges_decode_ok": 465,
+   "range_segments_median": 5.0,
+   "range_segments_max": 322,
+   "range_segments_total": 8248,
+   "fang_head_ranges_median": 4.5
+  }
+ },
+ "registry": {
+  "AF40": {
+   "rows": 10713,
+   "json_bytes": 2120351,
+   "gzip_bytes": 200740,
+   "gzip_bytes_per_household": 18.7,
+   "json_bytes_per_household": 197.9,
+   "unique_keys_ok": true
+  },
+  "AF50": {
+   "rows": 15296,
+   "json_bytes": 3097040,
+   "gzip_bytes": 271379,
+   "gzip_bytes_per_household": 17.7,
+   "json_bytes_per_household": 202.5,
+   "unique_keys_ok": true
+  },
+  "AF60": {
+   "rows": 16577,
+   "json_bytes": 3357740,
+   "gzip_bytes": 297517,
+   "gzip_bytes_per_household": 17.9,
+   "json_bytes_per_household": 202.6,
+   "unique_keys_ok": true
+  },
+  "AF70": {
+   "rows": 17633,
+   "json_bytes": 3570674,
+   "gzip_bytes": 336800,
+   "gzip_bytes_per_household": 19.1,
+   "json_bytes_per_household": 202.5,
+   "unique_keys_ok": true
+  }
+ },
+ "routing": {
+  "AF40": {
+   "index_build_ms": 181.5,
+   "query_us_mean": 7.8,
+   "v8_check_households": 1000,
+   "v8_agree": 1000,
+   "v8_mismatch": 0,
+   "mismatch_examples": []
+  },
+  "AF50": {
+   "index_build_ms": 188.0,
+   "query_us_mean": 8.08,
+   "v8_check_households": 1000,
+   "v8_agree": 1000,
+   "v8_mismatch": 0,
+   "mismatch_examples": []
+  },
+  "AF60": {
+   "index_build_ms": 205.5,
+   "query_us_mean": 8.09,
+   "v8_check_households": 1000,
+   "v8_agree": 1000,
+   "v8_mismatch": 0,
+   "mismatch_examples": []
+  },
+  "AF70": {
+   "index_build_ms": 219.6,
+   "query_us_mean": 8.08,
+   "v8_check_households": 1000,
+   "v8_agree": 1000,
+   "v8_mismatch": 0,
+   "mismatch_examples": []
+  }
+ },
+ "rebuild": {
+  "v7_fresh_build_ms_per_year": {
+   "median": 576.8,
+   "max": 628.7
+  },
+  "v7_fresh_total_s": 17.6,
+  "door_tables_equal_years": 31,
+  "v7_records_equal_years": 31,
+  "addr_equal_years": 31,
+  "addr_mismatch_years": [],
+  "events_equal_years": 31,
+  "events_total_incr": 19004,
+  "events_total_batch": 19004,
+  "registry_equal_years": 31,
+  "registry_mismatch_years": [],
+  "batch_numbering_all_years_ms": 441.3,
+  "registry_full_build_ms_per_year": {
+   "median": 37.0,
+   "max": 92.3
+  },
+  "synthetic_AF71_street_remove_and_rename_incr_eq_batch": true,
+  "synthetic_summary": {
+   "door_equal_incr_vs_fresh": true,
+   "removed_street": "r_north3",
+   "renamed_street": "u:三棵松巷",
+   "v7_ms": 229.7,
+   "addr_incr_ms": 22.02,
+   "changed": 1949,
+   "events": {
+    "改址|道路拆除": 1949,
+    "改名|三棵松巷→三棵松巷（合成新名）": 621
+   }
+  }
+ },
+ "incremental": {
+  "v7_apply": {
+   "median_ms": 12.902,
+   "p90_ms": 78.376,
+   "max_ms": 129.808,
+   "sum_ms": 819.0
+  },
+  "door_extract": {
+   "median_ms": 13.39,
+   "p90_ms": 14.539,
+   "max_ms": 15.119,
+   "sum_ms": 394.6
+  },
+  "addr_detect_O(N)_diff": {
+   "median_ms": 3.249,
+   "p90_ms": 3.49,
+   "max_ms": 3.641,
+   "sum_ms": 92.9
+  },
+  "addr_update_local": {
+   "median_ms": 1.17,
+   "p90_ms": 3.363,
+   "max_ms": 5.779,
+   "sum_ms": 57.0
+  },
+  "registry_update": {
+   "median_ms": 30.932,
+   "p90_ms": 36.433,
+   "max_ms": 47.213,
+   "sum_ms": 930.7
+  },
+  "registry_rows_touched_per_year_median": 1119,
+  "materialize": {
+   "median_ms": 176.294,
+   "p90_ms": 208.066,
+   "max_ms": 219.293,
+   "sum_ms": 5371.9
+  },
+  "stage_seconds": {
+   "prepare_s": 1.9,
+   "census_addr_s": 9.6,
+   "cast_s": 6.1,
+   "registry_s": 2.3
+  },
+  "note": "口粮是全城均分值，放在户籍表头，不进每户行"
+ },
+ "eparch_seat": {
+  "40": {
+   "house": "h4411",
+   "junction": "j:503.96,446.89",
+   "harmonic": 176.3432,
+   "junctions": 1359
+  }
+ },
+ "samples_text": [
+  "【AF70 门牌 黑狗巷 17a号】房屋 h10522，户主 hh_h10522_g1；区 d_forum，坊 坊@510.03,407.08>510.04,407.03.0|角1；尼西亚堂区 church_apostles；供水组 cistern_modestus；配给点 horrea_theodosius；哨 wall_founder#s01；行会 None；本户职位 fang_head|坊@510.03,407.08>510.04,407.03.0|角1\n  民政：坊长[坊@510.03,407.08>510.04,407.03.0|角1] 衙署 黑狗巷 17a号（任职户 h10522） → 区长[d_forum] 衙署 路·old_harbor 96号（任职户 h7474） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  教会(尼西亚)：堂区长老（尼西亚）[church_apostles] 衙署 台阶巷 204AW号（任职户 h2892） → 主教（尼西亚）[全城] 衙署 路·east 3号（任职户 h2121）\n  粮：粮仓主管[horrea_theodosius] 衙署 牧羊人巷 276A号（任职户 h2690） → 粮政官[全城] 衙署 路·harbor_south 499号（任职户 h2463） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  水：水役头[cistern_modestus] 衙署 木匠街 59a号（任职户 h2731） → 水政官[全城] 衙署 路·west 129号（任职户 h344） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  哨：哨长[wall_founder#s01] 衙署 水池街 22号（任职户 h4046） → 夜巡长[全城] 衙署 路·mese 421号（任职户 h1315） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  流程 edict_down：城市长官(裁断) @ 梅塞大道 113号 → 区长(治安) @ 路·old_harbor 96号 → 坊长(治安) @ 黑狗巷 17a号\n  流程 petition_up：坊长(上报) @ 黑狗巷 17a号 → 区长(上报) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号\n  流程 build_permit：坊长(上报) @ 黑狗巷 17a号 → 区长(批建) @ 路·old_harbor 96号 → 水役头(上报) @ 木匠街 59a号 → 水政官(批建) @ 路·west 129号\n  流程 demolition_comp：坊长(上报) @ 黑狗巷 17a号 → 区长(批建) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号 → 区长(征税) @ 路·old_harbor 96号\n  流程 relief：坊长(上报) @ 黑狗巷 17a号 → 区长(上报) @ 路·old_harbor 96号 → 粮政官(配粮) @ 路·harbor_south 499号 → 粮仓主管(配粮) @ 牧羊人巷 276A号 → 坊长(配粮) @ 黑狗巷 17a号",
+  "【AF70 门牌 三棵松巷 279A号】房屋 h16888，户主 hh_h16888_g0；区 d_forum，坊 坊@450.14,459.51>450.16,458.55.0；阿里乌会众 arian_meeting；供水组 cistern_carriers；配给点 horrea_theodosius；哨 gate_founder；行会 None；本户职位 无\n  民政：坊长[坊@450.14,459.51>450.16,458.55.0] 衙署 三棵松巷 283号（任职户 h3615） → 区长[d_forum] 衙署 路·old_harbor 96号（任职户 h7474） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  教会(阿里乌)：会众长老（阿里乌）[arian_meeting] 衙署 路·mese 423A号（任职户 h2743） → 主教（阿里乌）[全城] 衙署 路·exo 11A号（任职户 h2689）\n  粮：粮仓主管[horrea_theodosius] 衙署 牧羊人巷 276A号（任职户 h2690） → 粮政官[全城] 衙署 路·harbor_south 499号（任职户 h2463） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  水：水役头[cistern_carriers] 衙署 运水人池街 101D号（任职户 h2729） → 水政官[全城] 衙署 路·west 129号（任职户 h344） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  哨：哨长[gate_founder] 衙署 路·mese 406号（任职户 h1428） → 夜巡长[全城] 衙署 路·mese 421号（任职户 h1315） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  另：按 v8 口径主教（尼西亚）为全城职位，本户亦在其下：衙署 路·east 3号（任职户 h2121）\n  流程 edict_down：城市长官(裁断) @ 梅塞大道 113号 → 区长(治安) @ 路·old_harbor 96号 → 坊长(治安) @ 三棵松巷 283号\n  流程 petition_up：坊长(上报) @ 三棵松巷 283号 → 区长(上报) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号\n  流程 build_permit：坊长(上报) @ 三棵松巷 283号 → 区长(批建) @ 路·old_harbor 96号 → 水役头(上报) @ 运水人池街 101D号 → 水政官(批建) @ 路·west 129号\n  流程 demolition_comp：坊长(上报) @ 三棵松巷 283号 → 区长(批建) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号 → 区长(征税) @ 路·old_harbor 96号\n  流程 relief：坊长(上报) @ 三棵松巷 283号 → 区长(上报) @ 路·old_harbor 96号 → 粮政官(配粮) @ 路·harbor_south 499号 → 粮仓主管(配粮) @ 牧羊人巷 276A号 → 坊长(配粮) @ 三棵松巷 283号",
+  "【AF70 门牌 黑狗巷 17AG号】房屋 h13226，户主 hh_h13226_g1；区 d_forum，坊 坊@510.03,407.08>510.04,407.03.0；尼西亚堂区 church_apostles；供水组 cistern_modestus；配给点 horrea_theodosius；哨 wall_founder#s01；行会 None；本户职位 无\n  民政：坊长[坊@510.03,407.08>510.04,407.03.0] 衙署 黑狗巷 17K号（任职户 h10568） → 区长[d_forum] 衙署 路·old_harbor 96号（任职户 h7474） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  教会(尼西亚)：堂区长老（尼西亚）[church_apostles] 衙署 台阶巷 204AW号（任职户 h2892） → 主教（尼西亚）[全城] 衙署 路·east 3号（任职户 h2121）\n  粮：粮仓主管[horrea_theodosius] 衙署 牧羊人巷 276A号（任职户 h2690） → 粮政官[全城] 衙署 路·harbor_south 499号（任职户 h2463） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  水：水役头[cistern_modestus] 衙署 木匠街 59a号（任职户 h2731） → 水政官[全城] 衙署 路·west 129号（任职户 h344） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  哨：哨长[wall_founder#s01] 衙署 水池街 22号（任职户 h4046） → 夜巡长[全城] 衙署 路·mese 421号（任职户 h1315） → 城市长官[全城] 衙署 梅塞大道 113号（任职户 h1898）\n  流程 edict_down：城市长官(裁断) @ 梅塞大道 113号 → 区长(治安) @ 路·old_harbor 96号 → 坊长(治安) @ 黑狗巷 17K号\n  流程 petition_up：坊长(上报) @ 黑狗巷 17K号 → 区长(上报) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号\n  流程 build_permit：坊长(上报) @ 黑狗巷 17K号 → 区长(批建) @ 路·old_harbor 96号 → 水役头(上报) @ 木匠街 59a号 → 水政官(批建) @ 路·west 129号\n  流程 demolition_comp：坊长(上报) @ 黑狗巷 17K号 → 区长(批建) @ 路·old_harbor 96号 → 城市长官(裁断) @ 梅塞大道 113号 → 区长(征税) @ 路·old_harbor 96号\n  流程 relief：坊长(上报) @ 黑狗巷 17K号 → 区长(上报) @ 路·old_harbor 96号 → 粮政官(配粮) @ 路·harbor_south 499号 → 粮仓主管(配粮) @ 牧羊人巷 276A号 → 坊长(配粮) @ 黑狗巷 17K号"
+ ]
+}

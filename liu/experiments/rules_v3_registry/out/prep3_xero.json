@@ -1,0 +1,49 @@
+{
+ "scope": "xero",
+ "size_matrix_mismatch": 0,
+ "dist_to_ledger_px": {
+  "p50": 8.8,
+  "p90": 15.5,
+  "p99": 30.3
+ },
+ "hosted_house_years_AF50_70": 347,
+ "page_houses_AF60": 4465,
+ "ledger_houses_AF60": 3515,
+ "ledger_houses_AF60_by_district": {
+  "d_harbor": 931,
+  "d_forum": 1980,
+  "d_xerolophos": 604
+ },
+ "demolition_check": {
+  "11": {
+   "page_demolished": 25,
+   "ledger_same_year": 5,
+   "district": {
+    "d_forum": 25
+   }
+  },
+  "38": {
+   "page_demolished": 195,
+   "ledger_same_year": 140,
+   "district": {
+    "d_forum": 195
+   }
+  },
+  "48": {
+   "page_demolished": 91,
+   "ledger_same_year": 71,
+   "district": {
+    "d_harbor": 91
+   }
+  },
+  "54": {
+   "page_demolished": 17,
+   "ledger_same_year": 17,
+   "district": {
+    "d_xerolophos": 17
+   }
+  }
+ },
+ "seconds": 0.55,
+ "bytes": 2555458
+}

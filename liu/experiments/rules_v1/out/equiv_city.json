@@ -1,0 +1,21 @@
+{
+ "scope": "city",
+ "v0": 25494,
+ "v1": 25494,
+ "identical_pairs": 25494,
+ "only_v0": 0,
+ "only_v1": 0,
+ "pattern_diff": 0,
+ "years_diff": 0,
+ "score_diff": 0,
+ "exact_match": 25494,
+ "top8_same": true,
+ "top60_same": true,
+ "examples": {
+  "only_v0": [],
+  "only_v1": [],
+  "pattern_diff": [],
+  "years_diff": [],
+  "score_diff": []
+ }
+}

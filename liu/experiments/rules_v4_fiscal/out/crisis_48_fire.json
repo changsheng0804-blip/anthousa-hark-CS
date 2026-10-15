@@ -1,0 +1,466 @@
+{
+ "days": {
+  "tenant_to_owner": 1,
+  "to_fang": 1,
+  "fang_up": 2,
+  "district_up": 3,
+  "prefect_decide": 5,
+  "prefect_down": 2,
+  "district_down": 2,
+  "fang_cap": 20,
+  "to_elder": 1,
+  "elder_up": 2,
+  "bishop_decide": 2,
+  "bishop_down": 2,
+  "elder_cap": 10,
+  "relief_per_person": 0.25,
+  "next_collection": 90,
+  "clear_days_per_house": 20,
+  "men_per_unaffected": 0.3333333333333333
+ },
+ "neutral": {
+  "victims": {
+   "households": 86,
+   "people": 490,
+   "owners": 63,
+   "tenants": 23,
+   "ledger_houses_page": 63,
+   "ledger_houses_city": 287,
+   "ledger_houses_outside_page": 224,
+   "fangs": 3,
+   "districts": [
+    "港口区"
+   ]
+  },
+  "money": {
+   "prefect_reserve_AF47": 28374.0,
+   "need": 626.5,
+   "need_page": 122.5,
+   "need_outside": 504.0,
+   "covered_now": 1.0,
+   "bishop_reserve": [
+    1849.1,
+    1611.4
+   ]
+  },
+  "levels": {
+   "fang_knows_day": [
+    1.0,
+    2.0
+   ],
+   "fang_reports_up_day": [
+    3.0,
+    4.0
+   ],
+   "district_reports_day": [
+    7.0,
+    7.0
+   ],
+   "prefect_decides_day": 12.0,
+   "money_at_fang_day": 16.0,
+   "church_money_at_elder_day": 7
+  },
+  "relief_day": {
+   "civil": {
+    "first": 16.0,
+    "median": 17.0,
+    "last": 19.0
+   },
+   "first_any": {
+    "first": 7.0,
+    "median": 8.0,
+    "last": 18.0
+   }
+  },
+  "by_group": {
+   "阿里乌派": {
+    "households": 45,
+    "mean_day": 8.0,
+    "max_day": 10.0
+   },
+   "尼西亚派": {
+    "households": 25,
+    "mean_day": 7.2,
+    "max_day": 8.0
+   },
+   "还拜旧神": {
+    "households": 16,
+    "mean_day": 16.8,
+    "max_day": 18.0
+   },
+   "房主": {
+    "households": 63,
+    "mean_day": 9.6,
+    "max_day": 18.0
+   },
+   "租户": {
+    "households": 23,
+    "mean_day": 8.8,
+    "max_day": 17.0
+   },
+   "缺男丁": {
+    "households": 12,
+    "mean_day": 8.5,
+    "max_day": 16.0
+   }
+  },
+  "first5": [
+   {
+    "key": "6777:28",
+    "name": "安德烈",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 6,
+    "district": "港口区",
+    "fang": 14,
+    "needy": false,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "7838:30",
+    "name": "巴西尔",
+    "faith": "尼西亚派",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": true,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "8572:35",
+    "name": "狄奥多西",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 5,
+    "district": "港口区",
+    "fang": 14,
+    "needy": false,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "9111:39",
+    "name": "米哈伊尔",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": true,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "9454:40",
+    "name": "马克西姆斯",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 10,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   }
+  ],
+  "last5": [
+   {
+    "key": "14262:43",
+    "name": "尼科劳斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 7,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 17.0,
+    "church_day": null,
+    "first_day": 17.0
+   },
+   {
+    "key": "9343:33",
+    "name": "卢基乌斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 5,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   },
+   {
+    "key": "10630:34",
+    "name": "科斯马斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 5,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   },
+   {
+    "key": "11414:34",
+    "name": "以撒",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   },
+   {
+    "key": "14435:44",
+    "name": "尼科劳斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 2,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   }
+  ],
+  "clearing": {
+   "13": {
+    "burned_houses": 44,
+    "men_called": 46,
+    "days": 19.1,
+    "start": 2.0
+   },
+   "14": {
+    "burned_houses": 3,
+    "men_called": 29,
+    "days": 2.1,
+    "start": 1.0
+   },
+   "12": {
+    "burned_houses": 16,
+    "men_called": 58,
+    "days": 5.5,
+    "start": 2.0
+   }
+  },
+  "fang_order": {
+   "12": {
+    "head": 3254,
+    "households": 19,
+    "first": 4493,
+    "last": 4832
+   },
+   "13": {
+    "head": 614,
+    "households": 64,
+    "first": 3307,
+    "last": 2300
+   },
+   "14": {
+    "head": 1322,
+    "households": 3,
+    "first": 1727,
+    "last": 2351
+   }
+  }
+ },
+ "favoritism_lambda05": {
+  "relief_day": {
+   "civil": {
+    "first": 16.0,
+    "median": 17.0,
+    "last": 19.0
+   },
+   "first_any": {
+    "first": 7.0,
+    "median": 8.0,
+    "last": 18.0
+   }
+  },
+  "by_group": {
+   "阿里乌派": {
+    "households": 45,
+    "mean_day": 8.0,
+    "max_day": 10.0
+   },
+   "尼西亚派": {
+    "households": 25,
+    "mean_day": 7.2,
+    "max_day": 8.0
+   },
+   "还拜旧神": {
+    "households": 16,
+    "mean_day": 16.6,
+    "max_day": 18.0
+   },
+   "房主": {
+    "households": 63,
+    "mean_day": 9.6,
+    "max_day": 18.0
+   },
+   "租户": {
+    "households": 23,
+    "mean_day": 8.8,
+    "max_day": 16.0
+   },
+   "缺男丁": {
+    "households": 12,
+    "mean_day": 8.5,
+    "max_day": 16.0
+   }
+  },
+  "first5": [
+   {
+    "key": "6777:28",
+    "name": "安德烈",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 6,
+    "district": "港口区",
+    "fang": 14,
+    "needy": false,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "7838:30",
+    "name": "巴西尔",
+    "faith": "尼西亚派",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": true,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "8572:35",
+    "name": "狄奥多西",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 5,
+    "district": "港口区",
+    "fang": 14,
+    "needy": false,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "9111:39",
+    "name": "米哈伊尔",
+    "faith": "阿里乌派",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": true,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   },
+   {
+    "key": "9475:38",
+    "name": "安德烈",
+    "faith": "尼西亚派",
+    "role": "房主",
+    "size": 2,
+    "district": "港口区",
+    "fang": 13,
+    "needy": true,
+    "civil_day": 16.0,
+    "church_day": 7.0,
+    "first_day": 7.0
+   }
+  ],
+  "last5": [
+   {
+    "key": "10886:39",
+    "name": "马可",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 8,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 17.0,
+    "church_day": null,
+    "first_day": 17.0
+   },
+   {
+    "key": "14262:43",
+    "name": "尼科劳斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 7,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 17.0,
+    "church_day": null,
+    "first_day": 17.0
+   },
+   {
+    "key": "9343:33",
+    "name": "卢基乌斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 5,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   },
+   {
+    "key": "11414:34",
+    "name": "以撒",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 3,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   },
+   {
+    "key": "14435:44",
+    "name": "尼科劳斯",
+    "faith": "还拜旧神",
+    "role": "房主",
+    "size": 2,
+    "district": "港口区",
+    "fang": 13,
+    "needy": false,
+    "civil_day": 18.0,
+    "church_day": null,
+    "first_day": 18.0
+   }
+  ]
+ },
+ "seconds": {
+  "simulate": 0.0008,
+  "total": 0.18
+ }
+}

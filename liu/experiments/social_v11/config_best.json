@@ -1,0 +1,82 @@
+{
+ "_doc": "v11 基础配置 = v10 最佳组 g01（config_best.json）原样，只改：dunbar_layers 5/15/50/150 人 → 3/7/23/68 户（÷2.2 人/户，Hill&Dunbar 2003）；新增 office_cap_mult（职位户上限 68×k，假设）。——Hark（刘线）  最佳组 s1k2.0：市场 1500.0、c 2.0、辖民容量 80、k 2.0。",
+ "seed": 20261014,
+ "c": 2.0,
+ "a": 1.0,
+ "base": {
+  "近邻": 1.0,
+  "门口路口": 1.0,
+  "街段": 1.0,
+  "坊": 1.0,
+  "行会": 1.0,
+  "教堂会众": 1.0,
+  "井/水池": 1.0
+ },
+ "knn_k": 6,
+ "dist_d0": 20.0,
+ "dist_gamma": 1.0,
+ "homophily_faith": 0.2,
+ "homophily_guild": 0.4,
+ "office_hub_capacity": 80,
+ "market_strength": 1500.0,
+ "market_d0": 60.0,
+ "market_gamma": 6.0,
+ "tie_weight": {
+  "近邻": 3.0,
+  "门口路口": 2.0,
+  "街段": 1.5,
+  "坊": 1.0,
+  "行会": 1.5,
+  "教堂会众": 0.5,
+  "井/水池": 0.3,
+  "市场": 0.2,
+  "职位上下级": 2.0,
+  "职位辖民": 1.0,
+  "婚姻": 4.0
+ },
+ "kin_weight": {
+  "1": 5.0,
+  "2": 4.0,
+  "3": 2.5
+ },
+ "kin_window": 5,
+ "kin_max_children": 3,
+ "kin_maxdist": 3,
+ "p_immigrant": 0.35,
+ "p_marry": 0.8,
+ "p_cross_faith": 0.02,
+ "marry_d0": 60.0,
+ "marry_status_disc": 0.5,
+ "marry_guild_boost": 2.0,
+ "turnover": {
+  "近邻": 0.05,
+  "门口路口": 0.08,
+  "街段": 0.08,
+  "坊": 0.1,
+  "行会": 0.1,
+  "教堂会众": 0.15,
+  "井/水池": 0.15,
+  "市场": 0.2,
+  "职位辖民": 0.1
+ },
+ "p_lost": 0.4,
+ "age_boost": 0.3,
+ "q_closure": 0.06,
+ "closure_decay": 0.2,
+ "closure_top_k": 10,
+ "closure_weight_factor": 0.5,
+ "closure_w_cap": 3.0,
+ "dunbar_layers": [
+  3,
+  7,
+  23,
+  68
+ ],
+ "layer_names": [
+  "强",
+  "中",
+  "弱",
+  "认识"
+ ],
+ "office_cap_mult": 2.0
+}
