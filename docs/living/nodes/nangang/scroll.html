@@ -131,6 +131,7 @@ const PALW={homes:[[232,216,186],[222,200,164],[242,232,210],[212,186,148],[228,
 const PALR=[[190,100,66],[176,92,60],[200,116,74],[164,86,58],[184,108,72],[156,100,76],[196,124,84]];
 const TIMBER=[132,94,62],DARK=[64,48,36],DOOR=[104,70,46],STONEW=[214,204,182],BRICK=[184,120,92],MORTAR=[236,226,206];
 const AWN=[[176,72,52],[64,96,120],[196,160,84],[120,128,84],[226,214,190]];
+let LOW=false;const CH=256,LODZ=1.4;/* 近景按 256 像素切块，镜头外的块不画；镜头缩放过 LODZ 就换远景 */
 function houseGeom(B,f){
   const p=f.p,pt=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]],fr=f.fr??2,id=f.id,ty=(f.ty||'casa').startsWith('lm:')?'flat':(f.ty||'casa'),fn=f.fn||'homes',h=k=>hsh(id,k);
   const A=pt[fr],Bp=pt[(fr+1)%4],Cp=pt[(fr+2)%4],Dp=pt[(fr+3)%4];
@@ -166,6 +167,10 @@ function houseGeom(B,f){
   const wall=(PALW[fn]||PALW.homes)[(h(3)*(PALW[fn]||PALW.homes).length)|0].map(c=>c*(.96+.06*h(4))),rc=pick(PALR,14);
   const FH=4.0,ht=Math.max(3.4,(f.ht||4.6)*1.1);let nF=Math.max(1,Math.min(4,Math.round(ht/FH)));
   const u0=ins,u1=Lu-ins,v0=ins,v1=Lv-ins,W_=u1-u0;
+  /* 远景（LOW）：一块房身 + 一面屋顶，后院只留一块地色；屋顶样式、颜色、高度和近景同一套哈希，切换时不跳 */
+  if(LOW){const top=ty==='row'||ty==='std'?Math.max(4.5,nF*FH*.88):nF*FH*.88,r=h(15),kind=ty==='row'?'gable':r<.42?'hip':r<.8?'gable':'flat';box(u0,v0,u1,v1,0,top,wall);
+    roof(u0,v0,u1,v1,top,kind==='flat'?0:Math.min(3.6,(v1-v0)*.32),rc,kind,true,wall);
+    if(f.yd>1.5)quad(V(.2,Lv+.2,.08),V(Lu-.2,Lv+.2,.08),V(Lu-.2,Lv+f.yd,.08),V(.2,Lv+f.yd,.08),[168,170,118]);return}
   /* 正面开窗：每层按宽度排，位置抖一点 */
   const windows=(vf,y0,n,ww,wh,col,skipMid)=>{for(let i=0;i<n;i++){if(skipMid&&i===((n-1)/2|0))continue;const uc=u0+W_*(i+.5)/n+(h(60+i)-.5)*.6;fface(uc-ww/2,uc+ww/2,y0,y0+wh,vf,col)}};
   if(ty==='row'){
@@ -253,16 +258,20 @@ const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0
 const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
 /* ---- 按年份重建 ---- */
 let HM=null,PM=null;const M4=new THREE.Matrix4();
+let HG=null,HL=null;function lod(){if(!HG)return;const hi=cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
+  let n=window.__nvFix;if(hi){const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();if(fr.intersectsSphere(m.geometry.boundingSphere))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
 function build(){const t0=performance.now();paintGround();setTerrain();
-  const B={pos:[],col:[]};
-  for(const f of by.house){if(!live(f))continue;houseGeom(B,f)}
+  const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();
+  for(const f of by.house){if(!live(f))continue;const k=((f.p[0]/CH)|0)+'_'+((f.p[1]/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});LOW=false;houseGeom(b,f);LOW=true;houseGeom(BL,f)}LOW=false;
   LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6)}
   for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;
     pushBuilding(B,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56],[150,112,74],'flat')}
   /* 防波堤：底账港池落海的那圈，挤出成石堤 */const moleMat=mats.mole||(mats.mole=new THREE.MeshLambertMaterial({color:0xc4b8a0}));
   for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new THREE.Shape(P[0].map(p=>new THREE.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new THREE.Path(r.map(p=>new THREE.Vector2(p[0],p[1]))));
     const g=new THREE.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new THREE.Mesh(g,moleMat);m.castShadow=m.receiveShadow=true;LMG.add(m)}
-  window.__nv=B.pos.length/3;  if(HM){scene.remove(HM);HM.geometry.dispose()}HM=meshOf(B,VMAT);scene.add(HM);
+  if(HM){scene.remove(HM);HM.geometry.dispose()}HM=meshOf(B,VMAT);scene.add(HM);
+  if(HG){scene.remove(HG);HG.traverse(o=>o.geometry&&o.geometry.dispose())}HG=new THREE.Group();let nh=0;for(const b of BK.values()){if(!b.pos.length)continue;nh+=b.pos.length/3;HG.add(meshOf(b,VMAT))}scene.add(HG);
+  if(HL){scene.remove(HL);HL.geometry.dispose()}HL=meshOf(BL,VMAT);scene.add(HL);window.__nvHi=nh;window.__nvLo=BL.pos.length/3;window.__nvFix=B.pos.length/3;lod();
   let nc=0,no=0;for(const t of WD.trees){if(!(t[3]<=YEAR&&(t[4]==null||t[4]>YEAR))||t[2]==='garden')continue;const y=elevPx(t[0],t[1])+1.5,s=t[5];
     if(t[2]==='cypress'){M4.makeScale(s*.7,s*4.2,s*.7).setPosition(t[0],y,t[1]);cyp.setMatrixAt(nc++,M4)}else{M4.makeScale(s*1.2,s*1,s*1.2).setPosition(t[0],y+s*1.1,t[1]);oli.setMatrixAt(no++,M4)}}
   cyp.count=nc;oli.count=no;cyp.instanceMatrix.needsUpdate=oli.instanceMatrix.needsUpdate=true;
@@ -300,7 +309,7 @@ let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 
 $('day').onclick=()=>{DAY=!DAY;$('day').style.opacity=DAY?1:.5};
 addEventListener('resize',()=>{asp=innerWidth/innerHeight;Object.assign(cam,{left:-VH*asp/2,right:VH*asp/2});cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);sizeRT()});
 let fN=0,fT=performance.now();window.__fps=0;
-rnd.setAnimationLoop(()=>{ctl.update();anim();comp.uniforms.zk.value=1/cam.zoom;
+rnd.setAnimationLoop(()=>{ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;
   rnd.setRenderTarget(rtC);rnd.render(scene,cam);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,cam);scene.overrideMaterial=null;scene.background=bg;
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
