@@ -248,6 +248,15 @@
    "what": "按街道重排 + 道路系统同步上游（streets_ng.py 取自 streets_xero.py，house_types.py，页面画法取自上游 v25）；地面 ground_K 抹掉画上小房子",
    "machine": "pass",
    "owner": "待评"
+  },
+  {
+   "v": "nodes1",
+   "q": "nangang",
+   "date": "2026-10-17",
+   "what": "节点样板：底账→节点→渲染器，无栅格（tools/cs/nodes）",
+   "machine": "无机器验收（新架构，perf 基线见 tools/cs/nodes/README.md）",
+   "owner": "留",
+   "issue": "效果好多了"
   }
  ]
 }
