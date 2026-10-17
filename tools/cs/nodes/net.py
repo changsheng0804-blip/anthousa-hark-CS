@@ -273,6 +273,8 @@ while seeds and len(streets) < 3000:
     ix, iy = int(x / G), int(y / G)
     if not (0 <= ix < gw and 0 <= iy < gh) or sep_fam[fam][iy, ix] and not roadAny[iy, ix]: continue
     a, ja = trace(x, y, fam, 1); b, jb = trace(x, y, fam, -1)
+    if len(a) < 8 and not ja: a = a[:1]   # 越过母街的小尾巴剪掉：它会挡住母街另一侧的门面
+    if len(b) < 8 and not jb: b = b[:1]
     p = b[::-1] + a[1:]
     if len(p) < 2: continue
     for end, jn in ((0, jb), (-1, ja)):   # 没接上的头：16 像素内找最近的街接过去（不留断头缝）
@@ -310,7 +312,7 @@ def cut(l, sid, kind, half):
             dp = NUM['lot_d'][0] + (NUM['lot_d'][1] - NUM['lot_d'][0]) * hf(rl, sid, side, round(s), 'd')
             a = l.interpolate(s); b = l.interpolate(min(L, s + fw_))
             ux, uy = b.x - a.x, b.y - a.y; ul = math.hypot(ux, uy) or 1; ux /= ul; uy /= ul
-            nx, ny = -uy * side, ux * side; off = half + 1.2
+            nx, ny = -uy * side, ux * side; off = half + G + 0.6   # 至少隔一格：栅格取整时不咬到街
             P = [(a.x + nx * off, a.y + ny * off), (b.x + nx * off, b.y + ny * off), (b.x + nx * (off + dp), b.y + ny * (off + dp)), (a.x + nx * (off + dp), a.y + ny * (off + dp))]
             A_ = np.array(P) / G; bx0, by0 = np.floor(A_.min(0)).astype(int) - 1; bx1, by1 = np.ceil(A_.max(0)).astype(int) + 2
             if bx0 < 0 or by0 < 0 or bx1 >= gw or by1 >= gh: s += 2.0; continue
@@ -324,6 +326,8 @@ def cut(l, sid, kind, half):
                 s += fw_ + 0.3
             else: s += 1.0
 for i, l in enumerate(mese_lines): cut(l, 'm%d' % i, 'main', 7.5)
+if os.environ.get('DBG'):
+    import pickle; pickle.dump((occ, roadW, block), open('/tmp/occ.pkl', 'wb'))
 for i, (l, _, _) in enumerate(trunk_lines): cut(l, 't%d' % i, 'trunk', 4)
 for i, (l, _) in enumerate(streets): cut(l, 's%d' % i, 'street', 2.5)
 log('lots', len(lots), collections.Counter(l['kind'] for l in lots))
@@ -347,7 +351,7 @@ for i in order:
         if not np.isfinite(d_): break
         lot = lots[j]
         if not free(lot, a, b): continue
-        pen = d_ + (0 if lot['kind'] != 'street' or f['fn'] not in ('shops', 'market') else 40) - (15 if lot['kind'] != 'street' else 0) - 30 * nb_busy(j, a, b)   # 挨着已有人家的地块更好：连成排
+        pen = 0.6 * d_ + (0 if lot['kind'] != 'street' or f['fn'] not in ('shops', 'market') else 40) - {'main': 45, 'trunk': 25}.get(lot['kind'], 0) - 30 * nb_busy(j, a, b)   # 临街先填满：干道、挨着人家的地块优先   # 挨着已有人家的地块更好：连成排
         if best is None or pen < best[0]: best = (pen, j)
     if best is None: unplaced.append(f['id']); continue
     lots[best[1]]['busy'].append((a, b)); placed[f['id']] = best[1]
@@ -389,7 +393,7 @@ for g, w in allS:
 rep['street_points_on_water'] = wet
 rep['street_slope_p95'] = round(float(np.percentile(steep, 95)), 3)
 rep['houses_ledger'] = len(houses0); rep['houses_placed'] = len(newH); rep['houses_unplaced'] = len(unplaced)
-net = unary_union([LineString([(g[0], g[1]), (g[2], g[3])]).buffer(1.5) for g, _ in allS])
+net = unary_union([LineString([(g[0], g[1]), (g[2], g[3])]).buffer(max(1.5, w / 2)) for g, w in allS])   # 街面按宽度算
 comps = list(net.geoms) if hasattr(net, 'geoms') else [net]; big = max(comps, key=lambda c: c.area)
 rep['street_components'] = len(comps); rep['main_component_share'] = round(big.area / net.area, 3)
 rep['landmarks_reached'] = sum(1 for a in anchors if a[2] == 'lm' and big.distance(Point(a[0], a[1])) < 10); rep['landmarks'] = sum(1 for a in anchors if a[2] == 'lm')
