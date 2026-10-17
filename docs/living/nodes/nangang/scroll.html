@@ -7,6 +7,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#efe6d2;font-family:"N
 canvas{display:block;touch-action:none}
 #bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(250,244,230,.92);border:1px solid #b9a582;border-radius:14px;padding:8px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18)}
 #yr{width:min(56vw,420px)}#yl{min-width:72px;text-align:right;font-size:15px}
+  .wb{font:16px inherit;width:52px;height:52px;border-radius:26px;border:1px solid #b9a582;background:rgba(251,245,230,.9);touch-action:none}
 #tag{position:fixed;left:12px;top:10px;background:rgba(250,244,230,.88);border:1px solid #b9a582;border-radius:10px;padding:6px 10px;font-size:13px;line-height:1.5;max-width:70vw}
 #tag a{color:#7a3e1c}#fps{position:fixed;right:10px;top:10px;font:12px monospace;background:rgba(250,244,230,.8);padding:2px 6px;border-radius:6px}
 </style>
@@ -14,7 +15,8 @@ canvas{display:block;touch-action:none}
 </head><body>
 <div id="tag"><b>南港 · 长卷</b>　界画式斜俯，线稿淡彩。左右拖动展卷，双指缩放。<a href="./">2D</a> · <a href="3d.html">3D</a></div>
 <div id="fps"></div>
-<div id="bar"><button id="day" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">粮船日</button><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
+<div id="walkUI" style="display:none;position:fixed;right:14px;bottom:80px;gap:8px;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;touch-action:none"><button id="wF" class="wb">前</button><div style="display:flex;gap:8px"><button id="wL" class="wb">左</button><button id="wB" class="wb">后</button><button id="wR" class="wb">右</button></div></div>
+<div id="bar"><button id="walkB" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">漫步</button><button id="day" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">粮船日</button><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
 <script type="module">
 /* CS 线 · 节点渲染器 3D（2026-10-17）：只吃 nodes.json。地面 = 高程格起伏 + 地面层（陆地、沙岸、港池、街）画成贴图披上去；
    房子按底账占地立起来（墙 + 四坡/平顶），地标是代码部件，树是实例。年份一变，房子、树、栈桥整批重建（几十毫秒）。
@@ -72,15 +74,16 @@ const sea=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),seaMat);sea.rotati
 const mkRT=()=>{const r=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});r.depthTexture=new THREE.DepthTexture(1,1);return r};
 const rtC=mkRT(),rtN=mkRT();const nrmMat=new THREE.MeshNormalMaterial({side:THREE.DoubleSide});
 function sizeRT(){const w=Math.round(innerWidth*DPR),h=Math.round(innerHeight*DPR);rtC.setSize(w,h);rtN.setSize(w,h);comp.uniforms.res.value.set(w,h)}
-const comp=new THREE.ShaderMaterial({uniforms:{tC:{value:rtC.texture},tN:{value:rtN.texture},tD:{value:rtN.depthTexture},res:{value:new THREE.Vector2(1,1)},lw:{value:DPR},zk:{value:1}},
+const comp=new THREE.ShaderMaterial({uniforms:{tC:{value:rtC.texture},tN:{value:rtN.texture},tD:{value:rtN.depthTexture},res:{value:new THREE.Vector2(1,1)},lw:{value:DPR},zk:{value:1},ps:{value:0},nr:{value:2.2},fr:{value:2500}},
  vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
- fragmentShader:`uniform sampler2D tC,tN,tD;uniform vec2 res;uniform float lw,zk;varying vec2 vUv;
+ fragmentShader:`uniform sampler2D tC,tN,tD;uniform vec2 res;uniform float lw,zk,ps,nr,fr;varying vec2 vUv;
+ float lin(float d){float z=d*2.-1.;return 2.*nr*fr/(fr+nr-z*(fr-nr));}
  float D(vec2 u){return texture2D(tD,u).x;} vec3 N(vec2 u){return texture2D(tN,u).xyz*2.-1.;} vec3 C(vec2 u){return texture2D(tC,u).rgb;}
  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
  float edge(vec2 u,float r){vec2 px=r/res;float d=D(u);if(d>.9999)return 0.;vec3 n=N(u);vec3 c=C(u);float e=0.;
   vec2 o[4];o[0]=vec2(px.x,0.);o[1]=vec2(0.,px.y);o[2]=vec2(-px.x,0.);o[3]=vec2(0.,-px.y);
   for(int k=0;k<4;k++){vec2 v=u+o[k];float dn=D(v);
-   if(d-dn>.00045*zk)e=1.;                 /* 我在后面，邻居在前：线归后面这一侧，避免双线 */
+   if(ps<.5&&d-dn>.00045*zk)e=1.;if(ps>.5){float a=lin(d),b=lin(dn);if(a-b>.05*a+.4)e=1.;}                 /* 我在后面，邻居在前：线归后面这一侧，避免双线 */
    if(dn>.9999)e=1.;
    if(k<2&&dot(n,N(v))<.80)e=max(e,.85);   /* 面的折角：屋脊、墙角 */
    if(k<2&&length(c-C(v))>.16)e=max(e,.55);/* 颜色分界：屋顶与墙、街与地 */
@@ -258,8 +261,8 @@ const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0
 const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
 /* ---- 按年份重建 ---- */
 let HM=null,PM=null;const M4=new THREE.Matrix4();
-let HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const hi=cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
-  let n=window.__nvFix;if(hi){const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();if(fr.intersectsSphere(m.geometry.boundingSphere))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
+let STROLL=false,HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const hi=STROLL||cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
+  let n=window.__nvFix;if(hi){const AC=STROLL?pcam:cam;const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(AC.projectionMatrix,AC.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();if(fr.intersectsSphere(m.geometry.boundingSphere))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
 function build(){const t0=performance.now();paintGround();setTerrain();
   const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();
   for(const f of by.house){if(!live(f))continue;const k=((f.p[0]/CH)|0)+'_'+((f.p[1]/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});LOW=false;houseGeom(b,f);LOW=true;houseGeom(BL,f)}LOW=false;
@@ -297,7 +300,8 @@ build();
 /* ---- 粮船日：只在港池里、只沿栈桥；人走栈桥和岸边。船行走只在底账和蒙版都是水的线上 ---- */
 const hullG=new THREE.BoxGeometry(1,1,1).translate(0,.5,0),mastG=new THREE.CylinderGeometry(.25,.3,1,5).translate(0,.5,0),sailG=new THREE.PlaneGeometry(1,1).translate(0,.5,0);
 const SH=60,PP=900;const hull=new THREE.InstancedMesh(hullG,new THREE.MeshLambertMaterial({color:0x8a6a48}),SH),mast=new THREE.InstancedMesh(mastG,INK,SH),sail=new THREE.InstancedMesh(sailG,new THREE.MeshLambertMaterial({color:0xfaf6ea,side:THREE.DoubleSide}),SH);
-const ppl=new THREE.InstancedMesh(new THREE.CylinderGeometry(.55,.75,2.6,5).translate(0,1.3,0),INK,PP);scene.add(hull,mast,sail,ppl);
+const ppl=new THREE.InstancedMesh(new THREE.LatheGeometry([[0,0],[.72,0],[.5,1.2],[.42,1.9],[.14,2.0],[.32,2.12],[.37,2.3],[.3,2.5],[0,2.62]].map(p=>new THREE.Vector2(p[0],p[1])),7)/* 一个人：长袍到脚，头 */,new THREE.MeshLambertMaterial({color:0xffffff}),PP);scene.add(hull,mast,sail,ppl);
+/* 人穿的颜色：本色麻、土红、靛蓝、褐、白；从高处看还是一个个小点，走到街上才分得出谁是谁 */{const TUN=[0xd8c8a8,0xa85a3c,0x4a5a78,0x6e5038,0xece4d4,0x8a7a4a],c=new THREE.Color();for(let i=0;i<PP;i++){c.setHex(TUN[(hsh(i,95)*TUN.length)|0]);ppl.setColorAt(i,c)}}
 let SHIPS=[],WALK=[],DAY=true;const Q=new THREE.Quaternion(),V=new THREE.Vector3(),S3=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0);
 function plan(){SHIPS=[];WALK=[];let i=0;
   for(const f of by.pier||[]){if(!live(f))continue;let [a,b]=f.g;if(isLand(b[0],b[1])&&!isLand(a[0],a[1]))[a,b]=[b,a];/* a=岸，b=伸进水的一头 */
@@ -319,15 +323,38 @@ function anim(){const t=(performance.now()-T0)/1000;seaMat.uniforms.t.value=t;
     const Qs=Q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(UP,Math.PI/2+.25*Math.sin(t*.3+n)));sail.setMatrixAt(n,M4.compose(V.set(x,4.5,z),Qs,S3.set(s.L*.55,s.L*.6,1)));n++}
   hull.count=mast.count=sail.count=n;hull.instanceMatrix.needsUpdate=mast.instanceMatrix.needsUpdate=sail.instanceMatrix.needsUpdate=true;
   let m=0;for(const w of WALK){if(!w.st&&!DAY)continue;const busy=w.st?1:Math.min(1,Math.max(0,(cyc-.3)/.1))*(cyc<.92?1:0);if(!busy)continue;
-    let p=(w.ph+t*w.sp)%2;p=p>1?2-p:p;const x=w.ax+(w.bx-w.ax)*p,z=w.az+(w.bz-w.az)*p;M4.makeTranslation(x,(isLand(x,z)?elevPx(x,z)+1.5:1.4),z);ppl.setMatrixAt(m++,M4)}
+    let p=(w.ph+t*w.sp)%2;p=p>1?2-p:p;const x=w.ax+(w.bx-w.ax)*p,z=w.az+(w.bz-w.az)*p;if(STROLL&&Math.hypot(x-wx,z-wz)<14)continue;/* 漫步时不让人贴在脸上 */M4.makeTranslation(x,(isLand(x,z)?elevPx(x,z)+1.5:1.4),z);ppl.setMatrixAt(m++,M4)}
   ppl.count=m;ppl.instanceMatrix.needsUpdate=true}
 plan();
 let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
 $('day').onclick=()=>{DAY=!DAY;$('day').style.opacity=DAY?1:.5};
-addEventListener('resize',()=>{asp=innerWidth/innerHeight;Object.assign(cam,{left:-VH*asp/2,right:VH*asp/2});cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);sizeRT()});
+addEventListener('resize',()=>{asp=innerWidth/innerHeight;pcam.aspect=asp;pcam.updateProjectionMatrix();Object.assign(cam,{left:-VH*asp/2,right:VH*asp/2});cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);sizeRT()});
+/* ---- 漫步：镜头落到街上，人眼高度。只能在街面里走（离最近那段街的中线不超过半个街宽），
+   房子本来就离街至少一格，所以走到哪都不会穿进墙里。拖动看四周，按住「前/后」或 W/S 走，A/D 转身 ---- */
+let wx=0,wz=0,yaw=0,pitch=-.04,mv=0,turn=0;const pcam=new THREE.PerspectiveCamera(62,asp,2.2,2500);const EYE=1.65/MPP*EX;
+const SEGS=()=>(by.street||[]).filter(live);
+function nearSeg(x,z){let best=null;for(const f of SEGS()){const g=f.g,dx=g[2]-g[0],dz=g[3]-g[1],L2=dx*dx+dz*dz||1;let t=((x-g[0])*dx+(z-g[1])*dz)/L2;t=Math.max(0,Math.min(1,t));
+  const px=g[0]+dx*t,pz=g[1]+dz*t,d=Math.hypot(x-px,z-pz);if(!best||d<best.d)best={d,px,pz,f,dx,dz}}return best}
+function clampToStreet(x,z){const n=nearSeg(x,z);if(!n)return [x,z];const r=Math.max(.6,n.f.w/2-.7);if(n.d<=r)return [x,z];const k=r/n.d;return [n.px+(x-n.px)*k,n.pz+(z-n.pz)*k]}
+function walkPose(){const gy=elevPx(wx,wz)+1.5+EYE;pcam.position.set(wx,gy,wz);const cx=Math.cos(pitch);pcam.lookAt(wx+Math.sin(yaw)*cx*10,gy+Math.sin(pitch)*10,wz-Math.cos(yaw)*cx*10)}
+let lastT=performance.now();
+function walkStep(){const t=performance.now(),dt=Math.min(.05,(t-lastT)/1000);lastT=t;yaw+=turn*dt*1.4;
+  if(mv){const sp=1.4/MPP*EX*2.2;/* 走路约 1.4 米每秒，放快一点 */const nx=wx+Math.sin(yaw)*mv*sp*dt,nz=wz-Math.cos(yaw)*mv*sp*dt;[wx,wz]=clampToStreet(nx,nz)}walkPose()}
+function enterWalk(x,z,yw){const n=nearSeg(x,z);if(!n)return;wx=n.px;wz=n.pz;yaw=yw!=null?yw:Math.atan2(n.dx,-n.dz);pitch=-.04;STROLL=true;ctl.enabled=false;
+  scene.fog=new THREE.Fog(0xefe6d2,120,900);$('walkUI').style.display='flex';$('walkB').textContent='回长卷';walkPose();lastT=performance.now()}
+function exitWalk(){STROLL=false;ctl.enabled=true;scene.fog=null;$('walkUI').style.display='none';$('walkB').textContent='漫步';look(wx,wz,Math.max(cam.zoom,2.4))}
+$('walkB').onclick=()=>STROLL?exitWalk():enterWalk(ctl.target.x,ctl.target.z);
+let drag=null;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL)drag=[e.clientX,e.clientY]});addEventListener('pointerup',()=>drag=null);
+addEventListener('pointermove',e=>{if(!STROLL||!drag)return;yaw+=(e.clientX-drag[0])*.005;pitch=Math.max(-.6,Math.min(.5,pitch-(e.clientY-drag[1])*.004));drag=[e.clientX,e.clientY]});
+rnd.domElement.addEventListener('dblclick',e=>{if(STROLL)return;const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h)enterWalk(h.point.x,h.point.z)});
+const hold=(id,v,fn)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();fn(v)};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>fn(0)};
+hold('wF',1,v=>mv=v);hold('wB',-1,v=>mv=v);hold('wL',-1,v=>turn=v);hold('wR',1,v=>turn=v);
+addEventListener('keydown',e=>{if(!STROLL)return;const k=e.key.toLowerCase();if(k==='w'||k==='arrowup')mv=1;if(k==='s'||k==='arrowdown')mv=-1;if(k==='a'||k==='arrowleft')turn=-1;if(k==='d'||k==='arrowright')turn=1;if(k==='escape')exitWalk()});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
+window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
-rnd.setAnimationLoop(()=>{ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;
-  rnd.setRenderTarget(rtC);rnd.render(scene,cam);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,cam);scene.overrideMaterial=null;scene.background=bg;
+rnd.setAnimationLoop(()=>{if(STROLL)walkStep();else ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=STROLL?1:0;const AC=STROLL?pcam:cam;
+  rnd.setRenderTarget(rtC);rnd.render(scene,AC);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
 window.__look=look;
