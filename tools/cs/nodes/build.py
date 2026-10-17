@@ -140,7 +140,8 @@ def main():
         for s, sh in basins:
             if sh.buffer(2).contains(Point(cxh, cyh)): de = min(de, int(s['built']))
         if de <= b: continue
-        F.append({'t': 'house', 'id': id_, 'y0': b, 'y1': None if de >= 9999 else de, 'p': p, 'fn': h[8] if len(h) > 8 else 'homes', 'ht': h[7] if len(h) > 7 else 5})
+        F.append({'t': 'house', 'id': id_, 'y0': b, 'y1': None if de >= 9999 else de, 'p': p, 'fn': h[8] if len(h) > 8 else 'homes', 'ht': h[7] if len(h) > 7 else 5,
+                  'ty': h[9] if len(h) > 9 else 'casa', 'fr': h[10] if len(h) > 10 else 2, 'po': (h[12] & 1) if len(h) > 12 else 0})   # 类型、临街边、柱廊：上游 house_types 的词表（唯一来源）
 
     # ⑥ 地标：底账多边形 + 类型；页面的部件库按类型和种子画（像 WorldGacha 的城堡：是代码，不是图）
     sl = node_seed(R, 'landmarks'); seen = set()
