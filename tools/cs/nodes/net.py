@@ -356,6 +356,34 @@ for i in order:
     if best is None: unplaced.append(f['id']); continue
     lots[best[1]]['busy'].append((a, b)); placed[f['id']] = best[1]
 log('placed', len(placed), 'unplaced', len(unplaced))
+# ⑥b 后院：街廓中间没人家的地，按轮次一圈圈分给挨着的地块（每轮往后长 3 像素，最多 24），
+# 门脸不动，后面变成围墙园子——底账户数不变，街廓里面就不再是空地，而是一家家的后院。
+yard = {}
+used = [j for j, l in enumerate(lots) if l['busy']]
+occ = roadW.copy() | block.astype(np.uint8)   # 没人用过的地块放回去，给后院长
+for j in used: cv2.fillPoly(occ, [np.int32(np.array(lots[j]['p']) / G)], 1)
+grow = {j: True for j in used}
+for rnd_ in range(8):
+    any_ = False
+    for j in used:
+        if not grow[j]: continue
+        P = lots[j]['p']; d0 = yard.get(j, 0.0)
+        bx, by = P[3][0] - P[0][0], P[3][1] - P[0][1]; bl = math.hypot(bx, by) or 1; bx /= bl; by /= bl
+        s0 = d0
+        Q = [(P[3][0] + bx * s0, P[3][1] + by * s0), (P[2][0] + bx * s0, P[2][1] + by * s0), (P[2][0] + bx * (d0 + 3), P[2][1] + by * (d0 + 3)), (P[3][0] + bx * (d0 + 3), P[3][1] + by * (d0 + 3))]
+        A_ = np.array(Q) / G; bx0, by0 = np.floor(A_.min(0)).astype(int) - 1; bx1, by1 = np.ceil(A_.max(0)).astype(int) + 2
+        if d0 + 3 > min(14, 1.3 * math.hypot(P[1][0] - P[0][0], P[1][1] - P[0][1])): grow[j] = False; continue   # 后院不比门面长太多：否则成一根根细条
+        if bx0 < 0 or by0 < 0 or bx1 >= gw or by1 >= gh: grow[j] = False; continue
+        m = np.zeros((by1 - by0, bx1 - bx0), np.uint8); cv2.fillPoly(m, [np.int32(A_ - [bx0, by0])], 1)
+        own_ = np.zeros_like(m); Pe = [P[0], P[1], (P[2][0] + bx * d0, P[2][1] + by * d0), (P[3][0] + bx * d0, P[3][1] + by * d0)]
+        cv2.fillPoly(own_, [np.int32(np.array(Pe) / G - [bx0, by0])], 1)
+        cells = (m > 0) & (own_ == 0); sub = occ[by0:by1, bx0:bx1]
+        # 起步那一圈和房身贴着，跳过自己的边那一格
+        if cells.sum() and (sub[cells] > 0).mean() < 0.05:
+            sub[cells] = 1; yard[j] = d0 + 3; any_ = True
+        else: grow[j] = False
+    if not any_: break
+log('yards', len(yard), 'mean', round(float(np.mean(list(yard.values()))) if yard else 0, 1))
 newH = []
 for f in houses0:
     if f['id'] not in placed: continue
@@ -365,7 +393,7 @@ for f in houses0:
     ty = HT.pick_type(fn if fn in ('dock', 'horrea') else fnp, 0, area, lot['kind'] != 'street', f['id']) if fn != 'planned' or f['y0'] >= 48 else 'casa'
     ht = HT.type_height(ty, fnp, 0) if ty in HT.TYPE_H else f['ht']
     po = 1 if ty == 'row' and (fn == 'market' or hf(f['id'], 81) < .55) and lot['kind'] != 'street' else 0
-    newH.append({'t': 'house', 'id': f['id'], 'y0': f['y0'], 'y1': f['y1'], 'p': [round(c, 1) for xy in P for c in xy], 'fn': fn, 'ht': ht, 'ty': ty, 'fr': 0, 'po': po, 'sid': lot['sid']})
+    newH.append({'t': 'house', 'id': f['id'], 'y0': f['y0'], 'y1': f['y1'], 'p': [round(c, 1) for xy in P for c in xy], 'fn': fn, 'ht': ht, 'ty': ty, 'fr': 0, 'po': po, 'sid': lot['sid'], **({'yd': yard[placed[f['id']]]} if placed[f['id']] in yard else {})})
 
 # 街的年份：第一户临街那年前一年修出来；干道按两头锚点；梅塞是 canon（0 年）。没人临街的小街不修。
 first = collections.defaultdict(lambda: 9999)
@@ -407,7 +435,7 @@ idx = {f['id']: i for i, f in enumerate(houses0)}
 mv = [math.hypot(sum(h['p'][0::2]) / 4 - hc0[idx[h['id']]][0], sum(h['p'][1::2]) / 4 - hc0[idx[h['id']]][1]) for h in newH]
 rep['house_move_median_px'] = round(float(np.median(mv)), 1); rep['house_move_p95_px'] = round(float(np.percentile(mv, 95)), 1)
 rep['trunks'] = len(trunk_lines); rep['streets_built'] = built_streets; rep['lots'] = len(lots)
-rep['lots_reused_over_years'] = sum(1 for l in lots if len(l['busy']) > 1)
+rep['yards'] = len(yard); rep['lots_reused_over_years'] = sum(1 for l in lots if len(l['busy']) > 1)
 rep['pass'] = wet == 0 and rep['main_component_share'] > .95 and rep['landmarks_reached'] == rep['landmarks'] and rep['houses_unplaced'] <= 0.02 * len(houses0) and rep['house_front_to_street_max'] < 8
 print(json.dumps(rep, ensure_ascii=False, indent=1))
 
