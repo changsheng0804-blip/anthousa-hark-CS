@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>南港 · 长卷</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#efe6d2;font-family:"Noto Serif SC","Songti SC",serif;color:#2b2218}
+canvas{display:block;touch-action:none}
+#bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(250,244,230,.92);border:1px solid #b9a582;border-radius:14px;padding:8px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#yr{width:min(56vw,420px)}#yl{min-width:72px;text-align:right;font-size:15px}
+#tag{position:fixed;left:12px;top:10px;background:rgba(250,244,230,.88);border:1px solid #b9a582;border-radius:10px;padding:6px 10px;font-size:13px;line-height:1.5;max-width:70vw}
+#tag a{color:#7a3e1c}#fps{position:fixed;right:10px;top:10px;font:12px monospace;background:rgba(250,244,230,.8);padding:2px 6px;border-radius:6px}
+</style>
+<script type="importmap">{"imports":{"three":"../lib/three/three.module.js","three/addons/":"../lib/three/addons/"}}</script>
+</head><body>
+<div id="tag"><b>南港 · 长卷</b>　界画式斜俯，线稿淡彩。左右拖动展卷，双指缩放。<a href="./">2D</a> · <a href="3d.html">3D</a></div>
+<div id="fps"></div>
+<div id="bar"><button id="day" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">粮船日</button><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
+<script type="module">
+/* CS 线 · 节点渲染器 3D（2026-10-17）：只吃 nodes.json。地面 = 高程格起伏 + 地面层（陆地、沙岸、港池、街）画成贴图披上去；
+   房子按底账占地立起来（墙 + 四坡/平顶），地标是代码部件，树是实例。年份一变，房子、树、栈桥整批重建（几十毫秒）。
+   坐标：x = 页面像素 x，z = 页面像素 y，y = 高度（像素，1 像素 ≈ 0.84 米）。 */
+import * as THREE from 'three';
+import {MapControls} from 'three/addons/controls/MapControls.js';
+const $=id=>document.getElementById(id);
+const WD=await fetch('nodes.json').then(r=>r.json());
+const W=WD.W,H=WD.H,E=WD.elev,MPP=E.mpp;let YEAR=+$('yr').value;
+const hsh=(n,k=0)=>{let x=(Math.imul(n|0,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
+const live=f=>f.y0<=YEAR&&(f.y1==null||f.y1>YEAR);
+const by={};for(const f of WD.features)(by[f.t]=by[f.t]||[]).push(f);
+const EX=1.3;/* 高度夸张一点，七丘才显得出来 */
+function elevPx(x,y){const s=E.st,gx=Math.max(0,Math.min(E.w-1.001,x/s)),gy=Math.max(0,Math.min(E.h-1.001,y/s)),i=gx|0,j=gy|0,fx=gx-i,fy=gy-j,g=(a,b)=>E.dm[b*E.w+a]/10;
+  const m=(g(i,j)*(1-fx)+g(i+1,j)*fx)*(1-fy)+(g(i,j+1)*(1-fx)+g(i+1,j+1)*fx)*fy;return m/MPP*EX}
+/* ---- 地面层：陆地、沙岸、等高带、港池、街，画进一张贴图（运行时算的，不是画师的图） ---- */
+const TS=Math.min(2,4096/H),tex=document.createElement('canvas');tex.width=Math.round(W*TS);tex.height=Math.round(H*TS);const X=tex.getContext('2d');
+const path=(g)=>{for(const P of g)for(const ring of P){X.moveTo(ring[0][0],ring[0][1]);for(let i=1;i<ring.length;i++)X.lineTo(ring[i][0],ring[i][1]);X.closePath()}};
+const mask=document.createElement('canvas');mask.width=Math.ceil(W/4);mask.height=Math.ceil(H/4);const MX=mask.getContext('2d');let MD=null;
+function paintGround(){X.setTransform(TS,0,0,TS,0,0);X.fillStyle='rgb(200,214,206)';X.fillRect(0,0,W,H);
+  const L=by.land[0];X.save();X.beginPath();path(L.g);X.lineJoin='round';X.strokeStyle='rgb(232,222,196)';X.lineWidth=14;X.stroke();X.fillStyle='rgb(234,224,200)';X.fill();X.clip();
+  WD.bands.forEach((b,i)=>{X.beginPath();path(b.g);X.fillStyle=`rgba(150,140,100,${.02+.006*i})`;X.fill();X.strokeStyle='rgba(110,90,60,.18)';X.lineWidth=.5;X.stroke()});
+  X.restore();
+  for(const f of by.water)if(f.k==='harbor'&&live(f)){X.beginPath();path(f.g);X.fillStyle='rgb(200,214,206)';X.fill();X.save();X.beginPath();path(L.g);X.clip();X.beginPath();path(f.g);X.strokeStyle='rgb(150,136,110)';X.lineWidth=2;X.stroke();X.restore()}
+  for(const f of by.mole||[])if(live(f)){X.beginPath();path(f.g);X.fillStyle='rgb(196,184,160)';X.fill()}
+  const SC={m:['rgba(70,54,40,.75)','rgb(226,214,188)'],s:['rgba(70,54,40,.45)','rgb(240,232,214)'],c:['rgba(70,54,40,.35)','rgb(240,232,214)'],l:[null,'rgba(238,228,206,.9)']};X.lineCap='round';
+  for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k][pas];if(!col)continue;X.strokeStyle=col;for(const f of by.street){if(f.k!==k||!live(f))continue;const q=f.g;X.beginPath();X.moveTo(q[0],q[1]);X.lineTo(q[2],q[3]);X.lineWidth=f.w+(pas?-.4:.8);X.stroke()}}
+  /* 地标地皮（广场铺石、院子） */for(const f of by.landmark||[])if(live(f)){X.beginPath();f.g.forEach((p,i)=>i?X.lineTo(p[0],p[1]):X.moveTo(p[0],p[1]));X.closePath();X.fillStyle=f.k==='forum'?'rgb(244,238,224)':'rgb(236,226,204)';X.fill();X.strokeStyle='rgba(70,54,40,.5)';X.lineWidth=.8;X.stroke()}
+  /* 水陆蒙版：决定地形网格哪里下到海底 */MX.setTransform(.25,0,0,.25,0,0);MX.fillStyle='#000';MX.fillRect(0,0,W,H);MX.beginPath();MX.moveTo(0,0);
+  {const g=L.g;MX.beginPath();for(const P of g)for(const r of P){MX.moveTo(r[0][0],r[0][1]);for(const p of r)MX.lineTo(p[0],p[1]);MX.closePath()}MX.fillStyle='#fff';MX.fill('evenodd')}
+  for(const f of by.mole||[])if(live(f)){MX.beginPath();for(const P of f.g)for(const r of P){MX.moveTo(r[0][0],r[0][1]);for(const p of r)MX.lineTo(p[0],p[1]);MX.closePath()}MX.fillStyle='#fff';MX.fill('evenodd')}
+  for(const f of by.water)if(f.k==='harbor'&&live(f)){MX.beginPath();for(const P of f.g)for(const r of P){MX.moveTo(r[0][0],r[0][1]);for(const p of r)MX.lineTo(p[0],p[1]);MX.closePath()}MX.fillStyle='#000';MX.fill('evenodd')}
+  /* 岸边软化：蒙版糊一下，地形按覆盖率在海底和陆地之间过渡，免得岸成一级级台阶 */const M2=document.createElement('canvas');M2.width=mask.width;M2.height=mask.height;const m2=M2.getContext('2d');m2.filter='blur(1.5px)';m2.drawImage(mask,0,0);
+  MD=m2.getImageData(0,0,mask.width,mask.height).data}
+function cover(x,y){const fx=Math.max(0,Math.min(mask.width-1.001,x/4-.5)),fy=Math.max(0,Math.min(mask.height-1.001,y/4-.5)),i=fx|0,j=fy|0,a=fx-i,b=fy-j,g=(u,v)=>MD[(v*mask.width+u)*4]/255;return (g(i,j)*(1-a)+g(i+1,j)*a)*(1-b)+(g(i,j+1)*(1-a)+g(i+1,j+1)*a)*b}
+const isLand=(x,y)=>cover(x,y)>.5;
+const ground=(x,y)=>{const c=cover(x,y),t=Math.min(1,Math.max(0,(c-.3)/.4)),s=t*t*(3-2*t);return -6+(elevPx(x,y)+7.5)*s};
+/* ---- three：斜俯正交镜头 + 线稿淡彩后期（自己写的找边：深度跳变 + 面的折角 + 颜色分界） ---- */
+const DPR=Math.min(1.5,devicePixelRatio);const rnd=new THREE.WebGLRenderer({antialias:false});rnd.setPixelRatio(DPR);rnd.setSize(innerWidth,innerHeight);document.body.prepend(rnd.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xefe6d2);
+const VH=520;let asp=innerWidth/innerHeight;const cam=new THREE.OrthographicCamera(-VH*asp/2,VH*asp/2,VH/2,-VH/2,1,5000);
+const TILT=36*Math.PI/180,DIR=new THREE.Vector3(0,Math.sin(TILT),Math.cos(TILT));/* 从海上（南）斜俯看岸 */
+const ctl=new MapControls(cam,rnd.domElement);ctl.enableRotate=false;ctl.screenSpacePanning=true;ctl.minZoom=.35;ctl.maxZoom=6;ctl.enableDamping=true;ctl.dampingFactor=.12;
+function look(x,z,zoom){ctl.target.set(x,0,z);cam.position.copy(ctl.target).addScaledVector(DIR,2400);if(zoom)cam.zoom=zoom;cam.updateProjectionMatrix();ctl.update()}
+look(1200,1420,1.1);
+scene.add(new THREE.HemisphereLight(0xffffff,0xb8a888,2.2));
+const sun=new THREE.DirectionalLight(0xffffff,1.0);sun.position.set(-700,900,-500);scene.add(sun);
+/* 海：界画水纹（平行的波线），着色器里算，不用贴图 */
+const seaMat=new THREE.ShaderMaterial({uniforms:{t:{value:0}},vertexShader:'varying vec2 vP;void main(){vec4 w=modelMatrix*vec4(position,1.);vP=w.xz;gl_Position=projectionMatrix*viewMatrix*w;}',
+ fragmentShader:`uniform float t;varying vec2 vP;void main(){vec2 p=vP;float row=floor(p.y/7.);float ph=fract(sin(row*12.9898)*43758.5)*6.28;
+  float y=p.y-row*7.-3.5-sin(p.x*.045+ph+t*.35)*1.6;float seg=step(.58,fract(p.x/46.+ph+row*.37));float ln=(1.-smoothstep(.25,.9,abs(y)))*seg;
+  vec3 c=mix(vec3(.82,.87,.84),vec3(.40,.52,.54),ln*.32);gl_FragColor=vec4(c,1.);}`});
+const sea=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),seaMat);sea.rotation.x=-Math.PI/2;sea.position.set(W/2,0,H/2);scene.add(sea);
+/* 后期：两张底稿（颜色、法线+深度） */
+const mkRT=()=>{const r=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});r.depthTexture=new THREE.DepthTexture(1,1);return r};
+const rtC=mkRT(),rtN=mkRT();const nrmMat=new THREE.MeshNormalMaterial({side:THREE.DoubleSide});
+function sizeRT(){const w=Math.round(innerWidth*DPR),h=Math.round(innerHeight*DPR);rtC.setSize(w,h);rtN.setSize(w,h);comp.uniforms.res.value.set(w,h)}
+const comp=new THREE.ShaderMaterial({uniforms:{tC:{value:rtC.texture},tN:{value:rtN.texture},tD:{value:rtN.depthTexture},res:{value:new THREE.Vector2(1,1)},lw:{value:DPR},zk:{value:1}},
+ vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
+ fragmentShader:`uniform sampler2D tC,tN,tD;uniform vec2 res;uniform float lw,zk;varying vec2 vUv;
+ float D(vec2 u){return texture2D(tD,u).x;} vec3 N(vec2 u){return texture2D(tN,u).xyz*2.-1.;} vec3 C(vec2 u){return texture2D(tC,u).rgb;}
+ float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+ float edge(vec2 u,float r){vec2 px=r/res;float d=D(u);if(d>.9999)return 0.;vec3 n=N(u);vec3 c=C(u);float e=0.;
+  vec2 o[4];o[0]=vec2(px.x,0.);o[1]=vec2(0.,px.y);o[2]=vec2(-px.x,0.);o[3]=vec2(0.,-px.y);
+  for(int k=0;k<4;k++){vec2 v=u+o[k];float dn=D(v);
+   if(d-dn>.00045*zk)e=1.;                 /* 我在后面，邻居在前：线归后面这一侧，避免双线 */
+   if(dn>.9999)e=1.;
+   if(k<2&&dot(n,N(v))<.80)e=max(e,.85);   /* 面的折角：屋脊、墙角 */
+   if(k<2&&length(c-C(v))>.16)e=max(e,.55);/* 颜色分界：屋顶与墙、街与地 */
+  }return e;}
+ void main(){vec3 c=C(vUv);float d=D(vUv);
+  vec3 paper=vec3(.94,.905,.83);float g=hash(floor(gl_FragCoord.xy*.5))*.05+hash(floor(gl_FragCoord.xy/9.))*.03;
+  vec3 wash=mix(paper,c,.78);wash=mix(wash,wash*vec3(1.02,.99,.93),.5);
+  float e=edge(vUv,lw);
+  vec3 ink=vec3(.24,.18,.13);vec3 o=mix(wash,ink,e*.85);o*=1.-g;
+  float vg=smoothstep(.95,.35,length((vUv-.5)*vec2(1.,.9)));o=mix(o*vec3(.93,.89,.82),o,vg);
+  gl_FragColor=vec4(o,1.);}`});
+const pp=new THREE.Mesh(new THREE.PlaneGeometry(2,2),comp);const ppS=new THREE.Scene(),ppC=new THREE.OrthographicCamera(-1,1,1,-1,0,1);ppS.add(pp);pp.frustumCulled=false;sizeRT();
+/* 地形 */
+const SEG=4,nx=Math.ceil(W/SEG)+1,nz=Math.ceil(H/SEG)+1;const tg=new THREE.BufferGeometry();
+{const pos=new Float32Array(nx*nz*3),uv=new Float32Array(nx*nz*2),idx=[];for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const k=j*nx+i;pos[k*3]=Math.min(W,i*SEG);pos[k*3+2]=Math.min(H,j*SEG);uv[k*2]=pos[k*3]/W;uv[k*2+1]=1-pos[k*3+2]/H}
+ for(let j=0;j<nz-1;j++)for(let i=0;i<nx-1;i++){const a=j*nx+i,b=a+1,c=a+nx,d=c+1;idx.push(a,c,b,b,c,d)}tg.setAttribute('position',new THREE.BufferAttribute(pos,3));tg.setAttribute('uv',new THREE.BufferAttribute(uv,2));tg.setIndex(idx)}
+const gtex=new THREE.CanvasTexture(tex);gtex.colorSpace=THREE.SRGBColorSpace;gtex.anisotropy=Math.min(8,rnd.capabilities.getMaxAnisotropy());
+const terr=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({map:gtex}));scene.add(terr);
+/* 地形四周的裙边，免得从侧面看见空 */
+function setTerrain(){const p=tg.attributes.position.array;for(let k=0;k<nx*nz;k++)p[k*3+1]=ground(p[k*3],p[k*3+2]);tg.attributes.position.needsUpdate=true;tg.computeVertexNormals();gtex.needsUpdate=true}
+/* ---- 房子：底账占地 → 墙 + 屋顶，合成一个网格 ---- */
+const STY={market:[[244,236,214],[196,118,84]],shops:[[244,234,212],[192,112,82]],fine:[[250,246,236],[188,96,70]],workshop:[[222,200,164],[150,104,78]],water:[[236,240,236],[170,112,88]],garrison:[[226,224,214],[150,110,96]],homes:[[242,232,208],[184,116,86]],garden:[[230,214,180],[164,116,84]]};
+const FLAT={workshop:.45,garden:.5,water:.12,garrison:.15,homes:.12,market:.05,shops:.06};
+function quadAxes(P){/* P: 4 角 [x,z]；返回中心、长轴、半长半宽 */const cx=(P[0][0]+P[1][0]+P[2][0]+P[3][0])/4,cz=(P[0][1]+P[1][1]+P[2][1]+P[3][1])/4;
+  const ux=P[1][0]-P[0][0],uz=P[1][1]-P[0][1],vx=P[3][0]-P[0][0],vz=P[3][1]-P[0][1],Lu=Math.hypot(ux,uz),Lv=Math.hypot(vx,vz);
+  return Lu>=Lv?{cx,cz,ax:ux/Lu,az:uz/Lu,hu:Lu/2,hv:Lv/2}:{cx,cz,ax:vx/Lv,az:vz/Lv,hu:Lv/2,hv:Lu/2}}
+function pushBuilding(B,P,base,h,wall,roof,kind,pitch=.38){/* B: {pos,col}; P 4 角（任意顺序都按轴重建） */
+  const r=quadAxes(P),c=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v];
+  const k=[c(-r.hu,-r.hv),c(r.hu,-r.hv),c(r.hu,r.hv),c(-r.hu,r.hv)],y0=base-3,y1=base+h;
+  const tri=(a,b,cc,col)=>{B.pos.push(...a,...b,...cc);for(let i=0;i<3;i++)B.col.push(col[0]/255,col[1]/255,col[2]/255)};
+  const quad=(a,b,cc,d,col)=>{tri(a,b,cc,col);tri(a,cc,d,col)};
+  for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4];quad([a[0],y0,a[1]],[b[0],y0,b[1]],[b[0],y1,b[1]],[a[0],y1,a[1]],wall)}
+  if(kind==='flat'){quad([k[0][0],y1,k[0][1]],[k[3][0],y1,k[3][1]],[k[2][0],y1,k[2][1]],[k[1][0],y1,k[1][1]],wall.map(v=>v*.92));return}
+  const rh=r.hv*2*pitch,rr=Math.max(0,r.hu-r.hv*(kind==='gable'?0:1)),A=c(-rr,0),Bb=c(rr,0),ya=y1+rh;const o=1.06;/* 出檐 */
+  const kk=k.map(p=>[r.cx+(p[0]-r.cx)*o,r.cz+(p[1]-r.cz)*o]);
+  quad([kk[0][0],y1,kk[0][1]],[A[0],ya,A[1]],[Bb[0],ya,Bb[1]],[kk[1][0],y1,kk[1][1]],roof);
+  quad([kk[2][0],y1,kk[2][1]],[Bb[0],ya,Bb[1]],[A[0],ya,A[1]],[kk[3][0],y1,kk[3][1]],roof);
+  if(kind==='gable'){tri([k[1][0],y1,k[1][1]],[Bb[0],ya,Bb[1]],[k[2][0],y1,k[2][1]],wall);tri([k[3][0],y1,k[3][1]],[A[0],ya,A[1]],[k[0][0],y1,k[0][1]],wall)}
+  else{tri([kk[1][0],y1,kk[1][1]],[Bb[0],ya,Bb[1]],[kk[2][0],y1,kk[2][1]],roof);tri([kk[3][0],y1,kk[3][1]],[A[0],ya,A[1]],[kk[0][0],y1,kk[0][1]],roof)}}
+function meshOf(B,mat){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(B.pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(B.col,3));g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.castShadow=m.receiveShadow=true;return m}
+const VMAT=new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide});const INK=new THREE.MeshBasicMaterial({color:0x3a2c20});
+/* ---- 地标部件（代码，不是图） ---- */
+const MARBLE=[250,248,240],STONE=[238,230,210],ROOF=[184,104,76];
+function rectOf(G){let cx=0,cz=0;for(const q of G){cx+=q[0];cz+=q[1]}cx/=G.length;cz/=G.length;let best=null;for(let i=0;i<G.length;i++){const a=G[i],b=G[(i+1)%G.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!best||L>best.L)best={L,ax:(b[0]-a[0])/L,az:(b[1]-a[1])/L}}
+  let hu=0,hv=0;for(const q of G){const dx=q[0]-cx,dz=q[1]-cz;hu=Math.max(hu,Math.abs(dx*best.ax+dz*best.az));hv=Math.max(hv,Math.abs(-dx*best.az+dz*best.ax))}return {cx,cz,ax:best.ax,az:best.az,hu,hv}}
+const RQ=(r,u0,v0,u1,v1)=>{const c=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v];return [c(u0,v0),c(u1,v0),c(u1,v1),c(u0,v1)]};
+const LMG=new THREE.Group();scene.add(LMG);
+const colGeo=new THREE.CylinderGeometry(.9,1,1,8),domeGeo=new THREE.SphereGeometry(1,16,8,0,Math.PI*2,0,Math.PI/2);
+const mats={marble:new THREE.MeshLambertMaterial({color:0xf2eee4}),water:new THREE.MeshLambertMaterial({color:0x6fa2aa}),dome:new THREE.MeshLambertMaterial({color:0x9a8a74}),gold:new THREE.MeshLambertMaterial({color:0xc8a046})};
+function cyl(x,y,z,r,h,m){const o=new THREE.Mesh(colGeo,m);o.scale.set(r,h,r);o.position.set(x,y+h/2,z);o.castShadow=true;LMG.add(o)}
+function dome(x,y,z,r,m,sy=1){const o=new THREE.Mesh(domeGeo,m);o.scale.set(r,r*sy,r);o.position.set(x,y,z);o.castShadow=true;LMG.add(o)}
+const PARTS={
+ forum(B,f,r,b){const d=10,h=8;for(const s of [-1,1]){pushBuilding(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,h,MARBLE,ROOF,'hip',.3);pushBuilding(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,h,MARBLE,ROOF,'hip',.3)}
+  for(let u=-r.hu+d+3;u<r.hu-d;u+=6)for(const s of [-1,1]){const x=r.cx+r.ax*u-r.az*s*(r.hv-d-2),z=r.cz+r.az*u+r.ax*s*(r.hv-d-2);cyl(x,b,z,.9,h,mats.marble)}
+  cyl(r.cx,b,r.cz,2.4,34,mats.marble);dome(r.cx,b+34,r.cz,2.6,mats.gold,1.4)},
+ granary(B,f,r,b){const n=Math.max(2,Math.round(r.hv*2/16)),bw=(r.hv*2-4)/n;for(let i=0;i<n;i++){const v0=-r.hv+2+i*bw;pushBuilding(B,RQ(r,-r.hu+3,v0,r.hu-3,v0+bw-4),b,7+2*hsh(f.seed,i),STONE,[176,92,58],'gable',.42)}},
+ nymphaeum(B,f,r,b){const R_=Math.min(r.hu,r.hv*1.6)*.85,a0=Math.atan2(r.az,r.ax);for(let k=0;k<=14;k++){const t=Math.PI+k/14*Math.PI+a0,x=r.cx+Math.cos(t)*R_,z=r.cz+Math.sin(t)*R_*.6;cyl(x,b,z,1.6,14,mats.marble)}
+  const w=new THREE.Mesh(new THREE.CircleGeometry(R_*.75,32,0,Math.PI),mats.water);w.rotation.x=-Math.PI/2;w.rotation.z=-a0;w.scale.y=.6;w.position.set(r.cx,b+.6,r.cz);LMG.add(w)},
+ cistern(B,f,r,b){for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9)dome(r.cx+r.ax*u-r.az*v,b,r.cz+r.az*u+r.ax*v,3.8,mats.dome,.6);pushBuilding(B,RQ(r,r.hu-12,r.hv-10,r.hu-2,r.hv-2),b,6,STONE,ROOF,'hip')},
+ xenon(B,f,r,b){const d=9;for(const s of [-1,1]){pushBuilding(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,9,STONE,ROOF,'hip');pushBuilding(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,9,STONE,ROOF,'hip')}
+  pushBuilding(B,RQ(r,-8,-6,8,6),b,10,MARBLE,MARBLE,'flat');dome(r.cx,b+10,r.cz,5.5,mats.dome)}};
+PARTS.monument=PARTS.nymphaeum;PARTS.monastery=PARTS.xenon;
+/* ---- 树（实例） ---- */
+const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0),new THREE.MeshLambertMaterial({color:0x6f8a62}),WD.trees.length);
+const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
+/* ---- 按年份重建 ---- */
+let HM=null,PM=null;const M4=new THREE.Matrix4();
+function build(){const t0=performance.now();paintGround();setTerrain();
+  const B={pos:[],col:[]};
+  for(const f of by.house){if(!live(f))continue;const p=f.p,P=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];const cx=(p[0]+p[2]+p[4]+p[6])/4,cz=(p[1]+p[3]+p[5]+p[7])/4;
+    const s=STY[f.fn]||STY.homes,k=.9+.2*hsh(f.id,14),roof=s[1].map(v=>v*k),wall=s[0].map(v=>v*(.95+.08*hsh(f.id,3)));const ins=P.map(q=>[cx+(q[0]-cx)*.92,cz+(q[1]-cz)*.92]);
+    pushBuilding(B,ins,elevPx(cx,cz)+1.5,Math.max(3,(f.ht||5)*1.15),wall,roof,hsh(f.id,17)<(FLAT[f.fn]||.12)?'flat':'hip')}
+  LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6)}
+  for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;
+    pushBuilding(B,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56],[150,112,74],'flat')}
+  /* 防波堤：底账港池落海的那圈，挤出成石堤 */const moleMat=mats.mole||(mats.mole=new THREE.MeshLambertMaterial({color:0xc4b8a0}));
+  for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new THREE.Shape(P[0].map(p=>new THREE.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new THREE.Path(r.map(p=>new THREE.Vector2(p[0],p[1]))));
+    const g=new THREE.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new THREE.Mesh(g,moleMat);m.castShadow=m.receiveShadow=true;LMG.add(m)}
+  if(HM){scene.remove(HM);HM.geometry.dispose()}HM=meshOf(B,VMAT);scene.add(HM);
+  let nc=0,no=0;for(const t of WD.trees){if(!(t[3]<=YEAR&&(t[4]==null||t[4]>YEAR))||t[2]==='garden')continue;const y=elevPx(t[0],t[1])+1.5,s=t[5];
+    if(t[2]==='cypress'){M4.makeScale(s*.7,s*4.2,s*.7).setPosition(t[0],y,t[1]);cyp.setMatrixAt(nc++,M4)}else{M4.makeScale(s*1.2,s*1,s*1.2).setPosition(t[0],y+s*1.1,t[1]);oli.setMatrixAt(no++,M4)}}
+  cyp.count=nc;oli.count=no;cyp.instanceMatrix.needsUpdate=oli.instanceMatrix.needsUpdate=true;
+  window.__buildMs=Math.round(performance.now()-t0)}
+build();
+/* ---- 粮船日：只在港池里、只沿栈桥；人走栈桥和岸边。船行走只在底账和蒙版都是水的线上 ---- */
+const hullG=new THREE.BoxGeometry(1,1,1).translate(0,.5,0),mastG=new THREE.CylinderGeometry(.25,.3,1,5).translate(0,.5,0),sailG=new THREE.PlaneGeometry(1,1).translate(0,.5,0);
+const SH=60,PP=900;const hull=new THREE.InstancedMesh(hullG,new THREE.MeshLambertMaterial({color:0x8a6a48}),SH),mast=new THREE.InstancedMesh(mastG,INK,SH),sail=new THREE.InstancedMesh(sailG,new THREE.MeshLambertMaterial({color:0xfaf6ea,side:THREE.DoubleSide}),SH);
+const ppl=new THREE.InstancedMesh(new THREE.CylinderGeometry(.55,.75,2.6,5).translate(0,1.3,0),INK,PP);scene.add(hull,mast,sail,ppl);
+let SHIPS=[],WALK=[],DAY=true;const Q=new THREE.Quaternion(),V=new THREE.Vector3(),S3=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0);
+function plan(){SHIPS=[];WALK=[];let i=0;
+  for(const f of by.pier||[]){if(!live(f))continue;let [a,b]=f.g;if(isLand(b[0],b[1])&&!isLand(a[0],a[1]))[a,b]=[b,a];/* a=岸，b=伸进水的一头 */
+    const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz)||1,ux=dx/L,uz=dz/L,side=hsh(i,5)<.5?1:-1,off=f.w/2+4.2;
+    /* 靠泊：船身贴栈桥一侧，中点放在栈桥外段 */const t=.55+.3*hsh(i,6),mx=a[0]+dx*t-uz*off*side,mz=a[1]+dz*t+ux*off*side;
+    if(!isLand(mx,mz)&&!isLand(mx+ux*7,mz+uz*7)&&!isLand(mx-ux*7,mz-uz*7)){
+      /* 进港航线：从泊位沿栈桥方向往外退，一路都要是水 */let ok=true,ox=mx,oz=mz;for(let k=1;k<=9;k++){const x=mx+ux*k*10,z=mz+uz*k*10;if(cover(x,z)>.15){ok=false;break}ox=x;oz=z}/* 只在港池里短距离靠泊，蒙版稍有陆（含细防波堤）就停 */
+      SHIPS.push({mx,mz,ux,uz,ox,oz,arr:ok?hsh(i,7)*.7:0,L:24+8*hsh(i,8)})}
+    /* 扛包的人：岸 → 船边，往返 */const n=4+(hsh(i,9)*5|0);for(let k=0;k<n;k++)WALK.push({ax:a[0]+(hsh(i,20+k)-.5)*6,az:a[1]+(hsh(i,30+k)-.5)*6,bx:a[0]+dx*t-uz*(f.w/2-.8)*side,bz:a[1]+dz*t+ux*(f.w/2-.8)*side,ph:hsh(i,40+k),sp:.025+.02*hsh(i,50+k)});
+    i++}
+  /* 街上的人：主街和次街上稀疏走动 */let j=0;for(const f of by.street){if(!live(f)||(f.k!=='m'&&f.k!=='s'))continue;if(hsh(j++,61)>(f.k==='m'?.5:.12))continue;const q=f.g;WALK.push({ax:q[0],az:q[1],bx:q[2],bz:q[3],ph:hsh(j,62),sp:.008+.01*hsh(j,63),st:1});if(WALK.length>=PP)break}
+  WALK=WALK.slice(0,PP)}
+let T0=performance.now();window.__skip=sec=>{T0-=sec*1000};window.__ships=()=>SHIPS.slice(0,3);
+function anim(){const t=(performance.now()-T0)/1000;seaMat.uniforms.t.value=t;
+  /* 一个循环 90 秒：船从外海进来，停靠，人开始搬 */const cyc=(t/90)%1;let n=0;
+  for(const s of SHIPS){if(!DAY)break;const k=Math.min(1,Math.max(0,(cyc-s.arr*.4)/.35)),e=k*k*(3-2*k),x=s.ox+(s.mx-s.ox)*e,z=s.oz+(s.mz-s.oz)*e;
+    const yaw=Math.atan2(-s.uz,s.ux);Q.setFromAxisAngle(UP,yaw);
+    hull.setMatrixAt(n,M4.compose(V.set(x,-.6,z),Q,S3.set(s.L,3.2,7)));mast.setMatrixAt(n,M4.compose(V.set(x,1.8,z),Q,S3.set(1.4,s.L*.8,1.4)));
+    const Qs=Q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(UP,Math.PI/2+.25*Math.sin(t*.3+n)));sail.setMatrixAt(n,M4.compose(V.set(x,4.5,z),Qs,S3.set(s.L*.55,s.L*.6,1)));n++}
+  hull.count=mast.count=sail.count=n;hull.instanceMatrix.needsUpdate=mast.instanceMatrix.needsUpdate=sail.instanceMatrix.needsUpdate=true;
+  let m=0;for(const w of WALK){if(!w.st&&!DAY)continue;const busy=w.st?1:Math.min(1,Math.max(0,(cyc-.3)/.1))*(cyc<.92?1:0);if(!busy)continue;
+    let p=(w.ph+t*w.sp)%2;p=p>1?2-p:p;const x=w.ax+(w.bx-w.ax)*p,z=w.az+(w.bz-w.az)*p;M4.makeTranslation(x,(isLand(x,z)?elevPx(x,z)+1.5:1.4),z);ppl.setMatrixAt(m++,M4)}
+  ppl.count=m;ppl.instanceMatrix.needsUpdate=true}
+plan();
+let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
+$('day').onclick=()=>{DAY=!DAY;$('day').style.opacity=DAY?1:.5};
+addEventListener('resize',()=>{asp=innerWidth/innerHeight;Object.assign(cam,{left:-VH*asp/2,right:VH*asp/2});cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);sizeRT()});
+let fN=0,fT=performance.now();window.__fps=0;
+rnd.setAnimationLoop(()=>{ctl.update();anim();comp.uniforms.zk.value=1/cam.zoom;
+  rnd.setRenderTarget(rtC);rnd.render(scene,cam);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,cam);scene.overrideMaterial=null;scene.background=bg;
+  rnd.setRenderTarget(null);rnd.render(ppS,ppC);
+  fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
+window.__look=look;
+window.__view=(x,z,zm)=>look(x,z,zm);window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
+</script></body></html>
