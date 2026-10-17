@@ -5,7 +5,7 @@
 节点：① 地（底账真实海岸 + SRTM 高程 → 陆地面、等高带）② 水（海、按年挖出的港池，岸线用位置噪声收）
       ③ 栈桥（港池的码头边按规则长出，年份随港口逐年加）④ 街（streets.json，底账长出）⑤ 房（houses_street + houses_geom，底账）
       ⑥ 地标（底账多边形 + 类型 → 页面里的参数化代码部件画）⑦ 空地（没房没街的陆地按位置哈希种树、园子）
-用法: python3 tools/cs/nodes/build.py nangang   → docs/living/nodes/nangang/{world.json,recipe.json}
+用法: python3 tools/cs/nodes/build.py nangang   → docs/living/nodes/nangang/{nodes.json,recipe.json}
 配方 recipe.json 只记节点种子和参数；改一个节点的种子只重算它和它下游。"""
 import json, math, os, sys, hashlib
 import numpy as np
@@ -180,10 +180,10 @@ def main():
             trees.append([round(x), round(y), kind, y0_, y1_, round(2.6 + 2.6 * hf(so, gx_, gy_, 's'), 1)])
     out = {'q': q, 'W': W, 'H': H, 'years': years, 'nodes': NODES, 'bands': bands, 'features': F, 'trees': trees, 'pal': HG['pal'],
            'credit': '底账 world.json（tanxinhao 线）；海岸 OSM，高程 SRTM；方法学自 WorldGacha（oyasumi-gamedev），未用其代码'}
-    json.dump(out, open(os.path.join(O, 'world.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    json.dump(out, open(os.path.join(O, 'nodes.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
     json.dump(R, open(rp, 'w'), indent=1, ensure_ascii=False)
     import collections
-    print('features', collections.Counter(f['t'] for f in F), 'trees', len(trees), 'bands', len(bands), 'bytes', os.path.getsize(os.path.join(O, 'world.json')))
+    print('features', collections.Counter(f['t'] for f in F), 'trees', len(trees), 'bands', len(bands), 'bytes', os.path.getsize(os.path.join(O, 'nodes.json')))
 
 
 if __name__ == '__main__':

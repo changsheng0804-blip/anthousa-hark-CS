@@ -15,12 +15,12 @@ canvas{display:block;touch-action:none}
 <div id="fps"></div>
 <div id="bar"><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
 <script>
-/* CS 线 · 节点渲染器（2026-10-17）：只吃 world.json（tools/cs/nodes/build.py 产出）和底账房屋几何。
+/* CS 线 · 节点渲染器（2026-10-17）：只吃 nodes.json（tools/cs/nodes/build.py 产出）和底账房屋几何。
    远近分层：拉远时整块按年份画进一张离屏画布（每年只画一次），拉近时按视口只画看得见的矢量。
    地标是代码部件：按类型 + 种子长出柱廊、粮仓长屋、水殿半圆、蓄水池穹顶，与房屋同一套 3/4 俯视画法。 */
 (async()=>{
 const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d');
-const [WD,HG]=await Promise.all([fetch('world.json').then(r=>r.json()),fetch('../../nangang/houses_geom.json').then(r=>r.json())]);
+const [WD,HG]=await Promise.all([fetch('nodes.json').then(r=>r.json()),fetch('../../nangang/houses_geom.json').then(r=>r.json())]);
 const W=WD.W,H=WD.H;let YEAR=+$('yr').value;
 const hsh=(n,k=0)=>{let x=(Math.imul(n|0,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
 const live=f=>f.y0<=YEAR&&(f.y1==null||f.y1>YEAR);
