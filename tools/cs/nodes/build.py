@@ -178,7 +178,10 @@ def main():
             near = th.query_ball_point((x, y), 12)
             if near: y1_ = int(min(hy[near]))
             trees.append([round(x), round(y), kind, y0_, y1_, round(2.6 + 2.6 * hf(so, gx_, gy_, 's'), 1)])
-    out = {'q': q, 'W': W, 'H': H, 'years': years, 'nodes': NODES, 'bands': bands, 'features': F, 'trees': trees, 'pal': HG['pal'],
+    # 高程格（3D 渲染器要真起伏；2D 只用等高带）：每 16 像素一个点，单位分米
+    es = 16; ex = np.arange(0, W + es, es); ey = np.arange(0, H + es, es)
+    elev = {'st': es, 'w': len(ex), 'h': len(ey), 'mpp': round(12 / S, 4), 'dm': [int(round(elevation(x0 + x / S, y0 + y / S) * 10)) for y in ey for x in ex]}
+    out = {'q': q, 'W': W, 'H': H, 'elev': elev, 'years': years, 'nodes': NODES, 'bands': bands, 'features': F, 'trees': trees, 'pal': HG['pal'],
            'credit': '底账 world.json（tanxinhao 线）；海岸 OSM，高程 SRTM；方法学自 WorldGacha（oyasumi-gamedev），未用其代码'}
     json.dump(out, open(os.path.join(O, 'nodes.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
     json.dump(R, open(rp, 'w'), indent=1, ensure_ascii=False)
