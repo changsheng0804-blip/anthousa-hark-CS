@@ -9,3 +9,7 @@
 
 
 ## /goal 3 第 7 轮：房子几何改用上游 house_types（薄壳），一生阶段进瓦片 vec 与页面。——Hark（CS线）
+
+
+## 节点样板（2026-10-17）
+主人「可以」：留在 2D，先在南港验证「底账→节点→渲染器」。代码在 tools/cs/nodes/（见 README），页面在 docs/living/nodes/nangang/。不用栅格图，1.1 MB 对旧版 8.8 MB，平移约 60 fps。等主人说留或再来。

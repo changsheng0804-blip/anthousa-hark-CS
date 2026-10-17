@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>南港 · 节点样板（底账→节点→渲染器）</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#6f8f97;font-family:"Noto Serif SC","Songti SC",serif;color:#2b2218}
+canvas{display:block;touch-action:none}
+#bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(250,244,230,.92);border:1px solid #b9a582;border-radius:14px;padding:8px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#yr{width:min(56vw,420px)}#yl{min-width:72px;text-align:right;font-size:15px}
+#tag{position:fixed;left:12px;top:10px;background:rgba(250,244,230,.88);border:1px solid #b9a582;border-radius:10px;padding:6px 10px;font-size:13px;line-height:1.5;max-width:70vw}
+#tag a{color:#7a3e1c}#fps{position:fixed;right:10px;top:10px;font:12px monospace;background:rgba(250,244,230,.8);padding:2px 6px;border-radius:6px}
+</style></head><body>
+<canvas id="cv"></canvas>
+<div id="tag"><b>南港 · 节点样板</b>　一张栅格图都没有：地、水、栈桥、街、房、地标、树全从底账算出来。<a href="../../nangang/">对照旧版</a></div>
+<div id="fps"></div>
+<div id="bar"><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
+<script>
+/* CS 线 · 节点渲染器（2026-10-17）：只吃 world.json（tools/cs/nodes/build.py 产出）和底账房屋几何。
+   远近分层：拉远时整块按年份画进一张离屏画布（每年只画一次），拉近时按视口只画看得见的矢量。
+   地标是代码部件：按类型 + 种子长出柱廊、粮仓长屋、水殿半圆、蓄水池穹顶，与房屋同一套 3/4 俯视画法。 */
+(async()=>{
+const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d');
+const [WD,HG]=await Promise.all([fetch('world.json').then(r=>r.json()),fetch('../../nangang/houses_geom.json').then(r=>r.json())]);
+const W=WD.W,H=WD.H;let YEAR=+$('yr').value;
+const hsh=(n,k=0)=>{let x=(Math.imul(n|0,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
+const live=f=>f.y0<=YEAR&&(f.y1==null||f.y1>YEAR);
+const by={};for(const f of WD.features)(by[f.t]=by[f.t]||[]).push(f);
+/* 房屋：底账几何（墙面、屋面、影子），按底边 y 排序以便前后遮挡 */
+const houses=(by.house||[]).map(f=>{const R=HG.H[f.id];const p=f.p,cx=(p[0]+p[2]+p[4]+p[6])/4,cy=(p[1]+p[3]+p[5]+p[7])/4;let parts=null,sh=null,base=cy;
+  if(R){base=R[0];sh=[];for(let i=0;i<R[1].length;i+=2)sh.push([R[1][i],R[1][i+1]]);parts=R[2].map(q=>{const P=[];for(let i=3;i<q.length;i+=2)P.push([q[i],q[i+1]]);return [q[0],P,HG.pal[q[2]]]})}
+  return {f,cx,cy,base,parts,sh,p}});
+const G=64,grid=new Map();const put=(x,y,o)=>{const k=Math.floor(x/G)+','+Math.floor(y/G);if(!grid.has(k))grid.set(k,[]);grid.get(k).push(o)};
+houses.forEach(h=>put(h.cx,h.cy,{z:h.base,h}));
+for(const t of WD.trees)put(t[0],t[1],{z:t[1],t});
+const SG=new Map();(by.street||[]).forEach((f,i)=>{f.i=i;const q=f.g,r=f.w/2+2;for(let gx=Math.floor((Math.min(q[0],q[2])-r)/G);gx<=Math.floor((Math.max(q[0],q[2])+r)/G);gx++)for(let gy=Math.floor((Math.min(q[1],q[3])-r)/G);gy<=Math.floor((Math.max(q[1],q[3])+r)/G);gy++){const k=gx+','+gy;if(!SG.has(k))SG.set(k,[]);SG.get(k).push(f)}});
+function streetsIn(vx0,vy0,vx1,vy1){const o=new Set();for(let gx=Math.floor(vx0/G);gx<=Math.floor(vx1/G);gx++)for(let gy=Math.floor(vy0/G);gy<=Math.floor(vy1/G);gy++){const a=SG.get(gx+','+gy);if(a)for(const f of a)o.add(f)}return [...o]}
+/* ---- 地标部件库 ---- */
+function rect(P){/* 多边形的主轴框：中心、长轴单位向量、半长、半宽 */let cx=0,cy=0;for(const q of P){cx+=q[0];cy+=q[1]}cx/=P.length;cy/=P.length;
+  let best=null;for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!best||L>best.L)best={L,ux:(b[0]-a[0])/L,uy:(b[1]-a[1])/L}}
+  let mu=0,mv=0;for(const q of P){const dx=q[0]-cx,dy=q[1]-cy;mu=Math.max(mu,Math.abs(dx*best.ux+dy*best.uy));mv=Math.max(mv,Math.abs(-dx*best.uy+dy*best.ux))}
+  return {cx,cy,ux:best.ux,uy:best.uy,hu:mu,hv:mv}}
+const at=(r,u,v)=>[r.cx+r.ux*u-r.uy*v,r.cy+r.uy*u+r.ux*v];
+const poly=(X,P,fill,stroke,lw)=>{X.beginPath();X.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)X.lineTo(P[i][0],P[i][1]);X.closePath();if(fill){X.fillStyle=fill;X.fill()}if(stroke){X.strokeStyle=stroke;X.lineWidth=lw||.6;X.stroke()}};
+const up=(P,h)=>P.map(q=>[q[0],q[1]-h]);
+function block(X,P,h,wall,roof,kind){/* 一栋：影子 → 朝南的墙 → 屋面（坡顶或平顶），和底账房屋同一套 3/4 俯视 */
+  poly(X,P.map(q=>[q[0]+h*.55,q[1]+h*.3]),'rgba(60,44,28,.28)');
+  const U=up(P,h);let mx=0,my=0;for(const q of P){mx+=q[0];my+=q[1]}mx/=P.length;my/=P.length;
+  for(let k=0;k<P.length;k++){const a=P[k],b=P[(k+1)%P.length],ex=b[0]-a[0],ey=b[1]-a[1],L=Math.hypot(ex,ey)||1;let nx=ey/L,ny=-ex/L;if(nx*((a[0]+b[0])/2-mx)+ny*((a[1]+b[1])/2-my)<0){nx=-nx;ny=-ny}
+    if(ny>.02)poly(X,[a,b,U[(k+1)%P.length],U[k]],shade(wall,.8+.18*(.5-.5*nx)),'rgba(70,50,30,.35)',.4)}
+  if(kind==='flat'){poly(X,U,roof,'rgba(70,46,30,.6)',.5);return}
+  const r=rect(U),lift=Math.min(r.hu,r.hv)*.5,rr=Math.max(0,r.hu-r.hv);const r0=at(r,-rr,0),r1=at(r,rr,0);r0[1]-=lift;r1[1]-=lift;
+  const c=[at(r,-r.hu,-r.hv),at(r,r.hu,-r.hv),at(r,r.hu,r.hv),at(r,-r.hu,r.hv)];
+  const F=[[c[0],c[1],r1,r0],[c[1],c[2],r1],[c[2],c[3],r0,r1],[c[3],c[0],r0]];
+  F.forEach((f,i)=>{const k=[.82,.95,1.08,.9][i];poly(X,f,shade(roof,k),'rgba(80,40,20,.45)',.4)})}
+const rgb=s=>s.match(/\d+/g).map(Number),shade=(c,k)=>{const a=typeof c==='string'?rgb(c):c;return `rgb(${Math.min(255,a[0]*k|0)},${Math.min(255,a[1]*k|0)},${Math.min(255,a[2]*k|0)})`};
+const ROOF=[186,98,62],STONE=[224,214,192],MARBLE=[238,232,218];
+const PARTS={
+ forum(X,f){const r=rect(f.g);poly(X,f.g,'rgb(226,218,198)','rgba(120,100,70,.6)',.8);
+  /* 铺地石缝 */X.strokeStyle='rgba(150,130,100,.25)';X.lineWidth=.4;X.beginPath();for(let u=-r.hu;u<=r.hu;u+=6){const a=at(r,u,-r.hv),b=at(r,u,r.hv);X.moveTo(...a);X.lineTo(...b)}X.stroke();
+  /* 四面柱廊：屋顶一条 + 一排柱 */const d=10,h=7;for(const s of [-1,1]){const P=[at(r,-r.hu,s*r.hv),at(r,r.hu,s*r.hv),at(r,r.hu,s*(r.hv-d)),at(r,-r.hu,s*(r.hv-d))];block(X,P,h,MARBLE,ROOF)}
+  for(const s of [-1,1]){const P=[at(r,s*r.hu,-r.hv+d),at(r,s*(r.hu-d),-r.hv+d),at(r,s*(r.hu-d),r.hv-d),at(r,s*r.hu,r.hv-d)];block(X,P,h,MARBLE,ROOF)}
+  for(let u=-r.hu+d+3;u<r.hu-d;u+=5)for(const s of [-1,1]){const p=at(r,u,s*(r.hv-d-1.5));X.fillStyle='rgba(60,44,28,.25)';X.fillRect(p[0]+.8,p[1]-.6,1.6,1);X.fillStyle='rgb(244,240,230)';X.fillRect(p[0]-.7,p[1]-h,1.4,h)}
+  /* 中央纪功柱 */const c=[r.cx,r.cy];X.strokeStyle='rgba(60,44,28,.3)';X.lineWidth=2.4;X.beginPath();X.moveTo(c[0],c[1]);X.lineTo(c[0]+16,c[1]+9);X.stroke();X.fillStyle='rgb(236,230,214)';X.fillRect(c[0]-1.6,c[1]-30,3.2,30);X.fillStyle='rgb(200,160,70)';X.beginPath();X.arc(c[0],c[1]-31,2.2,0,7);X.fill()},
+ granary(X,f){const r=rect(f.g);poly(X,f.g,'rgb(208,196,170)','rgba(110,90,60,.6)',.7);
+  /* 沿长轴的长屋，一排排，留出中间的院子和装卸道 */const n=Math.max(2,Math.round(r.hv*2/16)),bw=(r.hv*2-4)/n;
+  for(let i=0;i<n;i++){const v0=-r.hv+2+i*bw,v1=v0+bw-4;const P=[at(r,-r.hu+3,v0),at(r,r.hu-3,v0),at(r,r.hu-3,v1),at(r,-r.hu+3,v1)];block(X,P,6+2*hsh(f.seed,i),STONE,[176,92,58])}},
+ nymphaeum(X,f){const r=rect(f.g);poly(X,f.g,'rgb(222,214,196)');const c=at(r,0,r.hv*.2),R=Math.min(r.hu,r.hv*1.6)*.85,a0=Math.atan2(r.uy,r.ux);
+  X.fillStyle='rgb(116,164,170)';X.beginPath();X.ellipse(c[0],c[1],R*.8,R*.45,a0,0,Math.PI);X.fill();X.strokeStyle='rgba(255,255,255,.6)';X.lineWidth=.5;for(let k=1;k<4;k++){X.beginPath();X.ellipse(c[0],c[1],R*.8*k/4,R*.45*k/4,a0,0,Math.PI);X.stroke()}
+  /* 半圆壁龛墙 */for(let k=0;k<=12;k++){const t=Math.PI+k/12*Math.PI,x=c[0]+Math.cos(t+a0)*R,y=c[1]+Math.sin(t+a0)*R*.55;X.fillStyle='rgba(60,44,28,.2)';X.fillRect(x,y,2.4,1.2);X.fillStyle=k%2?'rgb(244,238,224)':'rgb(214,204,184)';X.fillRect(x-1.4,y-10,2.8,10)}
+  X.fillStyle='rgba(255,255,255,.85)';X.beginPath();X.arc(c[0],c[1]-2,1.6,0,7);X.fill()},
+ cistern(X,f){const r=rect(f.g);poly(X,f.g,'rgb(214,204,182)','rgba(110,90,60,.5)',.6);
+  /* 地下蓄水池：地面上只见一格格低矮穹顶和取水亭 */for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9){const p=at(r,u,v);X.fillStyle='rgba(70,50,30,.2)';X.beginPath();X.ellipse(p[0]+1.5,p[1]+1,3.6,2.2,0,0,7);X.fill();X.fillStyle='rgb(206,192,166)';X.beginPath();X.ellipse(p[0],p[1]-1,3.4,2.4,0,Math.PI,0);X.fill();X.strokeStyle='rgba(110,84,56,.45)';X.lineWidth=.4;X.stroke()}
+  const k=at(r,r.hu-6,r.hv-6);block(X,[[k[0]-4,k[1]-3],[k[0]+4,k[1]-3],[k[0]+4,k[1]+3],[k[0]-4,k[1]+3]],5,STONE,ROOF)},
+ xenon(X,f){const r=rect(f.g),d=9;poly(X,f.g,'rgb(196,184,150)');
+  /* 救济院：四面围合、中间回廊院子和一座小教堂 */for(const s of [-1,1]){block(X,[at(r,-r.hu,s*r.hv),at(r,r.hu,s*r.hv),at(r,r.hu,s*(r.hv-d)),at(r,-r.hu,s*(r.hv-d))],8,STONE,ROOF);block(X,[at(r,s*r.hu,-r.hv+d),at(r,s*(r.hu-d),-r.hv+d),at(r,s*(r.hu-d),r.hv-d),at(r,s*r.hu,r.hv-d)],8,STONE,ROOF)}
+  const c=[r.cx,r.cy];block(X,[[c[0]-7,c[1]-5],[c[0]+7,c[1]-5],[c[0]+7,c[1]+5],[c[0]-7,c[1]+5]],9,MARBLE,[150,110,80],'flat');X.fillStyle='rgb(150,120,96)';X.beginPath();X.ellipse(c[0],c[1]-11,4.5,4,0,Math.PI,0);X.fill()},
+ monument(X,f){PARTS.nymphaeum(X,f)},monastery(X,f){PARTS.xenon(X,f)}
+};
+function landmark(X,f){(PARTS[f.k]||PARTS.granary)(X,f)}
+/* ---- 树 ---- */
+function tree(X,t){const [x,y,k,,,s]=t;if(k==='cypress'){X.fillStyle='rgba(40,50,30,.25)';X.beginPath();X.ellipse(x+s*.9,y+.6,s*.9,s*.35,0,0,7);X.fill();X.fillStyle='rgb(58,82,52)';X.beginPath();X.ellipse(x,y-s*1.6,s*.5,s*1.8,0,0,7);X.fill();X.fillStyle='rgba(120,150,90,.5)';X.beginPath();X.ellipse(x-s*.15,y-s*2,s*.2,s*1,0,0,7);X.fill()}
+  else if(k==='olive'){X.fillStyle='rgba(40,50,30,.22)';X.beginPath();X.ellipse(x+s*.7,y+.5,s*1.1,s*.5,0,0,7);X.fill();X.fillStyle='rgb(118,134,92)';X.beginPath();X.arc(x,y-s*.7,s,0,7);X.fill();X.fillStyle='rgba(176,186,140,.55)';X.beginPath();X.arc(x-s*.35,y-s*1.05,s*.45,0,7);X.fill()}
+  else{X.fillStyle='rgba(138,150,96,.55)';X.fillRect(x-s*1.6,y-s,s*3.2,s*2);X.strokeStyle='rgba(96,110,66,.6)';X.lineWidth=.5;for(let i=-1;i<=1;i++){X.beginPath();X.moveTo(x-s*1.6,y+i*s*.6);X.lineTo(x+s*1.6,y+i*s*.6);X.stroke()}}}
+/* ---- 一帧（或一张离屏图）：按层画 ---- */
+const path=(X,g)=>{for(const P of g)for(const ring of P){X.moveTo(ring[0][0],ring[0][1]);for(let i=1;i<ring.length;i++)X.lineTo(ring[i][0],ring[i][1]);X.closePath()}};
+function drawScene(X,v,near){const [vx0,vy0,vx1,vy1]=v;
+  /* 海 */X.fillStyle='rgb(92,132,142)';X.fillRect(vx0,vy0,vx1-vx0,vy1-vy0);
+  X.strokeStyle='rgba(220,236,236,.35)';X.lineWidth=.8;X.beginPath();const sp=near?22:34;for(let y=Math.floor(vy0/sp)*sp;y<vy1;y+=sp)for(let x=Math.floor(vx0/sp)*sp;x<vx1;x+=sp){const j=hsh(x*7+3,y*13+1);if(j<.55)continue;const ox=x+j*sp,oy=y+hsh(x,y)*sp;X.moveTo(ox,oy);X.quadraticCurveTo(ox+4,oy-2,ox+8,oy)}X.stroke();
+  /* 地：沙岸 → 陆地 → 等高带 */const L=by.land[0];X.save();X.beginPath();path(X,L.g);X.lineJoin='round';X.strokeStyle='rgb(216,200,160)';X.lineWidth=14;X.stroke();X.strokeStyle='rgba(240,232,208,.8)';X.lineWidth=5;X.stroke();X.fillStyle='rgb(214,200,166)';X.fill();X.clip();
+  WD.bands.forEach((b,i)=>{X.beginPath();path(X,b.g);X.fillStyle=`rgba(${120+i*2},${104+i*2},${64},${.05+.012*i})`;X.fill();X.strokeStyle='rgba(120,96,60,.22)';X.lineWidth=.6;X.stroke()});
+  X.restore();
+  /* 港池（按年挖，盖掉原来的沙岸）、码头石岸只描在陆地一侧 */for(const f of by.water)if(f.k==='harbor'&&live(f)){X.beginPath();path(X,f.g);X.fillStyle='rgb(98,138,146)';X.fill();X.save();X.beginPath();path(X,L.g);X.clip();X.beginPath();path(X,f.g);X.strokeStyle='rgb(176,166,146)';X.lineWidth=4;X.stroke();X.strokeStyle='rgba(80,64,44,.5)';X.lineWidth=.8;X.stroke();X.restore()}
+  /* 防波堤（石砌，随港口建成） */for(const f of by.mole||[]){if(!live(f))continue;X.save();X.translate(2,2);X.beginPath();path(X,f.g);X.fillStyle='rgba(30,50,56,.35)';X.fill();X.restore();X.beginPath();path(X,f.g);X.fillStyle='rgb(196,184,160)';X.fill();X.strokeStyle='rgba(90,72,50,.7)';X.lineWidth=.7;X.stroke()}
+  /* 栈桥 */for(const f of by.pier||[]){if(!live(f))continue;const [a,b]=f.g;const dx=b[0]-a[0],dy=b[1]-a[1],Ln=Math.hypot(dx,dy),nx=-dy/Ln*f.w/2,ny=dx/Ln*f.w/2;
+    poly(X,[[a[0]+nx+2,a[1]+ny+2],[b[0]+nx+2,b[1]+ny+2],[b[0]-nx+2,b[1]-ny+2],[a[0]-nx+2,a[1]-ny+2]],'rgba(30,50,56,.35)');poly(X,[[a[0]+nx,a[1]+ny],[b[0]+nx,b[1]+ny],[b[0]-nx,b[1]-ny],[a[0]-nx,a[1]-ny]],'rgb(150,112,74)','rgba(70,46,26,.7)',.6);
+    if(near){X.strokeStyle='rgba(90,60,34,.55)';X.lineWidth=.35;X.beginPath();for(let t=2;t<Ln;t+=2.2){const x=a[0]+dx*t/Ln,y=a[1]+dy*t/Ln;X.moveTo(x+nx,y+ny);X.lineTo(x-nx,y-ny)}X.stroke()}}
+  /* 水道桥 */for(const f of by.aqueduct||[]){if(!live(f))continue;X.lineCap='round';X.strokeStyle='rgba(60,44,28,.25)';X.lineWidth=7;X.beginPath();f.g.forEach((p,i)=>i?X.lineTo(p[0]+4,p[1]+3):X.moveTo(p[0]+4,p[1]+3));X.stroke();X.strokeStyle='rgb(200,184,150)';X.lineWidth=5;X.beginPath();f.g.forEach((p,i)=>i?X.lineTo(p[0],p[1]):X.moveTo(p[0],p[1]));X.stroke();X.strokeStyle='rgba(120,96,64,.7)';X.lineWidth=1;X.setLineDash([2,3]);X.stroke();X.setLineDash([])}
+  /* 街：先描边、再路面，按等级 */const SC={m:['rgba(118,104,86,.8)','rgb(190,178,156)'],s:['rgba(140,118,88,.5)','rgb(206,190,156)'],c:['rgba(140,118,88,.4)','rgb(208,192,158)'],l:[null,'rgba(212,196,162,.85)']};X.lineCap='round';const SV=streetsIn(vx0-10,vy0-10,vx1+10,vy1+10).sort((a,b)=>a.i-b.i);
+  for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k]&&SC[k][pas];if(!col)continue;X.strokeStyle=col;for(const f of SV){if(f.k!==k||!live(f))continue;const q=f.g;if(Math.max(q[0],q[2])<vx0-10||Math.min(q[0],q[2])>vx1+10||Math.max(q[1],q[3])<vy0-10||Math.min(q[1],q[3])>vy1+10)continue;X.beginPath();X.moveTo(q[0],q[1]);X.lineTo(q[2],q[3]);X.lineWidth=f.w+(pas?0:2);X.stroke()}}
+  /* 地标地皮先铺（压掉街），立体部分跟房子一起按前后排 */
+  const items=[];for(const f of by.landmark||[])if(live(f)){const r=rect(f.g);items.push({z:r.cy+r.hv,lm:f})}
+  for(let gx=Math.floor((vx0-40)/G);gx<=Math.floor((vx1+40)/G);gx++)for(let gy=Math.floor((vy0-30)/G);gy<=Math.floor((vy1+60)/G);gy++){const c=grid.get(gx+','+gy);if(c)for(const o of c){if(o.h){if(live(o.h.f))items.push(o)}else{const t=o.t;if(t[3]<=YEAR&&(t[4]==null||t[4]>YEAR))items.push(o)}}}
+  items.sort((a,b)=>a.z-b.z);
+  for(const o of items){if(o.lm)landmark(X,o.lm);else if(o.t)tree(X,o.t);else{const h=o.h;if(!h.parts){poly(X,[[h.p[0],h.p[1]],[h.p[2],h.p[3]],[h.p[4],h.p[5]],[h.p[6],h.p[7]]],'rgb(200,120,80)');continue}
+    if(h.sh&&h.sh.length>2)poly(X,h.sh,'rgba(60,44,28,.26)');for(const [k,P,c] of h.parts){if(!near&&k!==0)continue;X.beginPath();X.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)X.lineTo(P[i][0],P[i][1]);if(k===0){X.closePath();X.fillStyle=c;X.fill()}else{if(k===1)X.closePath();X.strokeStyle=c;X.lineWidth=k===2?.7:.45;X.stroke()}}}}}
+/* ---- 相机与远近分层 ---- */
+let dpr=Math.min(2,window.devicePixelRatio||1),vw,vh,cam={x:W/2,y:H/2,z:1};
+function resize(){vw=innerWidth;vh=innerHeight;cv.width=vw*dpr;cv.height=vh*dpr;cv.style.width=vw+'px';cv.style.height=vh+'px';const z0=Math.min(vw/W,vh/H)*1.02;if(!cam.fit){cam.z=z0;cam.fit=1}cam.min=z0*.8}
+resize();addEventListener('resize',()=>{resize();dirty=1});
+const FAR=document.createElement('canvas');FAR.width=W;FAR.height=H;let farYear=null;const fx=FAR.getContext('2d');
+function bakeFar(){fx.setTransform(1,0,0,1,0,0);drawScene(fx,[0,0,W,H],false);farYear=YEAR}
+/* 中间层：按 256 像素一块、按 2 的幂级别把场景烤进小画布（年份变了整套作废）；没烤好的块先用远景垫着，每帧最多烤 4 块 */
+const CH=256,cache=new Map();let cacheYear=null;
+function chunk(L,i,j){const k=L+':'+i+':'+j;let c=cache.get(k);if(c){cache.delete(k);cache.set(k,c);return c}return null}
+function bake(L,i,j){const c=document.createElement('canvas');c.width=c.height=CH*L;const X=c.getContext('2d');X.setTransform(L,0,0,L,-i*CH*L,-j*CH*L);X.beginPath();X.rect(i*CH,j*CH,CH,CH);X.clip();drawScene(X,[i*CH,j*CH,(i+1)*CH,(j+1)*CH],L>=2);
+  cache.set(L+':'+i+':'+j,c);while(cache.size>90)cache.delete(cache.keys().next().value);return c}
+let dirty=1;function frame(){requestAnimationFrame(frame);tickFps();if(!dirty)return;dirty=0;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='rgb(92,132,142)';ctx.fillRect(0,0,vw,vh);
+  const z=cam.z,vx0=cam.x-vw/2/z,vy0=cam.y-vh/2/z,vx1=cam.x+vw/2/z,vy1=cam.y+vh/2/z;
+  ctx.setTransform(dpr*z,0,0,dpr*z,dpr*(vw/2-cam.x*z),dpr*(vh/2-cam.y*z));ctx.imageSmoothingQuality='high';
+  if(farYear!==YEAR)bakeFar();
+  const zd=z*dpr;if(zd<1.5){ctx.imageSmoothingQuality=zd>1?'low':'high';ctx.drawImage(FAR,0,0);return}
+  if(zd>=6){drawScene(ctx,[vx0,vy0,vx1,vy1],true);return}
+  if(cacheYear!==YEAR){cache.clear();cacheYear=YEAR}
+  const L=zd<3?2:4,t0=performance.now(),need=[];let miss=0;
+  const j0=Math.max(0,Math.floor(vy0/CH)),j1=Math.min(Math.floor((H-1)/CH),Math.floor(vy1/CH)),i0=Math.max(0,Math.floor(vx0/CH)),i1=Math.min(Math.floor((W-1)/CH),Math.floor(vx1/CH));
+  for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){let c=chunk(L,i,j);if(!c&&performance.now()-t0<10)c=bake(L,i,j);need.push([i,j,c]);if(!c)miss++}
+  if(miss)ctx.drawImage(FAR,0,0);for(const [i,j,c] of need)if(c)ctx.drawImage(c,i*CH,j*CH,CH,CH);
+  if(miss)dirty=1}
+let fN=0,fT=performance.now();window.__fps=0;function tickFps(){fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps · z '+cam.z.toFixed(2);fN=0;fT=t}}
+requestAnimationFrame(frame);
+/* 年份 */$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';dirty=1};
+/* 拖、滚轮、双指 */const pts=new Map();let pinch=null;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY])});
+cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const o=pts.get(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);
+  if(pts.size===1){cam.x-=(e.clientX-o[0])/cam.z;cam.y-=(e.clientY-o[1])/cam.z;dirty=1}
+  else if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)zoomAt((a[0]+b[0])/2,(a[1]+b[1])/2,d/pinch);pinch=d}});
+const end=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+function zoomAt(sx,sy,k){const wx=cam.x+(sx-vw/2)/cam.z,wy=cam.y+(sy-vh/2)/cam.z;cam.z=Math.max(cam.min,Math.min(12,cam.z*k));cam.x=wx-(sx-vw/2)/cam.z;cam.y=wy-(sy-vh/2)/cam.z;dirty=1}
+cv.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*.0015))},{passive:false});
+window.__cam=cam;window.__set=(x,y,z,Y)=>{cam.x=x;cam.y=y;cam.z=z;if(Y!=null){YEAR=Y;$('yr').value=Y;$('yl').textContent='建城 '+Y+' 年'}dirty=1};window.__dirty=()=>{dirty=1};window.__ready=1;
+})();
+</script></body></html>
