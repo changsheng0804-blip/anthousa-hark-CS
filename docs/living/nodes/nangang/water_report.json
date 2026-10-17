@@ -1,0 +1,25 @@
+{
+ "cistern_area_m2": 7272,
+ "cistern_target_m2": 7272,
+ "cisterns": 3,
+ "aqueduct_len_m": 340,
+ "aqueduct_arcade_share": 0.01,
+ "fountains": 109,
+ "wells": 56,
+ "checks": {
+  "gravity_monotone": true,
+  "channel_above_pool": true,
+  "fountains_below_pool": true,
+  "cistern_on_free_land": true,
+  "aqueduct_cells_on_houses": 2,
+  "houses_without_water_point": 0
+ },
+ "pass": true,
+ "aqueduct_year": 18,
+ "peak_pop": 29088,
+ "pool_level_m": 69.6,
+ "entry": [
+  1632,
+  6
+ ]
+}

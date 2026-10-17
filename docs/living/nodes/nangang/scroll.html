@@ -258,7 +258,7 @@ const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0
 const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
 /* ---- 按年份重建 ---- */
 let HM=null,PM=null;const M4=new THREE.Matrix4();
-let HG=null,HL=null;function lod(){if(!HG)return;const hi=cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
+let HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const hi=cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
   let n=window.__nvFix;if(hi){const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();if(fr.intersectsSphere(m.geometry.boundingSphere))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
 function build(){const t0=performance.now();paintGround();setTerrain();
   const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();
@@ -266,6 +266,23 @@ function build(){const t0=performance.now();paintGround();setTerrain();
   LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6)}
   for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;
     pushBuilding(B,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56],[150,112,74],'flat')}
+  /* 水系（water.py）：水道桥只在洼地露出拱廊、埋着的段每 80 像素一个检修井；露天蓄水池矮墙围着、水面同海一个着色器；街边喷泉，高处人家打井 */
+  const KU=EX/MPP,AQS=[214,200,172],BOX=(x,z,ux,uz,a,b,y0,h,col,roof)=>{const vx=-uz,vz=ux;pushBuilding(B,[[x-ux*a-vx*b,z-uz*a-vz*b],[x+ux*a-vx*b,z+uz*a-vz*b],[x+ux*a+vx*b,z+uz*a+vz*b],[x-ux*a+vx*b,z-uz*a+vz*b]],y0,h,col,roof||col,'flat')};
+  for(const f of by.aqueduct||[])if(live(f)){const g=f.g;let acc=0;
+    for(let i=0;i+1<g.length;i++){const p=g[i],q=g[i+1],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<.01)continue;const ux=dx/L,uz=dz/L;
+      for(let s=0;s<L;s+=2){acc+=2;const t=s/L,x=p[0]+dx*t,z=p[1]+dz*t,zc=(p[2]+(q[2]-p[2])*t),gz=(p[3]+(q[3]-p[3])*t),gy=elevPx(x,z)+1.5,cy=gy+(zc-gz)*KU;
+        if(zc-gz>1.5){BOX(x,z,ux,uz,1.05,1.5,cy-1.2,1.9,AQS);if(acc%6===0)BOX(x,z,ux,uz,.75,1.3,gy-1,cy-gy-.2,AQS)}
+        else if(acc%80===0)BOX(x,z,ux,uz,.7,.7,gy-.2,1.0,STONEW)}}}
+  if(PM2){scene.remove(PM2);PM2.geometry.dispose()}const WQ=[];
+  for(const f of by.cistern||[])if(live(f)){const P=f.g;let cx=0,cz=0;for(const p of P){cx+=p[0];cz+=p[1]}cx/=P.length;cz/=P.length;const gy=elevPx(cx,cz)+1.5;
+    for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length],dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L;BOX((a[0]+b[0])/2,(a[1]+b[1])/2,ux,uz,L/2+1.2,1.2,gy-1,2.6,STONE);
+      for(let s=6;s<L-3;s+=12)BOX(a[0]+ux*s,a[1]+uz*s,ux,uz,.8,1.6,gy-1,3.1,STONEW)}
+    WQ.push([P,gy+.6])}
+  if(WQ.length){const pos=[];for(const [P,y] of WQ){for(let i=1;i+1<P.length;i++)pos.push(P[0][0],y,P[0][1],P[i][0],y,P[i][1],P[i+1][0],y,P[i+1][1])}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));PM2=new THREE.Mesh(g,poolMat);scene.add(PM2)}else PM2=null;
+  for(const f of by.fountain||[])if(live(f)){const gy=elevPx(f.x,f.y)+1.5,h=hsh(f.x*7+f.y,3);
+    if(f.k==='fountain'){BOX(f.x,f.y,1,0,1.3,1.3,gy-.3,1.4,STONE,[150,170,168]);BOX(f.x,f.y,1,0,.45,.45,gy+1.1,h<.5?2.4:1.6,MARBLE)}
+    else{BOX(f.x,f.y,1,0,.8,.8,gy-.3,1.1,STONEW,[90,84,70]);BOX(f.x-.8,f.y,1,0,.12,.12,gy+.8,1.8,[120,96,70]);BOX(f.x+.8,f.y,1,0,.12,.12,gy+.8,1.8,[120,96,70]);BOX(f.x,f.y,1,0,.95,.12,gy+2.5,.2,[120,96,70])}}
   /* 防波堤：底账港池落海的那圈，挤出成石堤 */const moleMat=mats.mole||(mats.mole=new THREE.MeshLambertMaterial({color:0xc4b8a0}));
   for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new THREE.Shape(P[0].map(p=>new THREE.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new THREE.Path(r.map(p=>new THREE.Vector2(p[0],p[1]))));
     const g=new THREE.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new THREE.Mesh(g,moleMat);m.castShadow=m.receiveShadow=true;LMG.add(m)}
