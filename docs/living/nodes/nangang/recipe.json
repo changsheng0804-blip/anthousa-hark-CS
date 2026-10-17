@@ -8,5 +8,8 @@
   "pier_every": 4,
   "tree_cell": 26,
   "ancient_r": 22
+ },
+ "net": {
+  "erosion_drops": 8000
  }
 }

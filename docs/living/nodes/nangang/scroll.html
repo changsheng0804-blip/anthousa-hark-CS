@@ -22,7 +22,7 @@ canvas{display:block;touch-action:none}
 import * as THREE from 'three';
 import {MapControls} from 'three/addons/controls/MapControls.js';
 const $=id=>document.getElementById(id);
-const WD=await fetch('nodes.json').then(r=>r.json());
+const WD=await fetch(new URLSearchParams(location.search).get('n')==='net'?'nodes_net.json':'nodes.json').then(r=>r.json());
 const W=WD.W,H=WD.H,E=WD.elev,MPP=E.mpp;let YEAR=+$('yr').value;
 const hsh=(n,k=0)=>{let x=(Math.imul(n|0,2654435761)+Math.imul(k,40503))>>>0;x^=x>>>15;x=Math.imul(x,2246822519)>>>0;x^=x>>>13;return (x>>>0)/4294967296};
 const live=f=>f.y0<=YEAR&&(f.y1==null||f.y1>YEAR);
