@@ -257,6 +257,15 @@
    "machine": "无机器验收（新架构，perf 基线见 tools/cs/nodes/README.md）",
    "owner": "留",
    "issue": "效果好多了"
+  },
+  {
+   "v": "scroll1",
+   "q": "nangang",
+   "date": "2026-10-17",
+   "what": "长卷：斜俯正交 + 线稿淡彩后期 + 界画水纹 + 粮船日（nodes/nangang/scroll.html）",
+   "machine": "无机器验收",
+   "owner": "留",
+   "issue": "确实好不少"
   }
  ]
 }
