@@ -31,6 +31,7 @@ canvas{display:block;touch-action:none}#ui{position:fixed;left:12px;top:12px;dis
 #card{z-index:5}
 </style></head>
 <body><canvas id="c"></canvas><div id="ui"></div><div id="st"></div><div id="card" class="panel"><button class="x" id="cardx">×</button><div id="cardbody"></div></div>
+<script src="../../flags.js"></script>
 <script>
 /* CS 线 · cs33 瓦片实验：浏览器只拼离线烤好的瓦片（tile_bake.py），按缩放挑级，只取视口里的瓦片。——Hark（CS线） */
 (async()=>{
@@ -394,13 +395,22 @@ ui.appendChild(yrR);ui.appendChild(yrL);
 let drag=null,pts=new Map();
 c.addEventListener('pointerdown',e=>{cancelFly();ZT=null;c.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,moved:0}});
 c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
-  if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
+  if(pts.size===2){const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);if(NG&&!NGF&&cam.z>=5.9&&d1>d0*1.01&&ngEnter()){pts.clear();return}zoomAt((e.clientX+o[0])/2,(e.clientY+o[1])/2,d1/d0)}
   else{cam.x-=(e.clientX-p[0])/cam.z;cam.y-=(e.clientY-p[1])*(H/Hv)/cam.z;if(drag)drag.moved+=Math.abs(e.clientX-p[0])+Math.abs(e.clientY-p[1])}
   pts.set(e.pointerId,[e.clientX,e.clientY]);dirty=true});
 c.addEventListener('pointerup',e=>{pts.delete(e.pointerId);if(drag&&drag.moved<6){const wx=cam.x+(e.clientX-W/2)/cam.z,wy=cam.y+(e.clientY*H/Hv-H/2)/cam.z;if(markHit(e.clientX,e.clientY*H/Hv)){drag=null;return}if(heartTap(wx,wy)){drag=null;return}for(const q in M.quarters){const [x,y,w,h]=M.quarters[q];if(Math.abs(wx-(x+w/2))<70/cam.z&&Math.abs(wy-(y+h/2+6/cam.z))<16/cam.z)location.href='../'+q+'/'}}drag=null});
+/* 灰度 nodes-nangang：瓦片缩到底（6×）还往里缩、屏幕中心落在南港里 → 在同一个点、同样比例叠上南港节点长卷（瓦片级 0 像素和节点像素同尺度，只差南港框的偏移），
+   淡入后在那一页里继续缩就一路落到街上；那一页往外缩回来，镜头位置交回这里，瓦片淡回来。——Hark（CS线） */
+const NG=!!(window.AFlag&&AFlag.on('nodes-nangang'));let NGF=null;
+function ngEnter(){const b=M.quarters.nangang;if(!b)return false;const nx=cam.x-b[0],ny=cam.y-b[1];if(nx<20||ny<20||nx>b[2]-20||ny>b[3]-20)return false;
+  NGF=document.createElement('iframe');NGF.src='../nodes/nangang/scroll.html?n=net&embed=1&x='+nx.toFixed(1)+'&y='+ny.toFixed(1)+'&z='+(cam.z*520/innerHeight).toFixed(3)+'&yr='+YEAR;
+  NGF.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;border:0;opacity:0;transition:opacity .45s;z-index:50;background:transparent';document.body.appendChild(NGF);return true}
+addEventListener('message',e=>{if(!NGF||e.source!==NGF.contentWindow)return;const d=e.data||{};if(d.t==='ready'){NGF.style.opacity=1;NGF.focus()}
+  if(d.t==='exit'){const b=M.quarters.nangang,f=NGF;cam.x=b[0]+d.x;cam.y=b[1]+d.y;cam.z=Math.min(5.6,d.z*innerHeight/520);H=Hv/Math.cos(tiltOf(cam.z));ZT=null;dirty=true;NGF=null;f.style.opacity=0;setTimeout(()=>f.remove(),500)}});
+window.__ngEnter=()=>ngEnter();
 /* 缩放绕光标：光标下的世界点缩放后仍在光标下。倾角随 z 变，所以新的摊平视野高 H' 要先算出来（并立刻生效），不然光标会随倾角漂 */
 function zoomAt(sx,sy,k){const fy=sy*H/Hv,wx=cam.x+(sx-W/2)/cam.z,wy=cam.y+(fy-H/2)/cam.z;cam.z=Math.max(0.03,Math.min(6,cam.z*k));H=Hv/Math.cos(tiltOf(cam.z));const fy2=sy*H/Hv;cam.x=wx-(sx-W/2)/cam.z;cam.y=wy-(fy2-H/2)/cam.z;dirty=true}
-c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
+c.addEventListener('wheel',e=>{e.preventDefault();cancelFly();if(NG&&!NGF&&cam.z>=5.9&&e.deltaY<0&&ngEnter())return;const base=ZT?ZT.z:cam.z;ZT={z:Math.max(0.03,Math.min(6,base*Math.exp(-e.deltaY*0.0015))),sx:e.clientX,sy:e.clientY}},{passive:false});
 /* ── 相机动画器 + 弧线飞行（/goal 2 项 3）：flyTo 走 van Wijk & Nuij 的「先拉高再俯冲」曲线（w=视野宽，ρ=1.42）；
    飞的路上提前（0.14 的进度）取前方的瓦片、矢量街和层，落地那一帧再等一等本级瓦片/矢量层全到（至多 1 秒）。滚轮缩放走同一个动画器，带缓动。 */
 let FLY=null,ZT=null;const RHO=1.42;

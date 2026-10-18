@@ -1,0 +1,5 @@
+{"date":"2026-10-18","device":"Mac M4, BrowserOS 155 (ANGLE Metal), 1040x591 dpr2","page":"nodes/nangang/scroll.html?n=net @7d247d5",
+ "fps_cap":"display 100Hz",
+ "views":{"远景全城 z0.5":{"fps":100,"verts":240228,"heap_mb":83},"中景 z2":{"fps":100,"verts":316380,"heap_mb":75},"近景 z6":{"fps":100,"verts":66810,"heap_mb":78},
+  "落街一半":{"fps":100,"verts":294672,"heap_mb":71},"街上":{"fps":100,"verts":477660,"heap_mb":71},"街上走":{"fps":100,"verts":564660,"heap_mb":72}},
+ "transfer_kb":438,"note":"手机未测"}

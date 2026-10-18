@@ -389,4 +389,15 @@ rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose(
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
 window.__look=look;
 window.__view=(x,z,zm)=>look(x,z,zm);window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
+/* 嵌在全城瓦片里（灰度 nodes-nangang）：瓦片缩到底再往里缩时，瓦片页在同一个点、同样比例叠上这一页，再接着落街；
+   在这里往外缩回到接进来时的比例以下，就把镜头位置交回瓦片页，瓦片淡回来 */
+const EP=new URLSearchParams(location.search);if(EP.get('embed')){const ex=+EP.get('x'),ey=+EP.get('y'),ez=+EP.get('z');let gone=false;
+  $('tag').style.display='none';$('fps').style.display='none';
+  const yy=Math.max(0,Math.min(70,Math.round((+EP.get('yr')||60)/10)*10));YEAR=yy;$('yr').value=yy;$('yl').textContent='建城 '+yy+' 年';build();plan();
+  look(ex,ey,Math.max(ctl.minZoom,Math.min(ctl.maxZoom,ez)));ctl.minZoom=Math.max(.35,ez*.7);
+  const bk=document.createElement('button');bk.textContent='← 全城';bk.style.cssText='position:fixed;left:12px;top:10px;font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:4px 10px';document.body.appendChild(bk);
+  const out=()=>{if(gone)return;gone=true;parent.postMessage({t:'exit',x:ctl.target.x,y:ctl.target.z,z:cam.zoom},'*')};bk.onclick=()=>{if(STROLL||DESC>0){dGoal=0;const iv=setInterval(()=>{if(DESC===0){clearInterval(iv);out()}},100)}else out()};
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&!STROLL&&DESC===0)out()});
+  (function w(){if(!gone&&!STROLL&&DESC===0&&cam.zoom<=ez*.78)out();requestAnimationFrame(w)})();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>parent.postMessage({t:'ready'},'*')))}
 </script></body></html>
