@@ -54,3 +54,7 @@ nodes.json 的房子多带三样底账字段：ty（上游 house_types 的类型
 瓦片接街景（灰度 nodes-nangang）：tiles/index.html 缩到 6× 还往里缩、屏幕中心在南港框里 → 同点同比例叠上 scroll.html?embed=1（瓦片级 0 像素＝节点像素，只差南港框偏移 meta.quarters.nangang），
 淡入 0.45 s，再缩就落街；那页缩回接入比例 ×0.78 以下或点「← 全城」，镜头交回瓦片。已知：瓦片的房子是旧街坊排法、节点是 net.py 重排，切换时房子位置会跳（淡入盖住一部分）。
 Mac M4 实测见 perf_mac.json：全程 100 fps。古城试长节点链：路网 pass:false（16 户），且与南港边界街只对上 1/8 → 路网要改成全城一次长、分区只裁。
+全城一次长（2026-10-18，主人「可以」）：city_merge.py 把九块拼成全城底稿 docs/living/city/（不入库，可重拼）→ build.py city → net.py city → water.py city，
+产物 nodes/city/nodes_net.json（入库，gzip 966 KB）。结果：17646/17661 户入街，主网占 99.6%，地标 29/29，水道 4.9 km、75% 架空拱廊，喷泉 383、井 63，每户有取水点；net/water 都 pass。
+tile_vec_nodes.py 让瓦片街巷层（tiles/vec）的街和房子改吃这一份（水格、史诗部件不动；check_tiles.js 57 项全过，矢量 gzip 5.36 MB≈原 5.38 MB）。
+瓦片灰度落街改为全城任意处：iframe 加载 scroll.html?q=city，坐标就是瓦片级 0 像素。粗级栅格瓦片（全城/街区级）仍是旧画，下一步再从节点重画。

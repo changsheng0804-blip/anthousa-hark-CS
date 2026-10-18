@@ -1,0 +1,22 @@
+{
+ "street_points_on_water": 0,
+ "street_slope_p95": 0.136,
+ "houses_ledger": 17661,
+ "houses_placed": 17646,
+ "houses_unplaced": 15,
+ "street_components": 14,
+ "main_component_share": 0.996,
+ "landmarks_reached": 29,
+ "landmarks": 29,
+ "gates_reached": 1,
+ "gates": 1,
+ "house_front_to_street_max": 3.9,
+ "house_move_median_px": 29.5,
+ "house_move_p95_px": 73.9,
+ "trunks": 40,
+ "streets_built": 1214,
+ "lots": 29043,
+ "yards": 12577,
+ "lots_reused_over_years": 675,
+ "pass": true
+}
