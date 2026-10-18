@@ -27,9 +27,35 @@ AI 的长处是能大量、快速、反复地生成；这份协议的目的，�
 - 推送后打开线上页面确认能用。坏了就立刻修，或者回退到上一个快照。
 - 大的方向变化（换路线、改规则、动正史）先问所有者，再动手。
 
+## 分级：哪里直推，哪里要所有者过目（2026-10-18 所有者同意）
+不看 diff，看三样东西：**意图、独立证据、分级**。
+
+| 级别 | 范围 | 怎么上线 |
+|---|---|---|
+| 承重墙 | `world.json`、`proposals/`、`rules/`、`chronicle/`、`engine/`、节点生成器 | 先在开关后面跑，所有者看过成品说「留」才转正。 |
+| 主体 | `docs/living/` 的页面逻辑、生成管线、渲染器 | 直推 `main`，但新行为必须先放在开关后面（见下）。 |
+| 外围 | 画面、文案、样式、脚手架、文档 | 直推 `main`，坏了回退快照。 |
+
+### 每次提交写三行意图
+提交说明第一行照旧（镜头 + 署名），正文写三行：
+- **为什么**：这次要解决什么。
+- **动了什么不变量**：底账、坐标、种子、接口，没动就写「无」。
+- **怎么证明**：跑了什么、在哪看（截图链接、帧率数字、`build_all.py` 结果）。
+
+### 证据不能只由作者自己出
+- 验收标准在动手前写进 `STORYBOARD.md` 或 INBOX，动手后不改。
+- 渲染、帧率、截图一律在所有者的 Mac 上实测，沙箱软件渲染的数字不算。
+- 承重墙改动另请一条线或另一个智能体按验收标准复查，找反例，不看作者自测。
+- 自动循环（/goal 之类）连续 3 轮没有产出就停下报告，不准在自己的守卫后面空转。
+
+### 灰度和开关（静态页面版）
+- **开关**：`docs/flags.json` 登记每个开关 `{名字, 负责人, 说明, 到期日}`；页面读 URL 参数 `?flag=名字`（或 localStorage）打开。默认全关，线上访客看不到。
+- **灰度**：大改先发到 `docs/living/next/`（或 `vN-next/`），只把链接给所有者；说「留」再把线上指针切过去，旧版照旧留快照。
+- **到期**：开关过了到期日还在，要么转正删开关，要么删代码。不留僵尸开关，组合态不准超过 5 个同时开。
+
 ## 目录
 - `docs/` → GitHub Pages。`docs/living/` 是「活着的安托萨」体验，`docs/living/STORYBOARD.md` 是当前分镜。
 - `world.json`、`proposals/`、`rules/`、`chronicle/` → 底账和正史。
 
 ---
-**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction.
+**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction. Since 2026-10-18 changes are tiered: load-bearing paths (ledger, engine, node generators) ship behind a flag and need the owner's keep; everything else pushes to main. Every commit body states why, which invariants it touched, and the evidence. Evidence is independent of the author (acceptance criteria fixed beforehand, rendering measured on the owner's Mac). Flags live in `docs/flags.json` with an expiry, toggled by `?flag=`; big changes go to `docs/living/next/` first.
