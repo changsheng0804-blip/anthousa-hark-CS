@@ -338,8 +338,11 @@ function nearSeg(x,z){let best=null;for(const f of SEGS()){const g=f.g,dx=g[2]-g
 function clampToStreet(x,z){const n=nearSeg(x,z);if(!n)return [x,z];const r=Math.max(.6,n.f.w/2-.7);if(n.d<=r)return [x,z];const k=r/n.d;return [n.px+(x-n.px)*k,n.pz+(z-n.pz)*k]}
 function walkPose(){const gy=elevPx(wx,wz)+1.5+EYE;pcam.position.set(wx,gy,wz);const cx=Math.cos(pitch);pcam.lookAt(wx+Math.sin(yaw)*cx*10,gy+Math.sin(pitch)*10,wz-Math.cos(yaw)*cx*10)}
 let lastT=performance.now();
+/* 街上点哪去哪：单击街面，镜头跳一小步（抬高过屋顶，免得穿墙）滑到那里；按住 Shift 跑 */
+let GL=null,RUN=false;function glideTo(x,z){const n=nearSeg(x,z);if(!n)return;GL={ax:wx,az:wz,bx:n.px,bz:n.pz,t:0,T:Math.min(1.1,.35+Math.hypot(n.px-wx,n.pz-wz)/400),hop:Math.min(60,8+Math.hypot(n.px-wx,n.pz-wz)*.12)}}
 function walkStep(){const t=performance.now(),dt=Math.min(.05,(t-lastT)/1000);lastT=t;yaw+=turn*dt*1.4;
-  if(mv){const sp=1.4/MPP*EX*2.2;/* 走路约 1.4 米每秒，放快一点 */const nx=wx+Math.sin(yaw)*mv*sp*dt,nz=wz-Math.cos(yaw)*mv*sp*dt;[wx,wz]=clampToStreet(nx,nz)}walkPose()}
+  if(GL){GL.t=Math.min(1,GL.t+dt/GL.T);const u=GL.t*GL.t*(3-2*GL.t);wx=GL.ax+(GL.bx-GL.ax)*u;wz=GL.az+(GL.bz-GL.az)*u;walkPose();pcam.position.y+=Math.sin(Math.PI*u)*GL.hop;if(GL.t>=1)GL=null;return}
+  if(mv){const sp=1.4/MPP*EX*2.2*(RUN?4:1);/* 走路约 1.4 米每秒，放快一点 */const nx=wx+Math.sin(yaw)*mv*sp*dt,nz=wz-Math.cos(yaw)*mv*sp*dt;[wx,wz]=clampToStreet(nx,nz)}walkPose()}
 /* 缩放一路进街：长卷缩到最大以后再往里缩，镜头不换页面，而是从斜俯正交平滑变成透视——
    一开始用 6° 窄视角从远处看（看起来和正交几乎一样），再一边降低、一边转平、一边张开视角，最后落到最近那段街上人眼高；往外缩原路升回去 */
 let DG=null,dGoal=null;const wr=a=>Math.atan2(Math.sin(a),Math.cos(a));
@@ -370,14 +373,15 @@ addEventListener('touchmove',e=>{if(e.touches.length!==2||pin==null)return;const
   if(DESC>0||STROLL||(atMax&&r>1.01)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(Math.log(r)*.9);pin=d;drag=null}else pin=d},{capture:true,passive:false});
 window.__desc=v=>{if(DESC===0&&!STROLL){descSetup(ctl.target.x,ctl.target.z);ctl.enabled=false;cam.zoom=ctl.maxZoom}descBy(v-DESC);return [DESC,STROLL]};
 $('walkB').onclick=()=>{dGoal=(STROLL||DESC>0)?0:1;gT=performance.now()};
-let drag=null;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL)drag=[e.clientX,e.clientY]});addEventListener('pointerup',()=>drag=null);
-addEventListener('pointermove',e=>{if(!STROLL||!drag)return;yaw+=(e.clientX-drag[0])*.005;pitch=Math.max(-.6,Math.min(.5,pitch-(e.clientY-drag[1])*.004));drag=[e.clientX,e.clientY]});
+let drag=null,d0=null;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL){drag=[e.clientX,e.clientY];d0=[e.clientX,e.clientY,performance.now()]}});
+addEventListener('pointerup',e=>{if(STROLL&&d0&&Math.hypot(e.clientX-d0[0],e.clientY-d0[1])<6&&performance.now()-d0[2]<400&&e.target===rnd.domElement){const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),pcam);const h=r.intersectObject(terr)[0];if(h)glideTo(h.point.x,h.point.z)}drag=null;d0=null});
+addEventListener('pointermove',e=>{if(!STROLL||!drag)return;yaw+=(e.clientX-drag[0])*.008;pitch=Math.max(-.9,Math.min(.6,pitch-(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY]});
 rnd.domElement.addEventListener('dblclick',e=>{if(STROLL)return;const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h){look(h.point.x,h.point.z);dGoal=1;gT=performance.now()}});
 const hold=(id,v,fn)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();fn(v)};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>fn(0)};
 hold('wF',1,v=>mv=v);hold('wB',-1,v=>mv=v);hold('wL',-1,v=>turn=v);hold('wR',1,v=>turn=v);
-addEventListener('keydown',e=>{if(!STROLL)return;const k=e.key.toLowerCase();if(k==='w'||k==='arrowup')mv=1;if(k==='s'||k==='arrowdown')mv=-1;if(k==='a'||k==='arrowleft')turn=-1;if(k==='d'||k==='arrowright')turn=1;if(k==='escape')exitWalk()});
-addEventListener('keyup',e=>{const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
-window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
+addEventListener('keydown',e=>{if(!STROLL)return;if(e.key==='Shift')RUN=true;const k=e.key.toLowerCase();if(k==='w'||k==='arrowup')mv=1;if(k==='s'||k==='arrowdown')mv=-1;if(k==='a'||k==='arrowleft')turn=-1;if(k==='d'||k==='arrowright')turn=1;if(k==='escape')exitWalk()});
+addEventListener('keyup',e=>{if(e.key==='Shift')RUN=false;const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
+window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__glide=(x,z)=>{glideTo(x,z);return !!GL};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
 rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;
   rnd.setRenderTarget(rtC);rnd.render(scene,AC);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;
