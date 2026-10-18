@@ -324,8 +324,30 @@ function anim(){const t=(performance.now()-T0)/1000;seaMat.uniforms.t.value=t;
   hull.count=mast.count=sail.count=n;hull.instanceMatrix.needsUpdate=mast.instanceMatrix.needsUpdate=sail.instanceMatrix.needsUpdate=true;
   let m=0;for(const w of WALK){if(!w.st&&!DAY)continue;const busy=w.st?1:Math.min(1,Math.max(0,(cyc-.3)/.1))*(cyc<.92?1:0);if(!busy)continue;
     let p=(w.ph+t*w.sp)%2;p=p>1?2-p:p;const x=w.ax+(w.bx-w.ax)*p,z=w.az+(w.bz-w.az)*p;if(STROLL&&Math.hypot(x-wx,z-wz)<14)continue;/* 漫步时不让人贴在脸上 */M4.makeTranslation(x,(isLand(x,z)?elevPx(x,z)+1.5:1.4),z);ppl.setMatrixAt(m++,M4)}
-  ppl.count=m;ppl.instanceMatrix.needsUpdate=true}
+  ppl.count=PPL?0:m;/* 居民试作打开时，旧的滑行路人先收起来，只看那五个人 */ppl.instanceMatrix.needsUpdate=true}
 plan();
+/* ---- 居民试作（灰度 people-nangang，2026-10-18）：?people=1 打开。五个人全从底账推出来，页面上不写字：认得出谁是谁就算成。?key=1 看答案 ---- */
+let PPL=null,PT=0,PSP=1,PRUN=true,FOL=0,PLT=performance.now();
+if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').then(r=>r.json());const {initPeople}=await import('../people/people.js');
+  if(YEAR!==pd.year){YEAR=pd.year;$('yr').value=YEAR;$('yl').textContent='建城 '+YEAR+' 年';build();plan()}$('yr').disabled=true;
+  PPL=initPeople({THREE,scene,elevPx,isLand,MPP,EX,data:pd});PT=+(QP.get('t')||0);
+  const ui=document.createElement('div');ui.id='pplUI';ui.style.cssText='position:fixed;right:10px;top:36px;background:rgba(250,244,230,.92);border:1px solid #b9a582;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:14px;align-items:stretch;min-width:210px';
+  const B=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.style.cssText='font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:3px 9px';b.onclick=f;return b};
+  const row1=document.createElement('div');row1.style.cssText='display:flex;gap:5px;align-items:center';row1.append('跟着');for(let n=1;n<=5;n++){const b=B(String(n),()=>follow(n));b.dataset.n=n;row1.append(b)}row1.append(B('×',()=>follow(0)));
+  const row2=document.createElement('div');row2.style.cssText='display:flex;gap:6px;align-items:center';const ph=document.createElement('span');ph.style.minWidth='34px';
+  const sl=document.createElement('input');sl.type='range';sl.min=0;sl.max=PPL.T;sl.step=1;sl.style.flex='1';sl.oninput=()=>{PT=+sl.value};
+  const sp=B('1×',()=>{PSP=PSP===1?4:PSP===4?16:1;sp.textContent=PSP+'×'});const pz=B('❚❚',()=>{PRUN=!PRUN;pz.textContent=PRUN?'❚❚':'▶'});row2.append(ph,sl,sp,pz);
+  ui.append(row1,row2);document.body.append(ui);
+  if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
+  window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};
+  PPL.ui={ph,sl,row1}}
+function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
+  if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
+function pplStep(){if(!PPL)return;const t=performance.now(),dt=Math.min(.1,(t-PLT)/1000);PLT=t;if(PRUN)PT=(PT+dt*PSP)%PPL.T;PPL.tick(PT);
+  PPL.ui.sl.value=PT;let w='';for(const [n,t0] of PPL.phases)if(PT>=t0)w=n;PPL.ui.ph.textContent=w;
+  if(FOL&&STROLL){const p=PPL.posOf(FOL);if(!p)return;const D=5.5/MPP,cy=p.y+2.6/MPP*EX;wx=p.x;wz=p.z;
+    pcam.position.set(p.x-Math.sin(yaw)*D,cy,p.z+Math.cos(yaw)*D);const gy=elevPx(pcam.position.x,pcam.position.z)+1.5+EYE*.6;if(pcam.position.y<gy)pcam.position.y=gy;pcam.lookAt(p.x,p.y+1.0/MPP*EX,p.z)}}
+window.__pplStep=()=>pplStep();
 let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
 $('day').onclick=()=>{DAY=!DAY;$('day').style.opacity=DAY?1:.5};
 addEventListener('resize',()=>{asp=innerWidth/innerHeight;pcam.aspect=asp;pcam.updateProjectionMatrix();Object.assign(cam,{left:-VH*asp/2,right:VH*asp/2});cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);sizeRT()});
@@ -383,7 +405,7 @@ addEventListener('keydown',e=>{if(!STROLL)return;if(e.key==='Shift')RUN=true;con
 addEventListener('keyup',e=>{if(e.key==='Shift')RUN=false;const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
 window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__glide=(x,z)=>{glideTo(x,z);return !!GL};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
-rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;
+rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();pplStep();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;
   rnd.setRenderTarget(rtC);rnd.render(scene,AC);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
