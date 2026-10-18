@@ -1,12 +1,8 @@
 # 上游候选（待评估，只挑更好的手动 cherry-pick）
-已审阅到：c28085296e04f2767de0d8e790b1ab7a5f4786e4
-- a955d73 preview/epic: static previews of east extension, Forum of Theodosius, Nymphaeum Maius, Mese colonnade (local prototype images only) ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- e69cb28 preview/epic: 帝国中心（君士坦丁广场、斑岩柱、米利翁、竞技场、大皇宫、圣和平、大教堂）与圣使徒教堂原型 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- a27d5bf preview/epic: 南岸港口粮仓、城墙城门；建筑南墙立面修正 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- fbc65d4 底账：帝国中心 8 座结构加 phases（site/frame/done），check.py 核对分期；inbox/TO_CS.md 回 CS 61bf622 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- b1b9c95 preview/epic: 按底账 phases 的工地分期图；旧图按分期重出 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- 4317427 底账：港口码头粮仓 5 座加 phases（狄奥多西港水上先开工、33 年完工），check.py 港口例外；preview 港口分期图 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- e45f0ab 底账：城墙城门水道营房塔广场 11 座加 phases；preview 城墙城门分期图 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- 454707e 底账：狄奥多西广场加 59 柱廊阶段；preview 水道、狄奥多西广场分期图 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- 43b6dd3 preview: 第四山丘浴场与蓄水池、城门外教堂 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
-- c6afa21 preview: 竞技场赛车日一天四刻 ——Hark —— 不采纳：谭线预览画面层，账本部分已随同步进入
+已审阅到：c6afa21b688ca9a12f96ad8772b17d69259c4ac1
+- d7851b3 协议：加分级合并、意图三行、独立证据、灰度与开关（所有者 2026-10-18 同意，同步自 CS 线）——Hark（CS线）
+  不采纳：CS线内部协议/交接文档，刘线有自己的工作方式。
+- c5c3fcd 交接：NOW.md（只覆盖的现状页）+ 协议加交接规则 为什么：今天换一个智能体接手，靠 git log 才发现南港节点链早已跑通；日志够查历史，缺现状。 动了什么不变量：无。 怎么证明：NOW.md 的每条成品都对得上 verdicts.json 和 nodes/nangang 下的报告。——Hark（CS线）
+  不采纳：CS线内部协议/交接文档，刘线有自己的工作方式。
+- 8378b9e 协议：长 5 刀剪 1 刀 + 文档路径自检（tools/check_docs.py） 为什么：纵向切片只管能过筛子，不管好维护；不强制修剪，熵只增不减。说明书引用的路径过期，比没有说明书更危险。 动了什么不变量：无，只加规矩和一个只读检查脚本。 怎么证明：脚本在临时目录里测过（存在的路径通过、消失的路径报 MISSING 退出码 1、vN 占位符和 .gitignore 里的生成物跳过）；本仓库 AGENTS.md、NOW.md 引用的路径逐个用 API 核过都在。——Hark（CS线）
+  不采纳：CS线内部协议/交接文档，刘线有自己的工作方式。
