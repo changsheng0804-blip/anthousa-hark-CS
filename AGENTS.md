@@ -53,9 +53,14 @@ AI 的长处是能大量、快速、反复地生成；这份协议的目的，�
 - **灰度**：大改先发到 `docs/living/next/`（或 `vN-next/`），只把链接给所有者；说「留」再把线上指针切过去，旧版照旧留快照。
 - **到期**：开关过了到期日还在，要么转正删开关，要么删代码。不留僵尸开关，组合态不准超过 5 个同时开。
 
+### 交接：每条线一页 NOW.md
+- 每条线根目录放一个 `NOW.md`，**只覆盖不追加**：当前方向、已有成品（链接 + 证据 + 主人评语）、进行中、等主人的事、下一步。
+- 每次推送成品、或主人说了「留/再来」，同一次提交里更新它。
+- 接手的智能体先读 `NOW.md`，再读本协议；日志（CS_LINE.md、nightlog、verdicts.json）照旧只往后长，用来查历史，不用来判断现状。
+
 ## 目录
 - `docs/` → GitHub Pages。`docs/living/` 是「活着的安托萨」体验，`docs/living/STORYBOARD.md` 是当前分镜。
 - `world.json`、`proposals/`、`rules/`、`chronicle/` → 底账和正史。
 
 ---
-**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction. Since 2026-10-18 changes are tiered: load-bearing paths (ledger, engine, node generators) ship behind a flag and need the owner's keep; everything else pushes to main. Every commit body states why, which invariants it touched, and the evidence. Evidence is independent of the author (acceptance criteria fixed beforehand, rendering measured on the owner's Mac). Flags live in `docs/flags.json` with an expiry, toggled by `?flag=`; big changes go to `docs/living/next/` first.
+**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction. Since 2026-10-18 changes are tiered: load-bearing paths (ledger, engine, node generators) ship behind a flag and need the owner's keep; everything else pushes to main. Every commit body states why, which invariants it touched, and the evidence. Evidence is independent of the author (acceptance criteria fixed beforehand, rendering measured on the owner's Mac). Each line keeps an overwrite-only `NOW.md` (direction, what exists with evidence and owner verdict, in progress, waiting on owner, next); update it with every shipped change and read it first. Flags live in `docs/flags.json` with an expiry, toggled by `?flag=`; big changes go to `docs/living/next/` first.
