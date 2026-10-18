@@ -343,9 +343,14 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   PPL.ui={ph,sl,row1}}
 function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
   if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
+/* 跟拍镜头别钻进房子里：从人往镜头方向一小步一小步探，碰到房子占地就停在前一步 */
+let HGRID=null;function houseGrid(){HGRID=new Map();for(const f of by.house||[]){if(!live(f))continue;const p=f.p;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);z0=Math.min(z0,p[i+1]);z1=Math.max(z1,p[i+1])}
+  for(let gx=Math.floor(x0/16);gx<=Math.floor(x1/16);gx++)for(let gz=Math.floor(z0/16);gz<=Math.floor(z1/16);gz++){const k=gx*4096+gz;if(!HGRID.has(k))HGRID.set(k,[]);HGRID.get(k).push(p)}}}
+function inHouse(x,z){const L=HGRID.get(Math.floor(x/16)*4096+Math.floor(z/16));if(!L)return false;for(const p of L){let c=false;for(let i=0,j=p.length-2;i<p.length;j=i,i+=2){const xi=p[i],zi=p[i+1],xj=p[j],zj=p[j+1];if(((zi>z)!==(zj>z))&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)c=!c}if(c)return true}return false}
+function camFree(x,z,D){if(!HGRID)houseGrid();const sx=-Math.sin(yaw),sz=Math.cos(yaw);let d=.8/MPP;for(;d<=D;d+=.4/MPP){if(inHouse(x+sx*(d+.5/MPP),z+sz*(d+.5/MPP)))break}return Math.max(.8/MPP,Math.min(D,d))}
 function pplStep(){if(!PPL)return;const t=performance.now(),dt=Math.min(.1,(t-PLT)/1000);PLT=t;if(PRUN)PT=(PT+dt*PSP)%PPL.T;PPL.tick(PT);
   PPL.ui.sl.value=PT;let w='';for(const [n,t0] of PPL.phases)if(PT>=t0)w=n;PPL.ui.ph.textContent=w;
-  if(FOL&&STROLL){const p=PPL.posOf(FOL);if(!p)return;const D=5.5/MPP,cy=p.y+2.6/MPP*EX;wx=p.x;wz=p.z;
+  if(FOL&&STROLL){const p=PPL.posOf(FOL);if(!p)return;const D=camFree(p.x,p.z,5.5/MPP),cy=p.y+2.6/MPP*EX;wx=p.x;wz=p.z;
     pcam.position.set(p.x-Math.sin(yaw)*D,cy,p.z+Math.cos(yaw)*D);const gy=elevPx(pcam.position.x,pcam.position.z)+1.5+EYE*.6;if(pcam.position.y<gy)pcam.position.y=gy;pcam.lookAt(p.x,p.y+1.0/MPP*EX,p.z)}}
 window.__pplStep=()=>pplStep();
 let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
