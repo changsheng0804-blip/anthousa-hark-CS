@@ -261,8 +261,8 @@ const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0
 const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
 /* ---- 按年份重建 ---- */
 let HM=null,PM=null;const M4=new THREE.Matrix4();
-let STROLL=false,HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const hi=STROLL||cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
-  let n=window.__nvFix;if(hi){const AC=STROLL?pcam:cam;const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(AC.projectionMatrix,AC.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();if(fr.intersectsSphere(m.geometry.boundingSphere))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
+let DESC=0,FOGF=1e9,STROLL=false,HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const PV=STROLL||DESC>0,hi=PV||cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
+  let n=window.__nvFix;if(hi){const AC=PV?pcam:cam;const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(AC.projectionMatrix,AC.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();const bs=m.geometry.boundingSphere;m.visible=!(PV&&DESC>.6)||bs.center.distanceTo(pcam.position)-bs.radius<FOGF;/* 街上只画雾以内的街区 */if(m.visible&&fr.intersectsSphere(bs))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
 function build(){const t0=performance.now();paintGround();setTerrain();
   const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();
   for(const f of by.house){if(!live(f))continue;const k=((f.p[0]/CH)|0)+'_'+((f.p[1]/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});LOW=false;houseGeom(b,f);LOW=true;houseGeom(BL,f)}LOW=false;
@@ -340,20 +340,46 @@ function walkPose(){const gy=elevPx(wx,wz)+1.5+EYE;pcam.position.set(wx,gy,wz);c
 let lastT=performance.now();
 function walkStep(){const t=performance.now(),dt=Math.min(.05,(t-lastT)/1000);lastT=t;yaw+=turn*dt*1.4;
   if(mv){const sp=1.4/MPP*EX*2.2;/* 走路约 1.4 米每秒，放快一点 */const nx=wx+Math.sin(yaw)*mv*sp*dt,nz=wz-Math.cos(yaw)*mv*sp*dt;[wx,wz]=clampToStreet(nx,nz)}walkPose()}
-function enterWalk(x,z,yw){const n=nearSeg(x,z);if(!n)return;wx=n.px;wz=n.pz;yaw=yw!=null?yw:Math.atan2(n.dx,-n.dz);pitch=-.04;STROLL=true;ctl.enabled=false;
+/* 缩放一路进街：长卷缩到最大以后再往里缩，镜头不换页面，而是从斜俯正交平滑变成透视——
+   一开始用 6° 窄视角从远处看（看起来和正交几乎一样），再一边降低、一边转平、一边张开视角，最后落到最近那段街上人眼高；往外缩原路升回去 */
+let DG=null,dGoal=null;const wr=a=>Math.atan2(Math.sin(a),Math.cos(a));
+function descSetup(tx,tz){const n=nearSeg(tx,tz);if(!n)return false;let y=Math.atan2(n.dx,-n.dz);if(Math.abs(wr(y))>Math.PI/2)y=wr(y+Math.PI);DG={tx,tz,wx:n.px,wz:n.pz,yaw:y,pitch:-.04};return true}
+function descPose(){const s=DESC,D0=(VH/cam.zoom)/(2*Math.tan(3*Math.PI/180));const top=new THREE.Vector3(DG.tx,0,DG.tz).addScaledVector(DIR,D0);
+  const gy=elevPx(DG.wx,DG.wz)+1.5+EYE,h=1-Math.pow(1-s,2);const x=top.x+(DG.wx-top.x)*h,z=top.z+(DG.wz-top.z)*h;
+  let H=Math.exp(Math.log(top.y)*(1-s)+Math.log(Math.max(.5,gy))*s);if(s>=1)H=gy;H=Math.max(H,elevPx(x,z)+1.5+EYE);
+  const p=-TILT*(1-s)+DG.pitch*s,yw=wr(DG.yaw)*s,cx=Math.cos(p);/* 视野只缩不放：看到的地面半高从 43 一路收到 20，最后几步才张开成人眼 62° */const hh=Math.exp(Math.log(43)*(1-s)+Math.log(20)*s),dd=(H-elevPx(x,z))/Math.max(.12,Math.sin(-p)),fa=Math.max(6,Math.min(62,2*Math.atan(hh/dd)*180/Math.PI)),s3=s*s*s;pcam.fov=fa*(1-s3)+62*s3;pcam.updateProjectionMatrix();pcam.position.set(x,H,z);
+  pcam.lookAt(x+Math.sin(yw)*cx*10,H+Math.sin(p)*10,z-Math.cos(yw)*cx*10);
+  const k=s*s;FOGF=s>0?3000+(900-3000)*k:1e9;scene.fog=s>.02?new THREE.Fog(0xefe6d2,2000+(120-2000)*k,FOGF):null}
+function descBy(d){if(!d)return;
+  if(STROLL){if(d>0)return;DG={tx:wx,tz:wz,wx,wz,yaw,pitch};STROLL=false;DESC=1;$('walkUI').style.display='none'}
+  if(DESC===0){if(d<0)return;if(!descSetup(ctl.target.x,ctl.target.z))return;ctl.enabled=false;cam.zoom=ctl.maxZoom;cam.updateProjectionMatrix()}
+  DESC=Math.max(0,Math.min(1,DESC+d));$('walkB').textContent=DESC>0?'回长卷':'漫步';
+  if(DESC===0){ctl.enabled=true;scene.fog=null;FOGF=1e9;dGoal=null;look(DG.tx,DG.tz,ctl.maxZoom);return}
+  descPose();if(DESC===1){wx=DG.wx;wz=DG.wz;yaw=DG.yaw;pitch=DG.pitch;STROLL=true;dGoal=null;$('walkUI').style.display='flex';walkPose();lastT=performance.now()}}
+function enterWalk(x,z,yw){const n=nearSeg(x,z);if(!n)return;wx=n.px;wz=n.pz;yaw=yw!=null?yw:Math.atan2(n.dx,-n.dz);pitch=-.04;DG={tx:wx,tz:wz,wx,wz,yaw,pitch};DESC=1;FOGF=900;STROLL=true;ctl.enabled=false;
   scene.fog=new THREE.Fog(0xefe6d2,120,900);$('walkUI').style.display='flex';$('walkB').textContent='回长卷';walkPose();lastT=performance.now()}
-function exitWalk(){STROLL=false;ctl.enabled=true;scene.fog=null;$('walkUI').style.display='none';$('walkB').textContent='漫步';look(wx,wz,Math.max(cam.zoom,2.4))}
-$('walkB').onclick=()=>STROLL?exitWalk():enterWalk(ctl.target.x,ctl.target.z);
+function exitWalk(){dGoal=0}
+/* 按钮/双击：不跳，自己缩进去（先把长卷推到最大，再落街） */
+let gT=performance.now();function goStep(){const t=performance.now(),dt=Math.min(.05,(t-gT)/1000);gT=t;if(dGoal==null)return;
+  if(dGoal===1&&!STROLL&&DESC===0&&cam.zoom<ctl.maxZoom-1e-3){cam.zoom=Math.min(ctl.maxZoom,cam.zoom*(1+dt*2.5));cam.updateProjectionMatrix();return}
+  descBy((dGoal===1?1:-1)*dt*.55)}
+addEventListener('wheel',e=>{if(e.target!==rnd.domElement)return;const atMax=cam.zoom>=ctl.maxZoom-1e-3;if(DESC>0||STROLL||(atMax&&e.deltaY<0)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(-Math.sign(e.deltaY)*Math.min(.08,Math.abs(e.deltaY)*.0009))}},{capture:true,passive:false});
+let pin=null;const tdist=e=>Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+addEventListener('touchstart',e=>{if(e.touches.length===2)pin=tdist(e)},{capture:true,passive:true});addEventListener('touchend',e=>{if(e.touches.length<2)pin=null},{capture:true});
+addEventListener('touchmove',e=>{if(e.touches.length!==2||pin==null)return;const d=tdist(e),r=d/pin;const atMax=cam.zoom>=ctl.maxZoom-1e-3;
+  if(DESC>0||STROLL||(atMax&&r>1.01)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(Math.log(r)*.9);pin=d;drag=null}else pin=d},{capture:true,passive:false});
+window.__desc=v=>{if(DESC===0&&!STROLL){descSetup(ctl.target.x,ctl.target.z);ctl.enabled=false;cam.zoom=ctl.maxZoom}descBy(v-DESC);return [DESC,STROLL]};
+$('walkB').onclick=()=>{dGoal=(STROLL||DESC>0)?0:1;gT=performance.now()};
 let drag=null;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL)drag=[e.clientX,e.clientY]});addEventListener('pointerup',()=>drag=null);
 addEventListener('pointermove',e=>{if(!STROLL||!drag)return;yaw+=(e.clientX-drag[0])*.005;pitch=Math.max(-.6,Math.min(.5,pitch-(e.clientY-drag[1])*.004));drag=[e.clientX,e.clientY]});
-rnd.domElement.addEventListener('dblclick',e=>{if(STROLL)return;const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h)enterWalk(h.point.x,h.point.z)});
+rnd.domElement.addEventListener('dblclick',e=>{if(STROLL)return;const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h){look(h.point.x,h.point.z);dGoal=1;gT=performance.now()}});
 const hold=(id,v,fn)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();fn(v)};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>fn(0)};
 hold('wF',1,v=>mv=v);hold('wB',-1,v=>mv=v);hold('wL',-1,v=>turn=v);hold('wR',1,v=>turn=v);
 addEventListener('keydown',e=>{if(!STROLL)return;const k=e.key.toLowerCase();if(k==='w'||k==='arrowup')mv=1;if(k==='s'||k==='arrowdown')mv=-1;if(k==='a'||k==='arrowleft')turn=-1;if(k==='d'||k==='arrowright')turn=1;if(k==='escape')exitWalk()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
 window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
-rnd.setAnimationLoop(()=>{if(STROLL)walkStep();else ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=STROLL?1:0;const AC=STROLL?pcam:cam;
+rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;
   rnd.setRenderTarget(rtC);rnd.render(scene,AC);scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
