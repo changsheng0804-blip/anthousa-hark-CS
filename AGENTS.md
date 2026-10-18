@@ -58,9 +58,19 @@ AI 的长处是能大量、快速、反复地生成；这份协议的目的，�
 - 每次推送成品、或主人说了「留/再来」，同一次提交里更新它。
 - 接手的智能体先读 `NOW.md`，再读本协议；日志（CS_LINE.md、nightlog、verdicts.json）照旧只往后长，用来查历史，不用来判断现状。
 
+### 定期修剪：长 5 刀，剪 1 刀
+- 每推出 5 个纵向切片（`verdicts.json` 里新增 5 条版本），下一轮只修剪不长：去重、合并相似的生成器、删死代码、清过期开关、重划一遍承重墙。不加任何新行为。
+- 修剪算成功要同时满足：代码行数或文件数下降；所有机器报告的关键数字前后一致（例如 `net_report.json`）；主人看成品觉得没变。
+- 修剪轮也记进 `verdicts.json`，`what` 以「修剪：」开头，好数到下一个 5。
+
+### 地图要对得上地形
+- 改了任何 `AGENTS.md` 或 `NOW.md`，推之前跑 `python3 tools/check_docs.py`：里面用反引号写的路径必须还存在，不为 0 就不推。
+- 规矩写在 `AGENTS.md`，现状写在 `NOW.md`，不混着写。子目录可以有自己的 `AGENTS.md`，同样受这条检查。
+- CS 线已有这个脚本；别的线直接拷过去即可，不依赖别的文件。
+
 ## 目录
 - `docs/` → GitHub Pages。`docs/living/` 是「活着的安托萨」体验，`docs/living/STORYBOARD.md` 是当前分镜。
 - `world.json`、`proposals/`、`rules/`、`chronicle/` → 底账和正史。
 
 ---
-**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction. Since 2026-10-18 changes are tiered: load-bearing paths (ledger, engine, node generators) ship behind a flag and need the owner's keep; everything else pushes to main. Every commit body states why, which invariants it touched, and the evidence. Evidence is independent of the author (acceptance criteria fixed beforehand, rendering measured on the owner's Mac). Each line keeps an overwrite-only `NOW.md` (direction, what exists with evidence and owner verdict, in progress, waiting on owner, next); update it with every shipped change and read it first. Flags live in `docs/flags.json` with an expiry, toggled by `?flag=`; big changes go to `docs/living/next/` first.
+**English, briefly.** Anthousa is built like an art studio, not a software project: generate, look at the result yourself, regenerate. No PRs or cross-review (owner decision, 2026-10-11). Three hard rules: never contradict the engine ledger (`world.json`, checked by `engine/build_all.py`); published history only grows forward (ask the owner before changing the past); never lose work (keep a snapshot of each version). Commit directly to `main`, sign the commit message, check the live Pages after pushing, and ask the owner before any change of direction. Since 2026-10-18 changes are tiered: load-bearing paths (ledger, engine, node generators) ship behind a flag and need the owner's keep; everything else pushes to main. Every commit body states why, which invariants it touched, and the evidence. Evidence is independent of the author (acceptance criteria fixed beforehand, rendering measured on the owner's Mac). Each line keeps an overwrite-only `NOW.md` (direction, what exists with evidence and owner verdict, in progress, waiting on owner, next); update it with every shipped change and read it first. After every 5 vertical slices, run one merge-only consolidation round (fewer lines, identical report numbers, no new behavior). Run `python3 tools/check_docs.py` before pushing changes to any AGENTS.md or NOW.md. Flags live in `docs/flags.json` with an expiry, toggled by `?flag=`; big changes go to `docs/living/next/` first.
