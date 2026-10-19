@@ -119,7 +119,9 @@ export function initCrowd(E) {
     if (load) put('farLoad', Mroot, LC[load]);
     if (k > 1.3) {                                                           // 只在长卷缩远时铺色带
       const walking = o.seg !== 'far', s = M * k;
-      Vp.set(o.x, o.y + .4, o.z);   // o.y 就是街面（地形 +1.5），色带要压在街面上面 Vs.set(walking ? 2.4 * s : 4.5 * s, 1, walking ? 8 * s : 4.5 * s);   // 尺寸按画面而不是按真人：缩远后一米不到一个像素 Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+      Vp.set(o.x, o.y + .4, o.z);                                            // o.y 就是街面（地形 +1.5），色带压在街面上
+      Vs.set(walking ? 2.4 * s : 4.5 * s, 1, walking ? 8 * s : 4.5 * s);     // 尺寸按画面而不是按真人：缩远后一米不到一个像素
+      Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
       put('trail', Mroot, o.act);
     }
   }
