@@ -128,8 +128,23 @@ export function initPeople(E) {
       let dd = d - o.dir; dd = Math.atan2(Math.sin(dd), Math.cos(dd)); o.dir += dd * Math.min(1, dt * 6 + .05);
       o.vis = a.a !== 'hide'; o.r.root.visible = o.vis;
       o.r.root.position.set(x, ground(x, z), z); o.r.root.rotation.y = o.dir;
-      apply(o, pose(o, t, a), a);
+      o.act = a; apply(o, pose(o, t, a), a);
     }
   }
-  return {tick, people, byId, T: data.T, phases: data.phases, posOf: n => { const o = people.find(q => q.p.n === n); return o && {x: o.x, z: o.z, y: o.r.root.position.y, dir: o.dir, vis: o.vis} }};
+  // 信息层：指到时一句话——身份、此刻在干什么、跟谁一起。全部从底账和此刻的动作推出
+  const NAME = id => (byId[id] && byId[id].p.role) || '';
+  function describe(o) {
+    const a = o.act || {}, ps = a.pose, ld = a.load, id = o.p.id, f = o.p.facts || {};
+    let what = '';
+    if (a.a === 'walk') what =
+      ld === 'net' ? '扛着渔网去栈桥' : ld === 'catch' ? '提着鱼篓回家' : ld === 'crate' ? '抱着货箱跟在主人后面' : ld === 'jar_empty' ? '拿着空罐去喷泉打水' :
+      ld === 'jar_full' ? '顶着满罐上坡回家' : ld === 'sack' ? '扛着麻袋去粮仓' : a.gait === 'porter' ? '空手回栈桥再扛一趟' : a.gait === 'tired' ? '收工回家' :
+      a.gait === 'rich' ? (a.t0 > 800 && a.t0 < 1500 ? '往狄奥多西广场去' : '回铺子') : a.tag === 'follow' ? '跟着爷爷' : a.tag === 'ahead' ? '跑在爷爷前头回家' : '走路';
+    else what = {mend: '在栈桥上补网', sit: '坐在家门口', rest: '在粮仓边歇着', sell: '在铺子前招呼买主', talk: '在广场上谈生意', queue: '在喷泉边排队等水',
+      spin: '在门口纺线', wait: '在门口等爷爷', play: '在玩', stand: ld === 'crate' ? '抱着货箱候着' : ld === 'net' ? '望着海' : '站着'}[ps] || '站着';
+    const extra = f.years_here ? '在这住了 ' + f.years_here + ' 年' : f.with ? NAME(f.with) + (id === 'c' ? '的孙子' : '家的人') :
+      f.climb_m ? '每趟上坡 ' + f.climb_m + ' 米' : f.trip_m ? '一趟 ' + f.trip_m + ' 米' : f.po ? '主街带柱廊的铺子' : '';
+    return {who: o.p.role, what, from: extra};
+  }
+  return {tick, people, byId, describe, T: data.T, phases: data.phases, posOf: n => { const o = people.find(q => q.p.n === n); return o && {x: o.x, z: o.z, y: o.r.root.position.y, dir: o.dir, vis: o.vis} }};
 }

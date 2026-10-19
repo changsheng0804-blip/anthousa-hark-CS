@@ -120,8 +120,9 @@ export function initCrowd(E) {
   const frus = new THREE.Frustum(), PV = new THREE.Matrix4(), SPH = new THREE.Sphere(new THREE.Vector3(), 2);
   const stat = {active: 0, full: 0, far: 0, ms: 0, gest: 0, bow: 0};
 
+  let frame = 0;
   function tick(t, view) {
-    const t0 = performance.now();
+    const t0 = performance.now(); frame++;
     for (const k in cnt) cnt[k] = 0;
     const cam = view.cam; PV.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); frus.setFromProjectionMatrix(PV);
     const cx = cam.position.x, cz = cam.position.z, fullR2 = (view.fullM / MPP) ** 2, D = dens((t % T) / T);
@@ -139,7 +140,9 @@ export function initCrowd(E) {
       if (mer && mer.vis && g && !g.center) { const dx = x - mer.x, dz = z - mer.z, px = Math.hypot(dx, dz) || 1e-3, dm = px * MPP;
         if (dm < 3.2) { bow = Math.min(1, (3.2 - dm) / 1.2); x += dx / px * bow * .9 * M; z += dz / px * bow * .9 * M } }   // 商人走过：让到一边、躬身
       o.x = x; o.z = z; o.dir = d; o.y = ground(x, z); act++;
+      o.leg = g ? (g === o.go ? 'out' : 'back') : 'far'; o.load = load; o.bowing = bow > .2;   // 给信息层读：此刻在路上的哪一段
       SPH.center.set(x, o.y, z); SPH.radius = 2 * M; if (!frus.intersectsSphere(SPH)) continue;
+      o.seen = frame;
       const dx = x - cx, dz = z - cz;
       if (view.full && dx * dx + dz * dz < fullR2 && nf < view.maxFull) {
         nf++; const Pp = blank();
@@ -156,5 +159,23 @@ export function initCrowd(E) {
     stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow;
     return stat;
   }
-  return {tick, stat, people: P};
+  // 信息层：指到才算，不指不花钱。只在这一帧视野里的人当中找
+  const ROLE = {woman: '妇人', laborer: '搬运工', trader: '商贩', rich: '富商', old: '老人', child: '孩子', commoner: '街坊'};
+  const DOING = {
+    water: {out: '拿着空罐去喷泉打水', far: '在喷泉边排队等水', back: '顶着满罐回家'},
+    market: {out: '去市场', far: '在市场上做买卖', back: '抱着货回铺子'},
+    haul: {out: '去栈桥扛货', far: '在栈桥边歇口气', back: '扛着麻袋往回走'},
+    forum: {out: '往广场去', far: '在广场上谈事', back: '从广场回铺子'},
+    errand: {out: '出门办事', far: '在市场转转', back: '办完事回家'},
+  };
+  const FROM = {homes: '住在民居', shops: '开铺子的人家', market: '市场边的人家', dock: '码头上的人家', horrea: '粮仓边的人家'};
+  function describe(o) {
+    const d = DOING[o.r.why] || DOING.errand;
+    let s = (o.role === 'child' ? '跟着家里人' : '') + d[o.leg];
+    if (o.role === 'child' && o.leg !== 'out') s = d[o.leg];
+    if (o.bowing) s = '给商人让路';
+    return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''};
+  }
+  const pickable = () => P.filter(o => o.seen === frame);
+  return {tick, stat, people: P, pickable, describe};
 }
