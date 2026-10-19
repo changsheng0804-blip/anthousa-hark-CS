@@ -357,7 +357,7 @@ function pickPerson(){TPEND=false;if(!PPL)return;const AC=(STROLL||DESC>0)?pcam:
   TIPO=best;if(!best)tipEl().style.display='none'}
 rnd.domElement.addEventListener('pointermove',e=>{TMX=e.clientX;TMY=e.clientY;if(!TPEND&&PPL){TPEND=true;requestAnimationFrame(pickPerson)}});
 rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none'});
-window.__tip=(x,y)=>{TMX=x;TMY=y;pickPerson();const AC=(STROLL||DESC>0)?pcam:cam;const p=PPL.posOf(2);return {got:!!TIPO,who:TIPO&&TIPO.src.describe(TIPO.o),m:p&&scr(p.x,p.y+1.5/MPP*EX,p.z,AC),stroll:STROLL,pick:CRW?CRW.pickable().length:-1}};
+window.__tip=(x,y)=>{TMX=x;TMY=y;pickPerson();const AC=(STROLL||DESC>0)?pcam:cam;const p=PPL.posOf(2);return {got:!!TIPO,who:TIPO&&TIPO.src.describe(TIPO.o),m:p&&scr(p.x,p.y+1.5/MPP*EX,p.z,AC),stroll:STROLL,cam:[pcam.position.x,pcam.position.y,pcam.position.z,pcam.near,pcam.far],mp:p,pick:CRW?CRW.pickable().length:-1}};
 function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';return}
   const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
   const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b>　'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block'}
