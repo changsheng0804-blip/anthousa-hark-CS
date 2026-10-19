@@ -119,7 +119,7 @@ export function initCrowd(E) {
     if (load) put('farLoad', Mroot, LC[load]);
     if (k > 1.3) {                                                           // 只在长卷缩远时铺色带
       const walking = o.seg !== 'far', s = M * k;
-      Vp.set(o.x, o.y - 1.5 + .4 * M, o.z); Vs.set(walking ? 2.4 * s : 4.5 * s, 1, walking ? 8 * s : 4.5 * s);   // 尺寸按画面而不是按真人：缩远后一米不到一个像素 Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+      Vp.set(o.x, o.y - 1.5 + 1.2 * M, o.z); Vs.set(walking ? 2.4 * s : 4.5 * s, 1, walking ? 8 * s : 4.5 * s);   // 尺寸按画面而不是按真人：缩远后一米不到一个像素 Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
       put('trail', Mroot, o.act);
     }
   }
@@ -170,7 +170,7 @@ export function initCrowd(E) {
       } else drawFar(o, load, boost);
     }
     for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true }
-    stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow;
+    stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow; stat.trail = cnt.trail; stat.k = boost;
     return stat;
   }
   // 信息层：指到才算，不指不花钱。只在这一帧视野里的人当中找
