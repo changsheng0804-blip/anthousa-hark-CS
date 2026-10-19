@@ -74,7 +74,7 @@ export function initCrowd(E) {
   mk('far', new THREE.CylinderGeometry(.2, .24, 1.6, 5).translate(0, .8, 0), capN);           // 远处：一根着色小柱
   // 远处的地上色带：走路的人拖一道椭圆，停着的人铺一片圆。很多人叠起来，热闹的街就成了一条流动的色带，喷泉和市场成一团
   mk('trail', new THREE.CircleGeometry(1, 12).rotateX(-Math.PI / 2), capN);
-  parts.trail.material = new THREE.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: .2, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2});
+  parts.trail.material = new THREE.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: .28, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2});
   parts.trail.renderOrder = 1;
   mk('farLoad', new THREE.BoxGeometry(.5, .4, .5).translate(0, 1.75, 0), capN);              // 远处：负重的色块（顶在头上那一块）
 
@@ -119,7 +119,7 @@ export function initCrowd(E) {
     if (load) put('farLoad', Mroot, LC[load]);
     if (k > 1.3) {                                                           // 只在长卷缩远时铺色带
       const walking = o.seg !== 'far', s = M * k;
-      Vp.set(o.x, o.y - 1.35, o.z); Vs.set(walking ? .9 * s : 2.2 * s, 1, walking ? 3.2 * s : 2.2 * s); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+      Vp.set(o.x, o.y - 1.5 + .4 * M, o.z); Vs.set(walking ? 2.4 * s : 4.5 * s, 1, walking ? 8 * s : 4.5 * s);   // 尺寸按画面而不是按真人：缩远后一米不到一个像素 Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
       put('trail', Mroot, o.act);
     }
   }
