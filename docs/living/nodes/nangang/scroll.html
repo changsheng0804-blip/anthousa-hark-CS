@@ -358,7 +358,7 @@ function pickPerson(){TPEND=false;if(!PPL)return;const AC=(STROLL||DESC>0)?pcam:
 rnd.domElement.addEventListener('pointermove',e=>{TMX=e.clientX;TMY=e.clientY;if(!TPEND&&PPL){TPEND=true;requestAnimationFrame(pickPerson)}});
 rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none'});
 function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';return}
-  const [sx,sy]=scr(o.x,y,o.z,AC);if(Math.hypot(sx-TMX,sy-TMY)>60){TIPO=null;tipEl().style.display='none';return}
+  const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
   const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b>　'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block'}
 function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
   if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
