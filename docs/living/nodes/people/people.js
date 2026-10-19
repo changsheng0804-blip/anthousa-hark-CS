@@ -2,8 +2,9 @@
    一个人 = 一副关节骨架（髋、躯干、头、两臂两节、两腿两节）+ 按底账穿的衣服和手里的东西。
    怎么走（步速、步长、前倾、起伏、摆臂、跛）、扛什么、几点去哪、跟着谁，全来自 people.json；这里只把这些数变成动作。
    页面上不写一个字：认不认得出他是谁，就是验收。——Hark（CS线） */
-export function initPeople(env) {
-  const {THREE, scene, elevPx, isLand, MPP, EX, data} = env;
+import {hash, pickTemper, gaitOf, blank, walk, stay, carry, OVER, env} from './pose.js';
+export function initPeople(E) {
+  const {THREE, scene, elevPx, isLand, MPP, EX, data} = E;
   const M = 1 / MPP;                       // 1 米 = 多少像素（水平）
   const V = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
   const mat = c => new THREE.MeshLambertMaterial({color: new THREE.Color(c)});
@@ -74,45 +75,30 @@ export function initPeople(env) {
     const q = path[path.length - 1]; return [q[0], q[1], 0];
   }
   const actAt = (o, t) => { const A = o.p.acts; for (const a of A) if (t >= a.t0 && t < a.t1) return a; return A[A.length - 1] };
-  const G = data.gait;
   function ground(x, z) { return isLand(x, z) ? elevPx(x, z) + 1.5 : 1.6 }
 
-  // 姿势：每个关节一个角度。走路的角度由步态语法算，停留的由 pose 算
+  // 姿势：交给姿势引擎（pose.js）。步态参数不再逐人手写——按每个人的种子从「意图 → 参数分布」里抽，
+  // 4 个候选按像不像真人打分留一个。叠加手势在最后一层：回头、擦汗、伸手、叉腰歇气。
+  for (const o of people) { const names = [...new Set(o.p.acts.filter(a => a.gait).map(a => a.gait))];
+    o.u = pickTemper(hash(o.p.id + ':' + (o.p.facts.house || '')), names.length ? names : ['walker'], {h: o.p.cast.h}); o.g = {} }
+  const gait = (o, name) => o.g[name] || (o.g[name] = gaitOf(name, o.u));
+  let prevAct = new Map();
   function pose(o, t, a) {
-    const r = o.r, P = {hip: 0, stoop: 0, neck: 0, legs: [[0, 0], [0, 0]], arms: [[0, 0, 0], [0, 0, 0]], bob: 0, lift: 0};
-    const load = a.load || null;
-    if (a.a === 'walk') {
-      const g = G[a.gait], ph = o.ph;
-      // 跛：一边步子快一边慢，把相位扭一下
-      const w = ph + g.limp * Math.sin(ph) * .6, s = Math.sin(w), cdouble = Math.abs(Math.sin(w));
-      const amp = Math.min(.75, g.stride * 1.05);
-      P.legs = [[amp * s, Math.max(0, -Math.cos(w)) * amp * 1.3 + .05], [-amp * s, Math.max(0, Math.cos(w)) * amp * 1.3 + .05]];
-      P.bob = g.bob * cdouble * (g.skip ? 2.2 : 1); P.stoop = g.stoop; P.neck = -g.stoop * .6;
-      P.arms = [[-g.swing * s, .25, 0], [g.swing * s, .25, 0]];
-      if (g.skip) P.lift = Math.max(0, Math.sin(w * 2)) * .06;
-    } else {
-      const ps = a.pose || 'stand', tt = t + o.p.n * 3.1;
-      if (ps === 'sit' || ps === 'rest') { P.lift = -.42 * r.k; P.legs = [[1.45, 1.5], [1.35, 1.5]]; P.stoop = ps === 'rest' ? .3 : .22; P.arms = [[.5, 1.0, 0], [.5, 1.0, 0]]; P.neck = Math.sin(tt * .3) * .15 }
-      else if (ps === 'mend') { P.lift = -.5 * r.k; P.legs = [[1.5, 1.7], [1.4, 1.6]]; P.stoop = .55; P.neck = .3; const h = Math.sin(tt * 2.6); P.arms = [[.9 + .15 * h, 1.2, 0], [.9 - .15 * h, 1.3, 0]] }
-      else if (ps === 'sell' || ps === 'talk') { const g = Math.max(0, Math.sin(tt * (ps === 'talk' ? .9 : .5))); P.stoop = -.05; P.arms = [[.2 + 1.1 * g, .8 * g, 0], [.15, .3, 0]]; P.neck = Math.sin(tt * .4) * .2 }
-      else if (ps === 'queue') { P.hip = Math.sin(tt * .5) * .04; P.neck = Math.sin(tt * .23) > .6 ? .6 : 0; P.arms = [[.1, .3, 0], [.05, .2, 0]] }
-      else if (ps === 'spin') { const h = Math.sin(tt * 3); P.arms = [[.6, 1.2 + .2 * h, 0], [.9 + .1 * h, 1.4, 0]]; P.neck = .25 }
-      else if (ps === 'wait') { P.neck = -.1; P.lift = Math.max(0, Math.sin(tt * 4)) * .05; P.arms = [[0, .2, 0], [0, .2, 0]] }
-      else if (ps === 'play') { const h = tt * 6; P.legs = [[.6 * Math.sin(h), .6 + .4 * Math.sin(h)], [-.6 * Math.sin(h), .6 - .4 * Math.sin(h)]]; P.lift = Math.abs(Math.sin(h)) * .1; P.arms = [[.8 * Math.sin(h), .4, .4], [-.8 * Math.sin(h), .4, .4]] }
-      else { P.hip = Math.sin(tt * .4) * .03; P.neck = Math.sin(tt * .17) * .25; P.arms = [[.05, .15, 0], [.05, .15, 0]] }
-    }
-    // 负重改姿势：抱箱两臂前举，满罐一手扶罐，麻袋两手反扶
-    if (load === 'crate') { P.arms = [[1.2, 1.1, -.3], [1.2, 1.1, .3]]; P.stoop -= .05 }
-    if (load === 'jar_full') { P.arms[1] = [Math.PI - .25, .2, .25]; P.stoop = Math.min(P.stoop, -.02); P.neck = 0 }
-    if (load === 'jar_empty') P.arms[1] = [.1, 1.1, .5];
-    if (load === 'sack') { P.arms = [[-2.6, 1.6, 0], [-2.6, 1.6, 0]]; }
-    if (load === 'net') P.arms[1] = [-2.4, 1.9, 0];
-    if (load === 'catch') P.arms[0] = [.05, .1, -.15];
+    const r = o.r, P = blank(), load = a.load || null;
+    if (a.a === 'walk') walk(P, gait(o, a.gait), o.ph);
+    else stay(P, a.pose || 'stand', t + o.p.n * 3.1, r.k);
+    carry(P, load);
+    // 叠加层：什么时候做哪个手势，全看他此刻在干什么
+    const id = o.p.id, dt = t - a.t0;
+    if (id === 'f' && a.a === 'walk' && load === 'net') OVER.lookback(P, env(dt % 7, 2.5, 1.8));                 // 带着孙子走：隔一会儿回头看一眼
+    if (id === 'p' && a.a === 'walk' && !load && a.gait === 'porter') OVER.wipe(P, env(dt, .3, 2.8));            // 刚卸下麻袋：抬手擦汗
+    if (id === 'c' && a.a === 'walk' && a.tag === 'follow') OVER.reach(P, env(dt % 6, 1, 2.2));                   // 跟着爷爷：时不时伸手去够
+    if (id === 'w' && a.a === 'walk' && load === 'jar_full') OVER.shift(P, env(dt % 14, 6, 3));                  // 满罐上坡：一手叉腰歇口气
     return P;
   }
   function apply(o, P, a) {
     const r = o.r;
-    r.hip.position.y = .92 * r.k * (1 + P.bob) + P.lift; r.hip.rotation.z = P.hip; r.torso.rotation.x = P.stoop; r.neck.rotation.x = P.neck;
+    r.hip.position.y = .92 * r.k * (1 + P.bob) + P.lift; r.hip.rotation.z = P.hip; r.torso.rotation.set(P.stoop, P.twist, P.side); r.neck.rotation.set(P.neck, P.headYaw, 0);
     for (let i = 0; i < 2; i++) { r.L[i].th.rotation.x = -P.legs[i][0]; r.L[i].sh.rotation.x = P.legs[i][1];
       r.A[i].up.rotation.x = -P.arms[i][0]; r.A[i].up.rotation.z = (i ? -1 : 1) * (.08 + P.arms[i][2]); r.A[i].lo.rotation.x = -P.arms[i][1] }
     if (r.robe) { r.robe.rotation.x = (P.legs[0][0] - P.legs[1][0]) * .08; r.robe.scale.z = 1 + Math.abs(P.legs[0][0] - P.legs[1][0]) * .25 }
@@ -132,12 +118,12 @@ export function initPeople(env) {
       }
       if (x == null) {
         if (a.a === 'walk') { const s = a.len * (t - a.t0) / Math.max(.01, a.t1 - a.t0); const q = along(a.path, s); x = q[0]; z = q[1]; d = q[2];
-          if (!G[a.gait].center) { const side = .7 * M; x += Math.cos(d) * side; z -= Math.sin(d) * side } }   // 有身份的走街心，其他人靠边
+          if (!gait(o, a.gait).center) { const side = .7 * M; x += Math.cos(d) * side; z -= Math.sin(d) * side } }   // 有身份的走街心，其他人靠边
         else { [x, z] = a.at; if (a.face) d = Math.atan2(a.face[0] - x, a.face[1] - z);
           if (a.pose === 'play') { const tt = t * .7 + o.p.n; x += Math.sin(tt) * 2.2 * M; z += Math.sin(tt * 1.7) * 1.4 * M; d = Math.atan2(Math.cos(tt) * 2.2, Math.cos(tt * 1.7) * 2.4) } }
       }
       const step = Math.hypot(x - o.x, z - o.z);
-      if (a.a === 'walk') { const g = G[a.gait]; o.ph += (step / M) / g.stride * Math.PI; }   // 相位跟着走过的米数走：步子不会滑
+      if (a.a === 'walk') { const g = gait(o, a.gait); o.ph += (step / M) / g.stride * Math.PI; }   // 相位跟着走过的米数走：步子不会滑
       o.x = x; o.z = z;
       let dd = d - o.dir; dd = Math.atan2(Math.sin(dd), Math.cos(dd)); o.dir += dd * Math.min(1, dt * 6 + .05);
       o.vis = a.a !== 'hide'; o.r.root.visible = o.vis;
