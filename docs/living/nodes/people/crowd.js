@@ -14,6 +14,8 @@ const PAL = {   // 衣色：染过的贵、素的便宜。都是按意图给的�
   old: ['#9a8e74', '#8a826a', '#a89a80'],
 };
 const SKIN = ['#c89a74', '#b98c6a', '#d0a07a', '#a87a58'];
+// 长卷缩远时按「在干什么」上色：打水蓝、扛货褐、市场赭黄、广场紫、跑腿绿。近看仍是衣服本来的颜色
+const ACTC = {water: '#2f6fb0', haul: '#7a4a1e', market: '#c8901a', forum: '#8a2a5a', errand: '#4f7a34'};
 const LOADC = {sack: '#d2c3a0', jar_full: '#b5683e', jar_empty: '#b5683e', crate: '#8a6a48', basket: '#a8864e'};
 
 export function initCrowd(E) {
@@ -46,7 +48,7 @@ export function initCrowd(E) {
       leg: new THREE.Color(long ? col : role === 'laborer' || role === 'child' ? SKIN[0] : '#7a6a50'), long, veil: role === 'woman', hat: role === 'rich' && U() < .5,
       loadOut, loadBack, pauseFar, pauseHome, tOut, tBack, cyc, off: U() * cyc, dens: U(), ph0: U() * 6.28,
       farPose: r.why === 'water' ? 'queue' : r.why === 'haul' ? 'rest' : r.why === 'market' ? 'sell' : r.why === 'forum' ? 'talk' : 'stand',
-      x: 0, z: 0, dir: 0, vis: false});
+      act: new THREE.Color(ACTC[r.why] || ACTC.errand), x: 0, z: 0, dir: 0, vis: false});
   }
 
   // ---------- 部件：每样一张 InstancedMesh。几何按 k=1、b=1 建，个子和胖瘦放在根矩阵的缩放里 ----------
@@ -70,6 +72,10 @@ export function initCrowd(E) {
   mk('jar', new THREE.LatheGeometry(jarPts, 7), capN);
   mk('crate', new THREE.BoxGeometry(.42, .3, .32), capN);
   mk('far', new THREE.CylinderGeometry(.2, .24, 1.6, 5).translate(0, .8, 0), capN);           // 远处：一根着色小柱
+  // 远处的地上色带：走路的人拖一道椭圆，停着的人铺一片圆。很多人叠起来，热闹的街就成了一条流动的色带，喷泉和市场成一团
+  mk('trail', new THREE.CircleGeometry(1, 12).rotateX(-Math.PI / 2), capN);
+  parts.trail.material = new THREE.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: .2, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2});
+  parts.trail.renderOrder = 1;
   mk('farLoad', new THREE.BoxGeometry(.5, .4, .5).translate(0, 1.75, 0), capN);              // 远处：负重的色块（顶在头上那一块）
 
   // ---------- 矩阵链 ----------
@@ -108,8 +114,16 @@ export function initCrowd(E) {
   }
   function drawFar(o, load, k = 1) {   // k：长卷缩远时把柱子放大，让人流在纸上看得出来
     Vp.set(o.x, o.y, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3); Vs.set(M * o.b * k, M * EX * o.k * k, M * o.b * k); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
-    put('far', Mroot, o.col); if (load) put('farLoad', Mroot, LC[load]);
+    const w = Math.min(1, (k - 1) / 1.5);
+    if (w > 0) { CT.copy(o.col).lerp(o.act, .35 + .65 * w); put('far', Mroot, CT) } else put('far', Mroot, o.col);
+    if (load) put('farLoad', Mroot, LC[load]);
+    if (k > 1.3) {                                                           // 只在长卷缩远时铺色带
+      const walking = o.seg !== 'far', s = M * k;
+      Vp.set(o.x, o.y - 1.35, o.z); Vs.set(walking ? .9 * s : 2.2 * s, 1, walking ? 3.2 * s : 2.2 * s); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+      put('trail', Mroot, o.act);
+    }
   }
+  const CT = new THREE.Color();
 
   // ---------- 时间 → 位置（纯函数） ----------
   const pathAt = (r, s) => { const P = r.path, C = r.cum; let lo = 0, hi = C.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (C[m] <= s) lo = m; else hi = m }
