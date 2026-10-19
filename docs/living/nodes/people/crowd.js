@@ -191,5 +191,5 @@ export function initCrowd(E) {
     return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''};
   }
   const pickable = () => P.filter(o => o.seen === frame);
-  return {tick, stat, people: P, pickable, describe};
+  return {tick, stat, people: P, pickable, describe, parts};
 }
