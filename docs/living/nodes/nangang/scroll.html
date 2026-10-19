@@ -348,7 +348,7 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
 /* 信息层（2026-10-19，主人定：指到才出现，省运算）：鼠标停在人身上 → 一张小签，写他是谁、此刻在干什么、跟谁一起。
    不指不算；指的时候也只在这一帧视野里的人当中找最近的那个 */
 let TIP=null,TIPO=null,TMX=-1,TMY=-1,TPEND=false;const TV=new THREE.Vector3();
-function tipEl(){if(TIP)return TIP;TIP=document.createElement('div');TIP.style.cssText='position:fixed;pointer-events:none;background:rgba(250,244,230,.95);border:1px solid #b9a582;border-radius:9px;padding:4px 8px;font-size:13px;line-height:1.45;color:#3a2e22;transform:translate(-50%,-100%);white-space:nowrap;display:none;box-shadow:0 1px 4px rgba(0,0,0,.15)';document.body.append(TIP);return TIP}
+function tipEl(){if(TIP)return TIP;TIP=document.createElement('div');TIP.id='ptip';TIP.style.cssText='position:fixed;pointer-events:none;background:rgba(250,244,230,.95);border:1px solid #b9a582;border-radius:9px;padding:4px 8px;font-size:13px;line-height:1.45;color:#3a2e22;transform:translate(-50%,-100%);white-space:nowrap;display:none;box-shadow:0 1px 4px rgba(0,0,0,.15)';document.body.append(TIP);return TIP}
 function scr(x,y,z,AC){TV.set(x,y,z).project(AC);return [(TV.x+1)/2*innerWidth,(1-TV.y)/2*innerHeight,TV.z]}
 function pickPerson(){TPEND=false;if(!PPL)return;const AC=(STROLL||DESC>0)?pcam:cam;let best=null,bd=28*28;
   const head=o=>(o.y!=null?o.y:o.r.root.position.y)+1.5/MPP*EX;
