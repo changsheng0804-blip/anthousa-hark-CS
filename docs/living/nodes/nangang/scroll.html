@@ -357,7 +357,7 @@ function pplStep(){if(!PPL)return;const t=performance.now(),dt=Math.min(.1,(t-PL
   if(FOL&&STROLL){const p=PPL.posOf(FOL);if(!p)return;const D=camFree(p.x,p.z,5.5/MPP),cy=p.y+2.6/MPP*EX;wx=p.x;wz=p.z;
     pcam.position.set(p.x-Math.sin(yaw)*D,cy,p.z+Math.cos(yaw)*D);const gy=elevPx(pcam.position.x,pcam.position.z)+1.5+EYE*.6;if(pcam.position.y<gy)pcam.position.y=gy;pcam.lookAt(p.x,p.y+1.0/MPP*EX,p.z)}}
 window.__pplStep=()=>pplStep();
-function crowdStep(AC){if(!CRW)return;AC.updateMatrixWorld();const near=(STROLL||DESC>0)||VH/cam.zoom*MPP<140;const st=CRW.tick(PT,{cam:AC,full:near,fullM:near&&!(STROLL||DESC>0)?1e4:70,maxFull:CRW.maxFull});
+function crowdStep(AC){if(!CRW)return;AC.updateMatrixWorld();const near=(STROLL||DESC>0)||VH/cam.zoom*MPP<140;const st=CRW.tick(PT,{cam:AC,full:near,fullM:near&&!(STROLL||DESC>0)?1e4:70,maxFull:CRW.maxFull,farBoost:(STROLL||DESC>0)?1:Math.min(5,Math.max(1,1.6/cam.zoom))});
   if(fN===0)$('fps').title=st.active+' 人在街上 · '+st.full+' 关节人 · '+st.far+' 远景 · '+st.ms.toFixed(1)+' ms'}
 let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
 $('day').onclick=()=>{DAY=!DAY;$('day').style.opacity=DAY?1:.5};

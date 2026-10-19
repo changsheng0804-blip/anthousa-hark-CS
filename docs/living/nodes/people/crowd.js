@@ -106,8 +106,8 @@ export function initCrowd(E) {
     else if (load === 'jar_full') { Mtmp.multiplyMatrices(Mneck, local(Mt, 0, .28, -.02, 0, 0, 0)); put('jar', Mtmp, LC.jar_full) }
     else if (load === 'jar_empty') { Mtmp.multiplyMatrices(Mtor, local(Mt, .2, .05, .08, 0, 0, -.5)); put('jar', Mtmp, LC.jar_empty) }
   }
-  function drawFar(o, load) {
-    Vp.set(o.x, o.y, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3); Vs.set(M * o.b, M * EX * o.k, M * o.b); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+  function drawFar(o, load, k = 1) {   // k：长卷缩远时把柱子放大，让人流在纸上看得出来
+    Vp.set(o.x, o.y, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3); Vs.set(M * o.b * k, M * EX * o.k * k, M * o.b * k); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
     put('far', Mroot, o.col); if (load) put('farLoad', Mroot, LC[load]);
   }
 
@@ -118,7 +118,7 @@ export function initCrowd(E) {
   const dens = f => { for (let i = 1; i < DENS.length; i++) if (f <= DENS[i][0]) { const a = DENS[i - 1], b = DENS[i], u = (f - a[0]) / (b[0] - a[0]); return a[1] + (b[1] - a[1]) * u } return .15 };
   const ground = (x, z) => isLand(x, z) ? elevPx(x, z) + 1.5 : 1.6;
   const frus = new THREE.Frustum(), PV = new THREE.Matrix4(), SPH = new THREE.Sphere(new THREE.Vector3(), 2);
-  const stat = {active: 0, full: 0, far: 0, ms: 0};
+  const stat = {active: 0, full: 0, far: 0, ms: 0, gest: 0, bow: 0};
 
   function tick(t, view) {
     const t0 = performance.now();
@@ -126,7 +126,7 @@ export function initCrowd(E) {
     const cam = view.cam; PV.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); frus.setFromProjectionMatrix(PV);
     const cx = cam.position.x, cz = cam.position.z, fullR2 = (view.fullM / MPP) ** 2, D = dens((t % T) / T);
     const mer = getMerchant && getMerchant();
-    let act = 0, nf = 0;
+    let act = 0, nf = 0, ng = 0, nbow = 0; const gestR2 = (25 / MPP) ** 2, boost = view.farBoost || 1;
     for (const o of P) {
       if (o.dens > D) continue;
       const r = o.r; let c = (t + o.off) % o.cyc, x, z, d, a, load = null, g = null, s = 0;
@@ -145,13 +145,15 @@ export function initCrowd(E) {
         nf++; const Pp = blank();
         if (g) walk(Pp, g, o.ph0 + (s / M) / g.stride * Math.PI); else stay(Pp, a, t + o.i * 1.7, o.k);
         carry(Pp, load);
-        if (bow) OVER.bow(Pp, bow);
-        if (g === o.go && o.role === 'laborer') OVER.wipe(Pp, env(c, .2, 2.5));               // 出门前抹一把汗
+        if (dx * dx + dz * dz < gestR2) {                                    // 叠加手势只给镜头 25 米内的人：远一点本来也看不清
+          ng++; if (bow) { OVER.bow(Pp, bow); nbow++ }
+          if (g === o.go && o.role === 'laborer') OVER.wipe(Pp, env(c, .2, 2.5));               // 出门前抹一把汗
+        }
         drawFull(o, Pp, load);
-      } else drawFar(o, load);
+      } else drawFar(o, load, boost);
     }
     for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true }
-    stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0;
+    stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow;
     return stat;
   }
   return {tick, stat, people: P};
