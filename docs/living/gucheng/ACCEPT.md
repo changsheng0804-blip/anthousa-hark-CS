@@ -46,9 +46,10 @@
 - ✅ gucheng ⇄ jinjiao 来回都能走
 - ✅ gucheng ⇄ dongjia 来回都能走
 - ✅ 页面和模板一字不差（所有街区共用一份）
-- ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page gucheng years 40:4008/4008 50:4796/4796 60:5057/5057 errors 0
-- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— houses 5582 unplaced 1 streets 5023 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 2, 3] labels 60 12 ok
-- ✅ 一张网：街区的街都从全城街网裁下来 —— 794/800 段在全城网上
+- ✅ 页面跑得起来：没有脚本错误，每个关键年站着的房子和底账一样多 —— page gucheng years 40:4007/4007 50:4795/4795 60:5056/5056 errors 0
+- ✅ 分区从底账推出来（港边货栈、粮仓仓场、临街铺面……） —— d_cs/epic_cleared）
+houses 5582 unplaced 1 streets 5024 in water 0 on piers 0 street segs in water 0 halls 40/50/60 [0, 2, 3] labels 60 12 ok
+- ✅ 一张网：街区的街都从全城街网裁下来 —— 796/800 段在全城网上
 - ✅ 顺着大道：近大道的街和大道平行或垂直 —— 212/217
 - ✅ 没有街区专用的街网参数 —— streets_ng 用到 无；配方 无
 - ✅ 同分布：框里街的疏密和全城一样（随密度，不随街区） —— 框里 0.230 / 全城 0.230 = 1.00
