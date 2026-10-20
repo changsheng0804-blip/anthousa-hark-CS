@@ -79,6 +79,13 @@ export function initCrowd(E) {
   mk('cap', new THREE.SphereGeometry(.115, 7, 4, 0, Math.PI * 2, 0, Math.PI * .5).translate(0, .15, -.01), capN);
   mk('veil', new THREE.CylinderGeometry(.12, .2, .32, 7, 1, true).translate(0, .02, -.02), capN); parts.veil.material = MAT.clone(); parts.veil.material.side = THREE.DoubleSide; parts.veil.material.onBeforeCompile = inkHook;
   mk('hat', new THREE.CylinderGeometry(.1, .12, .1, 7).translate(0, .27, 0), capN);
+  // 职业配件：每种多一次绘制，只给戴的人算
+  mk('straw', new THREE.ConeGeometry(.3, .16, 12).translate(0, .3, 0), capN);                       // 脚夫的斗笠
+  mk('pole', new THREE.BoxGeometry(.035, .035, 1.5), capN);                                        // 扁担
+  mk('apron', new THREE.BoxGeometry(.3, .42, .025).translate(0, -.16, .17), capN);                 // 商贩的围裙
+  mk('beard', new THREE.ConeGeometry(.065, .16, 6).rotateX(Math.PI).translate(0, .02, .09), capN); // 老人的胡子
+  mk('cane', cyl(.016, .016, 1, 5), capN);                                                         // 拐杖：高度按手到地面拉
+  mk('hem', new THREE.CylinderGeometry(.335, .34, .07, 12, 1, true).translate(0, -.74, 0).scale(1, 1, .85), capN);   // 长袍下摆的镶边
   for (const s of ['L', 'R']) { mk('th' + s, cyl(.075, .06, .46), capN); mk('sh' + s, cyl(.055, .045, .44), capN); mk('ft' + s, new THREE.BoxGeometry(.09, .06, .22).translate(0, -.03, .05), capN);
     mk('up' + s, cyl(.055, .045, .3), capN); mk('lo' + s, cyl(.045, .035, .28), capN); mk('hd' + s, new THREE.SphereGeometry(.045, 5, 4).scale(1, 1.3, .8).translate(0, -.03, 0), capN) }
   const jarPts = [[0, 0], [.07, .02], [.13, .12], [.14, .26], [.09, .38], [.05, .44], [.07, .5], [0, .5]].map(q => new THREE.Vector2(q[0], q[1]));
@@ -100,18 +107,26 @@ export function initCrowd(E) {
   const cnt = {}; for (const k in parts) cnt[k] = 0;
   let MASK = false; const CLOTH = new THREE.Color('#ffffff'), C_W = new THREE.Color(1, 1, 1), C_K = new THREE.Color(0, 0, 0);
   function put(name, mat, col) { const m = parts[name], c = cnt[name]++; m.setMatrixAt(c, mat); if (MASK) col = col === CLOTH ? C_W : C_K; if (col) m.setColorAt(c, col) }
-  const C_INK = new THREE.Color('#3a2e22'), C_VEIL = new THREE.Color('#e8dfcb'), C_HAIR = new THREE.Color('#2a1e16'), C_GOLD = new THREE.Color('#c9a34a'), C_GREY = new THREE.Color('#d9d4c8');
+  const C_INK = new THREE.Color('#3a2e22'), C_VEIL = new THREE.Color('#e8dfcb'), C_HAIR = new THREE.Color('#2a1e16'), C_GOLD = new THREE.Color('#c9a34a'), C_GREY = new THREE.Color('#d9d4c8'), C_STRAW = new THREE.Color('#c8ac6a'), C_WOOD = new THREE.Color('#6a4a2a'), C_APRON = new THREE.Color('#ddd2b6');
   const LC = {}; for (const k in LOADC) LC[k] = new THREE.Color(LOADC[k]);
 
   function drawFull(o, Pp, load) {
     Vp.set(o.x, o.y, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3); Vs.set(M * o.b, M * EX * o.k, M * o.b); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
     Mhip.multiplyMatrices(Mroot, local(Mt, 0, .92 * (1 + Pp.bob) + Pp.lift / o.k, 0, 0, 0, Pp.hip));
     Mtor.multiplyMatrices(Mhip, local(Mt, 0, 0, 0, Pp.stoop, Pp.twist, Pp.side));
+    const pole = o.role === 'laborer' && !load, cane = o.role === 'old';
+    if (pole) Pp.arms[1] = [.9, 1.75, 0];                                    // 手扶着肩上的扁担
+    if (cane) Pp.arms[1] = [.35, .35, .05];
     put('chest', Mtor, o.col); if (o.sash) put('sash', Mtor, o.sash);
-    if (o.long) { Mtmp.multiplyMatrices(Mhip, local(Mt, 0, 0, 0, (Pp.legs[0][0] - Pp.legs[1][0]) * .08, 0, 0)); put('robe', Mtmp, o.col) } else put('skirt', Mtor, o.col);
+    if (o.long) { Mtmp.multiplyMatrices(Mhip, local(Mt, 0, 0, 0, (Pp.legs[0][0] - Pp.legs[1][0]) * .08, 0, 0)); put('robe', Mtmp, o.col); if (o.sash && o.role !== 'old') put('hem', Mtmp, o.sash) } else put('skirt', Mtor, o.col);
+    if (o.role === 'trader') put('apron', Mhip, C_APRON);
+    if (pole) { Mtmp.multiplyMatrices(Mtor, local(Mt, .17, .62, .1, 0, 0, 0)); put('pole', Mtmp, C_WOOD);
+      for (const z of [-.68, .78]) { Mj.multiplyMatrices(Mtmp, local(Mt, 0, -.32, z, 0, 0, 0)); Mj.scale(Vp.set(.55, .7, .55)); put('crate', Mj, LC.basket) } }
     Mneck.multiplyMatrices(Mtor, local(Mt, 0, .6, 0, Pp.neck, Pp.headYaw, 0));
     put('head', Mneck, o.skin); put(o.veil ? 'veil' : 'cap', Mneck, o.veil ? C_VEIL : o.role === 'old' ? C_GREY : C_HAIR);
     if (o.hat) put('hat', Mneck, C_GOLD);
+    if (o.role === 'laborer') put('straw', Mneck, C_STRAW);
+    if (o.role === 'old' && !o.veil) put('beard', Mneck, C_GREY);
     for (let i = 0; i < 2; i++) {
       const s = i ? 1 : -1, S = i ? 'R' : 'L';
       Mj.multiplyMatrices(Mhip, local(Mt, s * .1, 0, 0, -Pp.legs[i][0], 0, 0)); put('th' + S, Mj, o.leg);
@@ -121,6 +136,8 @@ export function initCrowd(E) {
       Mj.multiplyMatrices(Mtor, local(Mt, s * .22, .56, 0, -A[0], 0, (i ? -1 : 1) * (.08 + A[2]))); put('up' + S, Mj, o.role === 'laborer' ? o.skin : o.col);
       Mk.multiplyMatrices(Mj, local(Mt, 0, -.3, 0, -A[1], 0, 0)); put('lo' + S, Mk, o.long && o.role !== 'laborer' ? o.col : o.skin);   // 长袍的人袖子盖到手腕
       Mtmp.multiplyMatrices(Mk, local(Mt, 0, -.28, 0, 0, 0, 0)); put('hd' + S, Mtmp, o.skin);
+      if (cane && i === 1) { const hx = Mtmp.elements[12], hy = Mtmp.elements[13], hz = Mtmp.elements[14];   // 拐杖从手里直直落到地上
+        Vp.set(hx, hy, hz); Qn.identity(); Vs.set(M * o.b, Math.max(.1, hy - o.y), M * o.b); Mj.compose(Vp, Qn, Vs); Vs.set(1, 1, 1); put('cane', Mj, C_WOOD) }
       if (i === 0 && load === 'basket') { Mtmp.multiplyMatrices(Mk, local(Mt, 0, -.3, 0, 0, 0, 0)); Mtmp.scale(Vp.set(.6, .6, .6)); put('crate', Mtmp, LC.basket) }
     }
     if (load === 'sack') { Mtmp.multiplyMatrices(Mtor, local(Mt, 0, .66, -.16, 0, 0, 0)); put('sack', Mtmp, LC.sack) }
@@ -278,5 +295,5 @@ export function initCrowd(E) {
     return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''};
   }
   const pickable = () => P.filter(o => o.seen === frame);
-  return {setInk: on => { NOINK.value = on ? 0 : 1 }, get inkOn() { return NOINK.value < .5 }, tick, stat, people: P, pickable, describe, parts, buildAtlas, atlasInfo: () => SPR && {V: SPR.V, W: SPR.W, H: SPR.H}, atlas: () => SPR};
+  return {MPP, setInk: on => { NOINK.value = on ? 0 : 1 }, get inkOn() { return NOINK.value < .5 }, tick, stat, people: P, pickable, describe, parts, buildAtlas, atlasInfo: () => SPR && {V: SPR.V, W: SPR.W, H: SPR.H}, atlas: () => SPR};
 }
