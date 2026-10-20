@@ -53,17 +53,25 @@ export function initCrowd(E) {
 
   // ---------- 部件：每样一张 InstancedMesh。几何按 k=1、b=1 建，个子和胖瘦放在根矩阵的缩放里 ----------
   const MAT = new THREE.MeshLambertMaterial({color: '#ffffff'});
+  // 人小到几个像素时，后期的描墨会把整个人涂黑：这时让人在颜色缓冲里写 alpha 0，后期见了就不按颜色分界描（法线那一遍也不画人）
+  const NOINK = {value: 0}, inkHook = sh => { sh.uniforms.uNoInk = NOINK; sh.fragmentShader = 'uniform float uNoInk;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n if (uNoInk > .5) gl_FragColor.a = 0.;') };
+  MAT.onBeforeCompile = inkHook;
   const cyl = (r0, r1, h, seg = 6) => new THREE.CylinderGeometry(r1, r0, h, seg).translate(0, -h / 2, 0);
   const parts = {};
   const mk = (name, geo, cap) => { const m = new THREE.InstancedMesh(geo, MAT, cap); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.count = 0; m.frustumCulled = false;
     m.setColorAt(0, new THREE.Color()); scene.add(m); parts[name] = m; return m };
-  const capN = Math.max(64, N);
+  // 帧图的行：身份 × 负重 × 步态（中景小人用，见下面 buildAtlas）
+  const VK = new Map(), VREP = [];
+  const vkey = (o, load, gait) => { const k = o.role + '|' + o.long + '|' + o.veil + '|' + o.hat + '|' + (load || '') + '|' + (gait ? 'w' : o.farPose);
+    let v = VK.get(k); if (v == null) { v = VREP.length; VK.set(k, v); VREP.push({o, load, gait, pose: o.farPose}) } return v };
+  for (const o of P) { o.vOut = vkey(o, o.loadOut, o.go); o.vBack = vkey(o, o.loadBack, o.gb); o.vFar = vkey(o, o.loadOut, null) }
+  const capN = Math.max(64, N, VREP.length * 8 * 7);
   mk('chest', new THREE.CylinderGeometry(.17, .15, .55, 7).translate(0, .3, 0), capN);
   mk('skirt', new THREE.CylinderGeometry(.16, .23, .3, 7).translate(0, -.1, 0), capN);
   mk('robe', new THREE.CylinderGeometry(.17, .3, .82, 8).translate(0, -.41 + .05, 0), capN);
   mk('head', new THREE.SphereGeometry(.11, 7, 5).translate(0, .14, 0), capN);
   mk('cap', new THREE.SphereGeometry(.115, 7, 4, 0, Math.PI * 2, 0, Math.PI * .5).translate(0, .15, -.01), capN);
-  mk('veil', new THREE.CylinderGeometry(.12, .2, .32, 7, 1, true).translate(0, .02, -.02), capN); parts.veil.material = MAT.clone(); parts.veil.material.side = THREE.DoubleSide;
+  mk('veil', new THREE.CylinderGeometry(.12, .2, .32, 7, 1, true).translate(0, .02, -.02), capN); parts.veil.material = MAT.clone(); parts.veil.material.side = THREE.DoubleSide; parts.veil.material.onBeforeCompile = inkHook;
   mk('hat', new THREE.CylinderGeometry(.1, .12, .1, 7).translate(0, .27, 0), capN);
   for (const s of ['L', 'R']) { mk('th' + s, cyl(.075, .06, .46), capN); mk('sh' + s, cyl(.055, .045, .44), capN); mk('ft' + s, new THREE.BoxGeometry(.09, .06, .22).translate(0, -.03, .05), capN);
     mk('up' + s, cyl(.05, .045, .3), capN); mk('lo' + s, cyl(.042, .035, .28), capN) }
@@ -84,7 +92,8 @@ export function initCrowd(E) {
   const E3 = new THREE.Euler(), Qn = new THREE.Quaternion(), Vp = new THREE.Vector3(), Vs = new THREE.Vector3(1, 1, 1);
   function local(out, x, y, z, rx, ry, rz) { E3.set(rx, ry, rz, 'XYZ'); Qn.setFromEuler(E3); Vp.set(x, y, z); return out.compose(Vp, Qn, Vs) }
   const cnt = {}; for (const k in parts) cnt[k] = 0;
-  function put(name, mat, col) { const m = parts[name], c = cnt[name]++; m.setMatrixAt(c, mat); if (col) m.setColorAt(c, col) }
+  let MASK = false; const CLOTH = new THREE.Color('#ffffff'), C_W = new THREE.Color(1, 1, 1), C_K = new THREE.Color(0, 0, 0);
+  function put(name, mat, col) { const m = parts[name], c = cnt[name]++; m.setMatrixAt(c, mat); if (MASK) col = col === CLOTH ? C_W : C_K; if (col) m.setColorAt(c, col) }
   const C_INK = new THREE.Color('#3a2e22'), C_VEIL = new THREE.Color('#e8dfcb'), C_HAIR = new THREE.Color('#2a1e16'), C_GOLD = new THREE.Color('#c9a34a'), C_GREY = new THREE.Color('#d9d4c8');
   const LC = {}; for (const k in LOADC) LC[k] = new THREE.Color(LOADC[k]);
 
@@ -126,6 +135,68 @@ export function initCrowd(E) {
     }
   }
   const CT = new THREE.Color();
+
+  // ---------- 中景小人：开场用自己的关节人拍一张帧图，远处每人只画一张小片 ----------
+  // 帧图每一行是一种「身份 × 负重 × 步态」，一行 8 个朝向 × (6 帧走路 + 1 帧站着)。衣服拍成白色，片上再染各人的衣色；
+  // alpha 里记哪里是衣服（0.5）哪里不是（1），外轮廓描一圈墨，跟长卷的线稿对得上。只在长卷斜俯（方位固定）时用。
+  const TW = 32, TH = 48, NF = 7, ND = 8, FOOT = .1;
+  const SH = 2.5 * M * EX, SW = SH * TW / TH;                              // 一格在世界里的大小（k=1）
+  let SPR = null;
+  function buildAtlas(rnd) {
+    const V = VREP.length, cols = ND * NF, W = cols * TW, H = V * TH;
+    const rt = new THREE.WebGLRenderTarget(W, H, {depthBuffer: true});
+    const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xffffff, 0xb8a888, 2.2)); const sun = new THREE.DirectionalLight(0xffffff, 1.0); sun.position.set(-700, 900, -500); sc.add(sun);
+    const TL = 36 * Math.PI / 180, up = new THREE.Vector3(0, Math.cos(TL), -Math.sin(TL)), DIRV = new THREE.Vector3(0, Math.sin(TL), Math.cos(TL));
+    const O = new THREE.Vector3(0, -20000, 0), cam = new THREE.OrthographicCamera(0, W / TW * SW, H / TH * SH, 0, 1, 400);
+    cam.position.copy(O).addScaledVector(DIRV, 200); cam.up.copy(up); cam.lookAt(O);
+    // 相机放在 O 处，左下角对着 O：第 (i,j) 格的脚在 O + 右×(i+.5)×SW + 上×(j+FOOT)×SH
+    const shoot = mask => {
+      for (const k in cnt) cnt[k] = 0;
+      VREP.forEach((v, j) => { for (let dI = 0; dI < ND; dI++) for (let f = 0; f < NF; f++) {
+        const i = dI * NF + f, Pp = blank(); if (f < NF - 1 && v.gait) walk(Pp, v.gait, f / (NF - 1) * Math.PI * 2); else stay(Pp, v.pose, 3.1, 1);
+        carry(Pp, v.load);
+        const q = O.clone().addScaledVector(new THREE.Vector3(1, 0, 0), (i + .5) * SW).addScaledVector(up, (j + FOOT) * SH);
+        const o = v.o, f0 = {x: q.x, y: q.y, z: q.z, dir: dI * Math.PI / 4, b: o.b, k: 1, col: CLOTH, skin: o.skin, leg: o.leg.equals(o.col) ? CLOTH : o.leg, long: o.long, veil: o.veil, hat: o.hat, role: o.role};
+        drawFull(f0, Pp, v.load) } });
+      const keep = [];
+    for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; keep.push([m, m.parent, m.material]); sc.add(m);
+        if (mask) m.material = BASIC }
+      rnd.setRenderTarget(rt); rnd.setClearColor(0x000000, 0); rnd.clear(); rnd.render(sc, cam); rnd.setRenderTarget(null);
+      for (const [m, par, mat] of keep) { par.add(m); m.material = mat }
+      const buf = new Uint8Array(W * H * 4); rnd.readRenderTargetPixels(rt, 0, 0, W, H, buf); return buf };
+    const BASIC = new THREE.MeshBasicMaterial({color: '#ffffff', side: THREE.DoubleSide});
+    const oldCC = rnd.getClearColor(new THREE.Color()), oldA = rnd.getClearAlpha();
+    const col = shoot(false); MASK = true; const msk = shoot(true); MASK = false;
+    rnd.setClearColor(oldCC, oldA); rt.dispose();
+    const out = new Uint8Array(W * H * 4), A = i => col[i * 4 + 3] > 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x;
+      if (!A(i)) {                                                           // 外面一圈墨：画在剪影外面，不吃掉里面的衣色
+        const nb = (x % TW > 0 && A(i - 1)) || (x % TW < TW - 1 && A(i + 1)) || (y % TH > 0 && A(i - W)) || (y % TH < TH - 1 && A(i + W));
+        if (nb) { out[i * 4] = 60; out[i * 4 + 1] = 46; out[i * 4 + 2] = 34; out[i * 4 + 3] = 200 } continue }
+      out[i * 4] = col[i * 4]; out[i * 4 + 1] = col[i * 4 + 1]; out[i * 4 + 2] = col[i * 4 + 2]; out[i * 4 + 3] = msk[i * 4] > 128 ? 128 : 255 }
+    const tex = new THREE.DataTexture(out, W, H, THREE.RGBAFormat); tex.magFilter = tex.minFilter = THREE.NearestFilter; tex.generateMipmaps = false; tex.needsUpdate = true;
+    const mat = new THREE.ShaderMaterial({uniforms: {map: {value: tex}, ink: {value: 1}, grid: {value: new THREE.Vector2(cols, V)}, up: {value: up}, size: {value: new THREE.Vector2(SW, SH)}, foot: {value: FOOT}},
+      vertexShader: `attribute float aFrame; uniform vec2 grid, size; uniform vec3 up; uniform float foot; varying vec2 vUv; varying vec3 vCol;
+        void main(){ vec3 c = (instanceMatrix * vec4(0., 0., 0., 1.)).xyz; float s = length(instanceMatrix[0].xyz);
+          vec3 p = c + vec3(1., 0., 0.) * (uv.x - .5) * size.x * s + up * (uv.y - foot) * size.y * s;
+          float fi = mod(aFrame, grid.x), fj = floor(aFrame / grid.x); vUv = (vec2(fi, fj) + uv) / grid; vCol = instanceColor;
+          gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.); }`,
+      fragmentShader: `uniform sampler2D map; uniform float ink; varying vec2 vUv; varying vec3 vCol;
+        void main(){ vec4 t = texture2D(map, vUv); if (t.a < .1) discard; if (t.a > .7 && t.a < .9) { if (ink < .5) discard; gl_FragColor = vec4(t.rgb, 0.); return; }
+          vec3 g = vec3(1. / 2.2); gl_FragColor = vec4(t.a < .7 ? pow(vCol, g) * (.55 + .6 * t.r) : pow(t.rgb, g) * .9, 0.); }`   /* 小人只有几个像素：按衣服的本色画（不走线性压暗），明暗只留一点 */   /* alpha 0：告诉后期这里是小人，别按颜色分界描墨 */});
+    const mesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1).translate(.5, .5, 0), mat, Math.max(64, N));
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); mesh.frustumCulled = false; mesh.count = 0; mesh.setColorAt(0, new THREE.Color());
+    const fa = new THREE.InstancedBufferAttribute(new Float32Array(Math.max(64, N)), 1); fa.setUsage(THREE.DynamicDrawUsage); mesh.geometry.setAttribute('aFrame', fa);
+    scene.add(mesh); parts.spr = mesh; cnt.spr = 0;
+    SPR = {mesh, fa, cols, V, W, H, out, col}; return SPR;
+  }
+  function drawSprite(o, k, frame) {
+    const n = cnt.spr++, dI = ((Math.round(o.dir / (Math.PI / 4)) % ND) + ND) % ND;
+    Vp.set(o.x, o.y, o.z); Qn.identity(); const s = o.k * k; Vs.set(s, s, s); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
+    SPR.mesh.setMatrixAt(n, Mroot); const w = Math.min(1, (k - 1) / 1.5);
+    SPR.mesh.setColorAt(n, w > 0 ? CT.copy(o.col).lerp(o.act, .35 + .65 * w) : o.col);
+    SPR.fa.array[n] = frame.v * SPR.cols + dI * NF + frame.f;
+  }
 
   // ---------- 时间 → 位置（纯函数） ----------
   const pathAt = (r, s) => { const P = r.path, C = r.cum; let lo = 0, hi = C.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (C[m] <= s) lo = m; else hi = m }
@@ -169,10 +240,17 @@ export function initCrowd(E) {
           if (g === o.go && o.role === 'laborer') OVER.wipe(Pp, env(c, .2, 2.5));               // 出门前抹一把汗
         }
         drawFull(o, Pp, load);
+      } else if (SPR && view.sprite) {                                      // 中景/远景：帧图小人 + 缩远时的色带
+        const v = g ? (g === o.go ? o.vOut : o.vBack) : o.vFar;
+        const f = g ? Math.floor((((o.ph0 + (s / M) / g.stride * Math.PI) / (Math.PI * 2)) % 1 + 1) % 1 * (NF - 1)) : NF - 1;
+        drawSprite(o, boost, {v, f});
+        if (boost > 1.3) { const walking = !!g, sc = M * boost; Vp.set(o.x, o.y + .4, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3);
+          Vs.set(walking ? 2.4 * sc : 4.5 * sc, 1, walking ? 8 * sc : 4.5 * sc); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1); put('trail', Mroot, o.act) }
       } else drawFar(o, load, boost);
     }
+    if (SPR) { SPR.fa.needsUpdate = true; SPR.mesh.material.uniforms.ink.value = view.spriteInk ? 1 : 0 }   // 小人默认不描墨：太小，描了就只剩一团黑
     for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true }
-    stat.active = act; stat.full = nf; stat.far = cnt.far; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow; stat.trail = cnt.trail; stat.k = boost;
+    stat.active = act; stat.full = nf; stat.far = cnt.far + (cnt.spr || 0); stat.spr = cnt.spr || 0; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow; stat.trail = cnt.trail; stat.k = boost;
     return stat;
   }
   // 信息层：指到才算，不指不花钱。只在这一帧视野里的人当中找
@@ -193,5 +271,5 @@ export function initCrowd(E) {
     return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''};
   }
   const pickable = () => P.filter(o => o.seen === frame);
-  return {tick, stat, people: P, pickable, describe, parts};
+  return {setInk: on => { NOINK.value = on ? 0 : 1 }, get inkOn() { return NOINK.value < .5 }, tick, stat, people: P, pickable, describe, parts, buildAtlas, atlasInfo: () => SPR && {V: SPR.V, W: SPR.W, H: SPR.H}, atlas: () => SPR};
 }

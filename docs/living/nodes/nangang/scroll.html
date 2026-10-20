@@ -86,7 +86,7 @@ const comp=new THREE.ShaderMaterial({uniforms:{tC:{value:rtC.texture},tN:{value:
    if(ps<.5&&d-dn>.00045*zk)e=1.;if(ps>.5){float a=lin(d),b=lin(dn);if(a-b>.05*a+.4)e=1.;}                 /* 我在后面，邻居在前：线归后面这一侧，避免双线 */
    if(dn>.9999)e=1.;
    if(k<2&&dot(n,N(v))<.80)e=max(e,.85);   /* 面的折角：屋脊、墙角 */
-   if(k<2&&length(c-C(v))>.16)e=max(e,.55);/* 颜色分界：屋顶与墙、街与地 */
+   if(k<2&&length(c-C(v))>.16&&texture2D(tC,u).a>.5&&texture2D(tC,v).a>.5)e=max(e,.55);/* 颜色分界：屋顶与墙、街与地 */
   }return e;}
  void main(){vec3 c=C(vUv);float d=D(vUv);
   vec3 paper=vec3(.94,.905,.83);float g=hash(floor(gl_FragCoord.xy*.5))*.05+hash(floor(gl_FragCoord.xy/9.))*.03;
@@ -340,8 +340,8 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   ui.append(row1,row2);document.body.append(ui);
   if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
   /* 人群压力试作（2026-10-19）：?crowd=人数 。&full=近景关节人上限（默认 300）。fps 角落多一行：在街上的人 / 关节人 / 远景柱 / 每帧算人用的毫秒 */
-  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261019k');
-    CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);
+  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261019u');
+    CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);if(QP.get('spr')!=='0'){const t0=performance.now();CRW.buildAtlas(rnd);window.__atlasMs=performance.now()-t0}
     window.__crowd={get stat(){return CRW.stat},n:+QP.get('crowd'),C:CRW}}
   window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};
   PPL.ui={ph,sl,row1}}
@@ -376,7 +376,7 @@ window.__pplStep=()=>pplStep();
 /* 长卷缩远时人流按在干什么上色，左下角给一行图例（和 crowd.js 里的 ACTC 同色） */
 let CLG=null;function crowdLegend(){if(CLG)return CLG;CLG=document.createElement('div');CLG.style.cssText='position:fixed;left:10px;bottom:10px;background:rgba(250,244,230,.9);border:1px solid #b9a582;border-radius:10px;padding:4px 10px;font-size:12px;color:#3a2e22;display:none;gap:10px;align-items:center;pointer-events:none';
   CLG.innerHTML='人流：'+[['#2f6fb0','打水'],['#7a4a1e','扛货'],['#c8901a','赶集'],['#8a2a5a','去广场'],['#4f7a34','办事']].map(([c,t])=>'<span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+c+';margin-right:3px"></i>'+t+'</span>').join('');document.body.append(CLG);return CLG}
-function crowdStep(AC){if(!CRW)return;AC.updateMatrixWorld();const near=(STROLL||DESC>0)||VH/cam.zoom*MPP<140;const st=CRW.tick(PT,{cam:AC,full:near,fullM:near&&!(STROLL||DESC>0)?1e4:70,maxFull:CRW.maxFull,farBoost:(STROLL||DESC>0)?1:Math.min(5,Math.max(1,1.6/cam.zoom))});
+function crowdStep(AC){if(!CRW)return;AC.updateMatrixWorld();if(!(STROLL||DESC>0)){const pxH=1.7*EX/MPP*cam.zoom*rnd.domElement.height/VH;CRW.setInk(pxH>=70)}else CRW.setInk(true);/* 人在画面上不到 70 像素高就不描墨，不然整个人被线涂黑 */const near=(STROLL||DESC>0)||VH/cam.zoom*MPP<140;const st=CRW.tick(PT,{cam:AC,full:near,fullM:near&&!(STROLL||DESC>0)?1e4:70,maxFull:CRW.maxFull,sprite:!(STROLL||DESC>0),spriteInk:cam.zoom>1.6,farBoost:(STROLL||DESC>0)?1:Math.min(5,Math.max(1,1.6/cam.zoom))});
   const fb=(STROLL||DESC>0)?1:1.6/cam.zoom,lg=crowdLegend();lg.style.display=fb>1.3?'flex':'none';
   if(fN===0)$('fps').title=st.active+' 人在街上 · '+st.full+' 关节人 · '+st.far+' 远景 · '+st.ms.toFixed(1)+' ms'}
 let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 '+YEAR+' 年';clearTimeout(pend);pend=setTimeout(()=>{build();plan()},60)};
@@ -437,10 +437,10 @@ addEventListener('keyup',e=>{if(e.key==='Shift')RUN=false;const k=e.key.toLowerC
 window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__glide=(x,z)=>{glideTo(x,z);return !!GL};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
 rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();pplStep();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;crowdStep(AC);tipStep(AC);
-  rnd.setRenderTarget(rtC);rnd.render(scene,AC);/* 远景人影和色带不进法线/深度那一遍：不描墨线，缩远后只剩颜色，不糊成一片黑 */const FH=CRW?[CRW.parts.far,CRW.parts.farLoad,CRW.parts.trail]:[];for(const m of FH)m.visible=false;scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;for(const m of FH)m.visible=true;
+  rnd.setRenderTarget(rtC);rnd.render(scene,AC);/* 远景人影和色带不进法线/深度那一遍：不描墨线，缩远后只剩颜色，不糊成一片黑 */const FH=!CRW?[]:CRW.inkOn?[CRW.parts.far,CRW.parts.farLoad,CRW.parts.trail,CRW.parts.spr].filter(Boolean):Object.values(CRW.parts);for(const m of FH)m.visible=false;scene.overrideMaterial=nrmMat;const bg=scene.background;scene.background=null;rnd.setRenderTarget(rtN);rnd.setClearColor(0x8080ff,1);rnd.clear();rnd.render(scene,AC);scene.overrideMaterial=null;scene.background=bg;for(const m of FH)m.visible=true;
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps'+(CRW?' · '+CRW.stat.active+'人/'+CRW.stat.full+'近 '+CRW.stat.ms.toFixed(1)+'ms':'');fN=0;fT=t}});
-window.__look=look;
+window.__look=look;window.__comp=comp;
 window.__view=(x,z,zm)=>look(x,z,zm);window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
 /* 嵌在全城瓦片里（灰度 nodes-nangang）：瓦片缩到底再往里缩时，瓦片页在同一个点、同样比例叠上这一页，再接着落街；
    在这里往外缩回到接进来时的比例以下，就把镜头位置交回瓦片页，瓦片淡回来 */
