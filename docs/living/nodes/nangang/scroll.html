@@ -59,7 +59,7 @@ const DPR=Math.min(1.5,devicePixelRatio);const rnd=new THREE.WebGLRenderer({anti
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xefe6d2);
 const VH=520;let asp=innerWidth/innerHeight;const cam=new THREE.OrthographicCamera(-VH*asp/2,VH*asp/2,VH/2,-VH/2,1,5000);
 const TILT=36*Math.PI/180,DIR=new THREE.Vector3(0,Math.sin(TILT),Math.cos(TILT));/* 从海上（南）斜俯看岸 */
-const ctl=new MapControls(cam,rnd.domElement);ctl.enableRotate=false;ctl.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};rnd.domElement.addEventListener('contextmenu',e=>e.preventDefault());ctl.screenSpacePanning=true;ctl.minZoom=.35;ctl.maxZoom=6;ctl.enableDamping=true;ctl.dampingFactor=.12;
+const ctl=new MapControls(cam,rnd.domElement);ctl.enableRotate=false;ctl.zoomToCursor=true;/* 滚轮朝鼠标所指的点缩放（主人 10-20） */ctl.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};rnd.domElement.addEventListener('contextmenu',e=>e.preventDefault());ctl.screenSpacePanning=true;ctl.minZoom=.35;ctl.maxZoom=6;ctl.enableDamping=true;ctl.dampingFactor=.12;
 function look(x,z,zoom){ctl.target.set(x,0,z);cam.position.copy(ctl.target).addScaledVector(DIR,2400);if(zoom)cam.zoom=zoom;cam.updateProjectionMatrix();ctl.update()}
 look(1200,1420,1.1);
 scene.add(new THREE.HemisphereLight(0xffffff,0xb8a888,2.2));
@@ -340,7 +340,7 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   ui.append(row1,row2);document.body.append(ui);
   if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
   /* 人群压力试作（2026-10-19）：?crowd=人数 。&full=近景关节人上限（默认 300）。fps 角落多一行：在街上的人 / 关节人 / 远景柱 / 每帧算人用的毫秒 */
-  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261020a');
+  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261020b');
     CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);if(QP.get('spr')!=='0'){const t0=performance.now();CRW.buildAtlas(rnd);window.__atlasMs=performance.now()-t0}
     window.__crowd={get stat(){return CRW.stat},n:+QP.get('crowd'),C:CRW}}
   window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};
@@ -361,14 +361,8 @@ window.__scrOf=o=>{const AC=(STROLL||DESC>0)?pcam:cam;return scr(o.x,o.y+1.5/MPP
 function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';if(RPN)RPN.style.display='none';return}
   const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';if(RPN)RPN.style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
   const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b><br>'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block';
-  /* 关系不画在画面上（主人 10-19：线满地图飞、坏画面）。挂在房子上，放进左边一个小面板：这一户、家里人、这栋房子跟哪几家有来往、在哪个方向多远 */
-  const hp=d.house,pn=relPanel();if(!hp){pn.style.display='none';return}
-  const tc=t=>/不来往|债主|欠/.test(t)?'#8a2a2a':'#5a4a32';
-  pn.innerHTML=`<div style="font-weight:600">${hp.head}家 · ${hp.trade}</div><div style="color:#7a6a50;font-size:12px">${hp.origin==='本城生'?'本城人':'从'+hp.origin+'来'}，${hp.arrive}；${hp.faith}</div>`
-    +(hp.fam.length?`<div style="margin-top:5px;font-size:12px;color:#7a6a50">家里人</div>`+hp.fam.map(f=>`<div>${f[0]} ${f[1]}<span style="color:#9a8a6a;font-size:12px"> · ${f[2]}</span></div>`).join(''):'')
-    +(hp.ties.length?`<div style="margin-top:5px;font-size:12px;color:#7a6a50">这栋房子跟</div>`+hp.ties.slice(0,7).map(t=>`<div><span style="color:#9a8a6a;font-size:12px">${t[0]}</span> ${t[1]}（${t[2]}）<span style="color:${tc(t[3])}"> ${t[3]}</span></div>`).join(''):'');
-  pn.style.display='block'}
-let RPN=null;function relPanel(){if(RPN)return RPN;RPN=document.createElement('div');RPN.style.cssText='position:fixed;left:14px;top:110px;max-width:280px;pointer-events:none;background:rgba(250,244,230,.94);border:1px solid #b9a582;border-radius:10px;padding:7px 10px;font-size:13px;line-height:1.55;color:#3a2e22;display:none;box-shadow:0 1px 4px rgba(0,0,0,.12);z-index:5';document.body.append(RPN);return RPN}
+  /* 关系走暗线（主人 10-20）：不画线、不出面板。关系只决定人往哪走、跟谁走、碰见谁打招呼，签子里只在此刻的动作牵涉到时才说一句 */}
+let RPN=null;
 function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
   if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
 /* 跟拍镜头别钻进房子里：从人往镜头方向一小步一小步探，碰到房子占地就停在前一步 */
@@ -416,7 +410,7 @@ function descPose(){const s=DESC,D0=(VH/cam.zoom)/(2*Math.tan(3*Math.PI/180));co
   const k=s*s;FOGF=s>0?3000+(900-3000)*k:1e9;scene.fog=s>.02?new THREE.Fog(0xefe6d2,2000+(120-2000)*k,FOGF):null}
 function descBy(d){if(!d)return;
   if(STROLL){if(d>0)return;DG={tx:wx,tz:wz,wx,wz,yaw,pitch};STROLL=false;DESC=1;$('walkUI').style.display='none'}
-  if(DESC===0){if(d<0)return;if(!descSetup(ctl.target.x,ctl.target.z))return;ctl.enabled=false;cam.zoom=ctl.maxZoom;cam.updateProjectionMatrix()}
+  if(DESC===0){if(d<0)return;let tx=ctl.target.x,tz=ctl.target.z;if(WHL){const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(WHL[0]/innerWidth*2-1,-WHL[1]/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h){tx=h.point.x;tz=h.point.z}}/* 落街落在鼠标所指的地方，不是画面中心 */if(!descSetup(tx,tz))return;ctl.enabled=false;cam.zoom=ctl.maxZoom;cam.updateProjectionMatrix()}
   DESC=Math.max(0,Math.min(1,DESC+d));$('walkB').textContent=DESC>0?'回长卷':'漫步';
   if(DESC===0){ctl.enabled=true;scene.fog=null;FOGF=1e9;dGoal=null;look(DG.tx,DG.tz,ctl.maxZoom);return}
   descPose();if(DESC===1){wx=DG.wx;wz=DG.wz;yaw=DG.yaw;pitch=DG.pitch;STROLL=true;dGoal=null;$('walkUI').style.display='flex';walkPose();lastT=performance.now()}}
@@ -427,7 +421,7 @@ function exitWalk(){dGoal=0}
 let gT=performance.now();function goStep(){const t=performance.now(),dt=Math.min(.05,(t-gT)/1000);gT=t;if(dGoal==null)return;
   if(dGoal===1&&!STROLL&&DESC===0&&cam.zoom<ctl.maxZoom-1e-3){cam.zoom=Math.min(ctl.maxZoom,cam.zoom*(1+dt*2.5));cam.updateProjectionMatrix();return}
   descBy((dGoal===1?1:-1)*dt*.55)}
-addEventListener('wheel',e=>{if(e.target!==rnd.domElement)return;const atMax=cam.zoom>=ctl.maxZoom-1e-3;if(DESC>0||STROLL||(atMax&&e.deltaY<0)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(-Math.sign(e.deltaY)*Math.min(.08,Math.abs(e.deltaY)*.0009))}},{capture:true,passive:false});
+let WHL=null;addEventListener('wheel',e=>{if(e.target!==rnd.domElement)return;WHL=[e.clientX,e.clientY];const atMax=cam.zoom>=ctl.maxZoom-1e-3;if(DESC>0||STROLL||(atMax&&e.deltaY<0)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(-Math.sign(e.deltaY)*Math.min(.08,Math.abs(e.deltaY)*.0009))}},{capture:true,passive:false});
 let pin=null;const tdist=e=>Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
 addEventListener('touchstart',e=>{if(e.touches.length===2)pin=tdist(e)},{capture:true,passive:true});addEventListener('touchend',e=>{if(e.touches.length<2)pin=null},{capture:true});
 addEventListener('touchmove',e=>{if(e.touches.length!==2||pin==null)return;const d=tdist(e),r=d/pin;const atMax=cam.zoom>=ctl.maxZoom-1e-3;
@@ -454,7 +448,7 @@ rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose(
   rnd.setRenderTarget(null);rnd.render(ppS,ppC);
   fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps'+(CRW?' · '+CRW.stat.active+'人/'+CRW.stat.full+'近 '+CRW.stat.ms.toFixed(1)+'ms':'');fN=0;fT=t}});
 window.__look=look;window.__comp=comp;
-window.__view=(x,z,zm)=>look(x,z,zm);window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
+window.__view=(x,z,zm)=>look(x,z,zm);window.__under=(x,y)=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(x/innerWidth*2-1,-y/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];return h?[Math.round(h.point.x),Math.round(h.point.z),+cam.zoom.toFixed(2)]:null};window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
 /* 嵌在全城瓦片里（灰度 nodes-nangang）：瓦片缩到底再往里缩时，瓦片页在同一个点、同样比例叠上这一页，再接着落街；
    在这里往外缩回到接进来时的比例以下，就把镜头位置交回瓦片页，瓦片淡回来 */
 const EP=new URLSearchParams(location.search);if(EP.get('embed')){const ex=+EP.get('x'),ey=+EP.get('y'),ez=+EP.get('z');let gone=false;
