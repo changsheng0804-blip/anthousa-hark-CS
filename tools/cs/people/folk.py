@@ -34,6 +34,13 @@ for h in cands:
     d = door(h)
     if d and inframe(*d[0]): h['_door'], h['_c'] = d, cen(h); POOL.append(h)
 HID = {h['id']: i for i, h in enumerate(POOL)}
+# ---------- 行当落位（zoning.py，主人 10-20：「规划其实是有规律的」）：每户当下这一家干什么，按地段规律分 ----------
+from zoning import zone
+_E = D['elev']
+def _elev(x, y):
+    gx = min(_E['w'] - 1.001, max(0, x / _E['st'])); gy = min(_E['h'] - 1.001, max(0, y / _E['st'])); i, j = int(gx), int(gy); fx, fy = gx - i, gy - j; g = lambda a, b: _E['dm'][b * _E['w'] + a]
+    return (g(i, j) * (1 - fx) + g(i + 1, j) * fx) * (1 - fy) + (g(i, j + 1) * (1 - fx) + g(i + 1, j + 1) * fx) * fy
+HT, _FE = zone(POOL, D, Y, piers, fount, _elev, Q)
 
 def lt_of(h):
     fn = h.get('fn'); s = h['_door'][1]; hb = nearest(s, piers); dh = math.dist(s, hb) if hb else 1e9
@@ -101,6 +108,7 @@ def household(h):
     f = fams[0]
     for x in fams:
         if x['B'] <= Y: f = x
+    f['trade'] = HT[h['id']]   # 当下这一家的行当按地段定；早先住过的人家还是各干各的
     return {'h': h, 'fams': fams, 'cur': f, 'people': people, 'ev': ev, 'obj': obj, 'debt': '欠' in obj or r.random() < .14, 'lt': lt}
 
 HH = [household(h) for h in POOL]
