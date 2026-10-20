@@ -3,7 +3,7 @@
    墙线 = box 版墙线，檐高 = box 版檐高（底账 ht），凸出物（窗台、挑廊、遮阳布、雨棚）≤ 底账占地边 + 0.5 像素（同 box 版的出檐）。
    种子：ctx.hsh(户 id, 2xx)，同户同图。单位：像素（1 像素 ≈ 0.84 m）。 */
 import {quad,tri,roofFace,linC,mul} from '../geo.js';
-import {TILE,tileUV,WIN,SHOP,DOOR,WHD,T_TIMBER,T_STRIPE,T_CLOTH,T_WHITE,T_PAVE,T_WATER} from './atlas.js';
+import {TILE,tileUV,WIN,SHOP,DOOR,WHD,T_TIMBER,T_STRIPE,T_CLOTH,T_WHITE,T_PAVE,T_WATER,T_RAIL} from './atlas.js';
 const RT=3.2,O=.5;
 const WU=tileUV(T_WHITE),WUV=[(WU.u0+WU.u1)/2,(WU.v0+WU.v1)/2];
 const SHUT=[[112,80,52],[96,110,98],[92,104,116],[138,72,48],[120,98,64]].map(linC);
@@ -27,10 +27,12 @@ function prism(B,x,z,r,y0,y1,col,n=6){for(let i=0;i<n;i++){const a0=i/n*Math.PI*
 /* 一面墙：层表 st = [{y0,y1,roles[]}]，nb 开间 */
 function wallFace(B,F,st,nb,kind,wcol,base,S){const bw=F.L/nb,P=F.P;
   Q(B,P(0,base-3,0),P(F.L,base-3,0),P(F.L,base,0),P(0,base,0),mul(wcol,.72));/* 勒脚 */
+  if(S.socle)boxF(B,F,-.08,F.L+.08,base-.4,base+.55,0,.12,mul(wcol,.78),null,{bottom:false});/* 墙基线脚 */
   st.forEach((L,li)=>{const h=L.y1-L.y0;
     for(let i=0;i<nb;i++){const s0=i*bw,s1=s0+bw,role=L.roles[i]||'blank',t=TILE[role][kind];Q(B,P(s0,L.y0,0),P(s1,L.y0,0),P(s1,L.y1,0),P(s0,L.y1,0),wcol,t);
       if(role==='winOpen'||role==='winShut'||role==='winArch'){const ws0=s0+WIN.x0*bw,ws1=s0+WIN.x1*bw,wy0=L.y0+WIN.y0*h,wy1=L.y0+WIN.y1*h;
         boxF(B,F,ws0-.12,ws1+.12,wy0-.16,wy0,0,.2,STONE);S.win++;
+        /* 窗框：两侧边框 + 过梁（真几何，低太阳下有一道影） */boxF(B,F,ws0-.14,ws0,wy0,wy1+.06,0,.09,mul(STONE,.97),null,{bottom:false});boxF(B,F,ws1,ws1+.14,wy0,wy1+.06,0,.09,mul(STONE,.97),null,{bottom:false});boxF(B,F,ws0-.2,ws1+.2,wy1+.06,wy1+.26,0,.13,STONE);
         if(role==='winOpen'){const lw=(ws1-ws0)/2,c=L.shut,an=1.15+.25*((i*7+li*3)%3)/2,cs=Math.cos(an)*lw,sn=Math.sin(an)*lw;
           Q(B,P(ws0,wy0,.02),P(ws0-cs,wy0,sn),P(ws0-cs,wy1,sn),P(ws0,wy1,.02),c,T_TIMBER);Q(B,P(ws1,wy0,.02),P(ws1+cs,wy0,sn),P(ws1+cs,wy1,sn),P(ws1,wy1,.02),c,T_TIMBER)}}
       else if(role==='shopOpen'||role==='shopShut'){const top=L.y0+SHOP.y1*h;boxF(B,F,s0+SHOP.x0*bw-.1,s0+SHOP.x1*bw+.1,top-.05,top+.3,0,.16,TIMBER_D,T_TIMBER);
@@ -41,7 +43,7 @@ function wallFace(B,F,st,nb,kind,wcol,base,S){const bw=F.L/nb,P=F.P;
   const top=st[st.length-1].y1;boxF(B,F,-.05,F.L+.05,top-.4,top,0,.2,mul(STONE,.95))}
 
 /* 四坡 / 两坡顶（同 box 版的形：屋脊顺长边、坡 ≈23°、出檐 O）；返回 {ya} */
-function roofHip(Bt,Br,rec,gable,kind){const [u0,u1,v0,v1]=rec.u,C=rec.C,y1=rec.y1,hu=(u1-u0)/2,hv=(v1-v0)/2,mu=(u0+u1)/2,mv=(v0+v1)/2,along=hu>=hv,Hh=along?hu:hv,Hs=along?hv:hu,rh=Hs*.42,rc=rec.rcol;
+function roofHip(Bt,Br,rec,gable,kind,F4,beams){const [u0,u1,v0,v1]=rec.u,C=rec.C,y1=rec.y1,hu=(u1-u0)/2,hv=(v1-v0)/2,mu=(u0+u1)/2,mv=(v0+v1)/2,along=hu>=hv,Hh=along?hu:hv,Hs=along?hv:hu,rh=Hs*.42,rc=rec.rcol;
   const L=(a,b)=>along?C(mu+a,mv+b):C(mu+b,mv+a),rr=gable?Hh:Math.max(0,Hh-Hs),ya=y1+rh,rx=gable?Hh+O:rr,AR=L(-rx,0),BR=L(rx,0),A3=[AR[0],ya,AR[1]],B3=[BR[0],ya,BR[1]];
   const e=(sa,sb)=>{const q=L(sa*(Hh+O),sb*(Hs+O));return [q[0],y1-O*.42,q[1]]},e00=e(-1,-1),e10=e(1,-1),e11=e(1,1),e01=e(-1,1);
   roofFace(Br,[e00,e10,B3,A3],e00,e10,rc,RT);roofFace(Br,[e11,e01,A3,B3],e11,e01,rc,RT);
@@ -53,6 +55,9 @@ function roofHip(Bt,Br,rec,gable,kind){const [u0,u1,v0,v1]=rec.u,C=rec.C,y1=rec.
   /* 檐口：瓦头一道深色封檐 + 檐底板 */
   const ee=[e00,e10,e11,e01];for(let i=0;i<4;i++){if(gable&&(i===1||i===3))continue;const a=ee[i],b=ee[(i+1)%4];Q(Bt,[a[0],a[1]-.28,a[2]],[b[0],b[1]-.28,b[2]],b,a,mul(rc,.55))}
   const w=[C(u0,v0),C(u1,v0),C(u1,v1),C(u0,v1)],eo=along?[e00,e10,e11,e01]:[e00,e01,e11,e10];for(let i=0;i<4;i++){const a=w[i],b=w[(i+1)%4];Q(Bt,[b[0],y1,b[1]],[a[0],y1,a[1]],eo[i],eo[(i+1)%4],SOFFIT)}
+  /* 檐下椽头（一排小木头，人眼高时檐口有节奏）+ 檐口瓦当（一排小三角） */
+  if(beams)for(const F of F4){const n=Math.floor(F.L/.75);for(let j=0;j<n;j++){const s=(j+.5)*F.L/n;boxF(Bt,F,s-.08,s+.08,y1-.3,y1-.06,0,O*.85,TIMBER_D,null,{bottom:true})}}
+  for(let i=0;i<4;i++){if(gable&&(i===1||i===3))continue;const a=ee[i],b=ee[(i+1)%4],Ln=Math.hypot(b[0]-a[0],b[2]-a[2]),n=Math.floor(Ln/.45);for(let j=0;j<n;j++){const t0=(j+.25)/n,t1=(j+.75)/n,tm=(j+.5)/n,p=t=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t],q0=p(t0),q1=p(t1),qm=p(tm);tri(Bt,q0,q1,[qm[0],qm[1]+.14,qm[2]],mul(rc,.6),WUV,WUV,WUV)}}
   return {ya}}
 
 /* 院宅的环形屋面 + 内院（四面朝院的墙、回廊、铺地、雨水池） */
@@ -93,8 +98,8 @@ function storeyTable(rec,ns,first=1.22){const H=rec.y1-rec.base,w=[first];for(le
 
 export function genHouse(Bt,Br,rec,pk,env){const f=rec.f,id=f.id,hsh=env.hsh,type=pk.type,k=rec.k;
   const cx=(k[0][0]+k[1][0]+k[2][0]+k[3][0])/4,cz=(k[0][1]+k[1][1]+k[2][1]+k[3][1])/4;
-  const kind=type==='C'?(hsh(id,203)<.85?1:0):(rec.kind==='opus'?1:0);
-  const S={win:0,col:0,whd:[],hsh,proj:.5};
+  const kind=type==='C'?(hsh(id,203)<.92?1:0):(rec.kind==='opus'?1:0);
+  const S={win:0,col:0,whd:[],hsh,proj:.5,socle:type!=='C'||hsh(id,215)<.5};
   const F4=[0,1,2,3].map(i=>frame(k[i],k[(i+1)%4],cx,cz));
   /* 每条边向外到底账占地边还剩多少（box 版内缩了 8%）：凸出物 ≤ 这个 + 0.5 */
   const lp=[[f.p[0],f.p[1]],[f.p[2],f.p[3]],[f.p[4],f.p[5]],[f.p[6],f.p[7]]];
@@ -107,19 +112,19 @@ export function genHouse(Bt,Br,rec,pk,env){const f=rec.f,id=f.id,hsh=env.hsh,typ
   const winRole=(i,li,j)=>{const r=hsh(id,300+i*41+li*7+j);if(rhythm===1&&j%2===1)return 'blank';if(rhythm===2&&j%3===2)return 'blank';return r<.42?'winOpen':r<.82?'winShut':'winArch'};
   F4.forEach((F,i)=>{const nb=Math.max(1,Math.round(F.L/bwBase)),front=i===fe,back=i===(fe+2)%4;S.proj=Math.min(1.4,margin[i]+.5);
     const sts=st.map((L,li)=>{let roles;
-      if(type==='A'){roles=Array.from({length:nb},(_,j)=>{if(li===0){if(front||(!back&&hsh(id,260+i*9+j)<.35))return hsh(id,270+i*9+j)<.62?'shopOpen':'shopShut';return hsh(id,280+i*9+j)<.25?'door':'blank'}
+      if(type==='A'){roles=Array.from({length:nb},(_,j)=>{if(li===0){if(front||(!back&&hsh(id,260+i*9+j)<.55))return hsh(id,270+i*9+j)<.62?'shopOpen':'shopShut';return hsh(id,280+i*9+j)<.25?'door':'blank'}
         if(back&&hsh(id,290+i*9+j)<.4)return 'blank';return winRole(i,li,j)})}
       else if(type==='B'){const dj=Math.floor(nb/2);roles=Array.from({length:nb},(_,j)=>{if(li===0){if(front&&j===dj)return 'door';return hsh(id,310+i*9+j)<(front?.3:.15)?'slit':'blank'}
-        const r=hsh(id,320+i*9+j+li*3);return r<(front?.45:.3)?'winShut':r<(front?.6:.38)?'slit':'blank'})}
+        const r=hsh(id,320+i*9+j+li*3);return r<(front?.5:.38)?(r<.12?'winOpen':'winShut'):r<(front?.66:.48)?'slit':'blank'})}
       else{const ph=Math.floor(hsh(id,330+i)*2);roles=Array.from({length:nb},(_,j)=>{if(li===0){if(front&&(j+ph)%2===0)return 'whDoor';if(!front&&!back&&hsh(id,340+i*9+j)<.25)return 'whDoor';return 'whVent'}
-        return hsh(id,350+i*9+j)<.3?'winShut':'whVent'})}
+        const r=hsh(id,350+i*9+j);return r<.45?'winArch':r<.65?'winShut':'whVent'})}
       return {...L,roles,shut:SHUT[Math.floor(hsh(id,360+i*5+li)*SHUT.length)]||shutCol}});
     S.whd=[];wallFace(Bt,F,sts,nb,kind,rec.wcol,rec.base,S);
     const bw=F.L/nb,P=F.P;
     /* A：临街挑廊（2 层底，不在柱廊上）+ 铺面遮阳布 */
     if(type==='A'&&front){const D=Math.min(1.1,margin[i]+.5);
       if(ns>=2&&D>.6&&hsh(id,208)<(portico?.45:.65)&&sts[1].y1-sts[1].y0>2.4){const yb=sts[1].y0,top=ns>2?sts[1].y1-.15:rec.y1-.3,s0=.25,s1=F.L-.25;
-        boxF(Bt,F,s0,s1,yb-.22,yb,0,D,TIMBER,T_TIMBER);boxF(Bt,F,s0,s1,yb,yb+.95,D-.12,D,TIMBER,T_TIMBER);
+        boxF(Bt,F,s0,s1,yb-.22,yb,0,D,TIMBER,T_TIMBER);boxF(Bt,F,s0,s1,yb,yb+.95,D-.12,D,TIMBER,T_RAIL);
         for(let j=0;j<=nb;j++){const s=Math.max(s0,Math.min(s1,j*bw));boxF(Bt,F,s-.09,s+.09,yb,top,D-.2,D-.02,TIMBER_D);boxF(Bt,F,s-.07,s+.07,yb-1,yb-.22,0,D*.6,TIMBER_D)}
         if(ns>2){const q0=P(s0-.1,top+.02,0),q1=P(s1+.1,top+.02,0),q2=P(s1+.1,top-.45,D+.2),q3=P(s0-.1,top-.45,D+.2);roofFace(Br,[q3,q2,q1,q0],q3,q2,mul(rec.rcol,.95),RT)}}
       const cl=CLOTH[Math.floor(hsh(id,209)*CLOTH.length)],AD=Math.min(1.3,margin[i]+.5);
@@ -134,5 +139,5 @@ export function genHouse(Bt,Br,rec,pk,env){const f=rec.f,id=f.id,hsh=env.hsh,typ
   let court=false;
   if(rec.flat)flatRoof(Bt,rec,F4,S,hsh(id,212)<.35);
   else if(pk.court)court=courtyard(Bt,Br,rec,null,S,st,kind);
-  if(!rec.flat&&!court)roofHip(Bt,Br,rec,type==='C'?true:hsh(id,213)<.22,kind);
+  if(!rec.flat&&!court)roofHip(Bt,Br,rec,type==='C'?true:hsh(id,213)<.22,kind,F4,type!=='B'||hsh(id,214)<.4);
   return {court,win:S.win,col:S.col}}

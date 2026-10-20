@@ -4,11 +4,11 @@
    v 自下而上（画布底 = v0，three 默认 flipY）。图集不能平铺：每个开间每层一个四边形，UV 内缩 4 像素防 mip 串色。 */
 export const TS=256, AW=2048, AH=1024;
 /* 格内比例（u 0..1 左→右，v 0..1 下→上） */
-export const WIN={x0:.36,x1:.64,y0:.36,y1:.80}, SHOP={x0:.08,x1:.92,y0:0,y1:.80}, DOOR={x0:.32,x1:.68,y0:0,y1:.74}, SLIT={x0:.45,x1:.55,y0:.58,y1:.86}, WHD={x0:.16,x1:.84,y0:0,y1:.86};
+export const WIN={x0:.34,x1:.66,y0:.34,y1:.80}, SHOP={x0:.08,x1:.92,y0:0,y1:.80}, DOOR={x0:.32,x1:.68,y0:0,y1:.74}, SLIT={x0:.45,x1:.55,y0:.58,y1:.86}, WHD={x0:.16,x1:.84,y0:0,y1:.86};
 const ROLES=['shopOpen','shopShut','winOpen','winShut','winArch','blank','slit','door','whDoor','whVent'];
 /* 格号：kind 0 = 灰泥、1 = 砖石夹层，每种 10 格（0–19）；20 木板、21 条纹布、22 素布、23 白（无贴图的东西用它）、24 石铺地、25 水 */
 export const TILE={};ROLES.forEach((r,i)=>{TILE[r]=[i,10+i]});
-export const T_TIMBER=20,T_STRIPE=21,T_CLOTH=22,T_WHITE=23,T_PAVE=24,T_WATER=25;
+export const T_TIMBER=20,T_STRIPE=21,T_CLOTH=22,T_WHITE=23,T_PAVE=24,T_WATER=25,T_RAIL=26;
 export function tileUV(t){const c=t%8,r=(t/8)|0,i=4/AW,j=4/AH;return {u0:c*TS/AW+i,u1:(c+1)*TS/AW-i,v0:1-(r+1)*TS/AH+j,v1:1-r*TS/AH-j}}
 
 function rng(seed){let s=seed>>>0;return ()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
@@ -25,15 +25,17 @@ function darkHole(X,x,y,w,h){const g=X.createLinearGradient(0,y,0,y+h);g.addColo
 /* 一格墙底：kind 0 灰泥（近白 + 斑 + 勒脚污渍），1 砖石夹层（石块层 + 两道砖带） */
 function base(X,x0,y0,kind,R){const s=TS;
   if(kind===0){X.fillStyle=rgb(242,238,228);X.fillRect(x0,y0,s,s);speckle(X,x0,y0,s,s,R,900,226,40);
-    for(let i=0;i<4;i++){X.fillStyle=rgb(200,190,170,.06+R()*.06);X.fillRect(x0+R()*s*.8,y0+R()*s*.7,20+R()*60,8+R()*30)}}
+    for(let i=0;i<14;i++){X.fillStyle=rgb(196,182,156,.025+R()*.035);X.beginPath();X.ellipse(x0+R()*s,y0+R()*s,30+R()*70,14+R()*40,0,0,7);X.fill()}
+    for(let i=0;i<6;i++){X.strokeStyle=rgb(150,136,116,.35);X.lineWidth=1;X.beginPath();let x=x0+R()*s,y=y0+R()*s;X.moveTo(x,y);for(let k=0;k<5;k++){x+=(R()-.5)*14;y+=4+R()*8;X.lineTo(x,y)}X.stroke()}}
   else{X.fillStyle=rgb(236,232,222);X.fillRect(x0,y0,s,s);stones(X,x0,y0,s,s,26,R);brickBand(X,x0,y0+s*.30,s,4,5,R);brickBand(X,x0,y0+s*.80,s,4,5,R)}
   /* 下沿污渍（每层下半部一点潮痕，远看不花） */const g=X.createLinearGradient(0,y0+s*.82,0,y0+s);g.addColorStop(0,rgb(120,104,84,0));g.addColorStop(1,rgb(120,104,84,.22));X.fillStyle=g;X.fillRect(x0,y0+s*.82,s,s*.18)}
 const px=(x0,u)=>x0+u*TS, py=(y0,v)=>y0+(1-v)*TS;/* 格内 (u,v) → 画布 */
 function lintel(X,x0,y0,u0,u1,v,R,stone=true){X.fillStyle=stone?rgb(214,206,188):rgb(92,64,40);X.fillRect(px(x0,u0)-6,py(y0,v)-10,(u1-u0)*TS+12,10);X.fillStyle=rgb(60,48,36,.5);X.fillRect(px(x0,u0)-6,py(y0,v),(u1-u0)*TS+12,2)}
 function sill(X,x0,y0,u0,u1,v){X.fillStyle=rgb(206,198,180);X.fillRect(px(x0,u0)-5,py(y0,v),(u1-u0)*TS+10,6)}
 const DRAW={
-  shopOpen(X,x0,y0,R){const o=SHOP;darkHole(X,px(x0,o.x0),py(y0,o.y1),(o.x1-o.x0)*TS,o.y1*TS);
-    /* 里面的架子和罐 */for(const v of [.55,.32]){X.fillStyle=rgb(88,62,40);X.fillRect(px(x0,o.x0)+8,py(y0,v),(o.x1-o.x0)*TS-16,4);for(let u=o.x0+.06;u<o.x1-.05;u+=.07+R()*.04){const k=R();X.fillStyle=k<.4?rgb(150,80,48):k<.7?rgb(176,140,96):rgb(120,96,70);X.beginPath();X.ellipse(px(x0,u),py(y0,v)-9,6,9,0,0,7);X.fill()}}
+  shopOpen(X,x0,y0,R){const o=SHOP,g=X.createLinearGradient(0,py(y0,o.y1),0,py(y0,0));g.addColorStop(0,rgb(34,26,20));g.addColorStop(1,rgb(96,74,54));X.fillStyle=g;X.fillRect(px(x0,o.x0),py(y0,o.y1),(o.x1-o.x0)*TS,o.y1*TS);
+    for(let u=o.x0+.08;u<o.x1-.06;u+=.1){X.fillStyle=rgb(150+R()*60,96+R()*40,50,.9);X.fillRect(px(x0,u),py(y0,o.y1)+6,6,18+R()*16)}
+    /* 里面的架子和罐 */for(const v of [.55,.32]){X.fillStyle=rgb(88,62,40);X.fillRect(px(x0,o.x0)+8,py(y0,v),(o.x1-o.x0)*TS-16,4);for(let u=o.x0+.06;u<o.x1-.05;u+=.07+R()*.04){const k=R();X.fillStyle=k<.4?rgb(178,92,52):k<.7?rgb(206,164,108):rgb(150,118,80);X.beginPath();X.ellipse(px(x0,u),py(y0,v)-11,8,12,0,0,7);X.fill();X.fillStyle=rgb(255,240,210,.25);X.fillRect(px(x0,u)-4,py(y0,v)-19,2,10)}}
     /* 折起的门板（两侧） */planks(X,px(x0,o.x0),py(y0,o.y1),18,o.y1*TS,R,'v',[110,76,48]);planks(X,px(x0,o.x1)-18,py(y0,o.y1),18,o.y1*TS,R,'v',[110,76,48]);
     lintel(X,x0,y0,o.x0,o.x1,o.y1,R,false)},
   shopShut(X,x0,y0,R){const o=SHOP;planks(X,px(x0,o.x0),py(y0,o.y1),(o.x1-o.x0)*TS,o.y1*TS,R,'v',[104,72,46]);X.fillStyle=rgb(48,36,28);X.fillRect(px(x0,(o.x0+o.x1)/2)-1,py(y0,o.y1),3,o.y1*TS);for(const v of [.2,.62])X.fillRect(px(x0,o.x0),py(y0,v),(o.x1-o.x0)*TS,4);lintel(X,x0,y0,o.x0,o.x1,o.y1,R,false)},
@@ -54,6 +56,7 @@ export function buildAtlas(){const c=document.createElement('canvas');c.width=AW
   ROLES.forEach((r,i)=>{for(const k of [0,1]){const t=TILE[r][k],[x0,y0]=at(t),R=rng(9100+t*37);X.save();X.beginPath();X.rect(x0,y0,TS,TS);X.clip();base(X,x0,y0,k,R);DRAW[r](X,x0,y0,R);X.restore()}});
   {const [x0,y0]=at(T_TIMBER);planks(X,x0,y0,TS,TS,rng(5),'h',[226,214,196])}
   {const [x0,y0]=at(T_STRIPE);for(let i=0;i<8;i++){X.fillStyle=i%2?'#f2ece0':'#9a948a';X.fillRect(x0+i*TS/8,y0,TS/8,TS)}speckle(X,x0,y0,TS,TS,rng(6),400,200,60,.25)}
+  {const [x0,y0]=at(T_RAIL);planks(X,x0,y0,TS,TS,rng(9),'v',[230,218,200]);X.fillStyle=rgb(40,30,22);for(let x=10;x<TS;x+=21)X.fillRect(x0+x,y0+30,8,TS-60);X.fillStyle=rgb(200,186,166);X.fillRect(x0,y0,TS,30);X.fillRect(x0,y0+TS-30,TS,30)}
   {const [x0,y0]=at(T_CLOTH);X.fillStyle='#ece6da';X.fillRect(x0,y0,TS,TS);speckle(X,x0,y0,TS,TS,rng(7),500,200,60,.3)}
   {const [x0,y0]=at(T_WHITE);X.fillStyle='#fff';X.fillRect(x0,y0,TS,TS)}
   {const [x0,y0]=at(T_PAVE);const R=rng(8);X.fillStyle='#bdb5a6';X.fillRect(x0,y0,TS,TS);for(let y=0;y<TS;y+=32)for(let x=-(y/32%2)*16;x<TS;x+=32){const k=214+R()*28;X.fillStyle=rgb(k,k*.97,k*.9);X.fillRect(x0+Math.max(0,x)+2,y0+y+2,28,28)}}

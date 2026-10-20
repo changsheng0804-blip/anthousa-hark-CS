@@ -1,0 +1,545 @@
+{
+ "what": "house_kit 试点（?flag=house_kit）：机位 1–6 开关 关→开 的数字。沙箱 SwiftShader 软件渲染，帧率不算；帧率待主人 Mac 实测。",
+ "date": "2026-10-20",
+ "renders": {
+  "off": "render.py 全机位，不带 flag",
+  "on": "render.py 全机位，--param flag=house_kit",
+  "stats": "__houseKitStats（同一页面 __applyShot + __still 后读）",
+  "flag_off_identity": "改前（8c19581）vs 改后关开关，逐像素"
+ },
+ "build_ms": {
+  "note": "整页重建（__buildMs），沙箱噪声 ±100 ms；开关只多 attach（近圈细模是懒生成，不在 build 里）",
+  "off_runs": [
+   1701,
+   1642,
+   1340
+  ],
+  "on_runs": [
+   1572,
+   1505,
+   1488,
+   1480
+  ],
+  "kit_attach_ms": 56,
+  "kit_attach_ms_year_rebuild": 9,
+  "near_ring_gen_ms_still_shot2": 177,
+  "interactive_budget_ms_per_frame": 5
+ },
+ "budget": {
+  "tris_max_shot": 1826840,
+  "limit": 2600000,
+  "note": "tris_total_on 含被塌成一点的 box 楼身三角形（面积 0，不画），实际画的要再减 box_tris_collapsed"
+ },
+ "thresholds": {
+  "R_px": 180,
+  "R_m": 151,
+  "hysteresis_px": 20,
+  "cell_px": 48
+ },
+ "shots": [
+  {
+   "shot": 1,
+   "tris_total_off": 1666068,
+   "tris_total_on": 1666068,
+   "buildings_tris_off": 339378,
+   "buildings_tris_on": 339378,
+   "kit_tris": 0,
+   "box_tris_collapsed": 0,
+   "near_ring_houses": 0,
+   "cells": 0,
+   "types": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "box": 0,
+    "court": 0
+   },
+   "kit_tris_per_house": 0,
+   "near_gen_ms_still": 0,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.25",
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": 84.2,
+      "edge": 0.0445,
+      "sat": 0.1834
+     },
+     "off": {
+      "L": 86.0,
+      "edge": 0.0,
+      "sat": 0.2354
+     },
+     "on": {
+      "L": 86.0,
+      "edge": 0.0,
+      "sat": 0.2354
+     }
+    },
+    {
+     "band": "0.25-0.6",
+     "owner": "buildings",
+     "ref": {
+      "L": 50.3,
+      "edge": 0.3632,
+      "sat": 0.4204
+     },
+     "off": {
+      "L": 48.5,
+      "edge": 0.2666,
+      "sat": 0.5412
+     },
+     "on": {
+      "L": 48.5,
+      "edge": 0.2666,
+      "sat": 0.5412
+     }
+    },
+    {
+     "band": "0.6-1",
+     "owner": "water",
+     "ref": {
+      "L": 42.5,
+      "edge": 0.1618,
+      "sat": 0.2979
+     },
+     "off": {
+      "L": 43.3,
+      "edge": 0.2357,
+      "sat": 0.4239
+     },
+     "on": {
+      "L": 43.3,
+      "edge": 0.2357,
+      "sat": 0.4239
+     }
+    }
+   ]
+  },
+  {
+   "shot": 2,
+   "tris_total_off": 1684163,
+   "tris_total_on": 1811709,
+   "buildings_tris_off": 339378,
+   "buildings_tris_on": 466924,
+   "kit_tris": 127546,
+   "box_tris_collapsed": 5420,
+   "near_ring_houses": 145,
+   "cells": 45,
+   "types": {
+    "A": 78,
+    "B": 67,
+    "C": 0,
+    "box": 0,
+    "court": 1
+   },
+   "kit_tris_per_house": 880,
+   "near_gen_ms_still": 177,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.25",
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": 61.0,
+      "edge": 0.1935,
+      "sat": 0.3953
+     },
+     "off": {
+      "L": 70.2,
+      "edge": 0.0157,
+      "sat": 0.053
+     },
+     "on": {
+      "L": 70.2,
+      "edge": 0.019,
+      "sat": 0.0552
+     }
+    },
+    {
+     "band": "0.25-0.7",
+     "owner": "buildings+crowd",
+     "ref": {
+      "L": 31.6,
+      "edge": 0.2194,
+      "sat": 0.5647
+     },
+     "off": {
+      "L": 43.5,
+      "edge": 0.2074,
+      "sat": 0.3794
+     },
+     "on": {
+      "L": 45.0,
+      "edge": 0.2003,
+      "sat": 0.3963
+     }
+    },
+    {
+     "band": "0.7-1",
+     "owner": "streets+props",
+     "ref": {
+      "L": 32.5,
+      "edge": 0.1696,
+      "sat": 0.3109
+     },
+     "off": {
+      "L": 49.6,
+      "edge": 0.31,
+      "sat": 0.3573
+     },
+     "on": {
+      "L": 49.5,
+      "edge": 0.3094,
+      "sat": 0.3571
+     }
+    }
+   ]
+  },
+  {
+   "shot": 3,
+   "tris_total_off": 1665592,
+   "tris_total_on": 1665592,
+   "buildings_tris_off": 339378,
+   "buildings_tris_on": 339378,
+   "kit_tris": 0,
+   "box_tris_collapsed": 0,
+   "near_ring_houses": 0,
+   "cells": 0,
+   "types": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "box": 0,
+    "court": 0
+   },
+   "kit_tris_per_house": 0,
+   "near_gen_ms_still": 0,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.14",
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": 83.3,
+      "edge": 0.0,
+      "sat": 0.1426
+     },
+     "off": {
+      "L": 76.1,
+      "edge": 0.0,
+      "sat": 0.1181
+     },
+     "on": {
+      "L": 76.1,
+      "edge": 0.0,
+      "sat": 0.1181
+     }
+    },
+    {
+     "band": "0.14-0.4",
+     "owner": "water+terrain",
+     "ref": {
+      "L": 51.0,
+      "edge": 0.2958,
+      "sat": 0.394
+     },
+     "off": {
+      "L": 59.7,
+      "edge": 0.008,
+      "sat": 0.2967
+     },
+     "on": {
+      "L": 59.7,
+      "edge": 0.008,
+      "sat": 0.2967
+     }
+    },
+    {
+     "band": "0.4-1",
+     "owner": "buildings+streets",
+     "ref": {
+      "L": 37.2,
+      "edge": 0.4321,
+      "sat": 0.557
+     },
+     "off": {
+      "L": 44.8,
+      "edge": 0.3567,
+      "sat": 0.5627
+     },
+     "on": {
+      "L": 44.8,
+      "edge": 0.3567,
+      "sat": 0.5627
+     }
+    }
+   ]
+  },
+  {
+   "shot": 4,
+   "tris_total_off": 1672132,
+   "tris_total_on": 1699352,
+   "buildings_tris_off": 339378,
+   "buildings_tris_on": 366598,
+   "kit_tris": 27220,
+   "box_tris_collapsed": 1172,
+   "near_ring_houses": 32,
+   "cells": 13,
+   "types": {
+    "A": 3,
+    "B": 14,
+    "C": 15,
+    "box": 0,
+    "court": 2
+   },
+   "kit_tris_per_house": 851,
+   "near_gen_ms_still": 50,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.18",
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": 76.2,
+      "edge": 0.1172,
+      "sat": 0.1347
+     },
+     "off": {
+      "L": 75.9,
+      "edge": 0.0,
+      "sat": 0.0922
+     },
+     "on": {
+      "L": 75.9,
+      "edge": 0.0,
+      "sat": 0.0922
+     }
+    },
+    {
+     "band": "0.18-0.6",
+     "owner": "buildings",
+     "ref": {
+      "L": 46.4,
+      "edge": 0.2675,
+      "sat": 0.3888
+     },
+     "off": {
+      "L": 51.0,
+      "edge": 0.2018,
+      "sat": 0.4481
+     },
+     "on": {
+      "L": 51.1,
+      "edge": 0.2012,
+      "sat": 0.4478
+     }
+    },
+    {
+     "band": "0.6-1",
+     "owner": "props+crowd+water",
+     "ref": {
+      "L": 36.8,
+      "edge": 0.2609,
+      "sat": 0.4087
+     },
+     "off": {
+      "L": 33.7,
+      "edge": 0.2636,
+      "sat": 0.6157
+     },
+     "on": {
+      "L": 33.7,
+      "edge": 0.2633,
+      "sat": 0.6158
+     }
+    }
+   ]
+  },
+  {
+   "shot": 5,
+   "tris_total_off": 1726630,
+   "tris_total_on": 1826840,
+   "buildings_tris_off": 358482,
+   "buildings_tris_on": 458692,
+   "kit_tris": 100210,
+   "box_tris_collapsed": 5026,
+   "near_ring_houses": 134,
+   "cells": 38,
+   "types": {
+    "A": 43,
+    "B": 78,
+    "C": 12,
+    "box": 1,
+    "court": 2
+   },
+   "kit_tris_per_house": 748,
+   "near_gen_ms_still": 77,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.3",
+     "owner": "sky-atmosphere+column",
+     "ref": {
+      "L": 80.5,
+      "edge": 0.0185,
+      "sat": 0.1217
+     },
+     "off": {
+      "L": 72.8,
+      "edge": 0.0181,
+      "sat": 0.0622
+     },
+     "on": {
+      "L": 72.8,
+      "edge": 0.0181,
+      "sat": 0.0622
+     }
+    },
+    {
+     "band": "0.3-0.8",
+     "owner": "column+buildings",
+     "ref": {
+      "L": 46.1,
+      "edge": 0.2734,
+      "sat": 0.5248
+     },
+     "off": {
+      "L": 55.6,
+      "edge": 0.2034,
+      "sat": 0.4058
+     },
+     "on": {
+      "L": 55.7,
+      "edge": 0.2022,
+      "sat": 0.4054
+     }
+    },
+    {
+     "band": "0.8-1",
+     "owner": "streets+column",
+     "ref": {
+      "L": 57.1,
+      "edge": 0.126,
+      "sat": 0.326
+     },
+     "off": {
+      "L": 64.9,
+      "edge": 0.382,
+      "sat": 0.3643
+     },
+     "on": {
+      "L": 64.9,
+      "edge": 0.382,
+      "sat": 0.3643
+     }
+    }
+   ]
+  },
+  {
+   "shot": 6,
+   "tris_total_off": 1677922,
+   "tris_total_on": 1775224,
+   "buildings_tris_off": 339378,
+   "buildings_tris_on": 436680,
+   "kit_tris": 97302,
+   "box_tris_collapsed": 4684,
+   "near_ring_houses": 126,
+   "cells": 37,
+   "types": {
+    "A": 41,
+    "B": 32,
+    "C": 52,
+    "box": 1,
+    "court": 2
+   },
+   "kit_tris_per_house": 772,
+   "near_gen_ms_still": 57,
+   "flag_off_identity": {
+    "pixels_diff": 0,
+    "max_abs": 0,
+    "mean_abs": 0.0
+   },
+   "bands": [
+    {
+     "band": "0-0.25",
+     "owner": "sky-atmosphere+aqueduct",
+     "ref": {
+      "L": 45.0,
+      "edge": 0.0132,
+      "sat": 0.2724
+     },
+     "off": {
+      "L": 73.5,
+      "edge": 0.0102,
+      "sat": 0.0655
+     },
+     "on": {
+      "L": 73.5,
+      "edge": 0.0102,
+      "sat": 0.0655
+     }
+    },
+    {
+     "band": "0.25-0.75",
+     "owner": "nymphaeum+buildings",
+     "ref": {
+      "L": 42.9,
+      "edge": 0.2235,
+      "sat": 0.3888
+     },
+     "off": {
+      "L": 37.9,
+      "edge": 0.1397,
+      "sat": 0.4964
+     },
+     "on": {
+      "L": 38.2,
+      "edge": 0.1425,
+      "sat": 0.4975
+     }
+    },
+    {
+     "band": "0.75-1",
+     "owner": "streets+nymphaeum",
+     "ref": {
+      "L": 44.7,
+      "edge": 0.2478,
+      "sat": 0.3407
+     },
+     "off": {
+      "L": 37.3,
+      "edge": 0.2156,
+      "sat": 0.722
+     },
+     "on": {
+      "L": 34.6,
+      "edge": 0.2024,
+      "sat": 0.7104
+     }
+    }
+   ]
+  }
+ ]
+}
