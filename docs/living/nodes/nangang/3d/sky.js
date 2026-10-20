@@ -17,22 +17,22 @@ export const checkShot=1;
 
 const P={
   az:300, el:14,                 /* 太阳方位（度，北=0 顺时针）和高度角：夏天傍晚，西北偏西 */
-  sun:0xffdcba, sunI:8.3,        /* 太阳色（暖白偏蜜）、强度 */
-  hemiSky:0xaeb8c0, hemiGnd:0x5a3c22, hemiI:0.95,  /* 天光：朝上的面吃冷灰天光（水面仍是青色），竖墙一半吃暖褐地面反光 → 阴影里的墙是暖褐 */
+  sun:0xffe6cc, sunI:8.3,        /* 太阳色（暖白）、强度：太阳偏中性，暖色主要来自白平衡和天光，屋顶（机位 3）才不会过暖 */
+  hemiSky:0xbcb8b0, hemiGnd:0x5a3c22, hemiI:1.1,   /* 天光：朝上的面吃冷灰天光（水面仍是青色），竖墙一半吃暖褐地面反光 → 阴影里的墙是暖褐 */
   zenith:0x9294a0, horizon:0xf2d2a2, glow:0xffc27a, /* 天空：天顶淡灰蓝（参考图的天顶不是饱和蓝）、地平线暖白、太阳一侧金 */
-  hazeLo:0.52, hazeHi:1.35,     /* 地平线霾：背光一侧 / 太阳一侧的亮度倍数 */
-  hazeCool:0xc9d2da, hazeCoolK:0.55,  /* 背光一侧的霾偏冷（远海发青灰），太阳一侧保持暖 */
+  hazeLo:0.52, hazeHi:1.6, hazePow:3,  /* 地平线霾：背光一侧 / 太阳一侧的亮度倍数，及向太阳收拢的快慢 */
+  hazeCool:0xc9d2da, hazeCoolK:0.85,  /* 背光一侧的霾偏冷（远海发青灰），太阳一侧保持暖 */
   skyGam:5.0,                   /* 地平线→天顶的过渡速度（越大蓝得越快） */
   fogNear:900, fogFar:9000,     /* 空气透视：900 像素外开始起霾，到相机 far(9000) 全进霾；tick 里跟着 camera.far 走 */
-  exp:0.77,                      /* 曝光 */
+  exp:0.70,                      /* 曝光 */
   wb:[1.05,1.0,0.92],            /* 白平衡（线性乘子；天空穹和雾不吃它） */
-  con:0.36,                      /* 支点以下的反差（暗部往下压） */
+  con:0.30,                      /* 支点以下的反差（暗部往下压） */
   pivot:0.42,                    /* S 形的支点（显示空间） */
-  hiCon:0.72,                    /* 支点以上的反差（亮部往上推） */
+  hiCon:0.95,                    /* 支点以上的反差（亮部往上推） */
   sat:1.2,                       /* 饱和 */
   shTint:[1.04,1.0,0.94],        /* 暗部色调（参考图的阴影是暖褐，不是蓝黑） */
   hiTint:[1.02,1.0,0.94],        /* 亮部色调（暖） */
-  black:0.012                    /* 黑位下压 */
+  black:0.0                      /* 黑位下压 */
 };
 
 let SUN=null,DOME=null;
@@ -73,10 +73,15 @@ function hazeGLSL(THREE,dir){const c=h=>{const k=new THREE.Color(h);return v3([k
   return `vec3 skyHaze( vec3 d ) {
 	vec2 h = d.xz; float hl = length( h ); h = hl > 1e-4 ? h / hl : vec2( 0.0 );
 	float hb = 0.5 + 0.5 * dot( h, vec2( ${sh.x.toFixed(5)}, ${sh.y.toFixed(5)} ) );
-	float k = mix( ${(+P.hazeLo).toFixed(4)}, ${(+P.hazeHi).toFixed(4)}, pow( hb, 1.5 ) );
+	float k = mix( ${(+P.hazeLo).toFixed(4)}, ${(+P.hazeHi).toFixed(4)}, pow( hb, ${(+P.hazePow).toFixed(3)} ) );
 	vec3 hcol = mix( ${v3([hc.r,hc.g,hc.b])}, ${c(P.hazeCool)}, ${(+P.hazeCoolK).toFixed(4)} * ( 1.0 - hb ) * ( 1.0 - hb ) );
 	return hcol * k + ${c(P.glow)} * ( 0.22 * pow( hb, 4.0 ) );
 }`}
+
+/* skyHaze 的 JS 版（hb = 0 背光 … 1 正对太阳），线性色 */
+function hazeJS(THREE,hb){const hc=new THREE.Color(P.horizon).lerp(new THREE.Color(P.glow),0.10);
+  const col=hc.clone().lerp(new THREE.Color(P.hazeCool),P.hazeCoolK*(1-hb)*(1-hb)).multiplyScalar(P.hazeLo+(P.hazeHi-P.hazeLo)*Math.pow(hb,P.hazePow));
+  return col.add(new THREE.Color(P.glow).multiplyScalar(0.22*Math.pow(hb,4)))}
 
 function installFog(THREE,dir){const SC=THREE.ShaderChunk,WB=v3(P.wb);
   SC.fog_pars_vertex='#ifdef USE_FOG\n\tvarying float vFogDepth;\n\tvarying vec3 vFogWDir;\n#endif';
@@ -146,8 +151,9 @@ export function init(ctx){const {THREE,scene,W,H,renderer}=ctx;
   renderer.toneMapping=THREE.CustomToneMapping;renderer.toneMappingExposure=P.exp;
   const dir=sunDir(THREE);
   /* 雾色 = 地平线色（再带一点太阳暖光），这样远处融进天空穹的地平线 */
-  const fogC=new THREE.Color(P.horizon).lerp(new THREE.Color(P.glow),0.10);
-  fogC.r/=P.wb[0];fogC.g/=P.wb[1];fogC.b/=P.wb[2];  /* 同穹：抵消白平衡，雾和穹的地平线对得上 */
+  /* fog.color 本身不再被雾用（霾色按方向在着色器里算），但别的模块（如 water 的倒影低空色）会读它：
+     给它一个「非太阳一侧」的地平线霾色（hb=0.3，和 skyHaze 同一公式），免得倒影整片都是太阳那边的金色 */
+  const fogC=hazeJS(THREE,0.3);fogC.r/=P.wb[0];fogC.g/=P.wb[1];fogC.b/=P.wb[2];
   scene.background=fogC.clone();scene.fog=new THREE.Fog(fogC,P.fogNear,P.fogFar);
   ctx.add(new THREE.HemisphereLight(P.hemiSky,P.hemiGnd,P.hemiI));
   const sun=new THREE.DirectionalLight(P.sun,P.sunI);
@@ -158,7 +164,7 @@ export function init(ctx){const {THREE,scene,W,H,renderer}=ctx;
   sun.shadow.bias=-0.0004;sun.shadow.normalBias=.9;
   SUN=sun;DOME=makeDome(THREE,dir);ctx.add(DOME)}
 /* reg.sun：别的模块要太阳方向（如水面高光）就读它，不要自己再建灯。reg.sky：雾色/地平线色/太阳方向，水面倒影可用 */
-export function build(ctx){ctx.reg.sun=SUN;ctx.reg.sky={sunDir:SUN?SUN.position.clone().sub(SUN.target.position).normalize():null,horizon:P.horizon,zenith:P.zenith,glow:P.glow,fog:ctx.scene.fog}}
+export function build(ctx){ctx.reg.sun=SUN;ctx.reg.sky={haze:hb=>hazeJS(ctx.THREE,hb),sunDir:SUN?SUN.position.clone().sub(SUN.target.position).normalize():null,horizon:P.horizon,zenith:P.zenith,glow:P.glow,fog:ctx.scene.fog}}
 export function dispose(ctx){}
 /* 雾必须正好在相机 far 处到 1，才能把远裁剪面（海面平面/远岸被切掉的那条硬边）藏进霾里。
    core 将来调 far 时这里自动跟上：fogFar = far，fogNear 按默认比例（900/9000）。 */

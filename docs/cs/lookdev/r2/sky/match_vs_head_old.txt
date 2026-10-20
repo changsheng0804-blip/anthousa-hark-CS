@@ -1,9 +1,9 @@
-shot1 0.25-0.60 buildings            L*  59.84 ->  47.28 (d -12.56)   edge 0.0644 -> 0.1508 (+134.2%)  FAIL
-shot1 0.60-1.00 water                L*  45.72 ->  33.47 (d -12.25)   edge 0.0316 -> 0.0790 (+150.0%)  FAIL
-shot2 0.25-0.70 buildings+crowd      L*  60.32 ->  42.47 (d -17.85)   edge 0.0540 -> 0.0483 (-10.6%)  FAIL
-shot2 0.70-1.00 streets+props        L*  48.14 ->  27.40 (d -20.74)   edge 0.2208 -> 0.1833 (-17.0%)  FAIL
-shot3 0.12-0.40 water+terrain        L*  63.82 ->  39.64 (d -24.18)   edge 0.0001 -> 0.0005 (+40.0%)  FAIL
-shot3 0.40-1.00 buildings+streets    L*  57.30 ->  46.53 (d -10.77)   edge 0.1020 -> 0.4541 (+345.2%)  FAIL
-shot4 0.18-0.60 buildings            L*  70.99 ->  61.30 (d -9.69)   edge 0.0294 -> 0.0667 (+126.9%)  FAIL
-shot4 0.60-1.00 props+crowd+water    L*  51.00 ->  28.66 (d -22.34)   edge 0.0119 -> 0.0387 (+225.2%)  FAIL
+shot1 0.25-0.60 buildings            L*  58.45 ->  47.21 (d -11.24)   edge 0.0875 -> 0.1533 (+75.2%)  FAIL
+shot1 0.60-1.00 water                L*  48.77 ->  35.93 (d -12.84)   edge 0.1331 -> 0.2152 (+61.7%)  FAIL
+shot2 0.25-0.70 buildings+crowd      L*  60.32 ->  44.45 (d -15.87)   edge 0.0540 -> 0.0518 (-4.1%)  FAIL
+shot2 0.70-1.00 streets+props        L*  48.14 ->  30.19 (d -17.95)   edge 0.2208 -> 0.1984 (-10.1%)  FAIL
+shot3 0.12-0.40 water+terrain        L*  67.92 ->  42.30 (d -25.62)   edge 0.0007 -> 0.0021 (+140.0%)  FAIL
+shot3 0.40-1.00 buildings+streets    L*  56.83 ->  46.58 (d -10.25)   edge 0.1109 -> 0.4575 (+312.5%)  FAIL
+shot4 0.18-0.60 buildings            L*  68.78 ->  59.19 (d -9.59)   edge 0.0698 -> 0.1088 (+55.9%)  FAIL
+shot4 0.60-1.00 props+crowd+water    L*  40.19 ->  25.20 (d -14.99)   edge 0.1317 -> 0.2420 (+83.8%)  FAIL
 NO MATCH (|dL*|<1.0, |d edge|<5%)
