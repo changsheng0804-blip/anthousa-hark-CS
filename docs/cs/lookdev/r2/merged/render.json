@@ -1,0 +1,181 @@
+{
+ "page": "docs/living/nodes/nangang/3d.html",
+ "url_params": "?clean=1&still=1",
+ "shots": [
+  {
+   "id": 1,
+   "name": "harbour",
+   "png": "../r2_director/r2_final/shot1.png",
+   "tris_total": 1579934,
+   "mod_stats": {
+    "terrain": {
+     "paint_ms": 1,
+     "build_ms": 108,
+     "tris": 498532
+    },
+    "water": {
+     "paint_ms": 0,
+     "build_ms": 21,
+     "tris": 2
+    },
+    "streets": {
+     "paint_ms": 5,
+     "build_ms": 135,
+     "tris": 121670
+    },
+    "sky": {
+     "build_ms": 0,
+     "tris": 2208
+    },
+    "buildings": {
+     "build_ms": 194,
+     "tris": 339682
+    },
+    "props": {
+     "build_ms": 130,
+     "tris": 419304
+    },
+    "flora": {
+     "build_ms": 4,
+     "tris": 198060
+    },
+    "crowd": {
+     "build_ms": 66,
+     "tris": 476
+    }
+   }
+  },
+  {
+   "id": 2,
+   "name": "street",
+   "png": "../r2_director/r2_final/shot2.png",
+   "tris_total": 1598029,
+   "mod_stats": {
+    "terrain": {
+     "paint_ms": 1,
+     "build_ms": 108,
+     "tris": 498532
+    },
+    "water": {
+     "paint_ms": 0,
+     "build_ms": 21,
+     "tris": 2
+    },
+    "streets": {
+     "paint_ms": 5,
+     "build_ms": 135,
+     "tris": 121670
+    },
+    "sky": {
+     "build_ms": 0,
+     "tris": 2208
+    },
+    "buildings": {
+     "build_ms": 194,
+     "tris": 339682
+    },
+    "props": {
+     "build_ms": 130,
+     "tris": 419304
+    },
+    "flora": {
+     "build_ms": 4,
+     "tris": 198060
+    },
+    "crowd": {
+     "build_ms": 66,
+     "tris": 18571
+    }
+   }
+  },
+  {
+   "id": 3,
+   "name": "aerial",
+   "png": "../r2_director/r2_final/shot3.png",
+   "tris_total": 1579458,
+   "mod_stats": {
+    "terrain": {
+     "paint_ms": 1,
+     "build_ms": 108,
+     "tris": 498532
+    },
+    "water": {
+     "paint_ms": 0,
+     "build_ms": 21,
+     "tris": 2
+    },
+    "streets": {
+     "paint_ms": 5,
+     "build_ms": 135,
+     "tris": 121670
+    },
+    "sky": {
+     "build_ms": 0,
+     "tris": 2208
+    },
+    "buildings": {
+     "build_ms": 194,
+     "tris": 339682
+    },
+    "props": {
+     "build_ms": 130,
+     "tris": 419304
+    },
+    "flora": {
+     "build_ms": 4,
+     "tris": 198060
+    },
+    "crowd": {
+     "build_ms": 66,
+     "tris": 0
+    }
+   }
+  },
+  {
+   "id": 4,
+   "name": "granary",
+   "png": "../r2_director/r2_final/shot4.png",
+   "tris_total": 1585998,
+   "mod_stats": {
+    "terrain": {
+     "paint_ms": 1,
+     "build_ms": 108,
+     "tris": 498532
+    },
+    "water": {
+     "paint_ms": 0,
+     "build_ms": 21,
+     "tris": 2
+    },
+    "streets": {
+     "paint_ms": 5,
+     "build_ms": 135,
+     "tris": 121670
+    },
+    "sky": {
+     "build_ms": 0,
+     "tris": 2208
+    },
+    "buildings": {
+     "build_ms": 194,
+     "tris": 339682
+    },
+    "props": {
+     "build_ms": 130,
+     "tris": 419304
+    },
+    "flora": {
+     "build_ms": 4,
+     "tris": 198060
+    },
+    "crowd": {
+     "build_ms": 66,
+     "tris": 6540
+    }
+   }
+  }
+ ],
+ "load_s": 4.6,
+ "build_ms": 1560,
+ "console": []
+}

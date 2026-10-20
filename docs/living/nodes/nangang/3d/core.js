@@ -51,7 +51,7 @@ export const pathRings=(X,g)=>{for(const P of g)for(const ring of P){X.moveTo(ri
 /* ---- three：渲染器、相机、控制 ---- */
 const rnd=new THREE.WebGLRenderer({antialias:true});rnd.setPixelRatio(Math.min(1.5,devicePixelRatio));rnd.setSize(innerWidth,innerHeight);rnd.shadowMap.enabled=true;rnd.shadowMap.type=THREE.PCFSoftShadowMap;document.body.prepend(rnd.domElement);
 const scene=new THREE.Scene();
-const cam=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,2,9000);cam.position.set(560,520,1900);
+const cam=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,2,16000);cam.position.set(560,520,1900);
 const ctl=new MapControls(cam,rnd.domElement);ctl.target.set(800,0,1250);ctl.maxPolarAngle=1.42;ctl.minDistance=40;ctl.maxDistance=3200;ctl.enableDamping=true;ctl.dampingFactor=.12;ctl.update();
 
 /* ---- 地面贴图画布：terrain 画底（海色、陆地、等高带），water 画港池和石堤地皮，streets 画街和地标地皮；terrain 的网格把它披上 ---- */
@@ -84,6 +84,9 @@ export const ctx={THREE,scene,camera:cam,renderer:rnd,controls:ctl,WD,by,W,H,yea
 
 function tris(o){let n=0;o.traverse(c=>{if(!c.isMesh||!c.geometry)return;const g=c.geometry,t=(g.index?g.index.count:(g.attributes.position?g.attributes.position.count:0))/3;n+=t*(c.isInstancedMesh?c.count:1)});return Math.round(n)}
 for(const m of ACTIVE){CUR=m.name;m.init?.(ctx)}CUR=null;
+/* 每个模块的三角形数。实例网格按当前 count 算：crowd 的实例数在 tick 里才定，所以 __still() 画完再数一次（r2 合并修正） */
+function modTris(stats){for(const k in stats)delete stats[k].tris;for(const o of scene.children){const k=o.userData.mod;if(k)(stats[k]=stats[k]||{}).tris=(stats[k].tris||0)+tris(o)}
+  let n=0;for(const k in stats)n+=stats[k].tris||0;window.__trisTotal=n;return stats}
 let built=false;
 function rebuild(){const t0=performance.now();ctx.reg={};const stats={};
   if(built)for(const m of ACTIVE){CUR=m.name;m.dispose?.(ctx)}
@@ -92,7 +95,7 @@ function rebuild(){const t0=performance.now();ctx.reg={};const stats={};
   buildMask();
   for(const m of ACTIVE){CUR=m.name;const t=performance.now();m.build?.(ctx);(stats[m.name]=stats[m.name]||{}).build_ms=Math.round(performance.now()-t)}
   CUR=null;gtex.needsUpdate=true;built=true;
-  for(const o of scene.children){const k=o.userData.mod;if(k)(stats[k]=stats[k]||{}).tris=(stats[k].tris||0)+tris(o)}
+  modTris(stats);
   window.__modStats=stats;window.__buildMs=Math.round(performance.now()-t0);
   console.info('[3d] build',window.__buildMs,'ms',JSON.stringify(stats))}
 rebuild();
@@ -103,6 +106,7 @@ const TICK=ACTIVE.filter(m=>m.tick);
 let fN=0,fT=performance.now(),T0=performance.now();window.__fps=0;
 const frame=()=>{ctl.update();if(TICK.length){ctx.time=(performance.now()-T0)/1000;for(const m of TICK)m.tick(ctx,ctx.time)}rnd.render(scene,cam);fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}};
 rnd.setAnimationLoop(frame);
+window.__modStatsNow=()=>modTris(window.__modStats||{});
 window.__view=(px,py,pz,tx,ty,tz)=>{cam.position.set(px,py,pz);ctl.target.set(tx,ty,tz);ctl.update()};
 window.__setYear=Y=>{ctx.year=Y;$('yr').value=Y;rebuild()};
 window.__ctx=ctx;
@@ -114,6 +118,6 @@ window.__applyShot=s=>{if(s.year!=null&&s.year!==ctx.year){ctx.year=s.year;$('yr
   cam.fov=s.fov||40;cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();cam.position.set(p[0],p[1]+gy(p[0],p[2]),p[2]);ctl.target.set(t[0],t[1]+gy(t[0],t[2]),t[2]);ctl.update();window.__shot=s.id};
 if(QS.has('shot')){try{const S=await fetch('shots.json').then(r=>r.json()),s=S.shots.find(x=>String(x.id)===QS.get('shot')||x.name===QS.get('shot'));if(s)window.__applyShot(s)}catch(e){console.warn('shots.json',e)}}
 /* ?still=1：不跑动画循环，只在 __still() 时画一帧并交出 PNG（无头截图用）。tick 的 t 固定 = 机位的 t，保证同代码同机位同图。 */
-window.__still=()=>{ctl.update();ctx.time=SHOT_T;for(const m of TICK)m.tick(ctx,SHOT_T);rnd.render(scene,cam);return rnd.domElement.toDataURL('image/png')};
+window.__still=()=>{ctl.update();ctx.time=SHOT_T;for(const m of TICK)m.tick(ctx,SHOT_T);rnd.render(scene,cam);if(window.__modStats)modTris(window.__modStats);return rnd.domElement.toDataURL('image/png')};
 if(QS.has('still'))rnd.setAnimationLoop(null);
 window.__ready=1;

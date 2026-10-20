@@ -79,7 +79,7 @@ export function init(ctx){const {THREE,W,H,renderer}=ctx;
     s.vertexShader=VERT_PARS+s.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\nvWPos=(modelMatrix*vec4(transformed,1.)).xyz;');
     s.fragmentShader=FRAG_PARS+s.fragmentShader.replace('#include <normal_fragment_maps>',FRAG_NORMAL).replace('#include <color_fragment>','#include <color_fragment>\n'+FRAG_COLOR).replace('#include <opaque_fragment>',FRAG_OUT+'#include <opaque_fragment>')};
   MAT.customProgramCacheKey=()=>'cs-water-1';
-  SEA=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),MAT);SEA.rotation.x=-Math.PI/2;SEA.position.set(W/2,0,H/2);SEA.receiveShadow=true;
+  SEA=new THREE.Mesh(new THREE.PlaneGeometry(40000,40000),MAT);SEA.rotation.x=-Math.PI/2;SEA.position.set(W/2,0,H/2);SEA.receiveShadow=true;
   ctx.add(SEA)}
 
 /* 地面贴图：港池水色、湿痕、石堤地皮 */

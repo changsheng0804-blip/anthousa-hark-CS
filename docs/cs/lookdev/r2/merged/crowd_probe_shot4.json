@@ -1,0 +1,39 @@
+{
+ "modStats_crowd_at_build": {
+  "build_ms": 78,
+  "tris": 0
+ },
+ "shot4": {
+  "stats": {
+   "active": 4789,
+   "full": 0,
+   "far": 255,
+   "ms": 14.3,
+   "greet": 0,
+   "tris": 6540,
+   "drawCalls": 2,
+   "liftMs": 58
+  },
+  "count": {
+   "in_frame": 254,
+   "visible_any": 2,
+   "visible_ge3px": 2,
+   "visible_ge6px": 2,
+   "visible_ge20px": 0,
+   "all_from_crowd_json": true,
+   "nearest": [
+    [
+     843,
+     169,
+     9.7
+    ],
+    [
+     707,
+     200,
+     8.2
+    ]
+   ]
+  }
+ },
+ "errors": []
+}

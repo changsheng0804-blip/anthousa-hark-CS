@@ -129,7 +129,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 3. **材质不共享**。每个模块自己建自己的材质。buildings 里有一个 `mats.water`（宁芙殿水池）和石堤的石头材质，它们归 buildings，不归 water。
 4. **灯只在 sky 里**。别的模块要太阳方向读 `ctx.reg.sun`（DirectionalLight），不要再加灯。阴影相机现在只罩住区中心 ±1500 像素；terrain 把陆地铺到区外，远处不会有投影，要扩阴影范围请 sky。
 5. **色调映射/曝光/雾归 sky**，改它们会让所有模块的 L* 一起动——所以只有 sky 追 L*，别的模块追边缘和饱和（见 `baseline/report.md` 第 4 节）。sky 合进来以后，别的模块的 L* 会整体移位，这不算谁弄坏了。
-6. **相机近/远裁剪面归 core**（near 2、far 9000）。terrain 要更远的远岸、雾更远，先在报告里提给 core。
+6. **相机近/远裁剪面归 core**（near 2、far 16000——r2 合并时由 9000 提上来，远岸环和雾都跟着 far 走）。terrain 要更远的远岸、雾更远，先在报告里提给 core。
 7. **注册表每次重建前清空**，所以 `reg` 要在 build 里写，不要在 init 里写。streets 在 buildings 之前 build，`reg.frontage` 由 streets 写、buildings 读——**第 0 步还没写 frontage**，buildings 代理在它出现前要能照常跑（读不到就当没有铺面）。
 8. **一律用 `ctx.add(obj)` 加东西**（core 靠它按模块数三角形），dispose 里自己 `scene.remove` 并 `geometry.dispose()`；常驻物（init 里加的）不用每次清。
 9. **确定性**：随机用 `ctx.hsh(id,k)`；动的东西（浪、人走）放 `tick(ctx,t)`，still 模式下 t 固定，同代码同机位同图。

@@ -1,0 +1,1471 @@
+{
+ "shots": [
+  {
+   "id": 1,
+   "name": "harbour",
+   "ref": {
+    "L": [
+     55.63,
+     25.23
+    ],
+    "a": [
+     0.44,
+     6.45
+    ],
+    "b": [
+     15.92,
+     9.0
+    ],
+    "pct": [
+     8.8,
+     21.9,
+     54.2,
+     89.7,
+     96.8
+    ],
+    "sat": 0.312,
+    "colourful": 38.89,
+    "warm_minus_cool": 0.7516,
+    "edge": 0.2032
+   },
+   "render": {
+    "L": [
+     60.74,
+     18.78
+    ],
+    "a": [
+     -5.5,
+     5.99
+    ],
+    "b": [
+     1.99,
+     9.13
+    ],
+    "pct": [
+     36.8,
+     43.2,
+     49.8,
+     82.3,
+     82.3
+    ],
+    "sat": 0.2209,
+    "colourful": 32.88,
+    "warm_minus_cool": 0.238,
+    "edge": 0.0297
+   },
+   "delta": {
+    "dL": 5.11,
+    "emd": 9.454,
+    "edge_ratio": 0.15
+   },
+   "bands": [
+    {
+     "y": [
+      0,
+      0.25
+     ],
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": [
+       84.16,
+       12.87
+      ],
+      "a": [
+       0.39,
+       2.42
+      ],
+      "b": [
+       14.78,
+       4.81
+      ],
+      "pct": [
+       39.8,
+       71.9,
+       87.1,
+       96.4,
+       98.2
+      ],
+      "sat": 0.1834,
+      "colourful": 24.26,
+      "warm_minus_cool": 0.8539,
+      "edge": 0.0445
+     },
+     "render": {
+      "L": [
+       82.35,
+       0.0
+      ],
+      "a": [
+       -4.93,
+       0.0
+      ],
+      "b": [
+       -3.95,
+       0.0
+      ],
+      "pct": [
+       82.3,
+       82.3,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.0991,
+      "colourful": 6.33,
+      "warm_minus_cool": 0.0,
+      "edge": 0.0
+     }
+    },
+    {
+     "y": [
+      0.25,
+      0.6
+     ],
+     "owner": "buildings",
+     "ref": {
+      "L": [
+       50.27,
+       21.03
+      ],
+      "a": [
+       4.86,
+       4.75
+      ],
+      "b": [
+       21.45,
+       8.21
+      ],
+      "pct": [
+       10.8,
+       22.2,
+       51.0,
+       80.3,
+       87.4
+      ],
+      "sat": 0.4204,
+      "colourful": 39.05,
+      "warm_minus_cool": 0.924,
+      "edge": 0.3632
+     },
+     "render": {
+      "L": [
+       62.52,
+       18.73
+      ],
+      "a": [
+       -2.61,
+       6.69
+      ],
+      "b": [
+       4.8,
+       10.65
+      ],
+      "pct": [
+       35.2,
+       44.1,
+       56.1,
+       82.3,
+       82.3
+      ],
+      "sat": 0.225,
+      "colourful": 35.26,
+      "warm_minus_cool": 0.3845,
+      "edge": 0.0484
+     }
+    },
+    {
+     "y": [
+      0.6,
+      1
+     ],
+     "owner": "water",
+     "ref": {
+      "L": [
+       42.5,
+       19.87
+      ],
+      "a": [
+       -3.38,
+       6.99
+      ],
+      "b": [
+       11.82,
+       9.2
+      ],
+      "pct": [
+       6.2,
+       16.8,
+       41.9,
+       70.8,
+       85.4
+      ],
+      "sat": 0.2979,
+      "colourful": 36.25,
+      "warm_minus_cool": 0.5378,
+      "edge": 0.1618
+     },
+     "render": {
+      "L": [
+       45.72,
+       7.37
+      ],
+      "a": [
+       -8.36,
+       5.9
+      ],
+      "b": [
+       3.25,
+       8.88
+      ],
+      "pct": [
+       36.1,
+       38.1,
+       44.1,
+       63.9,
+       64.3
+      ],
+      "sat": 0.2932,
+      "colourful": 35.67,
+      "warm_minus_cool": 0.2587,
+      "edge": 0.0316
+     }
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "street",
+   "ref": {
+    "L": [
+     39.23,
+     28.41
+    ],
+    "a": [
+     4.78,
+     5.63
+    ],
+    "b": [
+     14.45,
+     10.69
+    ],
+    "pct": [
+     1.4,
+     6.0,
+     33.4,
+     87.7,
+     93.1
+    ],
+    "sat": 0.4457,
+    "colourful": 38.2,
+    "warm_minus_cool": 0.6067,
+    "edge": 0.1984
+   },
+   "render": {
+    "L": [
+     63.96,
+     14.38
+    ],
+    "a": [
+     -0.59,
+     3.92
+    ],
+    "b": [
+     10.34,
+     10.23
+    ],
+    "pct": [
+     44.8,
+     47.5,
+     60.9,
+     82.3,
+     82.3
+    ],
+    "sat": 0.2284,
+    "colourful": 34.93,
+    "warm_minus_cool": 0.6843,
+    "edge": 0.0114
+   },
+   "delta": {
+    "dL": 24.73,
+    "emd": 26.728,
+    "edge_ratio": 0.062
+   },
+   "bands": [
+    {
+     "y": [
+      0,
+      0.25
+     ],
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": [
+       61.03,
+       30.34
+      ],
+      "a": [
+       4.66,
+       5.43
+      ],
+      "b": [
+       19.35,
+       10.06
+      ],
+      "pct": [
+       2.8,
+       16.4,
+       70.5,
+       92.8,
+       94.5
+      ],
+      "sat": 0.3953,
+      "colourful": 40.2,
+      "warm_minus_cool": 0.8584,
+      "edge": 0.1935
+     },
+     "render": {
+      "L": [
+       77.41,
+       11.93
+      ],
+      "a": [
+       -3.78,
+       3.31
+      ],
+      "b": [
+       -0.84,
+       7.41
+      ],
+      "pct": [
+       47.5,
+       48.0,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.1278,
+      "colourful": 25.46,
+      "warm_minus_cool": 0.1609,
+      "edge": 0.0148
+     }
+    },
+    {
+     "y": [
+      0.25,
+      0.7
+     ],
+     "owner": "buildings+crowd",
+     "ref": {
+      "L": [
+       31.64,
+       25.62
+      ],
+      "a": [
+       6.64,
+       5.78
+      ],
+      "b": [
+       15.93,
+       10.89
+      ],
+      "pct": [
+       0.8,
+       3.8,
+       24.7,
+       72.7,
+       91.3
+      ],
+      "sat": 0.5647,
+      "colourful": 39.7,
+      "warm_minus_cool": 0.6843,
+      "edge": 0.2194
+     },
+     "render": {
+      "L": [
+       62.83,
+       14.18
+      ],
+      "a": [
+       -0.02,
+       4.47
+      ],
+      "b": [
+       11.88,
+       9.79
+      ],
+      "pct": [
+       39.2,
+       47.5,
+       61.4,
+       82.3,
+       82.3
+      ],
+      "sat": 0.2368,
+      "colourful": 35.75,
+      "warm_minus_cool": 0.7636,
+      "edge": 0.0171
+     }
+    },
+    {
+     "y": [
+      0.7,
+      1
+     ],
+     "owner": "streets+props",
+     "ref": {
+      "L": [
+       32.45,
+       20.28
+      ],
+      "a": [
+       2.11,
+       4.34
+      ],
+      "b": [
+       8.19,
+       7.51
+      ],
+      "pct": [
+       2.4,
+       7.5,
+       29.8,
+       61.3,
+       74.2
+      ],
+      "sat": 0.3109,
+      "colourful": 25.25,
+      "warm_minus_cool": 0.2834,
+      "edge": 0.1696
+     },
+     "render": {
+      "L": [
+       54.49,
+       5.19
+      ],
+      "a": [
+       1.19,
+       0.35
+      ],
+      "b": [
+       17.3,
+       1.87
+      ],
+      "pct": [
+       45.7,
+       47.3,
+       55.0,
+       60.9,
+       60.9
+      ],
+      "sat": 0.2992,
+      "colourful": 16.32,
+      "warm_minus_cool": 1.0,
+      "edge": 0.0
+     }
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "aerial",
+   "ref": {
+    "L": [
+     47.17,
+     25.35
+    ],
+    "a": [
+     5.95,
+     11.02
+    ],
+    "b": [
+     17.05,
+     16.93
+    ],
+    "pct": [
+     2.3,
+     13.4,
+     47.0,
+     83.2,
+     93.6
+    ],
+    "sat": 0.4573,
+    "colourful": 64.07,
+    "warm_minus_cool": 0.5615,
+    "edge": 0.3373
+   },
+   "render": {
+    "L": [
+     65.38,
+     14.98
+    ],
+    "a": [
+     -4.4,
+     7.31
+    ],
+    "b": [
+     4.55,
+     12.41
+    ],
+    "pct": [
+     44.1,
+     44.1,
+     65.3,
+     82.3,
+     82.3
+    ],
+    "sat": 0.2255,
+    "colourful": 41.56,
+    "warm_minus_cool": 0.2778,
+    "edge": 0.0303
+   },
+   "delta": {
+    "dL": 18.21,
+    "emd": 19.843,
+    "edge_ratio": 0.093
+   },
+   "bands": [
+    {
+     "y": [
+      0,
+      0.14
+     ],
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": [
+       83.31,
+       8.94
+      ],
+      "a": [
+       -2.44,
+       2.86
+      ],
+      "b": [
+       10.91,
+       7.73
+      ],
+      "pct": [
+       61.5,
+       70.5,
+       84.6,
+       94.0,
+       95.9
+      ],
+      "sat": 0.1426,
+      "colourful": 30.19,
+      "warm_minus_cool": 0.5745,
+      "edge": 0.0
+     },
+     "render": {
+      "L": [
+       82.35,
+       0.0
+      ],
+      "a": [
+       -4.93,
+       0.0
+      ],
+      "b": [
+       -3.95,
+       0.0
+      ],
+      "pct": [
+       82.3,
+       82.3,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.0991,
+      "colourful": 6.33,
+      "warm_minus_cool": 0.0,
+      "edge": 0.0
+     }
+    },
+    {
+     "y": [
+      0.14,
+      0.4
+     ],
+     "owner": "water+terrain",
+     "ref": {
+      "L": [
+       50.95,
+       16.43
+      ],
+      "a": [
+       1.71,
+       10.33
+      ],
+      "b": [
+       10.59,
+       16.45
+      ],
+      "pct": [
+       14.9,
+       29.3,
+       51.1,
+       71.7,
+       85.2
+      ],
+      "sat": 0.394,
+      "colourful": 59.44,
+      "warm_minus_cool": 0.2687,
+      "edge": 0.2958
+     },
+     "render": {
+      "L": [
+       80.31,
+       4.32
+      ],
+      "a": [
+       -5.3,
+       0.81
+      ],
+      "b": [
+       -3.85,
+       0.25
+      ],
+      "pct": [
+       67.1,
+       73.2,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.1045,
+      "colourful": 8.29,
+      "warm_minus_cool": -0.0279,
+      "edge": 0.0
+     }
+    },
+    {
+     "y": [
+      0.4,
+      1
+     ],
+     "owner": "buildings+streets",
+     "ref": {
+      "L": [
+       37.24,
+       22.99
+      ],
+      "a": [
+       9.71,
+       10.76
+      ],
+      "b": [
+       21.25,
+       17.36
+      ],
+      "pct": [
+       1.4,
+       7.6,
+       33.5,
+       70.5,
+       85.9
+      ],
+      "sat": 0.557,
+      "colourful": 67.46,
+      "warm_minus_cool": 0.6854,
+      "edge": 0.4321
+     },
+     "render": {
+      "L": [
+       55.03,
+       9.76
+      ],
+      "a": [
+       -3.89,
+       9.37
+      ],
+      "b": [
+       10.15,
+       13.32
+      ],
+      "pct": [
+       44.1,
+       44.1,
+       54.2,
+       67.2,
+       74.3
+      ],
+      "sat": 0.3069,
+      "colourful": 50.18,
+      "warm_minus_cool": 0.4739,
+      "edge": 0.0504
+     }
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "granary",
+   "ref": {
+    "L": [
+     47.92,
+     25.81
+    ],
+    "a": [
+     2.05,
+     7.16
+    ],
+    "b": [
+     12.02,
+     10.35
+    ],
+    "pct": [
+     3.0,
+     12.4,
+     46.2,
+     83.5,
+     88.8
+    ],
+    "sat": 0.3511,
+    "colourful": 41.3,
+    "warm_minus_cool": 0.5272,
+    "edge": 0.2385
+   },
+   "render": {
+    "L": [
+     65.13,
+     17.29
+    ],
+    "a": [
+     -3.29,
+     5.18
+    ],
+    "b": [
+     5.24,
+     11.02
+    ],
+    "pct": [
+     37.0,
+     44.1,
+     64.6,
+     82.3,
+     82.3
+    ],
+    "sat": 0.2128,
+    "colourful": 34.5,
+    "warm_minus_cool": 0.398,
+    "edge": 0.0164
+   },
+   "delta": {
+    "dL": 17.21,
+    "emd": 18.454,
+    "edge_ratio": 0.073
+   },
+   "bands": [
+    {
+     "y": [
+      0,
+      0.18
+     ],
+     "owner": "sky-atmosphere",
+     "ref": {
+      "L": [
+       76.23,
+       15.2
+      ],
+      "a": [
+       -0.57,
+       3.52
+      ],
+      "b": [
+       3.23,
+       9.03
+      ],
+      "pct": [
+       37.4,
+       50.4,
+       83.5,
+       88.9,
+       91.5
+      ],
+      "sat": 0.1347,
+      "colourful": 28.22,
+      "warm_minus_cool": 0.1055,
+      "edge": 0.1172
+     },
+     "render": {
+      "L": [
+       82.35,
+       0.0
+      ],
+      "a": [
+       -4.93,
+       0.0
+      ],
+      "b": [
+       -3.95,
+       0.0
+      ],
+      "pct": [
+       82.3,
+       82.3,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.0991,
+      "colourful": 6.33,
+      "warm_minus_cool": 0.0,
+      "edge": 0.0
+     }
+    },
+    {
+     "y": [
+      0.18,
+      0.6
+     ],
+     "owner": "buildings",
+     "ref": {
+      "L": [
+       46.39,
+       21.53
+      ],
+      "a": [
+       5.74,
+       4.78
+      ],
+      "b": [
+       17.56,
+       7.91
+      ],
+      "pct": [
+       6.9,
+       18.1,
+       45.1,
+       75.5,
+       82.7
+      ],
+      "sat": 0.3888,
+      "colourful": 37.14,
+      "warm_minus_cool": 0.7983,
+      "edge": 0.2675
+     },
+     "render": {
+      "L": [
+       71.25,
+       16.33
+      ],
+      "a": [
+       -2.11,
+       5.4
+      ],
+      "b": [
+       2.68,
+       10.02
+      ],
+      "pct": [
+       43.4,
+       47.1,
+       82.3,
+       82.3,
+       82.3
+      ],
+      "sat": 0.1701,
+      "colourful": 31.52,
+      "warm_minus_cool": 0.3212,
+      "edge": 0.028
+     }
+    },
+    {
+     "y": [
+      0.6,
+      1
+     ],
+     "owner": "props+crowd+water",
+     "ref": {
+      "L": [
+       36.84,
+       24.26
+      ],
+      "a": [
+       -0.64,
+       8.59
+      ],
+      "b": [
+       10.17,
+       9.76
+      ],
+      "pct": [
+       1.8,
+       5.7,
+       36.0,
+       75.9,
+       82.3
+      ],
+      "sat": 0.4087,
+      "colourful": 40.52,
+      "warm_minus_cool": 0.4326,
+      "edge": 0.2609
+     },
+     "render": {
+      "L": [
+       51.02,
+       9.76
+      ],
+      "a": [
+       -3.8,
+       5.79
+      ],
+      "b": [
+       12.04,
+       10.33
+      ],
+      "pct": [
+       37.0,
+       43.4,
+       46.3,
+       64.3,
+       66.5
+      ],
+      "sat": 0.3085,
+      "colourful": 39.57,
+      "warm_minus_cool": 0.6567,
+      "edge": 0.0117
+     }
+    }
+   ]
+  }
+ ],
+ "gaps_ranked": [
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "saturation band 0.25-0.70",
+   "score": 4.1,
+   "owner": "buildings+crowd",
+   "delta": "dsat -0.33"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "detail density band 0.70-1.00",
+   "score": 4.0,
+   "owner": "streets+props",
+   "delta": "edge x0.01"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "detail density band 0.14-0.40",
+   "score": 4.0,
+   "owner": "water+terrain",
+   "delta": "edge x0.00"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "detail density band 0.60-1.00",
+   "score": 4.0,
+   "owner": "props+crowd+water",
+   "delta": "edge x0.05"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "saturation band 0.14-0.40",
+   "score": 3.62,
+   "owner": "water+terrain",
+   "delta": "dsat -0.29"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "detail density band 0.25-0.70",
+   "score": 3.61,
+   "owner": "buildings+crowd",
+   "delta": "edge x0.08"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "detail density band 0.18-0.60",
+   "score": 3.21,
+   "owner": "buildings",
+   "delta": "edge x0.11"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "saturation band 0.40-1.00",
+   "score": 3.13,
+   "owner": "buildings+streets",
+   "delta": "dsat -0.25"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "tone band 0.25-0.70",
+   "score": 3.12,
+   "owner": "buildings+crowd",
+   "delta": "dL* +31.2"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "exposure (global L* mean)",
+   "score": 3.09,
+   "owner": "sky-atmosphere",
+   "delta": "dL* +24.7"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "detail density band 0.40-1.00",
+   "score": 3.07,
+   "owner": "buildings+streets",
+   "delta": "edge x0.12"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "tone band 0.14-0.40",
+   "score": 2.94,
+   "owner": "water+terrain",
+   "delta": "dL* +29.4"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "detail density band 0.25-0.60",
+   "score": 2.88,
+   "owner": "buildings",
+   "delta": "edge x0.14"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "contrast (global L* sd)",
+   "score": 2.81,
+   "owner": "sky-atmosphere",
+   "delta": "dsd -14.0"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "warmth (global b*)",
+   "score": 2.79,
+   "owner": "sky-atmosphere",
+   "delta": "db* -13.9"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "saturation band 0.18-0.60",
+   "score": 2.73,
+   "owner": "buildings",
+   "delta": "dsat -0.22"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "warmth (global b*)",
+   "score": 2.5,
+   "owner": "sky-atmosphere",
+   "delta": "db* -12.5"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "tone band 0.18-0.60",
+   "score": 2.49,
+   "owner": "buildings",
+   "delta": "dL* +24.9"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "saturation band 0.25-0.60",
+   "score": 2.44,
+   "owner": "buildings",
+   "delta": "dsat -0.20"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "detail density band 0.60-1.00",
+   "score": 2.32,
+   "owner": "water",
+   "delta": "edge x0.20"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "exposure (global L* mean)",
+   "score": 2.28,
+   "owner": "sky-atmosphere",
+   "delta": "dL* +18.2"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "colourfulness (global)",
+   "score": 2.25,
+   "owner": "sky-atmosphere",
+   "delta": "dcolourful -23"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "tone band 0.70-1.00",
+   "score": 2.2,
+   "owner": "streets+props",
+   "delta": "dL* +22.0"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "exposure (global L* mean)",
+   "score": 2.15,
+   "owner": "sky-atmosphere",
+   "delta": "dL* +17.2"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "contrast (global L* sd)",
+   "score": 2.07,
+   "owner": "sky-atmosphere",
+   "delta": "dsd -10.4"
+  },
+  {
+   "shot": 3,
+   "name": "aerial",
+   "gap": "tone band 0.40-1.00",
+   "score": 1.78,
+   "owner": "buildings+streets",
+   "delta": "dL* +17.8"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "contrast (global L* sd)",
+   "score": 1.7,
+   "owner": "sky-atmosphere",
+   "delta": "dsd -8.5"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "tone band 0.60-1.00",
+   "score": 1.42,
+   "owner": "props+crowd+water",
+   "delta": "dL* +14.2"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "warmth (global b*)",
+   "score": 1.36,
+   "owner": "sky-atmosphere",
+   "delta": "db* -6.8"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "contrast (global L* sd)",
+   "score": 1.29,
+   "owner": "sky-atmosphere",
+   "delta": "dsd -6.4"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "saturation band 0.60-1.00",
+   "score": 1.25,
+   "owner": "props+crowd+water",
+   "delta": "dsat -0.10"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "tone band 0.25-0.60",
+   "score": 1.23,
+   "owner": "buildings",
+   "delta": "dL* +12.2"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "warmth (global b*)",
+   "score": 0.82,
+   "owner": "sky-atmosphere",
+   "delta": "db* -4.1"
+  },
+  {
+   "shot": 4,
+   "name": "granary",
+   "gap": "colourfulness (global)",
+   "score": 0.68,
+   "owner": "sky-atmosphere",
+   "delta": "dcolourful -7"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "exposure (global L* mean)",
+   "score": 0.64,
+   "owner": "sky-atmosphere",
+   "delta": "dL* +5.1"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "colourfulness (global)",
+   "score": 0.6,
+   "owner": "sky-atmosphere",
+   "delta": "dcolourful -6"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "colourfulness (global)",
+   "score": 0.33,
+   "owner": "sky-atmosphere",
+   "delta": "dcolourful -3"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "tone band 0.60-1.00",
+   "score": 0.32,
+   "owner": "water",
+   "delta": "dL* +3.2"
+  },
+  {
+   "shot": 2,
+   "name": "street",
+   "gap": "saturation band 0.70-1.00",
+   "score": 0.15,
+   "owner": "streets+props",
+   "delta": "dsat -0.01"
+  },
+  {
+   "shot": 1,
+   "name": "harbour",
+   "gap": "saturation band 0.60-1.00",
+   "score": 0.06,
+   "owner": "water",
+   "delta": "dsat -0.00"
+  }
+ ],
+ "gaps_by_module": [
+  {
+   "owner": "sky-atmosphere",
+   "kind": "exposure",
+   "score": 8.16,
+   "shots": [
+    "2:dL* +24.7",
+    "3:dL* +18.2",
+    "4:dL* +17.2",
+    "1:dL* +5.1"
+   ]
+  },
+  {
+   "owner": "sky-atmosphere",
+   "kind": "contrast",
+   "score": 7.87,
+   "shots": [
+    "2:dsd -14.0",
+    "3:dsd -10.4",
+    "4:dsd -8.5",
+    "1:dsd -6.4"
+   ]
+  },
+  {
+   "owner": "sky-atmosphere",
+   "kind": "warmth",
+   "score": 7.47,
+   "shots": [
+    "1:db* -13.9",
+    "3:db* -12.5",
+    "4:db* -6.8",
+    "2:db* -4.1"
+   ]
+  },
+  {
+   "owner": "buildings",
+   "kind": "detail density",
+   "score": 6.09,
+   "shots": [
+    "4:edge x0.11",
+    "1:edge x0.14"
+   ]
+  },
+  {
+   "owner": "buildings",
+   "kind": "saturation",
+   "score": 5.17,
+   "shots": [
+    "4:dsat -0.22",
+    "1:dsat -0.20"
+   ]
+  },
+  {
+   "owner": "buildings+crowd",
+   "kind": "saturation",
+   "score": 4.1,
+   "shots": [
+    "2:dsat -0.33"
+   ]
+  },
+  {
+   "owner": "streets+props",
+   "kind": "detail density",
+   "score": 4.0,
+   "shots": [
+    "2:edge x0.01"
+   ]
+  },
+  {
+   "owner": "water+terrain",
+   "kind": "detail density",
+   "score": 4.0,
+   "shots": [
+    "3:edge x0.00"
+   ]
+  },
+  {
+   "owner": "props+crowd+water",
+   "kind": "detail density",
+   "score": 4.0,
+   "shots": [
+    "4:edge x0.05"
+   ]
+  },
+  {
+   "owner": "sky-atmosphere",
+   "kind": "colourfulness",
+   "score": 3.86,
+   "shots": [
+    "3:dcolourful -23",
+    "4:dcolourful -7",
+    "1:dcolourful -6",
+    "2:dcolourful -3"
+   ]
+  },
+  {
+   "owner": "buildings",
+   "kind": "tone",
+   "score": 3.72,
+   "shots": [
+    "4:dL* +24.9",
+    "1:dL* +12.2"
+   ]
+  },
+  {
+   "owner": "water+terrain",
+   "kind": "saturation",
+   "score": 3.62,
+   "shots": [
+    "3:dsat -0.29"
+   ]
+  },
+  {
+   "owner": "buildings+crowd",
+   "kind": "detail density",
+   "score": 3.61,
+   "shots": [
+    "2:edge x0.08"
+   ]
+  },
+  {
+   "owner": "buildings+streets",
+   "kind": "saturation",
+   "score": 3.13,
+   "shots": [
+    "3:dsat -0.25"
+   ]
+  },
+  {
+   "owner": "buildings+crowd",
+   "kind": "tone",
+   "score": 3.12,
+   "shots": [
+    "2:dL* +31.2"
+   ]
+  },
+  {
+   "owner": "buildings+streets",
+   "kind": "detail density",
+   "score": 3.07,
+   "shots": [
+    "3:edge x0.12"
+   ]
+  },
+  {
+   "owner": "water+terrain",
+   "kind": "tone",
+   "score": 2.94,
+   "shots": [
+    "3:dL* +29.4"
+   ]
+  },
+  {
+   "owner": "water",
+   "kind": "detail density",
+   "score": 2.32,
+   "shots": [
+    "1:edge x0.20"
+   ]
+  },
+  {
+   "owner": "streets+props",
+   "kind": "tone",
+   "score": 2.2,
+   "shots": [
+    "2:dL* +22.0"
+   ]
+  },
+  {
+   "owner": "buildings+streets",
+   "kind": "tone",
+   "score": 1.78,
+   "shots": [
+    "3:dL* +17.8"
+   ]
+  },
+  {
+   "owner": "props+crowd+water",
+   "kind": "tone",
+   "score": 1.42,
+   "shots": [
+    "4:dL* +14.2"
+   ]
+  },
+  {
+   "owner": "props+crowd+water",
+   "kind": "saturation",
+   "score": 1.25,
+   "shots": [
+    "4:dsat -0.10"
+   ]
+  },
+  {
+   "owner": "water",
+   "kind": "tone",
+   "score": 0.32,
+   "shots": [
+    "1:dL* +3.2"
+   ]
+  },
+  {
+   "owner": "streets+props",
+   "kind": "saturation",
+   "score": 0.15,
+   "shots": [
+    "2:dsat -0.01"
+   ]
+  },
+  {
+   "owner": "water",
+   "kind": "saturation",
+   "score": 0.06,
+   "shots": [
+    "1:dsat -0.00"
+   ]
+  }
+ ]
+}

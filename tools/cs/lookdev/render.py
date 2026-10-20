@@ -80,7 +80,10 @@ def main():
             data = pg.evaluate('()=>window.__still()')  # 画一帧，直接从 canvas 取 PNG
             open(fn, 'wb').write(base64.b64decode(data.split(',', 1)[1]))
             print(f"  frame {time.time() - t1:.1f}s (软件渲染，不代表帧率)")
-            report['shots'].append({'id': s['id'], 'name': s['name'], 'png': os.path.relpath(fn, ROOT)})
+            ms = pg.evaluate('()=>({mod: window.__modStats || null, total: window.__trisTotal || null, crowd: window.__crowdStats || null})')  # __still 之后数（crowd 的实例数在 tick 里才定）
+            report['shots'].append({'id': s['id'], 'name': s['name'], 'png': os.path.relpath(fn, ROOT), 'tris_total': ms['total'], 'mod_stats': ms['mod'], 'crowd': ms['crowd']})
+            if ms['total']:
+                print(f"  tris {ms['total']:,}  " + ' '.join(f"{k}:{v.get('tris', 0):,}" for k, v in (ms['mod'] or {}).items()))
             print('shot', s['id'], s['name'], '->', os.path.relpath(fn, ROOT))
         report['console'] = errs[:20]
         b.close()

@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 01:20 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 04:30 PDT ——Hark（CS线）
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
@@ -16,21 +16,25 @@
 | 水系节点（水道桥/蓄水池/井） | scroll.html | water_report.json | 待评 |
 | 长卷街区细化（街名路牌、招牌、坡地台基台阶、柱廊额枋） | scroll.html | 10-20 提交 b506e82、ff210df | 待评 |
 | 居民：姿势引擎 + 人群 + 户籍关系 | scroll.html?n=net&crowd=N | tools/cs/people/README.md；Mac 实测一万人 100 fps | 模型不再细抠（10-19）；关系接入待评 |
-| 3D 试作（10-20 拆成 ES 模块，样子不变） | docs/living/nodes/nangang/3d.html + docs/living/nodes/nangang/3d/ | lookdev 基线：docs/cs/lookdev/baseline/report.md；拆分对照 docs/cs/lookdev/r2/split_match.json | 待评 |
+| 3D lookdev 第 2 轮（8 模块合并：低太阳 + 调色、立面/柱廊/粮仓、石板街、港水倒影、区外陆地和远岸、船吊车货堆、树、5966 口人） | docs/living/nodes/nangang/3d.html（`?shot=1..4` 看固定机位） | `docs/cs/lookdev/r2/report.md`、`docs/cs/lookdev/r2/overview.jpg`；沙箱：模块验收 9/12 条过，三角形 1.58–1.60 M | 待评（帧率待 Mac 实测） |
 
-灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口）。
+灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
 
 ## 进行中
-- **南港 3D lookdev 第 2 轮**：
-  - 第 0 步（10-20 完成）：3d.html 拆成 docs/living/nodes/nangang/3d/ 下 9 个 ES 模块（core + sky terrain water streets buildings props flora crowd；props、crowd 是空壳）。用 render.py 重渲 4 机位，match.py 对基线：4 机位全局 + 12 条带 ΔL* 全 +0.00、边缘差全 +0.0%，过。新增 match.py（「没变样」判据）、`&only=`、`&quality=`、每模块 build 毫秒/三角形数。接口、谁能改哪个文件、并行的坑：docs/cs/lookdev/MODULE_CONTRACT.md 第 2、6 节。
-  - 第 1 波（未开）：7 个模块代理并行，各按 MODULE_CONTRACT.md 第 6 节只改自己的文件，验收数字见 docs/cs/lookdev/baseline/report.md 第 4 节；证据放 docs/cs/lookdev/r2/ 下各自子目录，不改 NOW.md，导演合并时统一更新。
-  - 第 1 轮基线结论不变：骨架对，样子是白模 + 正午平光；前五差距 = 光和调色、房子白模、街面平涂、水平色 + 区外空海、没有船和人。沙箱只看样子，帧率没测。
-- 古城（gucheng）：户籍、街名、招牌、大地标部件已推（436984f），另一个会话在做。
+- **南港 3D lookdev 第 2 轮：合并完成（10-20）**。7 个模块代理 + 导演合并都已推到 main。现状：
+  - 4 个机位从「白模 + 正午平光」变成有光、有材质、有船有人的画面；机位 1、3、4 的光和调色过 sky 验收，机位 2 没过（顺光照亮整条街，参考是逆光）。
+  - 导演改了：相机 far 9000→16000；机位 3 抬头左转（地平线 ≈0.14，看得到东岸和远岸），机位 3 旧基线数字不再可比，已在新机位重拍；sky 加冷灰天光补光，粮仓山墙不再是黑的；`__modStats` 改在出图后数三角形。
+  - 剩下的差距（排名和归属见报告）：机位 2 太亮太平；粮仓码头没人（要 folk.py 加搬运工路线）；码头岸是沙坡不是石墙；机位 3 远处没细节；区外的城是空的。
+  - 怎么看：打开 `docs/living/nodes/nangang/3d.html`，加 `?shot=1`（港）、`?shot=2`（主街）、`?shot=3`（高空）、`?shot=4`（粮仓）；加 `&quality=preview` 看低档；`&only=buildings,streets` 只开几个模块。
+- 古城（gucheng）：另一个会话在做，别碰它的文件。
 
-## 等主人
-- 看 lookdev 总览 docs/cs/lookdev/baseline/overview.jpg：参考图的样子对不对（定了就是第 2 轮的靶子），机位要不要改。
-- 南港节点版「留」还是「再来」；2D 长卷还是 3D 继续走。
+## 等主人（Mac 上实测，沙箱的数字不算）
+- **帧率**：4 个机位在 `quality=high` 和 `quality=preview`、全部模块打开时的 fps 和最差一帧（预算 ≥60 fps、≤25 ms）。控制台 `window.__modStats` / `window.__trisTotal` 给三角形，`window.__crowdStats` 给人群 CPU 毫秒。
+- **三角形预算**：现在每个机位约 1.6 M（契约上限 3 M）；若 Mac 吃紧，先砍 props 港区货堆、terrain 远档。
+- **倒影开销**：water 的半分辨率平面倒影每帧多渲一遍场景，机位 1 开/关倒影各测一次帧率，决定要不要只在近水时开。
+- 看总览 `docs/cs/lookdev/r2/overview.jpg`：留 / 再来；机位 2 要不要改成逆光（像参考图）。
 
-## 下一步（主人点头后）
-- lookdev 第 2 轮第 1 波：并行 7 个模块代理（sky-atmosphere、buildings、streets、water、terrain、props+flora、crowd），每个按 report.md 第 4 节的自查机位和验收数字跑；然后导演代理合并复测写 r2 报告，主人 Mac 上看帧率（拆分后的帧率也待 Mac 实测）。
-- 节点链往外长一块街区，验证跨街区接缝从结构上消失。
+## 下一步（主人点头后，第 3 轮提案，详见报告末节）
+1. 机位 2 光向 + 粮仓搬运工路线（people 管线 → crowd）。
+2. 硬码头：港池蒙版锐化 + 竖直码头石墙 + 水线湿痕。
+3. 区外远景城 + 机位 3 远海细节，同一轮先在 Mac 上过帧率预算。

@@ -17,7 +17,8 @@ async function inflate(b64, Type) {
 const HGT = await inflate(D.hgt, Int16Array), CELL = await inflate(D.cell, Uint8Array);
 const UC = await inflate(D.urban.c, Uint8Array), UY = await inflate(D.urban.y, Uint8Array);
 
-const RR = 8300;            /* 远岸环半径（像素）：core 远平面 9000 以内 */
+let RR = 8300;              /* 远岸环半径（像素）：跟着相机远平面走，= far × 0.922（far 9000 时 8300）。r2 合并时 core 把 far 提到 16000，环跟着搬远，雾在环上的比例不变 */
+const RR_OF = c => (c && c.far ? c.far : 9000) * 8300 / 9000;
 const EX = 1.3;             /* 和 core 的高程夸张一致 */
 const KR = 7 / 6, RE = 6371000;
 const NA = 720;             /* 每 0.5° 一列 */
@@ -165,7 +166,7 @@ export function build(ctx) {
   skirt.geometry.attributes.position.needsUpdate = true; skirt.geometry.computeVertexNormals();
   paintYear(ctx);
   /* reg.horizon：water 想让远海裙和自己的海色一致，就在 build 里写 ctx.reg.horizon.sea = THREE.Color */
-  ctx.reg.horizon = {sea: null, haze: 1, radius: RR};
+  RR = RR_OF(ctx.camera); ctx.reg.horizon = {sea: null, haze: 1, radius: RR};
   lastKey = '';
 }
 
@@ -188,6 +189,7 @@ export function tick(ctx) {
   const fogC = (fog && fog.color) || (scene.background && scene.background.isColor ? scene.background : new THREE.Color(0xbfd0d4));
   const seaBase = (ctx.reg.horizon && ctx.reg.horizon.sea) || new THREE.Color(0x5b8590);
   const key = [c.position.x | 0, c.position.y.toFixed(1), c.position.z | 0, fogC.getHexString(), seaBase.getHexString(), (ctx.reg.horizon && ctx.reg.horizon.haze) || 1, fog ? fog.near + ',' + fog.far : ''].join('|');
+  const rr = RR_OF(c); if (rr !== RR) { RR = rr; if (ctx.reg.horizon) ctx.reg.horizon.radius = RR; lastKey = ''; }
   if (key === lastKey) return; lastKey = key;
   const h = Math.max(1, c.position.y) * D.mpp, dip = Math.sqrt(2 * h / (KR * RE)), cx = c.position.x, cz = c.position.z, cy = c.position.y;
   const Y = a => cy + RR * Math.tan(a);
@@ -209,6 +211,8 @@ export function tick(ctx) {
       for (let k = 0; k < NA; k++) if (!isNaN(LO[k]) && (isNaN(LO[(k + NA - 1) % NA]) || isNaN(LO[(k + 1) % NA]))) HI[k] = LO[k] + (HI[k] - LO[k]) * .35;
       for (let k = 0; k < NA; k++) if (isNaN(LO[k])) { const a = LO[(k + NA - 1) % NA], b = LO[(k + 1) % NA]; LO[k] = HI[k] = !isNaN(a) ? a : !isNaN(b) ? b : -dip; }
       for (let k = 0; k < NA; k++) if (isNaN(HI[k])) HI[k] = LO[k];
+      /* 单列尖峰削平（r2 合并：far 提到 16000 后雾薄了，亚洲岸近段相邻列 dH 一远一近，拉出锯齿）：比两邻都高的列压到两邻较高者 */
+      if (name === 'near') { const T = HI.slice(); for (let k = 0; k < NA; k++) { const a = T[(k + NA - 1) % NA], b = T[(k + 1) % NA]; if (T[k] > a && T[k] > b) HI[k] = Math.max(LO[k], Math.max(a, b)); } }
     }
     for (let k = 0; k <= NA; k++) {
       const kk = k % NA, az = kk / 2 * Math.PI / 180, dx = Math.sin(az), dz = Math.cos(az);
