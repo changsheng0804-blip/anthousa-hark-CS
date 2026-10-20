@@ -39,7 +39,7 @@ python3 tools/cs/lookdev/silhouette.py --ref-mask docs/cs/lookdev/landmarks/colu
 3d/water.js        海面平面；地面贴图上的港池水色、港池岸线、石堤地皮
 3d/streets.js      地面贴图上的街（m/s/c/l）和地标地皮
 3d/buildings.js    房子（合并网格）、地标部件（占位方块）、栈桥、石堤立体
-3d/landmarks/      史诗/特殊公共建筑，一座一个文件（2026-10-20 起；index.js 是模块壳，column.js 是第一座，kit/ 是部件）
+3d/landmarks/      史诗/特殊公共建筑，一座一个文件（2026-10-20 起；index.js 是模块壳，column.js 第一座、nymphaeum.js 第二座，kit/ 是部件）
 3d/props.js        空壳
 3d/flora.js        树（柏 = 锥、橄榄 = 球，实例网格）
 3d/crowd.js        空壳
@@ -79,7 +79,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 | streets | `3d/streets.js` | `street`（k=m/s/c/l、w）、`landmark` 地皮、`nodes_net.json` | 街面铺装（石板、缝、车辙、路缘）、广场铺地、喷泉/井/路牌等街具、写 `reg.frontage`（哪户面向哪条街） | 房子、地形高程 | 2 |
 | props | `3d/props.js` | `pier`、`landmark`（granary）、`house.fn`（market、dock） | 船（每个泊位）、吊车、麻袋/双耳罐堆、手推车、摊位、遮阳布 | 房子、街面、人 | 4（再看 1） |
 | flora | `3d/flora.js` | `trees`（olive/cypress/garden、年份、大小） | 柏、橄榄、园子的树形和颜色 | 树的位置/种类/年份（底账给的） | 3 |
-| landmarks | `3d/landmarks/index.js` + 一座一个文件（`3d/landmarks/column.js`…）+ `3d/landmarks/kit/` | `landmark`（id、g、y0/y1、seed）；底账的 phases（`proposals/`，按年份画施工中） | 自己接手的那几座地标的全部几何、材质、贴图、烘焙网格、LOD；`?lmmask=1` 蒙版 | 地标的位置/年份（底账给的）；没接手的地标（还归 buildings）；广场柱廊、地皮 | 5（再看 1） |
+| landmarks | `3d/landmarks/index.js` + 一座一个文件（`3d/landmarks/column.js`…）+ `3d/landmarks/kit/` | `landmark`（id、g、y0/y1、seed）；底账的 phases（`proposals/`，按年份画施工中） | 自己接手的那几座地标的全部几何、材质、贴图、烘焙网格、LOD；`?lmmask=1` 蒙版 | 地标的位置/年份（底账给的）；没接手的地标（还归 buildings）；广场柱廊、地皮 | 5、6（再看 1） |
 | crowd | `3d/crowd.js` | `crowd.json`、`folk_h.json`、`people.json`；复用 `docs/living/nodes/people/` 的 `crowd.js`、`pose.js` | 把长卷已有的人群接进 3D、按机位定近景关节人/远景柱的档 | 人的身份、路线、日程（由 `tools/cs/people/` 从底账推，模块只演） | 2、4 |
 
 共享规则：
@@ -146,7 +146,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 
 ## 7. landmarks：史诗/特殊公共建筑，一座一座按 Athenaion 的做法（2026-10-20 试点：纪功柱）
 
-主人 10-20：帧率 Mac 上够（60–90 fps），3D 样子可以接受；史诗级 / 特殊的公共建筑用这个方法逐座做。第一座 = 南港狄奥多西广场的纪功柱，证据在 `docs/cs/lookdev/landmarks/column/`（`notes.md` 写了底账事实、假设、4 轮数字）。
+主人 10-20：帧率 Mac 上够（60–90 fps），3D 样子可以接受；史诗级 / 特殊的公共建筑用这个方法逐座做。第一座 = 南港狄奥多西广场的纪功柱（机位 5），证据在 `docs/cs/lookdev/landmarks/column/`；第二座 = 大宁芙殿（机位 6），证据在 `docs/cs/lookdev/landmarks/nymphaeum/`（`notes.md` 都写了底账事实、假设、4 轮数字）。
 
 **钩子（唯一的一处）**：`3d/core.js` 的 `MODULES` 在 buildings 后面多一项 `landmarks`（`3d/landmarks/index.js`）。index.js 按地标 id 把 `ctx.by.landmark` 分给各自的文件；没有文件的地标照旧由 buildings 画占位。接手一座 = 新文件 + `LM` 列表加一项 + 删 buildings 里那一座的占位（同一次提交）。
 
@@ -161,6 +161,15 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 5. 建：剖面（`kit/lathe.js`）→ 线脚和旋转体；浮雕（`kit/relief.js`）→ 法线 + 反照率；装饰件（`kit/acanthus.js` 一类参数曲面）；雕像/不规则体 → SDF + marching cubes 离线烘焙（`tools/cs/landmarks/bake_*.py`，浏览器里现算 > 300 ms 就烘焙）；`THREE.LOD` 近/远两档；`?lmmask=1` 蒙版。
 6. 比（≤ 4 轮）：`render.py` 主机位 + 全 4 机位；`compare.py` 颜色；`silhouette.py` 形；每轮 `read_file` 看并排图，先修形（比例、机位），再修材质（反照率、浮雕对比）。
    远看浮雕浅时先上真几何（纪功柱：`column.js` 的 `helixBand` 螺旋凸棱、基座画框真凹 0.12 m），再加法线/AO；受光面亮在地标反照率里压，不动 sky / 全局光（10-20 修订）。
-7. 交付：`match.py --against <改前>` 证明机位 1–4 只有地标像素变；证据（并排、numbers.json、notes.md、overview.jpg）进 `docs/cs/lookdev/landmarks/<名字>/`；`docs/living/next/` 加链接；NOW.md 覆盖对应一段。
+7. 交付：`match.py --against <改前>` 证明别的机位只有地标像素变；证据（并排、numbers.json、notes.md、overview.jpg）进 `docs/cs/lookdev/landmarks/<名字>/`；`docs/living/next/` 加链接；NOW.md 覆盖对应一段。
 
-**可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief（`aoMin` 凹缝最暗、`low` 地压暗、`patina` 暖色风化；默认同旧）+ soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/lookdev/silhouette.py`。
+**第二座（宁芙殿）补的经验（10-20）**
+- 机位先找开阔处：地标多半被房子围着。先用 nodes.json 的房子多边形 + 高度做一遍视线遮挡粗算（几十个候选点，只要几秒），再渲 4–5 个候选看图。**近端 / 远端到相机的距离比要接近参考**（宁芙殿参考约 1.4，太近时 2.0 → 近塔冲出画面、高宽比大一截）；退不出去就接受，在 notes 里写。fov / 俯仰按 lmmask 包围盒反算两轮就收敛（俯仰的号别弄反：内容偏下 → 俯仰减小）。
+- 立面背光（sky 的太阳在方位 300°、高 14°，朝南的立面全在阴面）时，**在地标材质里加按世界法线的天光补光**（`nymphaeum.js` 的 `withFill`：onBeforeCompile 在 opaque_fragment 前加 `反照率 × 补光色 × (底量 + max(N·L_fill, 0))`，乘壁龛 AO，不吃阴影），柱子和线脚才有体积；唯一整片受光的面（塔的西面）单独压反照率。sky / 全局光不动。
+- 宽地标比形只看 `silhouette.py` 的 `iou_bbox_aligned` 和 `h_to_w`：它的四段分法是给柱子写的；`iou_height_aligned` 的画布 400 宽，宽地标会被裁（要用请 core 放宽）。占位的「改前蒙版」= 改前 / 改后 `only=buildings` 渲染之差。
+- **改前 / 改后都整套机位一次渲完**（`render.py` 默认 all）：water 的倒影随渲染顺序变，单机位分开渲，机位 4 港水会差几千像素，和地标无关。
+- 删 buildings 占位时，如果占位往 `ctx._cols` 推过柱子，**留同样数量的零高度空实例**（`[x,b,z,0,0]`），后面广场柱廊的序号（柱子色差 `hsh(i,77)`）才不变；否则机位 5 的广场柱子整排变色。
+- 弯的 / 折的立面：每个折面一个立面坐标矩阵 (s, y, d)，墙面用 `ShapeGeometry` 挖拱形龛口；檐部、台基、池栏用沿折线扫剖面（`nymphaeum.js` 的 `sweep`，斜接、实体在走向左边三角形就朝外）——下一座要用就搬进 `kit/`。几十个茛苕叶柱头会到 20 万三角形，立面柱子一律 `corinthian(lod:'far')`。
+- 水：water 模块的材质没导出、倒影只对 y=0 的海面，池水用地标自己的 MeshPhong + onBeforeCompile（细浪法线 + 菲涅尔天光），水帘 = 抛物线带 + alpha 竖条，`tick(t)` 滚贴图；`index.js` 已把 tick 转给地标。
+
+**可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief（`aoMin` 凹缝最暗、`low` 地压暗、`patina` 暖色风化；默认同旧）+ soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/landmarks/bake_nymph_statues.py`（同一套原语出 3 种站姿女像：顶罐、披袍、捧贝，近 / 远两档）、`tools/cs/lookdev/silhouette.py`。

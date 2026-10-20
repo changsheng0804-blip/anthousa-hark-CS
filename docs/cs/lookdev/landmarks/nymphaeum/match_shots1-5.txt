@@ -1,0 +1,21 @@
+shot1 global                         L*  55.78 ->  55.79 (d +0.01)   edge 0.1879 -> 0.1877 (-0.1%)  ok
+shot1 0.00-0.25 sky-atmosphere       L*  86.02 ->  86.02 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot1 0.25-0.60 buildings            L*  48.51 ->  48.52 (d +0.01)   edge 0.2671 -> 0.2666 (-0.2%)  ok
+shot1 0.60-1.00 water                L*  43.27 ->  43.27 (d +0.00)   edge 0.2357 -> 0.2357 (+0.0%)  ok
+shot2 global                         L*  52.03 ->  52.03 (d +0.00)   edge 0.1908 -> 0.1908 (+0.0%)  ok
+shot2 0.00-0.25 sky-atmosphere       L*  70.25 ->  70.25 (d +0.00)   edge 0.0157 -> 0.0157 (+0.0%)  ok
+shot2 0.25-0.70 buildings+crowd      L*  43.48 ->  43.48 (d +0.00)   edge 0.2074 -> 0.2074 (+0.0%)  ok
+shot2 0.70-1.00 streets+props        L*  49.64 ->  49.64 (d +0.00)   edge 0.3100 -> 0.3100 (+0.0%)  ok
+shot3 global                         L*  53.00 ->  53.00 (d +0.00)   edge 0.2167 -> 0.2167 (+0.0%)  ok
+shot3 0.00-0.14 sky-atmosphere       L*  76.13 ->  76.13 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot3 0.14-0.40 water+terrain        L*  59.70 ->  59.70 (d +0.00)   edge 0.0080 -> 0.0080 (+0.0%)  ok
+shot3 0.40-1.00 buildings+streets    L*  44.79 ->  44.79 (d +0.00)   edge 0.3567 -> 0.3567 (+0.0%)  ok
+shot4 global                         L*  48.54 ->  48.54 (d +0.00)   edge 0.1912 -> 0.1912 (+0.0%)  ok
+shot4 0.00-0.18 sky-atmosphere       L*  75.86 ->  75.86 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot4 0.18-0.60 buildings            L*  51.01 ->  51.01 (d +0.00)   edge 0.2018 -> 0.2018 (+0.0%)  ok
+shot4 0.60-1.00 props+crowd+water    L*  33.72 ->  33.72 (d +0.00)   edge 0.2636 -> 0.2636 (+0.0%)  ok
+shot5 global                         L*  62.65 ->  62.60 (d -0.05)   edge 0.1866 -> 0.1841 (-1.3%)  ok
+shot5 0.00-0.30 sky-atmosphere+column L*  72.83 ->  72.83 (d +0.00)   edge 0.0181 -> 0.0181 (+0.0%)  ok
+shot5 0.30-0.80 column+buildings     L*  55.67 ->  55.57 (d -0.10)   edge 0.2084 -> 0.2034 (-2.4%)  ok
+shot5 0.80-1.00 streets+column       L*  64.86 ->  64.86 (d +0.00)   edge 0.3820 -> 0.3820 (+0.0%)  ok
+MATCH (|dL*|<1.0, |d edge|<5%)

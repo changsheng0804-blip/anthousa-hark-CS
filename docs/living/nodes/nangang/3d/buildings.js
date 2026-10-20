@@ -34,8 +34,7 @@ const PARTS={
   for(let u=-r.hu+d+3;u<r.hu-d;u+=6)for(const s of [-1,1]){const x=r.cx+r.ax*u-r.az*s*(r.hv-d-2),z=r.cz+r.az*u+r.ax*s*(r.hv-d-2);ctx._cols.push([x,b,z,h,2.5])}
   /* 中间的纪功柱 2026-10-20 起归 landmarks 模块（3d/landmarks/column.js），这里不再画占位 */},
  granary(B,f,r,b,ctx){granary(ctx,B,f,r,b)},
- nymphaeum(B,f,r,b,ctx){const R_=Math.min(r.hu,r.hv*1.6)*.85,a0=Math.atan2(r.az,r.ax);for(let k=0;k<=14;k++){const t=Math.PI+k/14*Math.PI+a0,x=r.cx+Math.cos(t)*R_,z=r.cz+Math.sin(t)*R_*.6;ctx._cols.push([x,b,z,14,4.4])}
-  const w=new T.Mesh(new T.CircleGeometry(R_*.75,32,0,Math.PI),mats.water);w.rotation.x=-Math.PI/2;w.rotation.z=-a0;w.scale.y=.6;w.position.set(r.cx,b+.6,r.cz);LMG.add(w)},
+ nymphaeum(B,f,r,b,ctx){/* 大宁芙殿 2026-10-20 起归 landmarks（3d/landmarks/nymphaeum.js）：半圈 15 根柱子 + 半圆水池的占位删了；只留 15 个零高度的空实例，好让后面广场柱廊的序号（色差 hsh(i,77)）不变 */for(let k=0;k<15;k++)ctx._cols.push([r.cx,b,r.cz,0,0])},
  cistern(B,f,r,b){for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9)dome(r.cx+r.ax*u-r.az*v,b,r.cz+r.az*u+r.ax*v,3.8,mats.dome,.6);block(B,RQ(r,r.hu-12,r.hv-10,r.hu-2,r.hv-2),b,6,STONE,ROOF,'hip')},
  xenon(B,f,r,b){const d=9;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,9,STONE,ROOF,'hip');block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,9,STONE,ROOF,'hip')}
   block(B,RQ(r,-8,-6,8,6),b,10,MARBLE,MARBLE,'flat');dome(r.cx,b+10,r.cz,5.5,mats.dome)}};
