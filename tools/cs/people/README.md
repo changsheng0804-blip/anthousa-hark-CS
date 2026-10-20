@@ -61,3 +61,10 @@ Mac 本地实测：6000 人 100 fps，人群每帧约 2 ms。
 - 同一套推到古城：`NH=2800 python3 tools/cs/people/folk.py gucheng 60` → `python3 tools/cs/people/signs.py gucheng` → `python3 tools/cs/people/mknode.py gucheng 古城`（长卷页的源只有 nangang/scroll.html，别的节点由 mknode.py 复制，只换标题）。
 - 古城：约 6300 个上街的人、426 条街（420 条有名字）、833 块路牌、1459 块招牌。入口：gucheng/scroll.html?n=net&crowd=6000。
 - 补了古城才有的大地标部件：巴西利卡（church）、大皇宫（palace，围墙 + 回廊院 / 大殿 / 小楼按种子散开）、竞技场（hippodrome，看台、弯道、起跑门、分隔墙和方尖碑）、卫城 / 港口塔（fort）、城门（gate）。以前这些都当粮仓画。大件地标每一块按自己脚下的地面落座（PB），落在图外或水里的块不建。
+
+## 分块加载 + 全城（10-20）
+- 近景细房子、招牌按 256 像素的块现建：年份一变只建远景一层和每块的房子名单（CHF），镜头视野里的块按远近排队，每帧最多花 6 毫秒建，超过 CHMAX（默认 220，可用 &chmax= 改）块就扔掉最远的；落街前先把落点周围 260 像素建好（ensureAround）。路牌石柱并进固定层。
+- 人群不再依赖五人试作：没有 people.json 的节点只要有 &crowd 就加载，借一个空的五人档当一天的时钟。
+- 全城：`NH=10500 folk.py city 60`（约 100 秒，21877 个上街的人，8.6 MB）→ `signs.py city`（1015 条有名字的街，2017 块路牌，4957 块招牌）→ `mknode.py city 全城`。入口 city/scroll.html?n=net&crowd=22000。
+- Mac 实测全城（热缓存）：页面 1 秒内就绪，年份重建 0.96 秒降到 0.45 秒，JS 堆 1.46 GB 降到约 350 MB，远景 90 fps，落街 92–95 fps，人群每帧 2 毫秒。页面里有载入计时 window.__tm。
+- 还没分块的：crowd.json 仍是一整个文件（GitHub Pages 压缩后约 1.7 MB）。人数再多才值得按块切。
