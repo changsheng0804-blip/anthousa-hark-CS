@@ -1,0 +1,133 @@
+{
+ "module": "buildings",
+ "commit_base": "3ad741d",
+ "targets": {
+  "shot4_band_0.18-0.60_edge": 0.13,
+  "shot1_band_0.25-0.60_edge": 0.18,
+  "band_sat": 0.3
+ },
+ "geometry": {
+  "buildings_tris_year60": 338674,
+  "buildings_tris_year20": 161354,
+  "houses_live_year60": 4676,
+  "porticoes_year60": 1062,
+  "columns_year60": 2557,
+  "aqueduct_samples": 1203,
+  "meshes": "9 merged meshes (2 facade + 2 shopfront + roof + plain + granary wall + granary gable + aqueduct arcade) + 1 InstancedMesh (columns) + landmark group + pier mesh",
+  "build_ms_sandbox": "190-400",
+  "frontage_houses_from_streets_reg_year60": 1929
+ },
+ "match_skip_buildings": "vs main 0d68abe rendered without this change: 6 ok, 2 FAIL (shot2 sky band: house walls stand in it; shot2 street band L* +3.8 / edge +6%: shorter roof shadows from 23 deg roofs + recessed porticoes). Isolated vs baseline: additionally shot4 props band edge +46% (granary plinth/porch posts below 0.60), which disappears once props are in.",
+ "render": "sandbox SwiftShader 1376x768, full 4-shot render without only=; fps not measured (owner Mac M4)",
+ "isolated_on_3ad741d": {
+  "shot1_from_0.25": {
+   "edge_before": 0.0484,
+   "edge_after": 0.1542,
+   "sat_before": 0.225,
+   "sat_after": 0.3022
+  },
+  "shot2_from_0.25": {
+   "edge_before": 0.0171,
+   "edge_after": 0.1348,
+   "sat_before": 0.2368,
+   "sat_after": 0.3703
+  },
+  "shot3_from_0.4": {
+   "edge_before": 0.0814,
+   "edge_after": 0.2367,
+   "sat_before": 0.3432,
+   "sat_after": 0.4223
+  },
+  "shot4_from_0.18": {
+   "edge_before": 0.028,
+   "edge_after": 0.1364,
+   "sat_before": 0.1701,
+   "sat_after": 0.348
+  }
+ },
+ "met_isolated": {
+  "shot4_edge>=0.13": true,
+  "shot1_edge>=0.18": false,
+  "shot4_sat>=0.30": true,
+  "shot1_sat>=0.30": true,
+  "porticoes_visible": true,
+  "aqueduct_visible": true
+ },
+ "merged_on_0d68abe": {
+  "shot1_from_0.25": {
+   "edge_before": 0.0875,
+   "edge_after": 0.1632,
+   "sat_before": 0.2732,
+   "sat_after": 0.3438
+  },
+  "shot2_from_0.25": {
+   "edge_before": 0.054,
+   "edge_after": 0.1685,
+   "sat_before": 0.2193,
+   "sat_after": 0.3474
+  },
+  "shot3_from_0.4": {
+   "edge_before": 0.1109,
+   "edge_after": 0.2329,
+   "sat_before": 0.3574,
+   "sat_after": 0.4351
+  },
+  "shot4_from_0.18": {
+   "edge_before": 0.0698,
+   "edge_after": 0.1419,
+   "sat_before": 0.1928,
+   "sat_after": 0.3541
+  }
+ },
+ "met_merged": {
+  "shot4_edge>=0.13": true,
+  "shot1_edge>=0.18": false,
+  "shot4_sat>=0.30": true,
+  "shot1_sat>=0.30": true
+ },
+ "merged_on_f4cd590_sky": {
+  "note": "director merge 2026-10-20: full 4-shot render on f4cd590 (sky merged) without vs with buildings incl. granary gable relief (pilasters, string courses, cornice) + gap 5",
+  "shot1_from_0.25": {
+   "edge_before": 0.1533,
+   "edge_after": 0.197,
+   "sat_before": 0.5391,
+   "sat_after": 0.5854
+  },
+  "shot2_from_0.25": {
+   "edge_before": 0.0518,
+   "edge_after": 0.1409,
+   "sat_before": 0.3859,
+   "sat_after": 0.4338
+  },
+  "shot3_from_0.4": {
+   "edge_before": 0.4575,
+   "edge_after": 0.4529,
+   "sat_before": 0.5453,
+   "sat_after": 0.6388
+  },
+  "shot4_from_0.18": {
+   "edge_before": 0.1088,
+   "edge_after": 0.1124,
+   "sat_before": 0.3378,
+   "sat_after": 0.4599
+  },
+  "shot4_gable_relief_ab": {
+   "without_relief_gap2.6": {
+    "edge": 0.1104,
+    "sat": 0.4649
+   },
+   "with_relief_gap5": {
+    "edge": 0.1124,
+    "sat": 0.4599
+   },
+   "kept": "with relief: halls read as separate gabled sheds, pilasters/cornice catch light"
+  },
+  "met": {
+   "shot4_edge>=0.13": false,
+   "shot1_edge>=0.18": true,
+   "shot4_sat>=0.30": true,
+   "shot1_sat>=0.30": true
+  },
+  "why_shot4_edge_short": "with sky merged the sun is behind the granary row (NW): the gables facing the quay are in shadow and crush to near-black, so brick bands/arches lose contrast. Director fixes shadow fill / sun azimuth in sky.js and re-measures in r2/report.md."
+ }
+}
