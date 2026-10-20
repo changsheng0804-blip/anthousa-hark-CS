@@ -340,7 +340,7 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   ui.append(row1,row2);document.body.append(ui);
   if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
   /* 人群压力试作（2026-10-19）：?crowd=人数 。&full=近景关节人上限（默认 300）。fps 角落多一行：在街上的人 / 关节人 / 远景柱 / 每帧算人用的毫秒 */
-  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261019x');
+  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261019z');
     CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);if(QP.get('spr')!=='0'){const t0=performance.now();CRW.buildAtlas(rnd);window.__atlasMs=performance.now()-t0}
     window.__crowd={get stat(){return CRW.stat},n:+QP.get('crowd'),C:CRW}}
   window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};
@@ -354,13 +354,18 @@ function pickPerson(){TPEND=false;if(!PPL)return;const AC=(STROLL||DESC>0)?pcam:
   const head=o=>(o.y!=null?o.y:o.r.root.position.y)+1.5/MPP*EX;
   for(const o of PPL.people){if(!o.vis)continue;const [sx,sy,sz]=scr(o.x,head(o),o.z,AC);if(sz>1)continue;const d=(sx-TMX)**2+(sy-TMY)**2;if(d<bd){bd=d;best={o,src:PPL}}}
   if(CRW)for(const o of CRW.pickable()){const [sx,sy,sz]=scr(o.x,o.y+1.5/MPP*EX,o.z,AC);if(sz>1)continue;const d=(sx-TMX)**2+(sy-TMY)**2;if(d<bd){bd=d;best={o,src:CRW}}}
-  TIPO=best;if(!best)tipEl().style.display='none'}
+  TIPO=best;if(!best){tipEl().style.display='none';if(TSV)TSV.style.display='none'}}
 rnd.domElement.addEventListener('pointermove',e=>{TMX=e.clientX;TMY=e.clientY;if(!TPEND&&PPL){TPEND=true;requestAnimationFrame(pickPerson)}});
-rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none'});
-window.__tipS=()=>({o:!!TIPO,TMX,TMY,TPEND,h:TIPO?(()=>{const o=TIPO.o,AC=(STROLL||DESC>0)?pcam:cam;const b=(o.y!=null?o.y:o.r.root.position.y);return [o.y,scr(o.x,b+1.5/MPP*EX,o.z,AC)]})():0});window.__tip=(x,y)=>{TMX=x;TMY=y;pickPerson();const AC=(STROLL||DESC>0)?pcam:cam;const p=PPL.posOf(2);return {got:!!TIPO,who:TIPO&&TIPO.src.describe(TIPO.o),m:p&&scr(p.x,p.y+1.5/MPP*EX,p.z,AC),stroll:STROLL,cam:[pcam.position.x,pcam.position.y,pcam.position.z,pcam.near,pcam.far],mp:p,pick:CRW?CRW.pickable().length:-1}};
-function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';return}
-  const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
-  const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b>　'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block'}
+rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none';if(TSV)TSV.style.display='none'});
+window.__scrOf=o=>{const AC=(STROLL||DESC>0)?pcam:cam;return scr(o.x,o.y+1.5/MPP*EX,o.z,AC)};window.__tipS=()=>({o:!!TIPO,TMX,TMY,TPEND,h:TIPO?(()=>{const o=TIPO.o,AC=(STROLL||DESC>0)?pcam:cam;const b=(o.y!=null?o.y:o.r.root.position.y);return [o.y,scr(o.x,b+1.5/MPP*EX,o.z,AC)]})():0});window.__tip=(x,y)=>{TMX=x;TMY=y;pickPerson();const AC=(STROLL||DESC>0)?pcam:cam;const p=PPL.posOf(2);return {got:!!TIPO,who:TIPO&&TIPO.src.describe(TIPO.o),m:p&&scr(p.x,p.y+1.5/MPP*EX,p.z,AC),stroll:STROLL,cam:[pcam.position.x,pcam.position.y,pcam.position.z,pcam.near,pcam.far],mp:p,pick:CRW?CRW.pickable().length:-1}};
+function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';if(TSV)TSV.style.display='none';return}
+  const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';if(TSV)TSV.style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
+  const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b><br>'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block';
+  /* 关系线：指着一个人时，画面里跟他有关系的人各牵一根细墨线，线头写称呼。只在指着的时候画 */
+  const sv=tieSvg();let h='';if(d.ties)for(const [q,l] of d.ties){const [qx,qy,qz]=scr(q.x,q.y+1.5/MPP*EX,q.z,AC);if(qz>1||qx<0||qy<0||qx>innerWidth||qy>innerHeight)continue;
+    const cold=l.includes('不来往')||l==='债主'||l==='欠他家钱';h+=`<line x1="${px}" y1="${py}" x2="${qx}" y2="${qy}" stroke="${cold?'#8a2a2a':'#5a4a32'}" stroke-width="1.3" stroke-dasharray="${cold?'3 4':'none'}" opacity=".75"/><circle cx="${qx}" cy="${qy}" r="3" fill="${cold?'#8a2a2a':'#5a4a32'}"/><text x="${qx+6}" y="${qy-6}" font-size="12" fill="${cold?'#8a2a2a':'#3a2e22'}" stroke="#f6efdf" stroke-width="3" paint-order="stroke">${l}</text>`}
+  sv.innerHTML=h;sv.style.display=h?'block':'none'}
+let TSV=null;function tieSvg(){if(TSV)return TSV;TSV=document.createElementNS('http://www.w3.org/2000/svg','svg');TSV.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;display:none;z-index:5';document.body.append(TSV);return TSV}
 function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
   if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
 /* 跟拍镜头别钻进房子里：从人往镜头方向一小步一小步探，碰到房子占地就停在前一步 */

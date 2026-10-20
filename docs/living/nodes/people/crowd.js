@@ -5,7 +5,7 @@
    - 每个人的位置是时间的纯函数（路线 × 速度 × 出发时刻），不存状态：看不见的人一点不花钱。
    - 别人对你的反应：商人走过时，身边的人躬身让到一边。
    ——Hark（CS线） */
-import {hash, rng, pickTemper, gaitOf, blank, walk, stay, carry, OVER, env} from './pose.js';
+import {hash, rng, pickTemper, gaitOf, blank, walk, stay, carry, OVER, env} from './pose.js?v=20261019y';
 
 const PAL = {   // 衣色：染过的贵、素的便宜。都是按意图给的范围，人人从里面抽
   rich: ['#5a2f4a', '#3f3a6a', '#7a2a2a', '#2f4a3a'], trader: ['#4f6a3a', '#7a5a2a', '#5a6a7a', '#8a6a3a'],
@@ -26,32 +26,47 @@ export function initCrowd(E) {
 
   // ---------- 铺人：第 i 个人分到第 i % 路线数 条路；意图来自路线（底账推出），长相和步态由种子抽 ----------
   const P = [], lastOn = new Map();
-  for (let i = 0; i < N; i++) {
-    const ri = i % R.length, r = R[ri], seed = hash(r.h + ':' + i), U = rng(seed);
-    let role = r.intent;
-    if (role === 'commoner') { const x = U(); role = x < .16 ? 'child' : x < .3 ? 'old' : x < .65 ? 'woman' : 'commoner' }
+  // 户籍版（folk.py）：每个人是一栋真房子里的一口人，去哪、跟谁都写在底账推出来的数据里
+  const FOLK = data.people, LAB = data.labels || [], NN = FOLK ? Math.min(N, FOLK.length) : N, BYID = new Map();
+  if (FOLK) for (let i = 0; i < NN; i++) BYID.set(FOLK[i][0], i);
+  for (let i = 0; i < NN; i++) {
+    const F = FOLK && FOLK[i], ri = F ? F[1] : i % R.length, r = F ? {...R[ri], why: F[7] === 'follow' ? R[ri].why : F[7]} : R[ri], seed = hash(r.h + ':' + (F ? F[5] : i)), U = rng(seed);
+    let role = F ? F[2] : r.intent;
+    if (!F && role === 'commoner') { const x = U(); role = x < .16 ? 'child' : x < .3 ? 'old' : x < .65 ? 'woman' : 'commoner' }
     const out = {child: 'child_walk', old: 'old', woman: 'woman', rich: 'rich', trader: 'trader', laborer: 'porter', commoner: 'walker'}[role];
     const back = {woman: r.why === 'water' ? 'woman_full' : 'woman', laborer: 'porter_load', trader: 'trader_load', old: 'old', child: 'child_walk', rich: 'rich', commoner: 'walker'}[role];
-    const loadOut = r.why === 'water' ? 'jar_empty' : null;
-    const loadBack = r.why === 'water' ? 'jar_full' : role === 'laborer' ? 'sack' : role === 'trader' ? (U() < .6 ? 'crate' : 'basket') : r.why === 'errand' && U() < .4 ? 'basket' : null;
-    if (r.why === 'water' && role !== 'woman') role = 'woman';
-    const h = role === 'child' ? 1.0 + U() * .3 : role === 'woman' ? 1.5 + U() * .14 : role === 'old' ? 1.55 + U() * .14 : 1.6 + U() * .18;
+    const kid = role === 'child', loadOut = r.why === 'water' && !kid ? 'jar_empty' : null;
+    const loadBack = kid ? null : r.why === 'water' ? 'jar_full' : role === 'laborer' ? 'sack' : role === 'trader' ? (U() < .6 ? 'crate' : 'basket') : r.why === 'errand' && U() < .4 ? 'basket' : null;
+    if (!F && r.why === 'water' && role !== 'woman') role = 'woman';
+    const h = role === 'child' ? (F ? Math.min(1.45, .78 + F[4] * .065) : 1.0 + U() * .3) : role === 'woman' ? 1.5 + U() * .14 : role === 'old' ? 1.55 + U() * .14 : 1.6 + U() * .18;
     const b = role === 'laborer' ? 1.1 + U() * .15 : role === 'rich' ? 1.05 + U() * .15 : role === 'child' ? .78 + U() * .08 : .88 + U() * .16;
     const nb = lastOn.get(ri) || [];
     const u = pickTemper(seed, [out, back], {h}, nb.slice(-4)); nb.push(u); lastOn.set(ri, nb);   // 同一条路上的人尽量不像
     const go = gaitOf(out, u), gb = gaitOf(back, u);
     const pal = PAL[role] || PAL.commoner, col = pal[Math.floor(U() * pal.length)];
-    const long = role === 'rich' || role === 'woman' || (role === 'old' && U() < .4);
-    const pauseFar = r.why === 'water' ? 18 + U() * 20 : r.why === 'market' ? 40 + U() * 60 : r.why === 'forum' ? 80 + U() * 80 : r.why === 'haul' ? 6 + U() * 8 : 20 + U() * 30;
+    const fem = F ? F[3] === 'f' : role === 'woman', long = role === 'rich' || role === 'woman' || (role === 'old' && (F ? fem : U() < .4));
+    const pauseFar = r.why === 'water' ? 18 + U() * 20 : r.why === 'market' ? 40 + U() * 60 : r.why === 'forum' ? 80 + U() * 80 : r.why === 'haul' ? 6 + U() * 8 : r.why === 'visit' ? 60 + U() * 60 : r.why === 'debt' ? 25 + U() * 20 : 20 + U() * 30;
     const pauseHome = 30 + U() * 120;
     const L = r.L / M, tOut = L / go.speed, tBack = L / gb.speed, cyc = tOut + pauseFar + tBack + pauseHome;
     P.push({i, r, role, go, gb, h, b, k: h / 1.7, col: new THREE.Color(col), skin: new THREE.Color(SKIN[Math.floor(U() * SKIN.length)]),
-      leg: new THREE.Color(long ? col : role === 'laborer' || role === 'child' ? SKIN[0] : '#7a6a50'), sash: SASH[role] ? new THREE.Color(SASH[role]) : null, long, veil: role === 'woman', hat: role === 'rich' && U() < .5,
+      leg: new THREE.Color(long ? col : role === 'laborer' || role === 'child' ? SKIN[0] : '#7a6a50'), sash: SASH[role] ? new THREE.Color(SASH[role]) : null, long, veil: role === 'woman' || (F && role === 'old' && fem), hat: role === 'rich' && U() < .5,
       loadOut, loadBack, pauseFar, pauseHome, tOut, tBack, cyc, off: U() * cyc, dens: U(), ph0: U() * 6.28,
-      farPose: r.why === 'water' ? 'queue' : r.why === 'haul' ? 'rest' : r.why === 'market' ? 'sell' : r.why === 'forum' ? 'talk' : 'stand',
+      farPose: r.why === 'water' ? 'queue' : r.why === 'haul' ? 'rest' : r.why === 'market' ? 'sell' : r.why === 'forum' || r.why === 'visit' || r.why === 'debt' ? 'talk' : 'stand',
+      F, so: go.speed, sb: gb.speed, lag: 0, sideX: 0,
       act: new THREE.Color(ACTC[r.why] || ACTC.errand), x: 0, z: 0, dir: 0, vis: false});
   }
 
+  if (FOLK) {                                                                // 约伴、跟随：同一个时钟。先对齐约伴，再让跟着的人抄领头人的时钟
+    const tie = o => { o.ties = []; for (const [id, l] of o.F[11]) { const j = BYID.get(id); if (j != null) o.ties.push([P[j], LAB[l]]) } o.rel = new Map(o.ties.map(t => [t[0], t[1]])) };
+    for (const o of P) { tie(o); const j = BYID.get(o.F[10]); o.mate = j != null ? P[j] : null }
+    for (const o of P) { const m = o.mate; if (!m || m.i < o.i) continue;
+      const pf = Math.max(o.pauseFar, m.pauseFar); o.pauseFar = m.pauseFar = pf + 30; o.farPose = m.farPose = 'talk';
+      const cyc = Math.max(o.cyc, m.cyc) - Math.max(o.pauseFar, 0) + pf + 30; for (const q of [o, m]) q.cyc = q.tOut + q.pauseFar + q.tBack + Math.max(20, cyc - q.tOut - q.pauseFar - q.tBack);
+      m.cyc = o.cyc = Math.max(o.cyc, m.cyc); m.off = ((o.off + o.tOut - m.tOut) % o.cyc + o.cyc) % o.cyc; m.dens = o.dens }
+    for (const o of P) { const j = BYID.get(o.F[9]); if (j == null) continue; const L = P[j]; o.lead = L;
+      for (const k of ['off', 'cyc', 'tOut', 'tBack', 'pauseFar', 'dens', 'so', 'sb']) o[k] = L[k];
+      o.lag = (.7 + (o.i % 3) * .45) * M; o.sideX = (o.i & 1 ? .5 : -.5); o.farPose = o.role === 'child' ? 'stand' : L.farPose }
+  }
   // ---------- 部件：每样一张 InstancedMesh。几何按 k=1、b=1 建，个子和胖瘦放在根矩阵的缩放里 ----------
   const MAT = new THREE.MeshLambertMaterial({color: '#ffffff'});
   // 人小到几个像素时，后期的描墨会把整个人涂黑：这时让人在颜色缓冲里写 alpha 0，后期见了就不按颜色分界描（法线那一遍也不画人）
@@ -231,22 +246,24 @@ export function initCrowd(E) {
   const frus = new THREE.Frustum(), PV = new THREE.Matrix4(), SPH = new THREE.Sphere(new THREE.Vector3(), 2);
   const stat = {active: 0, full: 0, far: 0, ms: 0, gest: 0, bow: 0};
 
-  let frame = 0;
+  let frame = 0, NEARP = [];
   function tick(t, view) {
     const t0 = performance.now(); frame++;
     for (const k in cnt) cnt[k] = 0;
     const cam = view.cam; PV.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); frus.setFromProjectionMatrix(PV);
     const cx = cam.position.x, cz = cam.position.z, fullR2 = (view.fullM / MPP) ** 2, D = dens((t % T) / T);
     const mer = getMerchant && getMerchant();
-    let act = 0, nf = 0, ng = 0, nbow = 0; const gestR2 = (25 / MPP) ** 2, boost = view.farBoost || 1;
+    let act = 0, nf = 0, ng = 0, nbow = 0, ngr = 0; const NEARN = []; const gestR2 = (25 / MPP) ** 2, boost = view.farBoost || 1;
     for (const o of P) {
       if (o.dens > D) continue;
       const r = o.r; let c = (t + o.off) % o.cyc, x, z, d, a, load = null, g = null, s = 0;
-      if (c < o.tOut) { s = c * o.go.speed * M; [x, z, d] = pathAt(r, s); g = o.go; load = o.loadOut }
+      if (c < o.tOut) { s = Math.max(0, c * o.so * M - o.lag); [x, z, d] = pathAt(r, s); g = o.go; load = o.loadOut }
       else if ((c -= o.tOut) < o.pauseFar) { [x, z, d] = pathAt(r, r.L); a = o.farPose; load = o.loadOut; d += Math.PI }
-      else if ((c -= o.pauseFar) < o.tBack) { s = c * o.gb.speed * M; [x, z, d] = pathAt(r, r.L - s); d += Math.PI; g = o.gb; load = o.loadBack }
+      else if ((c -= o.pauseFar) < o.tBack) { s = Math.max(0, c * o.sb * M - o.lag); [x, z, d] = pathAt(r, r.L - s); d += Math.PI; g = o.gb; load = o.loadBack }
       else continue;                                                        // 在家里
-      if (g) { const side = (g.center ? 0 : (o.i & 1 ? .8 : -.8)) * M; x += Math.cos(d) * side; z -= Math.sin(d) * side }   // 靠右/靠左走，有身份的走街心
+      const ld = o.lead;
+      if (g) { const side = (ld ? (ld.go.center ? 0 : (ld.i & 1 ? .8 : -.8)) + o.sideX : g.center ? 0 : (o.i & 1 ? .8 : -.8)) * M; x += Math.cos(d) * side; z -= Math.sin(d) * side }
+      else if (o.mate || ld) { const k = ld ? o.sideX * 1.4 : (o.mate.i < o.i ? .5 : -.5); x += Math.cos(d) * k * M; z -= Math.sin(d) * k * M; if (o.mate) d += k > 0 ? -Math.PI / 2 : Math.PI / 2 }   // 约好的两人在喷泉边面对面说话   // 靠右/靠左走，有身份的走街心
       let bow = 0;
       if (mer && mer.vis && g && !g.center) { const dx = x - mer.x, dz = z - mer.z, px = Math.hypot(dx, dz) || 1e-3, dm = px * MPP;
         if (dm < 3.2) { bow = Math.min(1, (3.2 - dm) / 1.2); x += dx / px * bow * .9 * M; z += dz / px * bow * .9 * M } }   // 商人走过：让到一边、躬身
@@ -256,12 +273,17 @@ export function initCrowd(E) {
       o.seen = frame;
       const dx = x - cx, dz = z - cz;
       if (view.full && dx * dx + dz * dz < fullR2 && nf < view.maxFull) {
-        nf++; const Pp = blank();
+        nf++; NEARN.push(o); const Pp = blank();
         if (g) walk(Pp, g, o.ph0 + (s / M) / g.stride * Math.PI); else stay(Pp, a, t + o.i * 1.7, o.k);
         carry(Pp, load);
         if (dx * dx + dz * dz < gestR2) {                                    // 叠加手势只给镜头 25 米内的人：远一点本来也看不清
           ng++; if (bow) { OVER.bow(Pp, bow); nbow++ }
           if (g === o.go && o.role === 'laborer') OVER.wipe(Pp, env(c, .2, 2.5));               // 出门前抹一把汗
+          if (o.rel && !bow) for (const q of NEARP) { const l = o.rel.get(q); if (!l || q === o.lead || q.lead === o || q.lead === o.lead && o.lead || q === o.mate) continue;   // 路上碰见有关系的人
+            const ex = q.x - x, ez = q.z - z, dm = Math.hypot(ex, ez) * MPP; if (dm > 6) continue;
+            const e = Math.min(1, (6 - dm) / 2), ang = Math.atan2(ex, ez) - d, yaw = Math.atan2(Math.sin(ang), Math.cos(ang));
+            if (l.includes('不来往') || l === '债主') OVER.avert(Pp, e, yaw); else OVER.greet(Pp, e, yaw);
+            o.met = [q, l, frame]; ngr++; break }
         }
         drawFull(o, Pp, load);
       } else if (SPR && view.sprite) {                                      // 中景/远景：帧图小人 + 缩远时的色带
@@ -272,6 +294,7 @@ export function initCrowd(E) {
           Vs.set(walking ? 2.4 * sc : 4.5 * sc, 1, walking ? 8 * sc : 4.5 * sc); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1); put('trail', Mroot, o.act) }
       } else drawFar(o, load, boost);
     }
+    NEARP = NEARN; stat.greet = ngr;
     if (SPR) { SPR.fa.needsUpdate = true; SPR.mesh.material.uniforms.ink.value = view.spriteInk ? 1 : 0 }   // 小人默认不描墨：太小，描了就只剩一团黑
     for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true }
     stat.active = act; stat.full = nf; stat.far = cnt.far + (cnt.spr || 0); stat.spr = cnt.spr || 0; stat.ms = performance.now() - t0; stat.gest = ng; stat.bow = nbow; stat.trail = cnt.trail; stat.k = boost;
@@ -287,12 +310,21 @@ export function initCrowd(E) {
     errand: {out: '出门办事', far: '在市场转转', back: '办完事回家'},
   };
   const FROM = {homes: '住在民居', shops: '开铺子的人家', market: '市场边的人家', dock: '码头上的人家', horrea: '粮仓边的人家'};
+  const NOW = {
+    water: ['拿着空罐去喷泉打水', '在喷泉边排队等水', '顶着满罐回家'], visit: ['回娘家看看，去%家', '在娘家门口说话', '从娘家回来'],
+    haul: ['去%家的码头扛活', '在%家码头上卸货', '扛着麻袋往回走'], debt: ['去%家，想求他宽限几天', '在%家门口赔着笑说话', '从债主家出来'],
+  };
   function describe(o) {
-    const d = DOING[o.r.why] || DOING.errand;
-    let s = (o.role === 'child' ? '跟着家里人' : '') + d[o.seg];
-    if (o.role === 'child' && o.seg !== 'out') s = d[o.seg];
+    if (!o.F) { const d = DOING[o.r.why] || DOING.errand; let s = (o.role === 'child' ? '跟着家里人' : '') + d[o.seg];
+      if (o.role === 'child' && o.seg !== 'out') s = d[o.seg]; if (o.bowing) s = '给商人让路'; return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''} }
+    const F = o.F, si = {out: 0, far: 1, back: 2}[o.seg] || 0, L = o.lead || o, why = L.F[7], tg = L.F[8];
+    let s = NOW[why] ? NOW[why][si].replace('%', tg) : (DOING[why] || DOING.errand)[o.seg];
+    if (o.lead) s = '跟着' + (o.rel.get(o.lead) || '家里人') + (o.seg === 'far' ? '，在一边等着' : s.replace(/^(拿着空罐|顶着满罐|扛着麻袋)/, ''));
+    else if (o.mate && why === 'water') s = o.seg === 'far' ? '在喷泉边跟' + (o.rel.get(o.mate) || '邻居') + o.mate.F[5].split('，')[0] + '说话' : o.seg === 'out' ? '约了' + (o.rel.get(o.mate) || '邻居') + o.mate.F[5].split('，')[0] + '一道去打水' : s;
+    if (o.met && frame - o.met[2] < 90) s = (o.met[1].includes('不来往') ? '碰见' + o.met[1].replace('不来往的', '') + o.met[0].F[5].split('，')[0] + '，把头扭开了' : o.met[1] === '债主' ? '碰见债主，低着头快步走过' : '碰见' + o.met[1].replace('娘家·', '娘家') + o.met[0].F[5].split('，')[0] + '，打了个招呼');
     if (o.bowing) s = '给商人让路';
-    return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''};
+    const ties = o.ties.filter(t => t[0].seen === frame).slice(0, 6);
+    return {who: F[5], what: s, from: F[6], ties};
   }
   const pickable = () => P.filter(o => o.seen === frame);
   return {MPP, setInk: on => { NOINK.value = on ? 0 : 1 }, get inkOn() { return NOINK.value < .5 }, tick, stat, people: P, pickable, describe, parts, buildAtlas, atlasInfo: () => SPR && {V: SPR.V, W: SPR.W, H: SPR.H}, atlas: () => SPR};

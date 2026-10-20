@@ -105,6 +105,8 @@ export const OVER = {
   wipe:     (P, e) => { P.arms[1] = mix(P.arms[1], [2.6, 2.4, .25], e); P.neck -= .25 * e; P.stoop -= .1 * e },   // 卸完货抬手擦汗
   bow:      (P, e) => { P.stoop += .5 * e; P.neck += .4 * e; P.arms[0] = mix(P.arms[0], [.15, .3, -.05], e); P.arms[1] = mix(P.arms[1], [.6, 1.4, -.2], e) },  // 躬身让路
   reach:    (P, e) => { P.arms[1] = mix(P.arms[1], [1.3, .2, -.2], e); P.headYaw += .4 * e },             // 孩子伸手去够大人
+  greet:    (P, e, yaw = 0) => { P.headYaw += Math.max(-1.3, Math.min(1.3, yaw)) * e; P.arms[1] = mix(P.arms[1], [2.3, .5, .3], e * .9); P.neck += .12 * e },   // 碰见熟人：扭头、抬手打招呼
+  avert:    (P, e, yaw = 0) => { P.headYaw -= Math.sign(yaw || 1) * .9 * e; P.neck += .25 * e; P.stoop += .12 * e; P.twist -= Math.sign(yaw || 1) * .15 * e },   // 碰见不来往的人：把头扭开、低头
   shift:    (P, e) => { P.side += .12 * e; P.hip -= .08 * e; P.arms[0] = mix(P.arms[0], [.4, 1.6, .5], e) },  // 顶罐的人一手叉腰歇口气
 };
 const mix = (a, b, e) => a.map((v, i) => v + (b[i] - v) * e);

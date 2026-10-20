@@ -1,0 +1,12 @@
+{
+ "q": "gucheng",
+ "seed": 1,
+ "seeds": {},
+ "num": {
+  "contour_m": 5,
+  "pier_gap": 46,
+  "pier_every": 4,
+  "tree_cell": 26,
+  "ancient_r": 22
+ }
+}
