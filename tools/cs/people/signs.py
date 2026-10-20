@@ -99,11 +99,18 @@ PLAIN = ['无花果', '老橄榄', '灯笼', '鸽子', '葡萄架', '白墙', '�
          '茴香', '橡树', '槐树', '醋', '蜡烛', '藤筐', '车辙', '回声', '晚钟', '小桥', '水沟', '石凳', '骆驼', '渔火', '帆布', '铃铛']
 GRAND = ['柱廊', '凯旋', '奥古斯塔', '狄奥多西', '海门', '铜门', '君士坦丁', '瓦伦斯', '胜利', '和平', '皇后', '新墙', '格拉提安', '金门']
 SUF = {'m': '大道', 'c': '大街', 's': '街', 'l': '巷'}
-lms = [(f, LMN.get(f['k'], '')) for f in by['landmark']]
+# 地标的专名：路按「通到哪儿」起名，街按「挨着哪儿」起名，专名比「教堂」「粮仓」这种通名不容易撞（10-20 街名清理）
+LMS = {'horrea_theodosius': '狄奥多西粮仓', 'nymphaeum_maius': '大泉宫', 'horrea_alexandrina': '亚历山大粮仓', 'forum_theodosius': '狄奥多西广场',
+       'cistern_slope': '坡下水窖', 'xenon_xerolophos': '干山孤寡院', 'church_apostles': '圣使徒', 'market_embers': '余烬市场', 'gate_old_thracian': '色雷斯旧门',
+       'fort_acropolis': '卫城', 'agora_tetrastoon': '四柱廊', 'forum_founder': '斑岩柱', 'milion': '里程碑', 'palace_great': '皇宫', 'hippodrome': '竞技场',
+       'church_peace': '圣伊琳娜', 'granary_founder': '老粮仓', 'cistern_founder': '奠基者水池', 'nymphaeum_great': '泉宫', 'warehouse_horn': '金角货栈',
+       'tower_horn': '金角塔', 'church_megale': '大教堂', 'horrea_troadensia': '特罗阿德粮仓', 'church_anastasia': '阿纳斯塔西娅', 'baths_constantius': '浴场',
+       'cistern_modestus': '莫德斯图斯水窖', 'cistern_carriers': '挑水人水窖', 'aqb_valley': '水渠', 'barracks_gate': '兵营门'}
+lms = [(f, LMS.get(f.get('id'), LMN.get(f['k'], ''))) for f in by['landmark']]
 def lm_c(f): g = f['g']; return (sum(p[0] for p in g) / len(g), sum(p[1] for p in g) / len(g))
 fountains = [(f['x'], f['y']) for f in by['fountain']]
 piers = [((f['g'][0][0] + f['g'][1][0]) / 2, (f['g'][0][1] + f['g'][1][1]) / 2) for f in by.get('pier', [])]
-used = {}; BASE = set()
+used = {}; BASE = {}
 def mid(c):
     s = c['L'] / 2
     for a, b in zip(c['pts'], c['pts'][1:]):
@@ -130,12 +137,21 @@ def cands(ci, c):
         if m / n >= .45 and m >= 3: out.append(o + '人' + suf)
     for f, nm in lms:
         if nm and mind(c, [lm_c(f)]) < 90: out.append(nm + suf)
+    if k in ('m', 'c', 's'):   # 通到哪儿：哪一头 260 像素内有地标，就叫「去那儿的路」
+        for f, nm in sorted(lms, key=lambda q: min(math.dist(lm_c(q[0]), c['pts'][0]), math.dist(lm_c(q[0]), c['pts'][-1]))):
+            if nm and min(math.dist(lm_c(f), c['pts'][0]), math.dist(lm_c(f), c['pts'][-1])) < 260: out.append(nm + suf)
     if k in ('m', 'c') and piers and mind(c, piers) < 60: out.append('码头' + suf)
     if k in ('s', 'l') and mind(c, fountains) < 8: out.append('泉' + suf)
     if k == 'l':
         hs = sorted((FH[h['id']][3] for h in c['h'] if h['id'] in FH and FH[h['id']][2] and FH[h['id']][3] <= 30), key=lambda x: x)
         old = sorted(((FH[h['id']][3], FH[h['id']][2]) for h in c['h'] if h['id'] in FH and FH[h['id']][2]))
         for _, nm_ in old[:3]: out.append(nm_ + '家' + suf)   # 巷子按住得最久那户叫
+    if tr and n >= 3:   # 放宽一档：街上最多的行当有三户以上，也拿来起名（排在专名后、俗名前）
+        for t, m in tr.most_common(2):
+            if m >= 3 and t in TST: out.append(TST[t] + suf)
+    if og and n >= 4:
+        o, m = og.most_common(1)[0]
+        if m >= 3: out.append(o + '人' + suf)
     if slope(c) > .08: out.append('石阶' + suf if k == 'l' else '上坡' + suf)
     if k == 'm':
         for j in range(len(GRAND)): out.append(GRAND[(int(H('gm', ci) * len(GRAND)) + j) % len(GRAND)] + suf)
@@ -144,7 +160,7 @@ def cands(ci, c):
         for j in range(3): out.append(SAINT[(int(H('st', ci) * len(SAINT)) + j * 7) % len(SAINT)] + suf)
     if k == 'c':
         for j in range(3): out.append(GRAND[(int(H('gc', ci) * len(GRAND)) + j * 5) % len(GRAND)] + suf)
-    for j in range(12): out.append(PLAIN[(int(H('pl', ci) * len(PLAIN)) + j * 11) % len(PLAIN)] + suf)
+    for j in range(len(PLAIN)): out.append(PLAIN[(int(H('pl', ci) * len(PLAIN)) + j * 11) % len(PLAIN)] + suf)   # 整个俗名池都试一遍，免得落到「新X街」
     return out
 DIR = lambda p, q: ('东' if q[0] > p[0] else '西') if abs(q[0] - p[0]) > abs(q[1] - p[1]) else ('南' if q[1] > p[1] else '北')
 order = sorted(range(len(chains)), key=lambda i: ({'m': 0, 'c': 1, 's': 2, 'l': 3}[chains[i]['k']], -chains[i]['L']))
@@ -152,14 +168,17 @@ for ci in order:
     c = chains[ci]
     if c['L'] < 30: c['n'] = None; continue
     nm = None
+    # 小街小巷的俗名隔得够远（不同街区）可以重名，真城里也一样；大道、大街全城不重
+    far = lambda L: c['k'] in ('s', 'l') and all(math.dist(mid(chains[j]), mid(c)) > 1500 for j in L)
     for x in cands(ci, c):
-        if x not in used and x[:-len(SUF[c['k']])] not in BASE: nm = x; break
+        b = x[:-len(SUF[c['k']])]
+        if (x not in used or far(used[x])) and (b not in BASE or far(BASE[b])): nm = x; break
     if nm is None:
-        x = cands(ci, c)[-1]; d = DIR(mid(chains[used[x]]), mid(c)) if x in used else ''
-        for y in (d + x, '后' + x, '二' + x, '新' + x):
+        x = cands(ci, c)[-1]; d = DIR(mid(chains[used[x][0]]), mid(c)) if x in used else ''
+        for y in ('后' + x, '新' + x, d + x, '二' + x):
             if y not in used: nm = y; break
     c['n'] = nm
-    if nm: used[nm] = ci; BASE.add(nm[:-len(SUF[c['k']])] if nm.endswith(SUF[c['k']]) else nm)
+    if nm: used.setdefault(nm, []).append(ci); BASE.setdefault(nm[:-len(SUF[c['k']])] if nm.endswith(SUF[c['k']]) else nm, []).append(ci)
 
 # ---------- 4. 路牌 ----------
 quads = []
