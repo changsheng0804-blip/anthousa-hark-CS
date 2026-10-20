@@ -88,7 +88,7 @@ def household(h):
                 elif sx == 'f' and life > 17:
                     wy = k['b'] + 15 + int(r.random() * 5)
                     if wy < k['d'] and wy <= Y:
-                        k['left'] = wy; k['wedout'] = wy; k['aim'] = (h['_c'][0] + (r.random() - .5) * 700, h['_c'][1] + (r.random() - .5) * 700)
+                        k['left'] = wy; k['wedout'] = wy; k['aim'] = (h['_c'][0] + (r.random() - .5) * 200, h['_c'][1] + (r.random() - .5) * 200)
         line(head, wife, 0)
         for p in fam['people']:
             if p['d'] <= END and p['d'] >= B and p['d'] - p['b'] >= 5 and not (p.get('left') and p['left'] <= p['d']): E(p['d'], 'died', (p,))
@@ -122,7 +122,7 @@ merged = 0
 for i, hh in enumerate(HH):
     for k in hh['people']:
         if not k.get('wedout') or k['d'] <= Y: continue
-        for d, j in near_houses(*k['aim'], 420):
+        for d, j in near_houses(*k['aim'], 170):
             if j == i: continue
             br = next((b for b in HH[j]['people'] if b.get('bride') and b.get('married') and abs(b['married'] - k['wedout']) <= 4 and not b.get('natal') and alive(b)), None)
             if br:
@@ -141,13 +141,13 @@ for i, hh in enumerate(HH):
         T.append((j, 'cold' if cold else 'nb'))
     o = hh['cur']['origin']
     if o != '本城生':
-        same = [(d, j) for d, j in near_houses(*h['_c'], 320) if j != i and HH[j]['cur']['origin'] == o and all(t[0] != j for t in T)][:2]
+        same = [(d, j) for d, j in near_houses(*h['_c'], 160) if j != i and HH[j]['cur']['origin'] == o and all(t[0] != j for t in T)][:2]
         T += [(j, 'home') for d, j in same]
     if hh['lt'] == 'harbor' and h.get('fn') == 'homes':
-        emp = next(((d, j) for d, j in near_houses(*h['_c'], 600) if POOL[j].get('fn') in ('dock', 'horrea')), None)
+        emp = next(((d, j) for d, j in near_houses(*h['_c'], 320) if POOL[j].get('fn') in ('dock', 'horrea')), None)
         if emp: hh['emp'] = emp[1]; T.append((emp[1], 'boss')); HH[emp[1]].setdefault('ties', []).append((i, 'hand'))
     if hh['debt']:
-        cr = next(((d, j) for d, j in near_houses(*h['_c'], 450) if j != i and HH[j]['cur']['trade'] in ('粮商', '银钱商', '卖油的', '卖布的')), None)
+        cr = next(((d, j) for d, j in near_houses(*h['_c'], 260) if j != i and HH[j]['cur']['trade'] in ('粮商', '银钱商', '卖油的', '卖布的')), None)
         if cr: hh['cred'] = cr[1]; T.append((cr[1], 'cred')); HH[cr[1]].setdefault('ties', []).append((i, 'debtor'))
 
 # ---------- 每个人：在家里的位置 → 今天出不出门、去哪、跟谁 ----------
@@ -262,6 +262,20 @@ def fact(o):
 ROLE = lambda o: (lambda p, pl, age: 'child' if age < 12 else 'old' if age >= 60 else 'woman' if p['s'] == 'f' else
                   {'haul': 'laborer', 'market': 'trader', 'forum': 'rich', 'debt': 'commoner', 'errand': 'commoner'}.get(pl[0], 'commoner'))(o['p'], o['pl'], Y - o['p']['b'])
 TIE = {'nb': '邻居', 'cold': '不来往的邻居', 'home': '同乡', 'boss': '东家', 'hand': '伙计', 'cred': '债主', 'debtor': '欠他家钱', 'natal': '娘家人', 'inlaw': '亲家'}
+DIR8 = ['东', '东南', '南', '西南', '西', '西北', '北', '东北']
+def where(i, j):
+    a, b = POOL[i]['_c'], POOL[j]['_c']; d = math.dist(a, b) * MPP
+    if d < 18: return '隔壁'
+    k = int(((math.degrees(math.atan2(b[1] - a[1], b[0] - a[0])) + 360 + 22.5) % 360) // 45)
+    return '往%s %d 米' % (DIR8[k], round(d / 10) * 10 or 10)
+TYH = {'nb': '邻居', 'cold': '邻居·不来往', 'home': '同乡', 'boss': '东家', 'hand': '伙计家', 'cred': '债主', 'debtor': '欠他家钱', 'natal': '儿媳的娘家', 'inlaw': '女儿嫁过去'}
+HOUT = []
+for i, hh in enumerate(HH):
+    f = hh['cur']; seen = set(); T = []
+    for j, t in hh.get('ties', []):
+        if (j, t) in seen: continue
+        seen.add((j, t)); T.append([j, list(TYH).index(t)])
+    HOUT.append([hh.get('headN', ''), f['trade'], f['origin'], f['faith'], f['arrive'], round(POOL[i]['_c'][0]), round(POOL[i]['_c'][1]), T])
 LAB = {}
 people = []
 for k, o in enumerate(OUT):
@@ -286,7 +300,7 @@ for k, o in enumerate(OUT):
     who = ('%s，%s' % (p['n'], hh['cur']['trade']) if p['s'] == 'm' else '%s，%s家的当家' % (p['n'], hh['cur']['trade'])) if p is hd else '%s，%s家的%s' % (p['n'], hd['n'] if hd else '', rel(hd, p) if hd else '人')
     tgt = HH[pl[2]].get('headN', '') if pl[0] in ('visit', 'haul', 'debt') and pl[2] is not None else ''
     people.append([k, ri, ROLE(o), p['s'], Y - p['b'], who, fact(o), pl[0], tgt, lead if lead is not None else -1, meet.get(k, -1), [[a, LAB.setdefault(b, len(LAB))] for a, b in ties], HID[POOL[i]['id']]])
-out = {'q': Q, 'year': Y, 'mpp': MPP, 'routes': RT, 'people': people, 'labels': list(LAB),
+out = {'q': Q, 'year': Y, 'mpp': MPP, 'routes': RT, 'people': people, 'labels': list(LAB), 'houses': HOUT, 'htie': list(TYH.values()),
        'fields': 'id 路线 身份 性别 年龄 一句谁 一件事 去干什么 去谁家 跟着谁 约了谁 关系[[人,称呼]] 户',
        'note': '户籍 + 社会关系：每个人是一栋真房子里活着的一口人；去哪、跟谁，由他在家里的位置和这户跟别户的关系推出来。——Hark（CS线）'}
 dst = os.path.join(ROOT, 'docs/living/nodes', Q, 'crowd.json')

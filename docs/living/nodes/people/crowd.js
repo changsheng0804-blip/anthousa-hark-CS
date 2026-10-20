@@ -314,6 +314,17 @@ export function initCrowd(E) {
     water: ['拿着空罐去喷泉打水', '在喷泉边排队等水', '顶着满罐回家'], visit: ['回娘家看看，去%家', '在娘家门口说话', '从娘家回来'],
     haul: ['去%家的码头扛活', '在%家码头上卸货', '扛着麻袋往回走'], debt: ['去%家，想求他宽限几天', '在%家门口赔着笑说话', '从债主家出来'],
   };
+  // 关系挂在房子上：人 → 他家这栋房子 → 这栋房子跟别的房子。只在指着人的时候拼，给页面的小面板用
+  const HS = data.houses || [], HT = data.htie || [], D8 = ['东', '东南', '南', '西南', '西', '西北', '北', '东北'];
+  function houseOf(o) {
+    const H = HS[o.F[12]]; if (!H) return null;
+    const fam = o.ties.filter(t => /^(父亲|母亲|儿子|女儿|丈夫|妻子|哥哥|弟弟|姐姐|妹妹|公公|婆婆|儿媳|女婿|爷爷|奶奶|孙子|孙女)$/.test(t[1]))
+      .map(t => [t[1], t[0].F[5].split('，')[0], t[0].seen === frame ? '在街上' : t[0].seg ? '出门了' : '在家']);
+    const ties = H[7].map(([j, k]) => { const G = HS[j], dx = G[5] - H[5], dz = G[6] - H[6], d = Math.hypot(dx, dz) * MPP;
+      const w = d < 18 ? '隔壁' : '往' + D8[Math.floor(((Math.atan2(dz, dx) * 180 / Math.PI + 382.5) % 360) / 45)] + ' ' + Math.max(10, Math.round(d / 10) * 10) + ' 米';
+      return [w, G[0] + '家', G[1], HT[k]] });
+    return {head: H[0], trade: H[1], origin: H[2], faith: H[3], arrive: H[4], fam, ties};
+  }
   function describe(o) {
     if (!o.F) { const d = DOING[o.r.why] || DOING.errand; let s = (o.role === 'child' ? '跟着家里人' : '') + d[o.seg];
       if (o.role === 'child' && o.seg !== 'out') s = d[o.seg]; if (o.bowing) s = '给商人让路'; return {who: ROLE[o.role] || '街坊', what: s, from: FROM[o.r.fn] || ''} }
@@ -323,8 +334,7 @@ export function initCrowd(E) {
     else if (o.mate && why === 'water') s = o.seg === 'far' ? '在喷泉边跟' + (o.rel.get(o.mate) || '邻居') + o.mate.F[5].split('，')[0] + '说话' : o.seg === 'out' ? '约了' + (o.rel.get(o.mate) || '邻居') + o.mate.F[5].split('，')[0] + '一道去打水' : s;
     if (o.met && frame - o.met[2] < 90) s = (o.met[1].includes('不来往') ? '碰见' + o.met[1].replace('不来往的', '') + o.met[0].F[5].split('，')[0] + '，把头扭开了' : o.met[1] === '债主' ? '碰见债主，低着头快步走过' : '碰见' + o.met[1].replace('娘家·', '娘家') + o.met[0].F[5].split('，')[0] + '，打了个招呼');
     if (o.bowing) s = '给商人让路';
-    const ties = o.ties.filter(t => t[0].seen === frame).slice(0, 6);
-    return {who: F[5], what: s, from: F[6], ties};
+    return {who: F[5], what: s, from: F[6], house: houseOf(o)};
   }
   const pickable = () => P.filter(o => o.seen === frame);
   return {MPP, setInk: on => { NOINK.value = on ? 0 : 1 }, get inkOn() { return NOINK.value < .5 }, tick, stat, people: P, pickable, describe, parts, buildAtlas, atlasInfo: () => SPR && {V: SPR.V, W: SPR.W, H: SPR.H}, atlas: () => SPR};

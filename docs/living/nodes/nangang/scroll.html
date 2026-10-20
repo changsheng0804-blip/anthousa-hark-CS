@@ -59,7 +59,7 @@ const DPR=Math.min(1.5,devicePixelRatio);const rnd=new THREE.WebGLRenderer({anti
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xefe6d2);
 const VH=520;let asp=innerWidth/innerHeight;const cam=new THREE.OrthographicCamera(-VH*asp/2,VH*asp/2,VH/2,-VH/2,1,5000);
 const TILT=36*Math.PI/180,DIR=new THREE.Vector3(0,Math.sin(TILT),Math.cos(TILT));/* 从海上（南）斜俯看岸 */
-const ctl=new MapControls(cam,rnd.domElement);ctl.enableRotate=false;ctl.screenSpacePanning=true;ctl.minZoom=.35;ctl.maxZoom=6;ctl.enableDamping=true;ctl.dampingFactor=.12;
+const ctl=new MapControls(cam,rnd.domElement);ctl.enableRotate=false;ctl.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};rnd.domElement.addEventListener('contextmenu',e=>e.preventDefault());ctl.screenSpacePanning=true;ctl.minZoom=.35;ctl.maxZoom=6;ctl.enableDamping=true;ctl.dampingFactor=.12;
 function look(x,z,zoom){ctl.target.set(x,0,z);cam.position.copy(ctl.target).addScaledVector(DIR,2400);if(zoom)cam.zoom=zoom;cam.updateProjectionMatrix();ctl.update()}
 look(1200,1420,1.1);
 scene.add(new THREE.HemisphereLight(0xffffff,0xb8a888,2.2));
@@ -340,7 +340,7 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   ui.append(row1,row2);document.body.append(ui);
   if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
   /* 人群压力试作（2026-10-19）：?crowd=人数 。&full=近景关节人上限（默认 300）。fps 角落多一行：在街上的人 / 关节人 / 远景柱 / 每帧算人用的毫秒 */
-  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261019z');
+  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261020a');
     CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);if(QP.get('spr')!=='0'){const t0=performance.now();CRW.buildAtlas(rnd);window.__atlasMs=performance.now()-t0}
     window.__crowd={get stat(){return CRW.stat},n:+QP.get('crowd'),C:CRW}}
   window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};
@@ -354,18 +354,21 @@ function pickPerson(){TPEND=false;if(!PPL)return;const AC=(STROLL||DESC>0)?pcam:
   const head=o=>(o.y!=null?o.y:o.r.root.position.y)+1.5/MPP*EX;
   for(const o of PPL.people){if(!o.vis)continue;const [sx,sy,sz]=scr(o.x,head(o),o.z,AC);if(sz>1)continue;const d=(sx-TMX)**2+(sy-TMY)**2;if(d<bd){bd=d;best={o,src:PPL}}}
   if(CRW)for(const o of CRW.pickable()){const [sx,sy,sz]=scr(o.x,o.y+1.5/MPP*EX,o.z,AC);if(sz>1)continue;const d=(sx-TMX)**2+(sy-TMY)**2;if(d<bd){bd=d;best={o,src:CRW}}}
-  TIPO=best;if(!best){tipEl().style.display='none';if(TSV)TSV.style.display='none'}}
+  TIPO=best;if(!best){tipEl().style.display='none';if(RPN)RPN.style.display='none'}}
 rnd.domElement.addEventListener('pointermove',e=>{TMX=e.clientX;TMY=e.clientY;if(!TPEND&&PPL){TPEND=true;requestAnimationFrame(pickPerson)}});
-rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none';if(TSV)TSV.style.display='none'});
+rnd.domElement.addEventListener('pointerleave',()=>{TIPO=null;if(TIP)TIP.style.display='none';if(RPN)RPN.style.display='none'});
 window.__scrOf=o=>{const AC=(STROLL||DESC>0)?pcam:cam;return scr(o.x,o.y+1.5/MPP*EX,o.z,AC)};window.__tipS=()=>({o:!!TIPO,TMX,TMY,TPEND,h:TIPO?(()=>{const o=TIPO.o,AC=(STROLL||DESC>0)?pcam:cam;const b=(o.y!=null?o.y:o.r.root.position.y);return [o.y,scr(o.x,b+1.5/MPP*EX,o.z,AC)]})():0});window.__tip=(x,y)=>{TMX=x;TMY=y;pickPerson();const AC=(STROLL||DESC>0)?pcam:cam;const p=PPL.posOf(2);return {got:!!TIPO,who:TIPO&&TIPO.src.describe(TIPO.o),m:p&&scr(p.x,p.y+1.5/MPP*EX,p.z,AC),stroll:STROLL,cam:[pcam.position.x,pcam.position.y,pcam.position.z,pcam.near,pcam.far],mp:p,pick:CRW?CRW.pickable().length:-1}};
-function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';if(TSV)TSV.style.display='none';return}
-  const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';if(TSV)TSV.style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
+function tipStep(AC){if(!TIPO)return;const o=TIPO.o,y=(o.y!=null?o.y:o.r.root.position.y)+2.0/MPP*EX;if((TIPO.src===PPL&&!o.vis)||(TIPO.src===CRW&&o.seen==null)){TIPO=null;tipEl().style.display='none';if(RPN)RPN.style.display='none';return}
+  const b=(o.y!=null?o.y:o.r.root.position.y);const [px,py]=scr(o.x,b+1.5/MPP*EX,o.z,AC);if(Math.hypot(px-TMX,py-TMY)>70){TIPO=null;tipEl().style.display='none';if(RPN)RPN.style.display='none';return}/* 离开的判断用指中时同一个点（头），签子画在头顶上 */const [sx,sy]=scr(o.x,y,o.z,AC);
   const d=TIPO.src.describe(o),el=tipEl();el.innerHTML='<b>'+d.who+'</b><br>'+d.what+(d.from?'<br><span style="color:#7a6a50;font-size:12px">'+d.from+'</span>':'');el.style.left=sx+'px';el.style.top=(sy-6)+'px';el.style.display='block';
-  /* 关系线：指着一个人时，画面里跟他有关系的人各牵一根细墨线，线头写称呼。只在指着的时候画 */
-  const sv=tieSvg();let h='';if(d.ties)for(const [q,l] of d.ties){const [qx,qy,qz]=scr(q.x,q.y+1.5/MPP*EX,q.z,AC);if(qz>1||qx<0||qy<0||qx>innerWidth||qy>innerHeight)continue;
-    const cold=l.includes('不来往')||l==='债主'||l==='欠他家钱';h+=`<line x1="${px}" y1="${py}" x2="${qx}" y2="${qy}" stroke="${cold?'#8a2a2a':'#5a4a32'}" stroke-width="1.3" stroke-dasharray="${cold?'3 4':'none'}" opacity=".75"/><circle cx="${qx}" cy="${qy}" r="3" fill="${cold?'#8a2a2a':'#5a4a32'}"/><text x="${qx+6}" y="${qy-6}" font-size="12" fill="${cold?'#8a2a2a':'#3a2e22'}" stroke="#f6efdf" stroke-width="3" paint-order="stroke">${l}</text>`}
-  sv.innerHTML=h;sv.style.display=h?'block':'none'}
-let TSV=null;function tieSvg(){if(TSV)return TSV;TSV=document.createElementNS('http://www.w3.org/2000/svg','svg');TSV.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;display:none;z-index:5';document.body.append(TSV);return TSV}
+  /* 关系不画在画面上（主人 10-19：线满地图飞、坏画面）。挂在房子上，放进左边一个小面板：这一户、家里人、这栋房子跟哪几家有来往、在哪个方向多远 */
+  const hp=d.house,pn=relPanel();if(!hp){pn.style.display='none';return}
+  const tc=t=>/不来往|债主|欠/.test(t)?'#8a2a2a':'#5a4a32';
+  pn.innerHTML=`<div style="font-weight:600">${hp.head}家 · ${hp.trade}</div><div style="color:#7a6a50;font-size:12px">${hp.origin==='本城生'?'本城人':'从'+hp.origin+'来'}，${hp.arrive}；${hp.faith}</div>`
+    +(hp.fam.length?`<div style="margin-top:5px;font-size:12px;color:#7a6a50">家里人</div>`+hp.fam.map(f=>`<div>${f[0]} ${f[1]}<span style="color:#9a8a6a;font-size:12px"> · ${f[2]}</span></div>`).join(''):'')
+    +(hp.ties.length?`<div style="margin-top:5px;font-size:12px;color:#7a6a50">这栋房子跟</div>`+hp.ties.slice(0,7).map(t=>`<div><span style="color:#9a8a6a;font-size:12px">${t[0]}</span> ${t[1]}（${t[2]}）<span style="color:${tc(t[3])}"> ${t[3]}</span></div>`).join(''):'');
+  pn.style.display='block'}
+let RPN=null;function relPanel(){if(RPN)return RPN;RPN=document.createElement('div');RPN.style.cssText='position:fixed;left:14px;top:110px;max-width:280px;pointer-events:none;background:rgba(250,244,230,.94);border:1px solid #b9a582;border-radius:10px;padding:7px 10px;font-size:13px;line-height:1.55;color:#3a2e22;display:none;box-shadow:0 1px 4px rgba(0,0,0,.12);z-index:5';document.body.append(RPN);return RPN}
 function follow(n){FOL=n;if(PPL)for(const b of PPL.ui.row1.querySelectorAll('button[data-n]'))b.style.background=+b.dataset.n===n?'#e8d6ae':'#fbf5e6';
   if(!n){if(STROLL||DESC>0)exitWalk();return}const p=PPL.posOf(n);if(!p)return;if(!STROLL)enterWalk(p.x,p.z,p.dir+Math.PI);yaw=Math.PI-p.dir;pitch=-.2}
 /* 跟拍镜头别钻进房子里：从人往镜头方向一小步一小步探，碰到房子占地就停在前一步 */
@@ -431,14 +434,19 @@ addEventListener('touchmove',e=>{if(e.touches.length!==2||pin==null)return;const
   if(DESC>0||STROLL||(atMax&&r>1.01)){e.preventDefault();e.stopImmediatePropagation();dGoal=null;descBy(Math.log(r)*.9);pin=d;drag=null}else pin=d},{capture:true,passive:false});
 window.__desc=v=>{if(DESC===0&&!STROLL){descSetup(ctl.target.x,ctl.target.z);ctl.enabled=false;cam.zoom=ctl.maxZoom}descBy(v-DESC);return [DESC,STROLL]};
 $('walkB').onclick=()=>{dGoal=(STROLL||DESC>0)?0:1;gT=performance.now()};
-let drag=null,d0=null;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL){drag=[e.clientX,e.clientY];d0=[e.clientX,e.clientY,performance.now()]}});
+let drag=null,d0=null,PANR=false;rnd.domElement.addEventListener('pointerdown',e=>{if(STROLL){PANR=e.button===2;drag=[e.clientX,e.clientY];d0=PANR?null:[e.clientX,e.clientY,performance.now()]}});
 addEventListener('pointerup',e=>{if(STROLL&&d0&&Math.hypot(e.clientX-d0[0],e.clientY-d0[1])<6&&performance.now()-d0[2]<400&&e.target===rnd.domElement){const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),pcam);const h=r.intersectObject(terr)[0];if(h)glideTo(h.point.x,h.point.z)}drag=null;d0=null});
-addEventListener('pointermove',e=>{if(!STROLL||!drag)return;yaw+=(e.clientX-drag[0])*.008;pitch=Math.max(-.9,Math.min(.6,pitch-(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY]});
+addEventListener('pointermove',e=>{if(!STROLL||!drag)return;if(PANR){/* 右键拖：在街上平移（跟着手走，像拖地图） */const st=.04/MPP*EX,ddx=-(e.clientX-drag[0])*st,ddy=(e.clientY-drag[1])*st;[wx,wz]=clampToStreet(wx+Math.cos(yaw)*ddx+Math.sin(yaw)*ddy,wz+Math.sin(yaw)*ddx-Math.cos(yaw)*ddy);walkPose();drag=[e.clientX,e.clientY];return}yaw+=(e.clientX-drag[0])*.008;pitch=Math.max(-.9,Math.min(.6,pitch-(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY]});
 rnd.domElement.addEventListener('dblclick',e=>{if(STROLL)return;const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObject(terr)[0];if(h){look(h.point.x,h.point.z);dGoal=1;gT=performance.now()}});
 const hold=(id,v,fn)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();fn(v)};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>fn(0)};
 hold('wF',1,v=>mv=v);hold('wB',-1,v=>mv=v);hold('wL',-1,v=>turn=v);hold('wR',1,v=>turn=v);
-addEventListener('keydown',e=>{if(!STROLL)return;if(e.key==='Shift')RUN=true;const k=e.key.toLowerCase();if(k==='w'||k==='arrowup')mv=1;if(k==='s'||k==='arrowdown')mv=-1;if(k==='a'||k==='arrowleft')turn=-1;if(k==='d'||k==='arrowright')turn=1;if(k==='escape')exitWalk()});
-addEventListener('keyup',e=>{if(e.key==='Shift')RUN=false;const k=e.key.toLowerCase();if('wsarrowuparrowdown'.includes(k))mv=0;if('adarrowleftarrowright'.includes(k))turn=0});
+/* 方向键微调镜头（主人 10-19）：长卷里平移画面；街上左右横移、上下前后挪一小步（WASD 仍是走路和转身） */
+const NUDGE={arrowleft:[-1,0],arrowright:[1,0],arrowup:[0,1],arrowdown:[0,-1]};
+addEventListener('keydown',e=>{const k=e.key.toLowerCase(),n=NUDGE[k];if(!n||e.target.tagName==='INPUT')return;e.preventDefault();
+  if(STROLL){const st=(e.shiftKey?2.5:.6)/MPP*EX,sx=Math.cos(yaw),sz=Math.sin(yaw),fx=Math.sin(yaw),fz=-Math.cos(yaw);[wx,wz]=clampToStreet(wx+sx*n[0]*st+fx*n[1]*st,wz+sz*n[0]*st+fz*n[1]*st);walkPose()}
+  else if(DESC===0){const st=(e.shiftKey?160:40)/cam.zoom;ctl.target.x+=n[0]*st;ctl.target.z-=n[1]*st;cam.position.x+=n[0]*st;cam.position.z-=n[1]*st;ctl.update()}},{capture:true});
+addEventListener('keydown',e=>{if(!STROLL)return;if(e.key==='Shift')RUN=true;const k=e.key.toLowerCase();if(k==='w')mv=1;if(k==='s')mv=-1;if(k==='a')turn=-1;if(k==='d')turn=1;if(k==='escape')exitWalk()});
+addEventListener('keyup',e=>{if(e.key==='Shift')RUN=false;const k=e.key.toLowerCase();if(k==='w'||k==='s')mv=0;if(k==='a'||k==='d')turn=0});
 window.__walk=(x,z,yw,p)=>{enterWalk(x,z,yw);if(p!=null)pitch=p;walkPose()};window.__glide=(x,z)=>{glideTo(x,z);return !!GL};window.__walkMove=(m)=>{const sp=m;[wx,wz]=clampToStreet(wx+Math.sin(yaw)*sp,wz-Math.cos(yaw)*sp);walkPose();return [wx,wz]};
 let fN=0,fT=performance.now();window.__fps=0;
 rnd.setAnimationLoop(()=>{goStep();if(STROLL)walkStep();else if(DESC>0)descPose();else ctl.update();lod();anim();pplStep();comp.uniforms.zk.value=1/cam.zoom;comp.uniforms.ps.value=(STROLL||DESC>0)?1:0;const AC=(STROLL||DESC>0)?pcam:cam;crowdStep(AC);tipStep(AC);
