@@ -1,0 +1,11 @@
+shot1 0.00-0.25 sky-atmosphere       L*  82.35 ->  82.35 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot1 0.25-0.60 buildings            L*  62.36 ->  62.36 (d +0.00)   edge 0.0476 -> 0.0476 (+0.0%)  ok
+shot1 0.60-1.00 water                L*  45.72 ->  45.72 (d +0.00)   edge 0.0316 -> 0.0316 (+0.0%)  ok
+shot2 0.00-0.25 sky-atmosphere       L*  77.41 ->  77.41 (d +0.00)   edge 0.0148 -> 0.0148 (+0.0%)  ok
+shot2 0.70-1.00 streets+props        L*  48.14 ->  48.14 (d +0.00)   edge 0.2208 -> 0.2208 (+0.0%)  ok
+shot3 0.00-0.12 sky-atmosphere       L*  82.35 ->  82.35 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot3 0.12-0.40 water+terrain        L*  63.82 ->  63.82 (d +0.00)   edge 0.0001 -> 0.0001 (+0.0%)  ok
+shot3 0.40-1.00 buildings+streets    L*  57.25 ->  57.25 (d +0.00)   edge 0.1022 -> 0.1022 (+0.0%)  ok
+shot4 0.00-0.18 sky-atmosphere       L*  82.35 ->  82.35 (d +0.00)   edge 0.0000 -> 0.0000 (+0.0%)  ok
+shot4 0.18-0.60 buildings            L*  71.20 ->  71.20 (d +0.00)   edge 0.0277 -> 0.0279 (+0.7%)  ok
+MATCH (|dL*|<1.0, |d edge|<5%)

@@ -1,0 +1,123 @@
+{
+ "module": "crowd",
+ "base_commit": "3df0d79 (streets merged)",
+ "acceptance": "shot 2: >= 60 people visible, all from crowd.json; design for >= 60 fps on owner Mac (report CPU ms, not fps)",
+ "shot2_people": {
+  "before": 0,
+  "after": {
+   "in_frame": 389,
+   "visible_any": 111,
+   "visible_ge3px": 104,
+   "visible_ge6px": 39,
+   "visible_ge20px": 11,
+   "all_from_crowd_json": true
+  },
+  "definition": "unoccluded = pixels at the projected torso/head differ between crowd-on and crowd-off frames; size = projected foot-to-head height in px at 1376x768",
+  "target_met": "yes at >=3 px (104) and any size (111); NOT at >=6 px (39)"
+ },
+ "per_shot": {
+  "shot1": {
+   "stats": {
+    "active": 4789,
+    "full": 0,
+    "far": 19,
+    "ms": 6.1,
+    "greet": 0,
+    "tris": 476,
+    "drawCalls": 2,
+    "liftMs": 206
+   },
+   "visible_ge3px": 17,
+   "visible_ge6px": 0
+  },
+  "shot2": {
+   "stats": {
+    "active": 4789,
+    "full": 16,
+    "far": 379,
+    "ms": 12.3,
+    "greet": 0,
+    "tris": 18571,
+    "drawCalls": 23,
+    "liftMs": 206
+   },
+   "visible_ge3px": 104,
+   "visible_ge6px": 39
+  },
+  "shot3": {
+   "stats": {
+    "active": 4789,
+    "full": 0,
+    "far": 0,
+    "ms": 12.9,
+    "greet": 0,
+    "tris": 0,
+    "drawCalls": 0,
+    "liftMs": 206
+   },
+   "visible_ge3px": 0,
+   "visible_ge6px": 0
+  },
+  "shot4": {
+   "stats": {
+    "active": 4789,
+    "full": 0,
+    "far": 255,
+    "ms": 12.8,
+    "greet": 0,
+    "tris": 6540,
+    "drawCalls": 2,
+    "liftMs": 206
+   },
+   "visible_ge3px": 2,
+   "visible_ge6px": 2
+  }
+ },
+ "cpu_ms_per_frame_shot2_sandbox": {
+  "min": 2.3,
+  "p10": 3.3,
+  "median": 7.7,
+  "max": 31.9
+ },
+ "cpu_note": "crowd tick = 5966 positions + poses + instance matrices + pavement-height lookup. Sandbox = 2-core aarch64 under load ~9 from parallel agents; min is closest to uncontended. M4 estimate ~1-1.5 ms (not measured). GPU: ~24 instanced draw calls (+ shadow pass), ~19-23k tris in shot 2.",
+ "rebuild_ms": {
+  "crowd_build_sandbox": 260,
+  "of_which_pavement_lift_map": 206
+ },
+ "triangles": {
+  "shot2": 18571,
+  "worst_case_bound": "maxFull 200 jointed x ~750 tris + far pillars x ~20 tris (~160k)"
+ },
+ "bands": {
+  "shot2 0.25-0.70 buildings+crowd": {
+   "before_crowd_off": {
+    "edge": 0.0459,
+    "sat": 0.2146,
+    "L": 60.58,
+    "ref_edge": 0.2194
+   },
+   "after": {
+    "edge": 0.054,
+    "sat": 0.2193,
+    "L": 60.32,
+    "ref_edge": 0.2194
+   }
+  },
+  "shot4 0.60-1.00 props+crowd+water": {
+   "before_crowd_off": {
+    "edge": 0.0119,
+    "sat": 0.3082,
+    "L": 51.0,
+    "ref_edge": 0.2609
+   },
+   "after": {
+    "edge": 0.0119,
+    "sat": 0.3082,
+    "L": 51.0,
+    "ref_edge": 0.2609
+   }
+  }
+ },
+ "match_skip_crowd": "vs crowd-off render at the same HEAD: MATCH (all other bands |dL*|<1, |d edge|<5%). vs baseline/stats.json: only the streets bands move (streets commit 3df0d79), not crowd.",
+ "determinism": "shot 2 rendered alone vs inside the 4-shot sequence: 0 pixels differ"
+}

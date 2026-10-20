@@ -1,0 +1,85 @@
+{
+ "modStats_crowd_at_build": {
+  "build_ms": 195,
+  "tris": 0
+ },
+ "shot2": {
+  "stats": {
+   "active": 4789,
+   "full": 16,
+   "far": 379,
+   "ms": 10,
+   "greet": 0,
+   "tris": 18571,
+   "drawCalls": 23,
+   "liftMs": 130
+  },
+  "count": {
+   "in_frame": 389,
+   "visible_any": 111,
+   "visible_ge3px": 104,
+   "visible_ge6px": 39,
+   "visible_ge20px": 11,
+   "all_from_crowd_json": true,
+   "nearest": [
+    [
+     3713,
+     14,
+     87.3
+    ],
+    [
+     832,
+     15,
+     76.5
+    ],
+    [
+     3714,
+     15,
+     83.8
+    ],
+    [
+     4052,
+     16,
+     86.4
+    ],
+    [
+     218,
+     19,
+     55.5
+    ],
+    [
+     3995,
+     23,
+     44.6
+    ],
+    [
+     3228,
+     26,
+     39.8
+    ],
+    [
+     3229,
+     27,
+     38.1
+    ]
+   ]
+  },
+  "bench_ms": {
+   "min": 2.2999999998137355,
+   "p10": 3.300000000745058,
+   "median": 7.7000000001862645,
+   "max": 31.899999999441206,
+   "stats": {
+    "active": 4779,
+    "full": 23,
+    "far": 366,
+    "ms": 9.6,
+    "greet": 0,
+    "tris": 22677,
+    "drawCalls": 24,
+    "liftMs": 130
+   }
+  }
+ },
+ "errors": []
+}

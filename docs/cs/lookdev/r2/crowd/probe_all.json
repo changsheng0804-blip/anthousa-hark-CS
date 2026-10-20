@@ -1,0 +1,184 @@
+{
+ "modStats_crowd_at_build": {
+  "build_ms": 260,
+  "tris": 0
+ },
+ "shot2": {
+  "stats": {
+   "active": 4789,
+   "full": 16,
+   "far": 379,
+   "ms": 12.3,
+   "greet": 0,
+   "tris": 18571,
+   "drawCalls": 23,
+   "liftMs": 206
+  },
+  "count": {
+   "in_frame": 389,
+   "visible_any": 111,
+   "visible_ge3px": 104,
+   "visible_ge6px": 39,
+   "visible_ge20px": 11,
+   "all_from_crowd_json": true,
+   "nearest": [
+    [
+     3713,
+     14,
+     87.3
+    ],
+    [
+     832,
+     15,
+     76.5
+    ],
+    [
+     3714,
+     15,
+     83.8
+    ],
+    [
+     4052,
+     16,
+     86.4
+    ],
+    [
+     218,
+     19,
+     55.5
+    ],
+    [
+     3995,
+     23,
+     44.6
+    ],
+    [
+     3228,
+     26,
+     39.8
+    ],
+    [
+     3229,
+     27,
+     38.1
+    ]
+   ]
+  }
+ },
+ "shot1": {
+  "stats": {
+   "active": 4789,
+   "full": 0,
+   "far": 19,
+   "ms": 6.1,
+   "greet": 0,
+   "tris": 476,
+   "drawCalls": 2,
+   "liftMs": 206
+  },
+  "count": {
+   "in_frame": 19,
+   "visible_any": 17,
+   "visible_ge3px": 17,
+   "visible_ge6px": 0,
+   "visible_ge20px": 0,
+   "all_from_crowd_json": true,
+   "nearest": [
+    [
+     1862,
+     372,
+     4.3
+    ],
+    [
+     1863,
+     373,
+     4.3
+    ],
+    [
+     3884,
+     397,
+     3.9
+    ],
+    [
+     3886,
+     397,
+     3.9
+    ],
+    [
+     4506,
+     397,
+     3.9
+    ],
+    [
+     2236,
+     398,
+     3.9
+    ],
+    [
+     3472,
+     398,
+     4.0
+    ],
+    [
+     4505,
+     398,
+     3.9
+    ]
+   ]
+  }
+ },
+ "shot3": {
+  "stats": {
+   "active": 4789,
+   "full": 0,
+   "far": 0,
+   "ms": 12.9,
+   "greet": 0,
+   "tris": 0,
+   "drawCalls": 0,
+   "liftMs": 206
+  },
+  "count": {
+   "in_frame": 0,
+   "visible_any": 0,
+   "visible_ge3px": 0,
+   "visible_ge6px": 0,
+   "visible_ge20px": 0,
+   "all_from_crowd_json": true,
+   "nearest": []
+  }
+ },
+ "shot4": {
+  "stats": {
+   "active": 4789,
+   "full": 0,
+   "far": 255,
+   "ms": 12.8,
+   "greet": 0,
+   "tris": 6540,
+   "drawCalls": 2,
+   "liftMs": 206
+  },
+  "count": {
+   "in_frame": 254,
+   "visible_any": 2,
+   "visible_ge3px": 2,
+   "visible_ge6px": 2,
+   "visible_ge20px": 0,
+   "all_from_crowd_json": true,
+   "nearest": [
+    [
+     843,
+     169,
+     9.7
+    ],
+    [
+     707,
+     200,
+     8.2
+    ]
+   ]
+  }
+ },
+ "errors": []
+}
