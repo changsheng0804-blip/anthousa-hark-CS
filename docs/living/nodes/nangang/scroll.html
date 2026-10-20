@@ -281,7 +281,7 @@ function rectOf(G){let cx=0,cz=0;for(const q of G){cx+=q[0];cz+=q[1]}cx/=G.lengt
 const RQ=(r,u0,v0,u1,v1)=>{const c=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v];return [c(u0,v0),c(u1,v0),c(u1,v1),c(u0,v1)]};
 const LMG=new THREE.Group();scene.add(LMG);
 const colGeo=new THREE.CylinderGeometry(.9,1,1,8),domeGeo=new THREE.SphereGeometry(1,16,8,0,Math.PI*2,0,Math.PI/2);
-const mats={marble:new THREE.MeshLambertMaterial({color:0xf2eee4}),water:new THREE.MeshLambertMaterial({color:0x6fa2aa}),dome:new THREE.MeshLambertMaterial({color:0x9a8a74}),gold:new THREE.MeshLambertMaterial({color:0xc8a046})};
+const mats={marble:new THREE.MeshLambertMaterial({color:0xf2eee4}),water:new THREE.MeshLambertMaterial({color:0x6fa2aa}),dome:new THREE.MeshLambertMaterial({color:0xcbbfa6}),gold:new THREE.MeshLambertMaterial({color:0xc8a046})};
 function cyl(x,y,z,r,h,m){const o=new THREE.Mesh(colGeo,m);o.scale.set(r,h,r);o.position.set(x,y+h/2,z);o.castShadow=true;LMG.add(o)}
 function dome(x,y,z,r,m,sy=1){const o=new THREE.Mesh(domeGeo,m);o.scale.set(r,r*sy,r);o.position.set(x,y,z);o.castShadow=true;LMG.add(o)}
 const PARTS={
@@ -295,6 +295,46 @@ const PARTS={
  xenon(B,f,r,b){const d=9;for(const s of [-1,1]){pushBuilding(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,9,STONE,ROOF,'hip');pushBuilding(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,9,STONE,ROOF,'hip')}
   pushBuilding(B,RQ(r,-8,-6,8,6),b,10,MARBLE,MARBLE,'flat');dome(r.cx,b+10,r.cz,5.5,mats.dome)}};
 PARTS.monument=PARTS.nymphaeum;PARTS.monastery=PARTS.xenon;
+/* ---- 古城的大地标（10-20 推到古城时补的：之前不认识的种类一律当粮仓画，大皇宫、竞技场成了一排排长屋顶）。
+   大件不再整块用中心点一个地坪：每一块按自己脚下四角最高的地面落座，低的一侧砌台基（同房屋的坡地规则） ---- */
+const LP=(r,u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v],gY=(r,u,v)=>{const p=LP(r,u,v);return elevPx(p[0],p[1])+1.6};
+const PLW=[198,186,160];
+function PB(B,r,u0,v0,u1,v1,h,w,rf,ty,pi){/* 落在图外或水里的块不建（卫城的底账地块一半伸出了图边） */{const [x,z]=LP(r,(u0+u1)/2,(v0+v1)/2);if(x<0||z<0||x>W||z>H||cover(x,z)<.5)return -1e9}let hi=-1e9,lo=1e9;for(const [u,v] of [[u0,v0],[u1,v0],[u1,v1],[u0,v1],[(u0+u1)/2,(v0+v1)/2]]){const y=gY(r,u,v);hi=Math.max(hi,y);lo=Math.min(lo,y)}
+  if(hi-lo>.3)pushBuilding(B,RQ(r,u0,v0,u1,v1),lo+2,hi-.08-lo-2,PLW,PLW,'flat');pushBuilding(B,RQ(r,u0,v0,u1,v1),hi,h,w,rf,ty,pi);return hi}
+function wallRing(B,r,u0,v0,u1,v1,t,h,col,tw){/* 围墙一圈，按段落座；tw>0 时四角和每隔一段加方塔 */
+  const segs=[[u0,v0,u1,v0],[u1,v0,u1,v1],[u1,v1,u0,v1],[u0,v1,u0,v0]];
+  for(const [a,b,c,d] of segs){const L=Math.hypot(c-a,d-b),n=Math.max(1,Math.round(L/24));for(let i=0;i<n;i++){const s0=i/n,s1=(i+1)/n,ua=a+(c-a)*s0,va=b+(d-b)*s0,ub=a+(c-a)*s1,vb=b+(d-b)*s1;
+      PB(B,r,Math.min(ua,ub)-(a===c?t/2:0),Math.min(va,vb)-(b===d?t/2:0),Math.max(ua,ub)+(a===c?t/2:0),Math.max(va,vb)+(b===d?t/2:0),h,col,col,'flat');
+      if(tw&&(i%2===0))PB(B,r,ua-tw,va-tw,ua+tw,va+tw,h+4,col,ROOF,'hip',.5)}}}
+Object.assign(PARTS,{
+ church(B,f,r,b){/* 巴西利卡：中殿高、两侧廊低，东头半圆后殿，西头前庭柱廊 */const big=r.hu>70,h=Math.min(20,7+r.hv*.32),u0=-r.hu+Math.min(22,r.hu*.28),u1=r.hu-r.hv*.42;
+  PB(B,r,u0,-r.hv*.3,u1,r.hv*.3,h,MARBLE,ROOF,'gable',.3);for(const sg of [-1,1])PB(B,r,u0,sg*r.hv*.3,u1,sg*r.hv*.62,h*.55,STONE,ROOF,'gable',.22);
+  const [ax,az]=LP(r,u1,0),y=gY(r,u1,0);cyl(ax,y-3,az,r.hv*.3,h*.8+3,mats.marble);dome(ax,y+h*.8,az,r.hv*.3,mats.dome,.5);
+  if(big){const [cx,cz]=LP(r,(u0+u1)/2,0);dome(cx,gY(r,(u0+u1)/2,0)+h,cz,r.hv*.36,mats.dome,.7)}
+  for(const sg of [-1,1])PB(B,r,-r.hu+1,sg*r.hv*.62,u0,sg*(r.hv*.62-3),4.5,STONE,ROOF,'hip',.3);PB(B,r,-r.hu+1,-r.hv*.62,-r.hu+4,r.hv*.62,4.5,STONE,ROOF,'hip',.3)},
+ palace(B,f,r,b){/* 大皇宫：一道围墙，里面一层层台地，宫殿、柱廊院、浴场、小教堂按种子散开 */wallRing(B,r,-r.hu,-r.hv,r.hu,r.hv,2.2,6,STONE,3.5);
+  const nu=Math.max(2,Math.round(r.hu/45)),nv=Math.max(2,Math.round(r.hv/45)),cu=(r.hu*2-12)/nu,cv=(r.hv*2-12)/nv;
+  for(let i=0;i<nu;i++)for(let j=0;j<nv;j++){const k=i*nv+j,h1=hsh(f.seed,k),h2=hsh(f.seed,k+99),U0=-r.hu+6+i*cu,V0=-r.hv+6+j*cv,U1=U0+cu,V1=V0+cv,m=4+h2*5;
+    if(h1<.18)continue;/* 花园空地 */
+    if(h1<.55){/* 回廊院：四面长屋围一个院 */const d=Math.min(10,cv*.25);PB(B,r,U0+m,V0+m,U1-m,V0+m+d,7+h2*3,MARBLE,ROOF,'hip',.3);PB(B,r,U0+m,V1-m-d,U1-m,V1-m,7+h2*3,MARBLE,ROOF,'hip',.3);
+      PB(B,r,U0+m,V0+m+d,U0+m+d,V1-m-d,6,MARBLE,ROOF,'hip',.3);PB(B,r,U1-m-d,V0+m+d,U1-m,V1-m-d,6,MARBLE,ROOF,'hip',.3)}
+    else if(h1<.8){/* 大殿 */const y=PB(B,r,U0+m,V0+m*1.5,U1-m,V1-m*1.5,10+h2*6,MARBLE,ROOF,'gable',.28);if(h2>.6){const [x,z]=LP(r,(U0+U1)/2,(V0+V1)/2);dome(x,y+10+h2*6,z,Math.min(cu,cv)*.18,mats.dome,.8)}}
+    else{/* 浴场 / 小教堂：一大一小两座四坡顶，错开 */PB(B,r,U0+m*2,V0+m,U1-m*3,V1-m*3,8,STONE,ROOF,'hip',.45);PB(B,r,U1-m*3+2,V1-m*3-8,U1-m,V1-m,6,MARBLE,ROOF,'hip',.45)}}},
+ hippodrome(B,f,r,b){/* 竞技场：两边长看台、一头半圆弯道、一头起跑门，中间分隔墙上立方尖碑；坡低的一头看台底下砌拱券基座（同台基规则） */
+  const d=Math.min(18,r.hv*.24),ue=r.hu-r.hv;/* 弯道圆心 */
+  for(const sg of [-1,1])for(let u=-r.hu+10;u<ue;u+=24){const uu=Math.min(ue,u+24);for(let t=0;t<3;t++)PB(B,r,u,sg*(r.hv-d+t*d/3),uu,sg*(r.hv-d+(t+1)*d/3),4+t*3,STONE,STONE,'flat')}
+  for(let k=0;k<12;k++){const a0=-Math.PI/2+k/12*Math.PI,a1=-Math.PI/2+(k+1)/12*Math.PI,am=(a0+a1)/2;for(let t=0;t<3;t++){const R0=r.hv-d+t*d/3,R1=R0+d/3,uc=ue+Math.cos(am)*(R0+R1)/2,vc=Math.sin(am)*(R0+R1)/2,hw=(R0+R1)/2*Math.PI/12/2+1;
+    const ca=Math.cos(am),sa=Math.sin(am),q=[[uc-ca*d/6-sa*hw,vc-sa*d/6+ca*hw],[uc+ca*d/6-sa*hw,vc+sa*d/6+ca*hw],[uc+ca*d/6+sa*hw,vc+sa*d/6-ca*hw],[uc-ca*d/6+sa*hw,vc-sa*d/6-ca*hw]];
+    let hi=-1e9,lo=1e9;for(const [u,v] of q){const y=gY(r,u,v);hi=Math.max(hi,y);lo=Math.min(lo,y)}const Q=q.map(([u,v])=>LP(r,u,v));if(hi-lo>.3)pushBuilding(B,Q,lo+2,hi-.08-lo-2,PLW,PLW,'flat');pushBuilding(B,Q,hi,4+t*3,STONE,STONE,'flat')}}
+  PB(B,r,-r.hu,-r.hv+d,-r.hu+10,r.hv-d,8,STONE,ROOF,'hip',.25);/* 起跑门 */
+  const s0=-r.hu+r.hv*.9,s1=ue-r.hv*.3;PB(B,r,s0,-2,s1,2,1.6,MARBLE,MARBLE,'flat');/* 分隔墙 */
+  for(const [t,hh,rr] of [[.3,26,1.4],[.5,14,1.1],[.7,22,1.2]]){const u=s0+(s1-s0)*t,[x,z]=LP(r,u,0);cyl(x,gY(r,u,0)+1.6,z,rr,hh,mats.marble)}
+  const [kx,kz]=LP(r,(s0+ue)/2,-r.hv+d*.5);dome(kx,gY(r,(s0+ue)/2,-r.hv+d*.5)+10,kz,4,mats.gold,.6)/* 皇帝包厢 */},
+ fort(B,f,r,b){/* 卫城 / 港口塔：城墙带塔，里面有内堡和几座庙 */if(r.hu<30){PB(B,r,-r.hu*.6,-r.hv*.6,r.hu*.6,r.hv*.6,16,STONE,ROOF,'hip',.5);return}
+  wallRing(B,r,-r.hu+4,-r.hv+4,r.hu-4,r.hv-4,3,8,STONE,5);PB(B,r,-14,-12,14,12,14,STONE,ROOF,'hip',.4);
+  for(let k=0;k<14;k++){const u=(hsh(f.seed,k)-.5)*r.hu*1.4,v=(hsh(f.seed,k+7)-.5)*r.hv*1.4;if(Math.abs(u)<24&&Math.abs(v)<20)continue;PB(B,r,u-9,v-5,u+9,v+5,8,MARBLE,ROOF,'gable',.32)}},
+ gate(B,f,r,b){const w=Math.min(r.hu,14);for(const sg of [-1,1])PB(B,r,sg*w*.4-4,-5,sg*w*.4+4,5,15,STONE,ROOF,'hip',.5);PB(B,r,-w*.4,-4,w*.4,4,11,STONE,STONE,'flat')}});
+PARTS.warehouse=PARTS.granary;
 /* ---- 树（实例） ---- */
 const cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,7).translate(0,.5,0),new THREE.MeshLambertMaterial({color:0x6f8a62}),WD.trees.length);
 const oli=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:0xa4b088}),WD.trees.length);cyp.castShadow=oli.castShadow=true;scene.add(cyp,oli);
@@ -307,7 +347,7 @@ function build(){const t0=performance.now();paintGround();setTerrain();
   for(const f of by.house){if(!live(f))continue;const k=((f.p[0]/CH)|0)+'_'+((f.p[1]/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});LOW=false;houseGeom(b,f);LOW=true;houseGeom(BL,f)}LOW=false;
   LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g),b0=elevPx(r.cx,r.cz)+1.6;(PARTS[f.k]||PARTS.granary)(B,f,r,b0);
     /* 地标坐在坡上：四角和边中点的地面比地坪低的，砌一圈石台基垫到坡底（主人 10-20：悬空） */let gm=1e9;for(const [u,v] of [[-1,-1],[1,-1],[1,1],[-1,1],[0,-1],[0,1],[-1,0],[1,0]])gm=Math.min(gm,ground(r.cx+r.ax*u*r.hu-r.az*v*r.hv,r.cz+r.az*u*r.hu+r.ax*v*r.hv));
-    if(gm<b0-.3)pushBuilding(B,RQ(r,-r.hu,-r.hv,r.hu,r.hv),gm+2,b0-.08-gm-2,[198,186,160],[198,186,160],'flat')}
+    if(gm<b0-.3&&!/^(palace|hippodrome|fort|church|gate)$/.test(f.k))pushBuilding(B,RQ(r,-r.hu,-r.hv,r.hu,r.hv),gm+2,b0-.08-gm-2,[198,186,160],[198,186,160],'flat')}
   for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;
     pushBuilding(B,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56],[150,112,74],'flat')}
   /* 水系（water.py）：水道桥只在洼地露出拱廊、埋着的段每 80 像素一个检修井；露天蓄水池矮墙围着、水面同海一个着色器；街边喷泉，高处人家打井 */
