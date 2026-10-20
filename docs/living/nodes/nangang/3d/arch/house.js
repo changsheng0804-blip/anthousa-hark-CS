@@ -14,6 +14,7 @@ const OPUS_P={fine:.7,water:.6,garrison:.8,market:.45,shops:.35,horrea:1,dock:.5
 const FLAT={workshop:.45,garden:.5,water:.12,garrison:.15,homes:.15,market:.04,shops:.05,dock:.25,planned:.1,horrea:0};
 export const RIDGE=linC([232,222,204]),SOFFIT=linC([46,34,26]), CEIL=linC([96,78,60]), MARBLE_C=linC([233,223,204]);
 
+const snapB=B=>{const o={};for(const n in B)o[n]=B[n].pos.length/3;return o};
 /* 街段网格：只收 m/s 街，给 frontage 兜底用 */
 export function streetGrid(ctx){const G=new Map(),CS=40,key=(i,j)=>i*100003+j;
   for(const f of ctx.by.street||[]){if(!ctx.live(f)||(f.k!=='m'&&f.k!=='s'))continue;const [ax,az,bx,bz]=f.g,pad=f.w/2+16;
@@ -24,7 +25,7 @@ export function streetGrid(ctx){const G=new Map(),CS=40,key=(i,j)=>i*100003+j;
 function segInfo(x,z,s){const [ax,az,bx,bz]=s.g,dx=bx-ax,dz=bz-az,L2=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/L2)),L=Math.sqrt(L2);return {d:Math.hypot(ax+t*dx-x,az+t*dz-z),ex:dx/L,ez:dz/L}}
 
 /* 哪条边临街：返回 {e:0..3, k} 或 null。e 是局部矩形的边：0 = v-，1 = u+，2 = v+，3 = u- */
-function frontage(ctx,f,C,u0,u1,v0,v1,SG){const mids=[C((u0+u1)/2,v0),C(u1,(v0+v1)/2),C((u0+u1)/2,v1),C(u0,(v0+v1)/2)],dirs=[C(u1,v0),C(u1,v1),C(u0,v1),C(u0,v0)],starts=[C(u0,v0),C(u1,v0),C(u1,v1),C(u0,v1)];
+export function frontage(ctx,f,C,u0,u1,v0,v1,SG){const mids=[C((u0+u1)/2,v0),C(u1,(v0+v1)/2),C((u0+u1)/2,v1),C(u0,(v0+v1)/2)],dirs=[C(u1,v0),C(u1,v1),C(u0,v1),C(u0,v0)],starts=[C(u0,v0),C(u1,v0),C(u1,v1),C(u0,v1)];
   /* streets 的 reg.frontage（v1）：sides[] 每条 {k,x,z,nx,nz,house}；FM = 户 id → 最近那条（buildings.build 里建） */
   const rf=SG.fm&&SG.fm.get(f.id);if(rf){let bi=0,bd=1e9;mids.forEach((m,i)=>{const d=Math.hypot(m[0]-rf.x,m[1]-rf.z);if(d<bd){bd=d;bi=i}});return {e:bi,k:rf.k}}
   let best=null;for(let e=0;e<4;e++){const m=mids[e],ex=dirs[e][0]-starts[e][0],ez=dirs[e][1]-starts[e][1],L=Math.hypot(ex,ez)||1;
@@ -32,7 +33,7 @@ function frontage(ctx,f,C,u0,u1,v0,v1,SG){const mids=[C((u0+u1)/2,v0),C(u1,(v0+v
   return best}
 
 /* 一户：B = {stucco, opus, roof, plain}，COLS = 柱子列表 */
-export function house(ctx,B,f,SG,COLS){const {hsh,elevPx,geom:{quadAxes}}=ctx,p=f.p,P=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];
+export function house(ctx,B,f,SG,COLS,rec){const r0=rec?snapB(B):null;const {hsh,elevPx,geom:{quadAxes}}=ctx,p=f.p,P=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];
   const cx=(p[0]+p[2]+p[4]+p[6])/4,cz=(p[1]+p[3]+p[5]+p[7])/4,ins=P.map(q=>[cx+(q[0]-cx)*.92,cz+(q[1]-cz)*.92]);
   const r=quadAxes(ins),C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v];let u0=-r.hu,u1=r.hu,v0=-r.hv,v1=r.hv;
   const base=elevPx(cx,cz)+1.5,H=Math.max(3,(f.ht||5)*1.15),fn=f.fn||'homes';
@@ -67,6 +68,8 @@ export function house(ctx,B,f,SG,COLS){const {hsh,elevPx,geom:{quadAxes}}=ctx,p=
     /* 檐底板：墙顶一圈到檐口，朝下，深色 */
     const w=[C(u0,v0),C(u1,v0),C(u1,v1),C(u0,v1)],ee=along?[e00,e10,e11,e01]:[e00,e01,e11,e10];
     for(let i=0;i<4;i++){const a=w[i],b=w[(i+1)%4],ea=ee[i],eb=ee[(i+1)%4];quad(B.plain,[b[0],y1,b[1]],[a[0],y1,a[1]],ea,eb,SOFFIT)}}
+  /* house_kit（开关，默认关）：记下这户「楼身」在各桶里的顶点区间（柱廊不算），近处换细模时把它塌掉；不改任何几何 */
+  if(rec)rec.push({f,r0,r1:snapB(B),k,base,y1,H,wcol,rcol,kind,fr,flat,u:[u0,u1,v0,v1],o0,C,nc:COLS.length});
   /* 柱廊几何 */
   if(fr){const hc=Math.min(H*.72,4.3),yb=base,ya=base+hc,o=o0;let a,b,ia,ib;/* a→b = 原墙线（柱子立在上面），ia/ib = 退进去的新墙线 */
     if(fr.e===0){a=C(o.u0,o.v0);b=C(o.u1,o.v0);ia=C(o.u0,v0);ib=C(o.u1,v0)}else if(fr.e===1){a=C(o.u1,o.v0);b=C(o.u1,o.v1);ia=C(u1,o.v0);ib=C(u1,o.v1)}

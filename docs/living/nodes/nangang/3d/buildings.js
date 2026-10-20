@@ -11,10 +11,11 @@ import {bucket,meshOf,linC,mul,wall,quad,tri,roofFace,columnGeo} from './arch/ge
 import {house,streetGrid,STH,BAY,RT,SOFFIT} from './arch/house.js';
 import {granary,GABLE_WALL_FRAC} from './arch/granary.js';
 import {aqueduct} from './arch/aqueduct.js';
+import * as KIT from './arch/kit/index.js';   /* house_kit（?flag=house_kit，默认关）：近处民居换类型细模，见 arch/kit/index.js */
 export const name='buildings';
 export const checkShot=4;
 const MARBLE=[238,232,218],STONE=[222,212,190],ROOF=[186,98,62];
-let T=null,LMG=null,MESHES=[],COLM=null,colGeo=null,domeGeo=null,cylGeo=null,mats=null,quadAxes=null,RQ=null,hsh=null;
+let KITG=null,T=null,LMG=null,MESHES=[],COLM=null,colGeo=null,domeGeo=null,cylGeo=null,mats=null,quadAxes=null,RQ=null,hsh=null;
 
 function cyl(x,y,z,r,h,m){const o=new T.Mesh(cylGeo,m);o.scale.set(r,h,r);o.position.set(x,y+h/2,z);o.castShadow=true;LMG.add(o)}
 function dome(x,y,z,r,m,sy=1){const o=new T.Mesh(domeGeo,m);o.scale.set(r,r*sy,r);o.position.set(x,y,z);o.castShadow=true;LMG.add(o)}
@@ -55,8 +56,8 @@ export function init(ctx){T=ctx.THREE;({quadAxes,RQ}=ctx.geom);hsh=ctx.hsh;
 
 export function build(ctx){const {by,elevPx}=ctx,live=ctx.live;
   const B={stucco:bucket(),opus:bucket(),stuccoShop:bucket(),opusShop:bucket(),roof:bucket(),plain:bucket(),gwall:bucket(),ggable:bucket(),arc:bucket()},COLS=[];ctx._cols=COLS;
-  const SG=streetGrid(ctx);let nPort=0,nH=0;
-  for(const f of by.house){if(!live(f))continue;nH++;nPort+=house(ctx,B,f,SG,COLS)}
+  const SG=streetGrid(ctx);let nPort=0,nH=0;const REC=KIT.on?[]:null;
+  for(const f of by.house){if(!live(f))continue;nH++;nPort+=house(ctx,B,f,SG,COLS,REC)}
   for(const f of by.landmark||[])if(live(f)){const r=ctx.geom.rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6,ctx)}
   let nAq=0;for(const f of by.aqueduct||[])if(live(f))nAq+=aqueduct(ctx,B,f);
   /* 栈桥、石堤：几何照旧（第 1 轮的样子），别的带（水、码头）不受这一轮影响 */
@@ -65,7 +66,8 @@ export function build(ctx){const {by,elevPx}=ctx,live=ctx.live;
   if(PB.pos.length){const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(PB.pos,3));g.setAttribute('color',new T.Float32BufferAttribute(PB.col,3));g.computeVertexNormals();const m=new T.Mesh(g,mats.pier||(mats.pier=new T.MeshLambertMaterial({vertexColors:true,side:T.DoubleSide})));m.castShadow=m.receiveShadow=true;MESHES.push(ctx.add(m))}
   for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new T.Shape(P[0].map(p=>new T.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new T.Path(r.map(p=>new T.Vector2(p[0],p[1]))));
     const g=new T.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new T.Mesh(g,mats.mole);m.castShadow=m.receiveShadow=true;LMG.add(m)}
-  for(const k of ['stucco','opus','stuccoShop','opusShop','roof','plain','gwall','ggable','arc']){const m=meshOf(T,B[k],mats[k]);if(!m)continue;if(k==='arc')m.customDepthMaterial=mats.arcDepth;MESHES.push(ctx.add(m))}
+  const MK={};for(const k of ['stucco','opus','stuccoShop','opusShop','roof','plain','gwall','ggable','arc']){const m=meshOf(T,B[k],mats[k]);if(!m)continue;if(k==='arc')m.customDepthMaterial=mats.arcDepth;MESHES.push(ctx.add(m));MK[k]=m}
+  if(KIT.on){KITG=ctx.add(new T.Group());KIT.attach(ctx,{rec:REC,meshes:MK,mats,group:KITG})}
   if(COLS.length){COLM=new T.InstancedMesh(colGeo,mats.column,COLS.length);const M=new T.Matrix4(),c=new T.Color();
     COLS.forEach((q,i)=>{const rr=q[4]>1.2?q[4]:.95;M.makeScale(rr,q[3],rr).setPosition(q[0],q[1],q[2]);COLM.setMatrixAt(i,M);const g=.86+.14*hsh(i,77);c.setRGB(g,g*.985,g*.95);COLM.setColorAt(i,c)});
     COLM.castShadow=true;COLM.receiveShadow=true;ctx.add(COLM)}
@@ -76,7 +78,9 @@ function pierBox(B,P,base,h,col){const r=quadAxes(P),c=(u,v)=>[r.cx+r.ax*u-r.az*
   for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4];q([a[0],y0,a[1]],[b[0],y0,b[1]],[b[0],y1,b[1]],[a[0],y1,a[1]],cc)}
   q([k[0][0],y1,k[0][1]],[k[3][0],y1,k[3][1]],[k[2][0],y1,k[2][1]],[k[1][0],y1,k[1][1]],c2)}
 
+export function tick(ctx){if(KIT.on)KIT.tick(ctx)}
 export function dispose(ctx){
+  if(KITG){KIT.dispose();ctx.scene.remove(KITG);KITG=null}
   for(const m of MESHES){ctx.scene.remove(m);m.geometry.dispose()}MESHES=[];
   if(COLM){ctx.scene.remove(COLM);COLM.dispose();COLM=null}
   for(const o of LMG.children)if(o.geometry&&o.geometry!==cylGeo&&o.geometry!==domeGeo)o.geometry.dispose();
