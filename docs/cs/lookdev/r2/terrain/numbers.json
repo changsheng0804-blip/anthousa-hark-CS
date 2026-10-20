@@ -1,0 +1,216 @@
+{
+ "acceptance": {
+  "shot3_band_0.12-0.40_edge_min": 0.08,
+  "land_outside_district": true,
+  "far_shore_on_horizon": true
+ },
+ "shots": {
+  "1": {
+   "global": {
+    "edge": [
+     0.0297,
+     0.0356
+    ],
+    "L": [
+     60.74,
+     59.86
+    ]
+   },
+   "bands": {
+    "0.00-0.25 sky-atmosphere": {
+     "ref_edge": 0.0445,
+     "edge_before_after": [
+      0.0,
+      0.0
+     ],
+     "L_before_after": [
+      82.35,
+      82.35
+     ]
+    },
+    "0.25-0.60 buildings": {
+     "ref_edge": 0.3632,
+     "edge_before_after": [
+      0.0484,
+      0.0652
+     ],
+     "L_before_after": [
+      62.52,
+      60.01
+     ]
+    },
+    "0.60-1.00 water": {
+     "ref_edge": 0.1618,
+     "edge_before_after": [
+      0.0316,
+      0.0316
+     ],
+     "L_before_after": [
+      45.72,
+      45.72
+     ]
+    }
+   }
+  },
+  "2": {
+   "global": {
+    "edge": [
+     0.0114,
+     0.0114
+    ],
+    "L": [
+     63.96,
+     63.96
+    ]
+   },
+   "bands": {
+    "0.00-0.25 sky-atmosphere": {
+     "ref_edge": 0.1935,
+     "edge_before_after": [
+      0.0148,
+      0.0148
+     ],
+     "L_before_after": [
+      77.41,
+      77.41
+     ]
+    },
+    "0.25-0.70 buildings+crowd": {
+     "ref_edge": 0.2194,
+     "edge_before_after": [
+      0.0171,
+      0.0171
+     ],
+     "L_before_after": [
+      62.83,
+      62.83
+     ]
+    },
+    "0.70-1.00 streets+props": {
+     "ref_edge": 0.1696,
+     "edge_before_after": [
+      0.0,
+      0.0
+     ],
+     "L_before_after": [
+      54.49,
+      54.49
+     ]
+    }
+   }
+  },
+  "3": {
+   "global": {
+    "edge": [
+     0.049,
+     0.0489
+    ],
+    "L": [
+     62.74,
+     62.71
+    ]
+   },
+   "bands": {
+    "0.00-0.12 sky-atmosphere": {
+     "ref_edge": 0.0,
+     "edge_before_after": [
+      0.0,
+      0.0
+     ],
+     "L_before_after": [
+      82.35,
+      81.85
+     ]
+    },
+    "0.12-0.40 water+terrain": {
+     "ref_edge": 0.2764,
+     "edge_before_after": [
+      0.0001,
+      0.0001
+     ],
+     "L_before_after": [
+      63.82,
+      63.82
+     ]
+    },
+    "0.40-1.00 buildings+streets": {
+     "ref_edge": 0.4321,
+     "edge_before_after": [
+      0.0814,
+      0.0812
+     ],
+     "L_before_after": [
+      58.33,
+      58.38
+     ]
+    }
+   }
+  },
+  "4": {
+   "global": {
+    "edge": [
+     0.0164,
+     0.017
+    ],
+    "L": [
+     65.13,
+     65.04
+    ]
+   },
+   "bands": {
+    "0.00-0.18 sky-atmosphere": {
+     "ref_edge": 0.1172,
+     "edge_before_after": [
+      0.0,
+      0.0
+     ],
+     "L_before_after": [
+      82.35,
+      82.35
+     ]
+    },
+    "0.18-0.60 buildings": {
+     "ref_edge": 0.2675,
+     "edge_before_after": [
+      0.028,
+      0.0295
+     ],
+     "L_before_after": [
+      71.25,
+      71.04
+     ]
+    },
+    "0.60-1.00 props+crowd+water": {
+     "ref_edge": 0.2609,
+     "edge_before_after": [
+      0.0117,
+      0.0117
+     ],
+     "L_before_after": [
+      51.02,
+      51.02
+     ]
+    }
+   }
+  }
+ },
+ "result": {
+  "shot3_band_0.12-0.40_edge": [
+   0.0001,
+   0.0001
+  ],
+  "met": false,
+  "why_not": "该带在机位 3 里全部是南港以南 1.6–5.2 km 的开阔马尔马拉海面（射线求交算出），按真实地理没有陆地；而且被 sky 的雾（1400–3800）吃成雾色。真地平线在画面最上 1% 行内（相机俯 23°、半视角 22.5°）。",
+  "land_outside_district": "met：区外陆地在机位 1（东侧城区接着长）、机位 3（左下）、机位 4（天际线）都看得见",
+  "far_shore": "met（淡）：机位 3 顶部按真实方位出现王子群岛、Sivriada/Yassiada、亚洲岸；马尔马拉南岸群山和乌卢达山真实仰角在画面上沿以外",
+  "triangles_terrain": {
+   "before": 465920,
+   "after": 498532,
+   "outer_added": 32612
+  },
+  "build_ms_sandbox": {
+   "terrain_build_ms": 435,
+   "init_paint_outer_ms": "≈1700（只在 init 一次，沙箱软件）"
+  }
+ }
+}

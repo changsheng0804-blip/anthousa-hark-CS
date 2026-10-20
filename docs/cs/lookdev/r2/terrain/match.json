@@ -1,0 +1,123 @@
+[
+ {
+  "shot": 1,
+  "part": "0.00-0.25 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 82.35,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 1,
+  "part": "0.25-0.60 buildings",
+  "L_base": 62.52,
+  "L_new": 60.01,
+  "dL": -2.51,
+  "edge_base": 0.0484,
+  "edge_new": 0.0652,
+  "dEdge_pct": 34.7,
+  "ok": false
+ },
+ {
+  "shot": 1,
+  "part": "0.60-1.00 water",
+  "L_base": 45.72,
+  "L_new": 45.72,
+  "dL": 0.0,
+  "edge_base": 0.0316,
+  "edge_new": 0.0316,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.00-0.25 sky-atmosphere",
+  "L_base": 77.41,
+  "L_new": 77.41,
+  "dL": 0.0,
+  "edge_base": 0.0148,
+  "edge_new": 0.0148,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.25-0.70 buildings+crowd",
+  "L_base": 62.83,
+  "L_new": 62.83,
+  "dL": 0.0,
+  "edge_base": 0.0171,
+  "edge_new": 0.0171,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.70-1.00 streets+props",
+  "L_base": 54.49,
+  "L_new": 54.49,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "0.00-0.12 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 81.85,
+  "dL": -0.5,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "0.40-1.00 buildings+streets",
+  "L_base": 58.33,
+  "L_new": 58.38,
+  "dL": 0.05,
+  "edge_base": 0.0814,
+  "edge_new": 0.0812,
+  "dEdge_pct": -0.2,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "0.00-0.18 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 82.35,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "0.18-0.60 buildings",
+  "L_base": 71.25,
+  "L_new": 71.04,
+  "dL": -0.21,
+  "edge_base": 0.028,
+  "edge_new": 0.0295,
+  "dEdge_pct": 5.4,
+  "ok": false
+ },
+ {
+  "shot": 4,
+  "part": "0.60-1.00 props+crowd+water",
+  "L_base": 51.02,
+  "L_new": 51.02,
+  "dL": 0.0,
+  "edge_base": 0.0117,
+  "edge_new": 0.0117,
+  "dEdge_pct": 0.0,
+  "ok": true
+ }
+]
