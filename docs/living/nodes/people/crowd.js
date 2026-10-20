@@ -18,6 +18,7 @@ const SKIN = ['#c89a74', '#b98c6a', '#d0a07a', '#a87a58'];
 const ACTC = {water: '#2f6fb0', haul: '#7a4a1e', market: '#c8901a', forum: '#8a2a5a', errand: '#4f7a34'};
 const LOADC = {sack: '#d2c3a0', jar_full: '#b5683e', jar_empty: '#b5683e', crate: '#8a6a48', basket: '#a8864e'};
 
+const SASH = {woman: '#9a3028', trader: '#c8901a', rich: '#24386a', laborer: '#a89068', old: '#4a3c30', commoner: '#6a4a2a'};   // 腰带：身份色，中景小人上也留得住
 export function initCrowd(E) {
   const {THREE, scene, elevPx, isLand, MPP, EX, data, T, getMerchant} = E;
   const M = 1 / MPP, N = E.n;
@@ -45,7 +46,7 @@ export function initCrowd(E) {
     const pauseHome = 30 + U() * 120;
     const L = r.L / M, tOut = L / go.speed, tBack = L / gb.speed, cyc = tOut + pauseFar + tBack + pauseHome;
     P.push({i, r, role, go, gb, h, b, k: h / 1.7, col: new THREE.Color(col), skin: new THREE.Color(SKIN[Math.floor(U() * SKIN.length)]),
-      leg: new THREE.Color(long ? col : role === 'laborer' || role === 'child' ? SKIN[0] : '#7a6a50'), long, veil: role === 'woman', hat: role === 'rich' && U() < .5,
+      leg: new THREE.Color(long ? col : role === 'laborer' || role === 'child' ? SKIN[0] : '#7a6a50'), sash: SASH[role] ? new THREE.Color(SASH[role]) : null, long, veil: role === 'woman', hat: role === 'rich' && U() < .5,
       loadOut, loadBack, pauseFar, pauseHome, tOut, tBack, cyc, off: U() * cyc, dens: U(), ph0: U() * 6.28,
       farPose: r.why === 'water' ? 'queue' : r.why === 'haul' ? 'rest' : r.why === 'market' ? 'sell' : r.why === 'forum' ? 'talk' : 'stand',
       act: new THREE.Color(ACTC[r.why] || ACTC.errand), x: 0, z: 0, dir: 0, vis: false});
@@ -66,15 +67,20 @@ export function initCrowd(E) {
     let v = VK.get(k); if (v == null) { v = VREP.length; VK.set(k, v); VREP.push({o, load, gait, pose: o.farPose}) } return v };
   for (const o of P) { o.vOut = vkey(o, o.loadOut, o.go); o.vBack = vkey(o, o.loadBack, o.gb); o.vFar = vkey(o, o.loadOut, null) }
   const capN = Math.max(64, N, VREP.length * 8 * 7);
-  mk('chest', new THREE.CylinderGeometry(.17, .15, .55, 7).translate(0, .3, 0), capN);
-  mk('skirt', new THREE.CylinderGeometry(.16, .23, .3, 7).translate(0, -.1, 0), capN);
-  mk('robe', new THREE.CylinderGeometry(.17, .3, .82, 8).translate(0, -.41 + .05, 0), capN);
+  // 外形：不加人数、不加骨头，只把几何换成有轮廓的（窄腰宽肩、衣摆带褶），再加手和一条腰带
+  const lathe = (pts, seg, fold = 0, foldY = -1e9) => { const g = new THREE.LatheGeometry(pts.map(q => new THREE.Vector2(q[0], q[1])), seg), a = g.attributes.position;
+    for (let i = 0; i < a.count; i++) { const x = a.getX(i), y = a.getY(i), z = a.getZ(i); if (y > foldY) continue; const th = Math.atan2(z, x), f = 1 + fold * Math.sin(th * 5) * Math.min(1, (foldY - y) / .3); a.setX(i, x * f); a.setZ(i, z * f) }
+    g.computeVertexNormals(); return g };
+  mk('chest', lathe([[.13, 0], [.15, .1], [.16, .3], [.2, .48], [.17, .56], [.07, .6], [0, .6]], 8).scale(1, 1, .72), capN);   // 胸背扁、肩宽
+  mk('sash', new THREE.CylinderGeometry(.165, .17, .07, 8).translate(0, .04, 0).scale(1, 1, .76), capN);
+  mk('skirt', lathe([[.25, -.27], [.22, -.12], [.17, .05], [0, .05]], 10, .06, -.12).scale(1, 1, .85), capN);   // 短衫下摆，有褶
+  mk('robe', lathe([[.33, -.78], [.29, -.6], [.2, -.25], [.16, 0], [.15, .05], [0, .05]], 12, .07, -.45).scale(1, 1, .85), capN);   // 长袍：下摆张开，有褶
   mk('head', new THREE.SphereGeometry(.11, 7, 5).translate(0, .14, 0), capN);
   mk('cap', new THREE.SphereGeometry(.115, 7, 4, 0, Math.PI * 2, 0, Math.PI * .5).translate(0, .15, -.01), capN);
   mk('veil', new THREE.CylinderGeometry(.12, .2, .32, 7, 1, true).translate(0, .02, -.02), capN); parts.veil.material = MAT.clone(); parts.veil.material.side = THREE.DoubleSide; parts.veil.material.onBeforeCompile = inkHook;
   mk('hat', new THREE.CylinderGeometry(.1, .12, .1, 7).translate(0, .27, 0), capN);
   for (const s of ['L', 'R']) { mk('th' + s, cyl(.075, .06, .46), capN); mk('sh' + s, cyl(.055, .045, .44), capN); mk('ft' + s, new THREE.BoxGeometry(.09, .06, .22).translate(0, -.03, .05), capN);
-    mk('up' + s, cyl(.05, .045, .3), capN); mk('lo' + s, cyl(.042, .035, .28), capN) }
+    mk('up' + s, cyl(.055, .045, .3), capN); mk('lo' + s, cyl(.045, .035, .28), capN); mk('hd' + s, new THREE.SphereGeometry(.045, 5, 4).scale(1, 1.3, .8).translate(0, -.03, 0), capN) }
   const jarPts = [[0, 0], [.07, .02], [.13, .12], [.14, .26], [.09, .38], [.05, .44], [.07, .5], [0, .5]].map(q => new THREE.Vector2(q[0], q[1]));
   mk('sack', new THREE.SphereGeometry(.3, 7, 5).scale(1.25, .7, .9), capN);
   mk('jar', new THREE.LatheGeometry(jarPts, 7), capN);
@@ -101,7 +107,7 @@ export function initCrowd(E) {
     Vp.set(o.x, o.y, o.z); E3.set(0, o.dir, 0); Qn.setFromEuler(E3); Vs.set(M * o.b, M * EX * o.k, M * o.b); Mroot.compose(Vp, Qn, Vs); Vs.set(1, 1, 1);
     Mhip.multiplyMatrices(Mroot, local(Mt, 0, .92 * (1 + Pp.bob) + Pp.lift / o.k, 0, 0, 0, Pp.hip));
     Mtor.multiplyMatrices(Mhip, local(Mt, 0, 0, 0, Pp.stoop, Pp.twist, Pp.side));
-    put('chest', Mtor, o.col);
+    put('chest', Mtor, o.col); if (o.sash) put('sash', Mtor, o.sash);
     if (o.long) { Mtmp.multiplyMatrices(Mhip, local(Mt, 0, 0, 0, (Pp.legs[0][0] - Pp.legs[1][0]) * .08, 0, 0)); put('robe', Mtmp, o.col) } else put('skirt', Mtor, o.col);
     Mneck.multiplyMatrices(Mtor, local(Mt, 0, .6, 0, Pp.neck, Pp.headYaw, 0));
     put('head', Mneck, o.skin); put(o.veil ? 'veil' : 'cap', Mneck, o.veil ? C_VEIL : o.role === 'old' ? C_GREY : C_HAIR);
@@ -113,7 +119,8 @@ export function initCrowd(E) {
       Mtmp.multiplyMatrices(Mk, local(Mt, 0, -.44, 0, 0, 0, 0)); put('ft' + S, Mtmp, C_INK);
       const A = Pp.arms[i];
       Mj.multiplyMatrices(Mtor, local(Mt, s * .22, .56, 0, -A[0], 0, (i ? -1 : 1) * (.08 + A[2]))); put('up' + S, Mj, o.role === 'laborer' ? o.skin : o.col);
-      Mk.multiplyMatrices(Mj, local(Mt, 0, -.3, 0, -A[1], 0, 0)); put('lo' + S, Mk, o.skin);
+      Mk.multiplyMatrices(Mj, local(Mt, 0, -.3, 0, -A[1], 0, 0)); put('lo' + S, Mk, o.long && o.role !== 'laborer' ? o.col : o.skin);   // 长袍的人袖子盖到手腕
+      Mtmp.multiplyMatrices(Mk, local(Mt, 0, -.28, 0, 0, 0, 0)); put('hd' + S, Mtmp, o.skin);
       if (i === 0 && load === 'basket') { Mtmp.multiplyMatrices(Mk, local(Mt, 0, -.3, 0, 0, 0, 0)); Mtmp.scale(Vp.set(.6, .6, .6)); put('crate', Mtmp, LC.basket) }
     }
     if (load === 'sack') { Mtmp.multiplyMatrices(Mtor, local(Mt, 0, .66, -.16, 0, 0, 0)); put('sack', Mtmp, LC.sack) }
@@ -156,7 +163,7 @@ export function initCrowd(E) {
         const i = dI * NF + f, Pp = blank(); if (f < NF - 1 && v.gait) walk(Pp, v.gait, f / (NF - 1) * Math.PI * 2); else stay(Pp, v.pose, 3.1, 1);
         carry(Pp, v.load);
         const q = O.clone().addScaledVector(new THREE.Vector3(1, 0, 0), (i + .5) * SW).addScaledVector(up, (j + FOOT) * SH);
-        const o = v.o, f0 = {x: q.x, y: q.y, z: q.z, dir: dI * Math.PI / 4, b: o.b, k: 1, col: CLOTH, skin: o.skin, leg: o.leg.equals(o.col) ? CLOTH : o.leg, long: o.long, veil: o.veil, hat: o.hat, role: o.role};
+        const o = v.o, f0 = {x: q.x, y: q.y, z: q.z, dir: dI * Math.PI / 4, b: o.b, k: 1, col: CLOTH, skin: o.skin, leg: o.leg.equals(o.col) ? CLOTH : o.leg, long: o.long, veil: o.veil, hat: o.hat, role: o.role, sash: o.sash};
         drawFull(f0, Pp, v.load) } });
       const keep = [];
     for (const k in parts) { const m = parts[k]; m.count = cnt[k]; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; keep.push([m, m.parent, m.material]); sc.add(m);
