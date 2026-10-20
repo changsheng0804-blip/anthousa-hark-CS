@@ -1,0 +1,54 @@
+{
+ "acceptance": {
+  "what": "shot 2 band 0.70-1.00 (streets+props) edge density >= 0.08 (full render, no only=)",
+  "before": 0.0,
+  "after": 0.2208,
+  "ref": 0.1696,
+  "met": true
+ },
+ "bands": {
+  "shot2 0.7": {
+   "edge_before": 0.0,
+   "edge_after": 0.2208,
+   "sat_before": 0.2992,
+   "sat_after": 0.2312,
+   "L_before": 54.49,
+   "L_after": 48.14
+  },
+  "shot2 0.25": {
+   "edge_before": 0.0171,
+   "edge_after": 0.0459,
+   "sat_before": 0.2368,
+   "sat_after": 0.2146,
+   "L_before": 62.83,
+   "L_after": 60.58
+  },
+  "shot3 0.4": {
+   "edge_before": 0.0814,
+   "edge_after": 0.1022,
+   "sat_before": 0.3432,
+   "sat_after": 0.3408,
+   "L_before": 58.33,
+   "L_after": 57.25
+  }
+ },
+ "triangles_streets": 121670,
+ "tris_by_mesh": {
+  "m": 26672,
+  "walk": 18102,
+  "s": 18476,
+  "c": 16920,
+  "l": 6910,
+  "kerb": 28892,
+  "plaza": 5166,
+  "fountains": 532
+ },
+ "build_ms_sandbox_software": "433-908 (contended sandbox, not a perf number)",
+ "draw_calls_added": 8,
+ "textures": "2x1024^2 (main carriageway, plaza) + 5x512^2 (walk, s, c, l) + 256^2 kerb, each map + normal map; quality=preview halves them",
+ "frontage": {
+  "sides": 6484,
+  "fountains": 14
+ },
+ "match_skip_streets": "only shot2 0.25-0.70 (buildings+crowd) moves: L* -2.25, edge 0.0171->0.0459; every changed pixel in that band is street surface receding to the vanishing point (see shot2_changed_pixels.jpg). All other bands |dL*|<=0.16, |d edge|<=1.7%."
+}
