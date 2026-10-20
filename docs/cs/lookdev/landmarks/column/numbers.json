@@ -210,24 +210,227 @@
   "note": "沙箱数；第一次建完整柱子 36–48 ms（含柱头叶片、烘焙像解码），之后年份重建复用缓存 ≈0 ms。贴图（3 张画布：柱身 2048×256、基座图集 1024²、大理石 256²）在 init 里做一次。"
  },
  "dimensions_m": {
-  "steps": 1.35,
-  "pedestal_top": 8.75,
+  "steps": 1.1,
+  "pedestal_top": 7.3,
+  "pedestal_half_width_steps": 3.52,
+  "die_half_width": 2.71,
   "shaft": [
-   10.6,
-   37.6
+   8.9,
+   34.5
   ],
   "shaft_diam": [
    3.9,
    3.4
   ],
   "capital": [
-   37.95,
-   40.55
+   34.85,
+   38.85
   ],
-  "statue_drum_top": 43.55,
-  "statue": 7.5,
-  "total": 51.05,
-  "total_px": 60.8
+  "statue_drum_top": 42.65,
+  "statue": 9.3,
+  "total": 51.95,
+  "total_px": 61.8,
+  "before_ff84e83": {
+   "pedestal_top": 8.75,
+   "shaft": [
+    10.6,
+    37.6
+   ],
+   "capital": [
+    37.95,
+    40.55
+   ],
+   "statue_drum_top": 43.55,
+   "statue": 7.5,
+   "total": 51.05
+  }
  },
- "shots1_4_match": "match.py --against before 4 个机位全局 + 12 条带 ΔL*=0.00、边缘差 ≤0.1%（全过）。逐像素：机位 2/3/4 零像素变化；机位 1 共 93 像素变化，79 个在柱子蒙版（新旧并集，±3 px）里，14 个在它脚下一行（影子/基座边）。第 60 年柱子是施工中（底账 64 年才立到顶），所以机位 1 天际线上的柱子变矮、带脚手架。"
+ "shots1_4_match": "match.py --against before 4 个机位全局 + 12 条带 ΔL*=0.00、边缘差 ≤0.1%（全过）。逐像素：机位 2/3/4 零像素变化；机位 1 共 93 像素变化，79 个在柱子蒙版（新旧并集，±3 px）里，14 个在它脚下一行（影子/基座边）。第 60 年柱子是施工中（底账 64 年才立到顶），所以机位 1 天际线上的柱子变矮、带脚手架。",
+ "revision_2026_10_20b": {
+  "note": "主人 10-20 第二遍三条：浮雕加深、受光面压暗（只动 landmarks 材质，sky/全局光不动）、像和柱头放大。before = ff84e83（上面 after 那一版），after = 本次。同一机位 5、同一套工具。3 轮（i1 几何+材质第一版；i2 比例再挪 + 螺旋棱收细 + 反照率再压；i3 凹缝最暗提一点 + 贴图暗缝不画死黑 + 基座再压 + 像高光收）。",
+  "silhouette": {
+   "iou_bbox_aligned": [
+    0.749,
+    0.827
+   ],
+   "iou_height_aligned": [
+    0.789,
+    0.858
+   ],
+   "h_to_w": {
+    "ref": 5.353,
+    "before": 4.366,
+    "after": 5.0
+   },
+   "height_frac": {
+    "ref": {
+     "statue": 0.22,
+     "capital": 0.074,
+     "shaft": 0.521,
+     "pedestal": 0.185
+    },
+    "before": {
+     "statue": 0.163,
+     "capital": 0.049,
+     "shaft": 0.552,
+     "pedestal": 0.235
+    },
+    "after": {
+     "statue": 0.204,
+     "capital": 0.067,
+     "shaft": 0.532,
+     "pedestal": 0.197
+    }
+   },
+   "shaft_slenderness": {
+    "ref": 7.06,
+    "before": 7.69,
+    "after": 7.48
+   },
+   "pedestal_to_shaft_width": {
+    "ref": 2.13,
+    "before": 2.42,
+    "after": 2.17
+   }
+  },
+  "in_mask_colour": {
+   "ref": {
+    "L_mean": 39.9,
+    "L_sd": 29.5,
+    "L_p10_p90": [
+     9.1,
+     84.5
+    ],
+    "b_mean": 20.5,
+    "sat": 0.511,
+    "edge": 0.295,
+    "px": 32003
+   },
+   "before": {
+    "L_mean": 54.2,
+    "L_sd": 38.5,
+    "L_p10_p90": [
+     6.7,
+     95.5
+    ],
+    "b_mean": 24.8,
+    "sat": 0.524,
+    "edge": 0.218,
+    "px": 37235
+   },
+   "after": {
+    "L_mean": 41.9,
+    "L_sd": 35.8,
+    "L_p10_p90": [
+     1.8,
+     88.8
+    ],
+    "b_mean": 22.1,
+    "sat": 0.609,
+    "edge": 0.326,
+    "px": 34581
+   }
+  },
+  "in_mask_L_by_part_after": {
+   "note": "柱子蒙版按高度切四段（像 0–20%、柱头 20–27%、柱身 27–80%、基座 80–100%）的 L* p10/p50/p90",
+   "statue": [
+    2.3,
+    44.5,
+    91.1
+   ],
+   "capital": [
+    1.1,
+    6.5,
+    87.4
+   ],
+   "shaft": [
+    1.9,
+    36.6,
+    87.1
+   ],
+   "pedestal": [
+    2.1,
+    58.0,
+    89.8
+   ]
+  },
+  "shot5_colour_global_after": {
+   "L_mean": 62.65,
+   "L_sd": 26.68,
+   "pct_p02_p98": [
+    0.7,
+    11.2,
+    72.9,
+    87.0,
+    94.3
+   ],
+   "b_mean": 13.01,
+   "sat": 0.2958,
+   "edge": 0.1866
+  },
+  "shot5_colour_bands_after": [
+   {
+    "y": [
+     0,
+     0.3
+    ],
+    "owner": "sky-atmosphere+column",
+    "L": 72.83,
+    "edge": 0.0181,
+    "sat": 0.0622
+   },
+   {
+    "y": [
+     0.3,
+     0.8
+    ],
+    "owner": "column+buildings",
+    "L": 55.67,
+    "edge": 0.2084,
+    "sat": 0.4083
+   },
+   {
+    "y": [
+     0.8,
+     1
+    ],
+    "owner": "streets+column",
+    "L": 64.86,
+    "edge": 0.382,
+    "sat": 0.3643
+   }
+  ],
+  "triangles": {
+   "near": [
+    33484,
+    41288
+   ],
+   "far": [
+    2204,
+    3920
+   ],
+   "construction_year60": [
+    3090,
+    4180
+   ],
+   "construction_year63_after": 9214,
+   "__modStats_landmarks_shot5": [
+    35688,
+    45208
+   ],
+   "note": "近档多的 = 螺旋真棱 18 圈 × 72 段 × 3 面（7,776）+ 基座画框凹场；远档多的 = 螺旋棱粗版（16 段/圈）。"
+  },
+  "build_ms": {
+   "geometry_build_ms": [
+    36,
+    37
+   ],
+   "landmarks_module_build_first_shot5": [
+    39,
+    68
+   ],
+   "note": "沙箱 SwiftShader 数，抖得厉害；年份 57/58/60/63/64/65/70 来回拨无报错，64 年后复用缓存 0 ms。"
+  },
+  "shots1_4_match": "match.py --against ff84e83 的同机位重渲（fx/base_all）：机位 1–4 全局 + 12 条带 ΔL*=0.00、边缘 +0.0%（全过）。逐像素：机位 2/3/4 零变化；机位 1 共 61 像素，51 个在柱子蒙版（新旧并集 ±3 px）里，10 个在它下面一行（第 297 行，影子）。机位 5 是柱子自己的机位（0.00–0.30 带边缘 +11%，是柱子上半截，本来就该变）。"
+ }
 }

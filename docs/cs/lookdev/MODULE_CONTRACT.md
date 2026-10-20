@@ -160,6 +160,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 4. 机位：`shots.json` 加一个（core 允许的最小改动），用页面里的投影反算 fov/俯仰，让地标在画面里的上下边和参考一致；带 = 天空/地标/背景。
 5. 建：剖面（`kit/lathe.js`）→ 线脚和旋转体；浮雕（`kit/relief.js`）→ 法线 + 反照率；装饰件（`kit/acanthus.js` 一类参数曲面）；雕像/不规则体 → SDF + marching cubes 离线烘焙（`tools/cs/landmarks/bake_*.py`，浏览器里现算 > 300 ms 就烘焙）；`THREE.LOD` 近/远两档；`?lmmask=1` 蒙版。
 6. 比（≤ 4 轮）：`render.py` 主机位 + 全 4 机位；`compare.py` 颜色；`silhouette.py` 形；每轮 `read_file` 看并排图，先修形（比例、机位），再修材质（反照率、浮雕对比）。
+   远看浮雕浅时先上真几何（纪功柱：`column.js` 的 `helixBand` 螺旋凸棱、基座画框真凹 0.12 m），再加法线/AO；受光面亮在地标反照率里压，不动 sky / 全局光（10-20 修订）。
 7. 交付：`match.py --against <改前>` 证明机位 1–4 只有地标像素变；证据（并排、numbers.json、notes.md、overview.jpg）进 `docs/cs/lookdev/landmarks/<名字>/`；`docs/living/next/` 加链接；NOW.md 覆盖对应一段。
 
-**可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief + soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/lookdev/silhouette.py`。
+**可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief（`aoMin` 凹缝最暗、`low` 地压暗、`patina` 暖色风化；默认同旧）+ soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/lookdev/silhouette.py`。

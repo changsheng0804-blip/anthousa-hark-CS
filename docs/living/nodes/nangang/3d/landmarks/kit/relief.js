@@ -1,7 +1,8 @@
 /* landmarks 部件 · 程序化浮雕贴图：高度图（画布里画灰度形状）→ 模糊 → 法线贴图 + 带凹缝暗部的反照率贴图。——Hark（CS线）2026-10-20
    不贴照片、不下载：所有人物、花环、框都是代码画的形状。确定性：随机一律用 rng(seed)（mulberry32）。
    不用 ctx.filter（Safari 不支持），模糊自己做（可分离盒式模糊，两遍 ≈ 高斯）。
-     const R = relief(T, W, H, (g, rng) => {...画高度：黑 = 最深，白 = 最高...}, {seed, blur, strength, base, ao})
+     const R = relief(T, W, H, (g, rng) => {...画高度：黑 = 最深，白 = 最高...}, {seed, blur, strength, base, ao, aoMin, low, patina})
+       aoMin = 凹缝最暗到多少（默认 0.42）；low = 高度 0 的「地」额外压暗多少（默认 0.1 = 以前的 0.9+0.1h）；patina = 暖色风化 0..1
      → {map, normalMap}（CanvasTexture；map 是 sRGB，normalMap 是线性）
    画人物的小函数（figure / captive / victory / garland / frame）在这里，凯旋门、方尖碑底座等以后照样用。 */
 export function rng(seed) {
@@ -38,7 +39,7 @@ export function relief(T, W, H, paint, opt = {}) {
   for (let i = 0; i < W * H; i++) h[i] = src[i * 4] / 255;
   h = boxBlur(boxBlur(h, W, H, opt.blur ?? 1, wrapX, wrapY), W, H, opt.blur ?? 1, wrapX, wrapY);
   const big = boxBlur(boxBlur(h, W, H, opt.aoR ?? 6, wrapX, wrapY), W, H, opt.aoR ?? 6, wrapX, wrapY);
-  const s = opt.strength ?? 6, base = opt.base ?? [236, 227, 210], aoK = opt.ao ?? 2.2, dirt = opt.dirt ?? 0.06;
+  const s = opt.strength ?? 6, base = opt.base ?? [236, 227, 210], aoK = opt.ao ?? 2.2, dirt = opt.dirt ?? 0.06, aoMin = opt.aoMin ?? 0.42, lowK = opt.low ?? 0.1, pat = opt.patina ?? 0;
   const nimg = g.createImageData(W, H), aimg = g.createImageData(W, H), N = nimg.data, A = aimg.data;
   const at = (x, y) => h[(wrapY ? (y % H + H) % H : Math.max(0, Math.min(H - 1, y))) * W + (wrapX ? (x % W + W) % W : Math.max(0, Math.min(W - 1, x)))];
   // 低频斑驳（风化）：几层不同尺度的确定性正弦和，避免再开一个噪声库
@@ -49,10 +50,12 @@ export function relief(T, W, H, paint, opt = {}) {
     const L = Math.hypot(nx, ny, nz); nx /= L; ny /= L; nz /= L;
     N[i * 4] = (nx * .5 + .5) * 255; N[i * 4 + 1] = (ny * .5 + .5) * 255; N[i * 4 + 2] = (nz * .5 + .5) * 255; N[i * 4 + 3] = 255;
     const cav = Math.max(0, big[i] - h[i]);
-    const ao = Math.max(0.42, 1 - aoK * cav) * (0.9 + 0.1 * h[i]);
+    const ao = Math.max(aoMin, 1 - aoK * cav) * (1 - lowK * (1 - h[i]));   // 凹缝（cavity）压暗 + 越深的「地」越暗（lowK）
     let m = 0; for (let k = 0; k < 6; k++) m += Math.sin((x / W) * fr[k] * 6.283 * (wrapX ? 1 : 1.3) + ph[k]) * Math.sin((y / H) * fr[(k + 2) % 6] * 6.283 + ph[(k + 3) % 6]);
     const w = 1 - dirt * (0.5 + 0.5 * Math.tanh(m)) - (opt.streak ? opt.streak * Math.max(0, Math.sin(x * 0.37 + ph[1]) * Math.sin(x * 0.11 + ph[2])) : 0);
-    A[i * 4] = Math.min(255, base[0] * ao * w); A[i * 4 + 1] = Math.min(255, base[1] * ao * w); A[i * 4 + 2] = Math.min(255, base[2] * ao * w * 0.985); A[i * 4 + 3] = 255;
+    // 暖色风化（patina）：另一组低频起伏决定往赭黄偏多少，凹处偏得多一点（积灰）；pat = 0 时和以前一样
+    const pw = pat * (0.5 + 0.5 * Math.tanh(1.5 * Math.sin((x / W) * fr[4] * 6.283 + ph[5]) * Math.sin((y / H) * fr[1] * 3.1 + ph[0]))) * (0.6 + 0.8 * Math.min(1, cav * 6));
+    A[i * 4] = Math.min(255, base[0] * ao * w * (1 + 0.03 * pw)); A[i * 4 + 1] = Math.min(255, base[1] * ao * w * (1 - 0.03 * pw)); A[i * 4 + 2] = Math.min(255, base[2] * ao * w * (0.985 - 0.12 * pw)); A[i * 4 + 3] = 255;
   }
   const mk = (img, srgb) => {
     const c = document.createElement('canvas'); c.width = W; c.height = H; c.getContext('2d').putImageData(img, 0, 0);
