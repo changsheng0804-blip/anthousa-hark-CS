@@ -148,8 +148,45 @@
      "props+crowd+water"
     ]
    ]
+  },
+  {
+   "id": 5,
+   "name": "column",
+   "ref": "../landmarks/column/refs/ref1_hero.jpg",
+   "zh": "狄奥多西广场·纪功柱·人眼高（landmark 试点，第 65 年：柱 64 年立到顶）",
+   "pos": [
+    1392,
+    1.7,
+    352
+   ],
+   "target": [
+    1436,
+    26.2,
+    313
+   ],
+   "fov": 57.5,
+   "eye": true,
+   "year": 65,
+   "bands": [
+    [
+     0,
+     0.3,
+     "sky-atmosphere+column"
+    ],
+    [
+     0.3,
+     0.8,
+     "column+buildings"
+    ],
+    [
+     0.8,
+     1,
+     "streets+column"
+    ]
+   ]
   }
  ],
  "bands_note": "bands = 参考图构图里自上而下的横带 [起, 止, 归哪个模块]，按参考图定死，compare.py 用它把差距分给模块。动手前定，动手后不改。",
- "camera_note": "2026-10-20 r2 合并（导演）：机位 3 target 由 [1150,0,1560] 改为 [1808,0,1901]（pos 不动；俯角 ≈23°→16°，方位 15.6°→33°，即向左 17°），天空带 0–0.12 → 0–0.14。机位 3 的基线数字因此重拍（docs/cs/lookdev/r2/baseline_shot3_newcam/），旧基线机位 3 不再可比。相机 far 9000 → 16000。"
+ "camera_note": "2026-10-20 r2 合并（导演）：机位 3 target 由 [1150,0,1560] 改为 [1808,0,1901]（pos 不动；俯角 ≈23°→16°，方位 15.6°→33°，即向左 17°），天空带 0–0.12 → 0–0.14。机位 3 的基线数字因此重拍（docs/cs/lookdev/r2/baseline_shot3_newcam/），旧基线机位 3 不再可比。相机 far 9000 → 16000。",
+ "shot5_note": "2026-10-20 landmark 试点（纪功柱）：机位 5 只看狄奥多西广场的纪功柱，参考图在 docs/cs/lookdev/landmarks/column/refs/。year=65 因为底账（proposals/era_0051.json phases）写柱子第 64 年才立到顶。"
 }

@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 04:30 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 05:30 PDT ——Hark（CS线）
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
@@ -17,10 +17,16 @@
 | 长卷街区细化（街名路牌、招牌、坡地台基台阶、柱廊额枋） | scroll.html | 10-20 提交 b506e82、ff210df | 待评 |
 | 居民：姿势引擎 + 人群 + 户籍关系 | scroll.html?n=net&crowd=N | tools/cs/people/README.md；Mac 实测一万人 100 fps | 模型不再细抠（10-19）；关系接入待评 |
 | 3D lookdev 第 2 轮（8 模块合并：低太阳 + 调色、立面/柱廊/粮仓、石板街、港水倒影、区外陆地和远岸、船吊车货堆、树、5966 口人） | docs/living/nodes/nangang/3d.html（`?shot=1..4` 看固定机位） | `docs/cs/lookdev/r2/report.md`、`docs/cs/lookdev/r2/overview.jpg`；沙箱：模块验收 9/12 条过，三角形 1.58–1.60 M | 待评（帧率待 Mac 实测） |
+| 3D 地标试点：狄奥多西广场纪功柱（landmarks 模块第一座） | docs/living/nodes/nangang/3d.html?shot=5（第 65 年；第 60 年是施工中） | `docs/cs/lookdev/landmarks/column/notes.md`、`docs/cs/lookdev/landmarks/column/overview.jpg`；轮廓 IoU 0.51→0.75（框对齐）、0.66→0.79（按高）；机位 1–4 match 全过 | 待评（帧率待 Mac 实测） |
 
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
 
 ## 进行中
+- **南港 3D 地标（landmarks，10-20 开）**：主人 10-20 说 Mac 帧率够（60–90）、3D 样子可以接受，史诗/特殊公共建筑按 athenaion 的做法一座座做。第一座纪功柱已推：
+  - 一座一个文件 `docs/living/nodes/nangang/3d/landmarks/`（`index.js` 模块壳 + `column.js` + `kit/` 部件），core 的 MODULES 里只多了 `landmarks` 一项；buildings 里的占位圆柱删了。规矩和配方见 `docs/cs/lookdev/MODULE_CONTRACT.md` 第 7 节。
+  - 底账：`forum_theodosius` 中心；`proposals/era_0051.json` 写 64 年立到顶 → 58–63 年画施工中（基座 + 长高的柱身 + 脚手架）。假设（科林斯柱头、51 m、像 7.5 m 面朝西、镀银不鎏金）都写在 notes.md。
+  - 新工具 `tools/cs/lookdev/silhouette.py`（比形：IoU、高宽比、四段高度占比、蒙版内颜色）；雕像烘焙 `tools/cs/landmarks/bake_statue.py`。
+  - 剩下的差：浮雕在 60 m 外偏浅；受光面偏亮（全局光的事）；参考图里像和柱头更大（AI 夸张，没全跟）。
 - **南港 3D lookdev 第 2 轮：合并完成（10-20）**。7 个模块代理 + 导演合并都已推到 main。现状：
   - 4 个机位从「白模 + 正午平光」变成有光、有材质、有船有人的画面；机位 1、3、4 的光和调色过 sky 验收，机位 2 没过（顺光照亮整条街，参考是逆光）。
   - 导演改了：相机 far 9000→16000；机位 3 抬头左转（地平线 ≈0.14，看得到东岸和远岸），机位 3 旧基线数字不再可比，已在新机位重拍；sky 加冷灰天光补光，粮仓山墙不再是黑的；`__modStats` 改在出图后数三角形。
@@ -29,6 +35,7 @@
 - 古城（gucheng）：另一个会话在做，别碰它的文件。
 
 ## 等主人（Mac 上实测，沙箱的数字不算）
+- **纪功柱**：`3d.html?shot=5` 看一眼「留 / 再来」；Mac 上机位 5 的帧率（近档 33,484 三角形、远档 2,204）；像要不要更大 / 鎏金、柱头要不要改回史实更可能的多立克式。下一座做哪个（候选：宁芙殿、粮仓立面、广场凯旋门、蓄水池）。
 - **帧率**：4 个机位在 `quality=high` 和 `quality=preview`、全部模块打开时的 fps 和最差一帧（预算 ≥60 fps、≤25 ms）。控制台 `window.__modStats` / `window.__trisTotal` 给三角形，`window.__crowdStats` 给人群 CPU 毫秒。
 - **三角形预算**：现在每个机位约 1.6 M（契约上限 3 M）；若 Mac 吃紧，先砍 props 港区货堆、terrain 远档。
 - **倒影开销**：water 的半分辨率平面倒影每帧多渲一遍场景，机位 1 开/关倒影各测一次帧率，决定要不要只在近水时开。

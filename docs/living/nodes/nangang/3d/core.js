@@ -19,11 +19,12 @@ import * as terrain from './terrain.js';
 import * as water from './water.js';
 import * as streets from './streets.js';
 import * as buildings from './buildings.js';
+import * as landmarks from './landmarks/index.js';   /* 2026-10-20 landmark 试点：史诗/特殊公共建筑，一座一个文件（见 MODULE_CONTRACT 的 landmarks 行） */
 import * as props from './props.js';
 import * as flora from './flora.js';
 import * as crowd from './crowd.js';
 
-export const MODULES=[sky,terrain,water,streets,buildings,props,flora,crowd];
+export const MODULES=[sky,terrain,water,streets,buildings,landmarks,props,flora,crowd];
 const $=id=>document.getElementById(id);
 const QS=new URLSearchParams(location.search);
 /* ?only=a,b：只建这些模块（单模块自查）。sky 和 terrain 是舞台，总是开着（灯和地面贴图都在它们身上）。 */

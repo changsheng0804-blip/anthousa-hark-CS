@@ -1,0 +1,233 @@
+{
+ "note": "纪功柱 landmark 试点（2026-10-20）。沙箱 SwiftShader 1376×768；颜色数字 = compare.py（688×384）对 refs/ref1_hero.jpg；形 = silhouette.py；before = 3d.html 原来的占位（白圆柱 34 px + 金圆顶），after = 3d/landmarks/column.js。机位 5 两边同一个最终机位。帧率待主人 Mac 实测。",
+ "shot5_colour_global": {
+  "ref": {
+   "L_mean": 58.6,
+   "L_sd": 27.6,
+   "pct_p02_p98": [
+    4.2,
+    16.5,
+    71.9,
+    89.0,
+    97.5
+   ],
+   "b_mean": 15.3,
+   "sat": 0.364,
+   "edge": 0.168
+  },
+  "before": {
+   "L_mean": 64.0,
+   "L_sd": 25.9,
+   "pct_p02_p98": [
+    0.8,
+    14.0,
+    73.0,
+    87.7,
+    96.8
+   ],
+   "b_mean": 12.9,
+   "sat": 0.283,
+   "edge": 0.176
+  },
+  "after": {
+   "L_mean": 63.0,
+   "L_sd": 26.6,
+   "pct_p02_p98": [
+    0.8,
+    12.0,
+    72.9,
+    87.5,
+    95.3
+   ],
+   "b_mean": 13.1,
+   "sat": 0.293,
+   "edge": 0.182
+  }
+ },
+ "shot5_colour_bands": [
+  {
+   "y": [
+    0,
+    0.3
+   ],
+   "owner": "sky-atmosphere+column",
+   "ref": {
+    "L": 80.5,
+    "edge": 0.018,
+    "sat": 0.122
+   },
+   "before": {
+    "L": 73.7,
+    "edge": 0.0,
+    "sat": 0.048
+   },
+   "after": {
+    "L": 73.1,
+    "edge": 0.016,
+    "sat": 0.06
+   }
+  },
+  {
+   "y": [
+    0.3,
+    0.8
+   ],
+   "owner": "column+buildings",
+   "ref": {
+    "L": 46.1,
+    "edge": 0.273,
+    "sat": 0.525
+   },
+   "before": {
+    "L": 57.0,
+    "edge": 0.2,
+    "sat": 0.395
+   },
+   "after": {
+    "L": 56.3,
+    "edge": 0.204,
+    "sat": 0.405
+   }
+  },
+  {
+   "y": [
+    0.8,
+    1
+   ],
+   "owner": "streets+column",
+   "ref": {
+    "L": 57.1,
+    "edge": 0.126,
+    "sat": 0.326
+   },
+   "before": {
+    "L": 67.4,
+    "edge": 0.38,
+    "sat": 0.355
+   },
+   "after": {
+    "L": 64.7,
+    "edge": 0.375,
+    "sat": 0.361
+   }
+  }
+ ],
+ "shot5_colour_in_mask": {
+  "ref": {
+   "L_mean": 39.9,
+   "L_sd": 29.5,
+   "L_p10_p90": [
+    9.1,
+    84.5
+   ],
+   "b_mean": 20.5,
+   "sat": 0.511,
+   "edge": 0.295,
+   "px": 32003
+  },
+  "before": {
+   "L_mean": 76.0,
+   "L_sd": 27.6,
+   "L_p10_p90": [
+    39.5,
+    99.0
+   ],
+   "b_mean": 19.9,
+   "sat": 0.279,
+   "edge": 0.071,
+   "px": 18814
+  },
+  "after": {
+   "L_mean": 54.2,
+   "L_sd": 38.5,
+   "L_p10_p90": [
+    6.7,
+    95.5
+   ],
+   "b_mean": 24.8,
+   "sat": 0.524,
+   "edge": 0.218,
+   "px": 37235
+  }
+ },
+ "silhouette": {
+  "iou_bbox_aligned": {
+   "before": 0.509,
+   "after": 0.749
+  },
+  "iou_height_aligned": {
+   "before": 0.656,
+   "after": 0.789
+  },
+  "h_to_w": {
+   "ref": 5.353,
+   "before": 7.87,
+   "after": 4.366
+  },
+  "height_frac": {
+   "ref": {
+    "statue": 0.22,
+    "capital": 0.074,
+    "shaft": 0.521,
+    "pedestal": 0.185
+   },
+   "before": {
+    "statue": 0.068,
+    "capital": 0.002,
+    "shaft": 0.812,
+    "pedestal": 0.118
+   },
+   "after": {
+    "statue": 0.163,
+    "capital": 0.049,
+    "shaft": 0.552,
+    "pedestal": 0.235
+   }
+  },
+  "shaft_slenderness_rows_per_width": {
+   "ref": 7.06,
+   "before": 6.9,
+   "after": 7.69
+  },
+  "pedestal_to_shaft_width": {
+   "ref": 2.13,
+   "before": 1.08,
+   "after": 2.42
+  },
+  "caveat": "before 的占位没有基座和柱头，分段规则在它身上切出来的数只能当参考；看 IoU 和高宽比。"
+ },
+ "triangles": {
+  "near": 33484,
+  "far": 2204,
+  "construction_year60": 3090,
+  "__modStats_landmarks_shot5": 35688,
+  "note": "__modStats 把 LOD 两档都算进去（近 + 远）；画面上每帧只画一档。buildings 去掉占位后 339,682 → 339,410。"
+ },
+ "build_ms": {
+  "landmarks_module_build_first": 38,
+  "geometry_build_ms": 36,
+  "statue_bake_s_offline": 0.5,
+  "note": "沙箱数；第一次建完整柱子 36–48 ms（含柱头叶片、烘焙像解码），之后年份重建复用缓存 ≈0 ms。贴图（3 张画布：柱身 2048×256、基座图集 1024²、大理石 256²）在 init 里做一次。"
+ },
+ "dimensions_m": {
+  "steps": 1.35,
+  "pedestal_top": 8.75,
+  "shaft": [
+   10.6,
+   37.6
+  ],
+  "shaft_diam": [
+   3.9,
+   3.4
+  ],
+  "capital": [
+   37.95,
+   40.55
+  ],
+  "statue_drum_top": 43.55,
+  "statue": 7.5,
+  "total": 51.05,
+  "total_px": 60.8
+ },
+ "shots1_4_match": "match.py --against before 4 个机位全局 + 12 条带 ΔL*=0.00、边缘差 ≤0.1%（全过）。逐像素：机位 2/3/4 零像素变化；机位 1 共 93 像素变化，79 个在柱子蒙版（新旧并集，±3 px）里，14 个在它脚下一行（影子/基座边）。第 60 年柱子是施工中（底账 64 年才立到顶），所以机位 1 天际线上的柱子变矮、带脚手架。"
+}

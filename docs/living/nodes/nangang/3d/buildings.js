@@ -32,7 +32,7 @@ function block(B,P,base,h,wallS,roofS,kind,pitch=.42){const r=quadAxes(P),C=(u,v
 const PARTS={
  forum(B,f,r,b,ctx){const d=10,h=8;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,h,MARBLE,ROOF,'hip',.36);block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,h,MARBLE,ROOF,'hip',.36)}
   for(let u=-r.hu+d+3;u<r.hu-d;u+=6)for(const s of [-1,1]){const x=r.cx+r.ax*u-r.az*s*(r.hv-d-2),z=r.cz+r.az*u+r.ax*s*(r.hv-d-2);ctx._cols.push([x,b,z,h,2.5])}
-  cyl(r.cx,b,r.cz,2.4,34,mats.marble);dome(r.cx,b+34,r.cz,2.6,mats.gold,1.4)},
+  /* 中间的纪功柱 2026-10-20 起归 landmarks 模块（3d/landmarks/column.js），这里不再画占位 */},
  granary(B,f,r,b,ctx){granary(ctx,B,f,r,b)},
  nymphaeum(B,f,r,b,ctx){const R_=Math.min(r.hu,r.hv*1.6)*.85,a0=Math.atan2(r.az,r.ax);for(let k=0;k<=14;k++){const t=Math.PI+k/14*Math.PI+a0,x=r.cx+Math.cos(t)*R_,z=r.cz+Math.sin(t)*R_*.6;ctx._cols.push([x,b,z,14,4.4])}
   const w=new T.Mesh(new T.CircleGeometry(R_*.75,32,0,Math.PI),mats.water);w.rotation.x=-Math.PI/2;w.rotation.z=-a0;w.scale.y=.6;w.position.set(r.cx,b+.6,r.cz);LMG.add(w)},

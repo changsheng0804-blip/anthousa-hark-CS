@@ -13,6 +13,10 @@ python3 tools/cs/lookdev/render.py --out /tmp/me            # 4 个机位 → /t
 python3 tools/cs/lookdev/render.py --shot 2 --out /tmp/me --param "only=buildings,streets"
 python3 tools/cs/lookdev/compare.py --renders /tmp/me --out /tmp/me   # cmp_shotN.jpg + stats.json + 排名
 python3 tools/cs/lookdev/match.py --renders /tmp/me --skip water      # 别人的带没被我弄坏（|ΔL*|<1、边缘差<5%）
+# 地标（2026-10-20 起）：比形。lmmask 渲染 = landmarks 模块的材质全换品红
+python3 tools/cs/lookdev/render.py --shot 5 --out /tmp/lm_mask --param "only=landmarks&lmmask=1"
+python3 tools/cs/lookdev/silhouette.py --ref-mask docs/cs/lookdev/landmarks/column/refs/ref1_mask.png --render /tmp/lm_mask/shot5.png --out /tmp/lm/sil \
+    --ref-img docs/cs/lookdev/landmarks/column/refs/ref1_hero.jpg --render-img /tmp/me/shot5.png   # IoU、高宽比、四段高度占比、蒙版内颜色
 ```
 
 - 页面钩子（不带参数时页面完全不变）：`3d.html?shot=N` 套用 `shots.json` 的机位；`&clean=1` 藏界面；`&still=1` 停掉动画循环，只在 `window.__still()` 时画一帧并返回 PNG（无头截图靠它，软件渲染一帧 1–4 秒）。`window.__applyShot(s)` 换机位不重载。
@@ -34,7 +38,8 @@ python3 tools/cs/lookdev/match.py --renders /tmp/me --skip water      # 别人�
 3d/terrain.js      地面贴图底层（海色底、陆地、沙岸、等高带）+ 高程网格（披 core 的地面贴图）
 3d/water.js        海面平面；地面贴图上的港池水色、港池岸线、石堤地皮
 3d/streets.js      地面贴图上的街（m/s/c/l）和地标地皮
-3d/buildings.js    房子（合并网格）、地标部件、栈桥、石堤立体
+3d/buildings.js    房子（合并网格）、地标部件（占位方块）、栈桥、石堤立体
+3d/landmarks/      史诗/特殊公共建筑，一座一个文件（2026-10-20 起；index.js 是模块壳，column.js 是第一座，kit/ 是部件）
 3d/props.js        空壳
 3d/flora.js        树（柏 = 锥、橄榄 = 球，实例网格）
 3d/crowd.js        空壳
@@ -52,7 +57,7 @@ export function dispose(ctx) { … }        // 每次重建前：清掉上次 bu
 export function tick(ctx, t) { … }        // 每帧；still 模式只在 __still() 时调，t = 机位的 t（默认 0），保证同图
 ```
 
-顺序（init / paint / build / tick 全按这个）：**sky → terrain → water → streets → buildings → props → flora → crowd**。
+顺序（init / paint / build / tick 全按这个）：**sky → terrain → water → streets → buildings → landmarks → props → flora → crowd**。
 重建一次 = 清空 `ctx.reg` → 各模块 dispose → 各模块 paint（地面贴图）→ core 算水陆蒙版 → 各模块 build → 贴图标脏。
 
 `ctx`：`THREE, scene, camera, renderer, controls, WD`（nodes.json）、`by`（按 t 分好的要素）、`W, H, year, live(f), elevPx(x,z), ground(x,z), hsh(n,k)`、
@@ -74,6 +79,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 | streets | `3d/streets.js` | `street`（k=m/s/c/l、w）、`landmark` 地皮、`nodes_net.json` | 街面铺装（石板、缝、车辙、路缘）、广场铺地、喷泉/井/路牌等街具、写 `reg.frontage`（哪户面向哪条街） | 房子、地形高程 | 2 |
 | props | `3d/props.js` | `pier`、`landmark`（granary）、`house.fn`（market、dock） | 船（每个泊位）、吊车、麻袋/双耳罐堆、手推车、摊位、遮阳布 | 房子、街面、人 | 4（再看 1） |
 | flora | `3d/flora.js` | `trees`（olive/cypress/garden、年份、大小） | 柏、橄榄、园子的树形和颜色 | 树的位置/种类/年份（底账给的） | 3 |
+| landmarks | `3d/landmarks/index.js` + 一座一个文件（`3d/landmarks/column.js`…）+ `3d/landmarks/kit/` | `landmark`（id、g、y0/y1、seed）；底账的 phases（`proposals/`，按年份画施工中） | 自己接手的那几座地标的全部几何、材质、贴图、烘焙网格、LOD；`?lmmask=1` 蒙版 | 地标的位置/年份（底账给的）；没接手的地标（还归 buildings）；广场柱廊、地皮 | 5（再看 1） |
 | crowd | `3d/crowd.js` | `crowd.json`、`folk_h.json`、`people.json`；复用 `docs/living/nodes/people/` 的 `crowd.js`、`pose.js` | 把长卷已有的人群接进 3D、按机位定近景关节人/远景柱的档 | 人的身份、路线、日程（由 `tools/cs/people/` 从底账推，模块只演） | 2、4 |
 
 共享规则：
@@ -110,6 +116,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 | streets | `3d/streets.js`、`3d/streets/` | `render.py --shot 2 --out /tmp/streets --param only=streets` | 4 机位，`match.py --skip streets` |
 | buildings | `3d/buildings.js`、`3d/arch/` | `render.py --shot 4 --out /tmp/bld --param only=buildings`（再 `--shot 1`） | 4 机位，`match.py --skip buildings` |
 | props + flora | `3d/props.js`、`3d/flora.js`、`3d/props/` | `render.py --shot 4 --out /tmp/props --param only=props,flora,buildings,water`（船要有码头和水才看得懂） | 4 机位，`match.py --skip props,flora` |
+| landmarks | `3d/landmarks/` 下全部；接手一座时可以删 `3d/buildings.js` 里那一座的占位（一行，注释写清）；烘焙脚本放 `tools/cs/landmarks/` | `render.py --shot 5 --out /tmp/lm` + `--param "only=landmarks&lmmask=1"` 出蒙版 | 4 机位 `match.py --against <改前渲染>`：只允许地标所在的像素变；机位 5 用 `silhouette.py` |
 | crowd | `3d/crowd.js`、`3d/crowd/`；可以 import `docs/living/nodes/people/crowd.js`、`pose.js`（在 `3d/crowd.js` 里写 `../../people/crowd.js`），**不准改**（长卷也在用） | `render.py --shot 2 --out /tmp/crowd --param only=crowd,buildings,streets` | 4 机位，`match.py --skip crowd` |
 
 只有 core（导演）能改：`3d.html`、`3d/core.js`、`shots.json`、`nodes.json` 及其他数据、`tools/cs/lookdev/` 下的工具、
@@ -136,3 +143,23 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 10. **模块只用相对路径 import**（`'three'` 走页面的 importmap，`three/addons/…` 也行）；不引 CDN、不下载贴图。
 11. **git**：只 `git add` 自己的文件；推之前 `git pull --rebase`（古城线的另一个会话也在推这个仓库，别碰它的文件）。沙箱里 HTTPS fetch 常 502，重试即可。
 12. **沙箱渲染慢**：软件渲染一帧 1–4 秒，`render.py` 全 4 机位约 20 秒（载入 ~2 秒 + 重建 ~1.6 秒）。沙箱 chrome 用 `LOOKDEV_CHROME`/`LOOKDEV_LIBS`/`LOOKDEV_PYLIB` 指路（见第 1 节）。
+
+## 7. landmarks：史诗/特殊公共建筑，一座一座按 Athenaion 的做法（2026-10-20 试点：纪功柱）
+
+主人 10-20：帧率 Mac 上够（60–90 fps），3D 样子可以接受；史诗级 / 特殊的公共建筑用这个方法逐座做。第一座 = 南港狄奥多西广场的纪功柱，证据在 `docs/cs/lookdev/landmarks/column/`（`notes.md` 写了底账事实、假设、4 轮数字）。
+
+**钩子（唯一的一处）**：`3d/core.js` 的 `MODULES` 在 buildings 后面多一项 `landmarks`（`3d/landmarks/index.js`）。index.js 按地标 id 把 `ctx.by.landmark` 分给各自的文件；没有文件的地标照旧由 buildings 画占位。接手一座 = 新文件 + `LM` 列表加一项 + 删 buildings 里那一座的占位（同一次提交）。
+
+**一座地标的文件**（`3d/landmarks/<名字>.js`）导出 `id`、`init(ctx)`（材质、画布贴图，只一次）、`build(ctx, f, r, b)` → Object3D 或 null（`r = rectOf(f.g)`、`b = elevPx(中心)+1.6`）、`stats()`（近/远三角形、建造毫秒）。
+年份照底账：nodes.json 只有 y0/y1，细的阶段（施工、完工）读 `proposals/` 的 phases，写成文件里的常量并注明出处。
+
+**配方（每座照走一遍）**
+1. 底账：在 `nodes.json`、`proposals/`、`chronicle/` 里找这座的 id、位置、年份、阶段；史料补形制（尺寸、材料、装饰），每条写出处；底账没说的写成「假设」。
+2. 参考图 3 张（`generate_image`）：主机位人眼高（把占位渲染图当构图参考喂进去，参考才和机位对得上）、3/4 近景细部、远景天际线；光照 ART_BIBLE（低暖太阳从左）；禁教堂/十字/现代物。存 `docs/cs/lookdev/landmarks/<名字>/refs/`。逐张看，有违规就重生成。
+3. 参考蒙版：天空背景的部分按行估背景色自动抠，被背景压住的部分按放大网格量边、手写多边形；存 `refs/ref1_mask.png`，叠在参考上看一遍。
+4. 机位：`shots.json` 加一个（core 允许的最小改动），用页面里的投影反算 fov/俯仰，让地标在画面里的上下边和参考一致；带 = 天空/地标/背景。
+5. 建：剖面（`kit/lathe.js`）→ 线脚和旋转体；浮雕（`kit/relief.js`）→ 法线 + 反照率；装饰件（`kit/acanthus.js` 一类参数曲面）；雕像/不规则体 → SDF + marching cubes 离线烘焙（`tools/cs/landmarks/bake_*.py`，浏览器里现算 > 300 ms 就烘焙）；`THREE.LOD` 近/远两档；`?lmmask=1` 蒙版。
+6. 比（≤ 4 轮）：`render.py` 主机位 + 全 4 机位；`compare.py` 颜色；`silhouette.py` 形；每轮 `read_file` 看并排图，先修形（比例、机位），再修材质（反照率、浮雕对比）。
+7. 交付：`match.py --against <改前>` 证明机位 1–4 只有地标像素变；证据（并排、numbers.json、notes.md、overview.jpg）进 `docs/cs/lookdev/landmarks/<名字>/`；`docs/living/next/` 加链接；NOW.md 覆盖对应一段。
+
+**可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief + soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/lookdev/silhouette.py`。
