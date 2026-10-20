@@ -165,7 +165,9 @@ function houseGeom(B,f){
   const cx=(p[0]+p[4])/2,cz=(p[1]+p[5])/2;if(cx<0||cz<0||cx>W||cz>H)return;/* 街区框外的户不画：框外没有陆地，画了就站在水上 */
   /* 坡地（主人 10-20：斜坡上悬空）：地坪按临街门口的地面定，后头高出来的埋进坡里（最多埋 2.2），低下去的用石砌台基一直垫到坡底 */
   const gP=(u,v)=>{const q=P(u,v);return ground(q[0],q[1])},gF=gP(Lu/2,0),gC=[gP(0,0),gP(Lu,0),gP(Lu,Lv),gP(0,Lv),gP(Lu/2,Lv/2),gF],gMin=Math.min(...gC),gMax=Math.max(...gC);
-  const base=Math.max(gF,gMax-2.2),gL=(u,v)=>gP(u,v)-base;
+  /* 门前地带（台阶、柱廊台面会落的地方）横着竖着都量一遍，取最高的：门前地面永远不会高过台面，台阶不被坡吃掉（主人 10-20） */
+  let gS=gF;{const dep=ty==='row'&&f.po?3.0:1.6;for(let i=0;i<=4;i++)for(const v of [0,-dep/2,-dep])gS=Math.max(gS,gP(Lu*i/4,v))}
+  const base=Math.max(gS+.08,gMax-2.2),gL=(u,v)=>gP(u,v)-base;
   const c3=c=>[c[0]/255,c[1]/255,c[2]/255];
   const tri=(a,b,c,col)=>{B.pos.push(a[0],a[1],a[2],b[0],b[1],b[2],c[0],c[1],c[2]);const k=c3(col);for(let i=0;i<3;i++)B.col.push(k[0],k[1],k[2])};
   const quad=(a,b,c,d,col)=>{tri(a,b,c,col);tri(a,c,d,col)};
@@ -214,7 +216,7 @@ function houseGeom(B,f){
     if(!f.po&&h(8)<.6){const ac=pick(AWN,9),y=gH*.95;quad(V(u0+.2,v0,y),V(u1-.2,v0,y),V(u1-.2,v0-2.2,y-1.2),V(u0+.2,v0-2.2,y-1.2),ac)}
     if(f.po){/* 柱廊：披檐的上沿收在挑楼底板下面（不再穿进挑楼），柱头顶到披檐底，柱脚落到台阶上 */const D=2.4,yT=gH-.08,yB=3.0,vT=v0-jet,vB=v0-D-.3,rY=v=>yB+(v-vB)/(vT-vB)*(yT-yB);
       const sg=Math.min(0,gL(u0+.5,v0-D),gL(u1-.5,v0-D),gL(DU,v0-D))-.5;box(u0,vB,u1,v0,sg,.12,STONEW,STONEW);
-      const nC=Math.max(1,Math.round(W_/3));for(let k=0;k<nC;k++){const uu=u0+W_*(k+.5)/nC;box(uu-.3,v0-D,uu+.3,v0-D+.6,.12,rY(v0-D+.3)+.06,MORTAR)}/* 柱子排在每户门面中间，相邻两户不在分界上各立一根挤成双柱 */
+      const nC=Math.max(1,Math.round(W_/3));for(let k=0;k<nC;k++){const uu=u0+W_*(k+.5)/nC;box(uu-.3,v0-D,uu+.3,v0-D+.6,.12,rY(v0-D)-.36,MORTAR)}box(u0,v0-D-.05,u1,v0-D+.65,rY(v0-D)-.38,rY(v0-D)-.03,MORTAR,MORTAR);/* 柱头不再戳穿披檐：柱子顶到外沿那条最低的檐下，上面架一根额枋托住披檐 *//* 柱子排在每户门面中间，相邻两户不在分界上各立一根挤成双柱 */
       quad(V(u0,vT,yT),V(u1,vT,yT),V(u1,vB,yB),V(u0,vB,yB),rc)}
     for(let fl=1;fl<nF;fl++)windows(v1+.07,gH+(fl-1)*FH*.9+1.1,Math.max(1,Math.round(W_/3.6)),.9,1.4,DARK);
     roof(u0,v0-jet,u1,v1,top,Math.min(3.4,(v1-v0+jet)*.32),rc,h(10)<.7?'gable':'hip',true,up);
@@ -263,7 +265,7 @@ function houseGeom(B,f){
     else if(r<.65&&Lu>4){const pv=[200,170,120],g=gL(Lu/2,y0+1.8);boxG(.9,y0+.6,1.2,y0+3,2.4+g-gL(1,y0+1.8),pv);boxG(Lu-1.2,y0+.6,Lu-.9,y0+3,2.4+g-gL(Lu-1,y0+1.8),pv);box(.9,y0+.6,Lu-.9,y0+3,g+2.3,g+2.55,[120,140,80])}
     else if(r<.9){const uc=Lu*(.3+.4*h(92)),vc=(y0+y1)/2,rr=Math.min(2.2,(y1-y0)*.35+.6),g=gL(uc,vc);box(uc-.2,vc-.2,uc+.2,vc+.2,g-.4,g+2,[120,96,70]);box(uc-rr,vc-rr,uc+rr,vc+rr,g+2,g+2+rr*1.3,[118,140,96],[132,154,104])}}
   /* 门口台阶：门前地面比地坪低，就砌几级石阶下到街面 */
-  {const dh=-gL(DU,v0-.4);if(dh>.45&&!(ty==='row'&&f.po)){const n=Math.min(6,Math.ceil(dh/.5)),hs=dh/n;for(let k=0;k<n;k++){const a=v0-.15-(k+1)*.5,b=v0-.15-k*.5;box(DU-.85,a,DU+.85,b,gL(DU,a)-.4,-(k+1)*hs+hs,STONEW,STONEW)}}}
+  {const PO=ty==='row'&&f.po,sv=PO?v0-2.7:v0-.15,sy=PO?.12:0,dh=sy-gL(DU,sv-.4);if(dh>.45){const n=Math.min(6,Math.ceil(dh/.5)),hs=dh/n;for(let k=0;k<n;k++){const a=sv-(k+1)*.5,b=sv-k*.5;const gm=Math.min(gL(DU-.85,a),gL(DU+.85,a)),gx=Math.max(gL(DU-.85,a),gL(DU+.85,a),gL(DU-.85,b),gL(DU+.85,b));box(DU-.85,a,DU+.85,b,gm-.4,Math.max(sy-(k+1)*hs+hs,gx+.1),STONEW,STONEW)}}}
   /* 招牌（signs.json：这户的行当）：连排铺面挂在挑楼正面，公寓挂在拱门上方，别的人家门边挑出一块吊牌 */
   const lab=SGN&&SGN.shops[id];if(lab&&ATL){const c=ATL.cell['sh:'+lab],nS=[-nv[0],-nv[1]];
     if(ty==='row'){const jt=.7+.5*h(5),gH=FH*.95,vv=v0-jt,ww=Math.min(W_*.72,.8*c.a),uc=u0+W_/2;box(uc-ww/2-.08,vv-.08,uc+ww/2+.08,vv-.01,gH+.07,gH+1.03,DARK);txt(V(uc-ww/2,vv-.1,gH+.15),V(uc+ww/2,vv-.1,gH+.15),V(uc+ww/2,vv-.1,gH+.95),V(uc-ww/2,vv-.1,gH+.95),nS,c)}
