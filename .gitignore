@@ -9,3 +9,4 @@ docs/baked_hillshade.png
 __pycache__/
 tools/cs/factory/out/zoom/*.jpg
 tools/cs/factory/out/ground_y/
+docs/cs/lookdev/out/

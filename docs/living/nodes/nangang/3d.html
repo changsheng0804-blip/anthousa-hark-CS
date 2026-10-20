@@ -137,5 +137,14 @@ let pend=0;$('yr').oninput=e=>{YEAR=+e.target.value;$('yl').textContent='建城 
 addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight)});
 let fN=0,fT=performance.now();window.__fps=0;
 rnd.setAnimationLoop(()=>{ctl.update();rnd.render(scene,cam);fN++;const t=performance.now();if(t-fT>1000){window.__fps=fN*1000/(t-fT);$('fps').textContent=window.__fps.toFixed(0)+' fps';fN=0;fT=t}});
-window.__view=(px,py,pz,tx,ty,tz)=>{cam.position.set(px,py,pz);ctl.target.set(tx,ty,tz);ctl.update()};window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};window.__ready=1;
+window.__view=(px,py,pz,tx,ty,tz)=>{cam.position.set(px,py,pz);ctl.target.set(tx,ty,tz);ctl.update()};window.__setYear=Y=>{YEAR=Y;$('yr').value=Y;build()};
+/* lookdev 机位钩子（2026-10-20，CS 线）：?shot=N 读 shots.json 的固定机位；?clean=1 藏掉界面。不带参数时什么都不变。 */
+const QS=new URLSearchParams(location.search);if(QS.has('clean'))for(const id of ['tag','bar','fps'])$(id).style.display='none';
+window.__applyShot=s=>{if(s.year!=null&&s.year!==YEAR){YEAR=s.year;$('yr').value=s.year;$('yl').textContent='建城 '+YEAR+' 年';build()}
+  const gy=(x,z)=>s.eye?Math.max(0,ground(x,z)):0,p=s.pos,t=s.target;ctl.maxPolarAngle=Math.PI/2+.15;ctl.minDistance=1;
+  cam.fov=s.fov||40;cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();cam.position.set(p[0],p[1]+gy(p[0],p[2]),p[2]);ctl.target.set(t[0],t[1]+gy(t[0],t[2]),t[2]);ctl.update();window.__shot=s.id};
+if(QS.has('shot')){try{const S=await fetch('shots.json').then(r=>r.json()),s=S.shots.find(x=>String(x.id)===QS.get('shot')||x.name===QS.get('shot'));if(s)window.__applyShot(s)}catch(e){console.warn('shots.json',e)}}
+/* ?still=1：不跑动画循环，只在 __still() 时画一帧并交出 PNG（无头截图用，软件渲染一帧要几秒） */
+window.__still=()=>{ctl.update();rnd.render(scene,cam);return rnd.domElement.toDataURL('image/png')};if(QS.has('still'))rnd.setAnimationLoop(null);
+window.__ready=1;
 </script></body></html>

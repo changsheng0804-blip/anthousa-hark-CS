@@ -1,0 +1,29 @@
+{
+ "page": "docs/living/nodes/nangang/3d.html",
+ "url_params": "?clean=1&still=1",
+ "shots": [
+  {
+   "id": 1,
+   "name": "harbour",
+   "png": "docs/cs/lookdev/baseline/render/shot1.png"
+  },
+  {
+   "id": 2,
+   "name": "street",
+   "png": "docs/cs/lookdev/baseline/render/shot2.png"
+  },
+  {
+   "id": 3,
+   "name": "aerial",
+   "png": "docs/cs/lookdev/baseline/render/shot3.png"
+  },
+  {
+   "id": 4,
+   "name": "granary",
+   "png": "docs/cs/lookdev/baseline/render/shot4.png"
+  }
+ ],
+ "load_s": 1.9,
+ "build_ms": 1705,
+ "console": []
+}

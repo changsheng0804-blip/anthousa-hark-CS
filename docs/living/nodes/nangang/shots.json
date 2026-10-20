@@ -1,0 +1,154 @@
+{
+ "note": "南港 lookdev 固定机位。3d.html?shot=N&clean=1 用它；tools/cs/lookdev/render.py 也读它。坐标同 nodes.json：x=页面 x，z=页面 y（向南为正），y=高（像素，1 像素≈0.84 米）。eye=true 时 pos/target 的 y 是离地高度。",
+ "size": [
+  1376,
+  768
+ ],
+ "shots": [
+  {
+   "id": 1,
+   "name": "harbour",
+   "ref": "ref1_harbour.jpg",
+   "zh": "尤利安港·水上·黄昏",
+   "pos": [
+    1600,
+    48,
+    1740
+   ],
+   "target": [
+    1640,
+    22,
+    1280
+   ],
+   "fov": 42,
+   "eye": false,
+   "year": 60,
+   "bands": [
+    [
+     0,
+     0.25,
+     "sky-atmosphere"
+    ],
+    [
+     0.25,
+     0.6,
+     "buildings"
+    ],
+    [
+     0.6,
+     1,
+     "water"
+    ]
+   ]
+  },
+  {
+   "id": 2,
+   "name": "street",
+   "ref": "ref2_street.jpg",
+   "zh": "主街·人眼高",
+   "pos": [
+    470,
+    2.0,
+    632
+   ],
+   "target": [
+    900,
+    3.0,
+    611
+   ],
+   "fov": 60,
+   "eye": true,
+   "year": 60,
+   "bands": [
+    [
+     0,
+     0.25,
+     "sky-atmosphere"
+    ],
+    [
+     0.25,
+     0.7,
+     "buildings+crowd"
+    ],
+    [
+     0.7,
+     1,
+     "streets+props"
+    ]
+   ]
+  },
+  {
+   "id": 3,
+   "name": "aerial",
+   "ref": "ref3_aerial.jpg",
+   "zh": "高空·屋顶到海",
+   "pos": [
+    820,
+    520,
+    380
+   ],
+   "target": [
+    1150,
+    0,
+    1560
+   ],
+   "fov": 45,
+   "eye": false,
+   "year": 60,
+   "bands": [
+    [
+     0,
+     0.12,
+     "sky-atmosphere"
+    ],
+    [
+     0.12,
+     0.4,
+     "water+terrain"
+    ],
+    [
+     0.4,
+     1,
+     "buildings+streets"
+    ]
+   ]
+  },
+  {
+   "id": 4,
+   "name": "granary",
+   "ref": "ref4_granary.jpg",
+   "zh": "亚历山大粮仓·码头",
+   "pos": [
+    600,
+    13,
+    1428
+   ],
+   "target": [
+    680,
+    9,
+    1320
+   ],
+   "fov": 50,
+   "eye": true,
+   "year": 60,
+   "bands": [
+    [
+     0,
+     0.18,
+     "sky-atmosphere"
+    ],
+    [
+     0.18,
+     0.6,
+     "buildings"
+    ],
+    [
+     0.6,
+     1,
+     "props+crowd+water"
+    ]
+   ]
+  }
+ ],
+ "bands_note": "bands = 参考图构图里自上而下的横带 [起, 止, 归哪个模块]，按参考图定死，compare.py 用它把差距分给模块。动手前定，动手后不改。"
+}
