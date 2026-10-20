@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 06:50 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 09:40 PDT ——Hark（CS线）
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
@@ -20,9 +20,15 @@
 | 3D 地标试点：狄奥多西广场纪功柱（landmarks 模块第一座） | docs/living/nodes/nangang/3d.html?shot=5（第 65 年；第 60 年是施工中） | `docs/cs/lookdev/landmarks/column/notes.md`、`docs/cs/lookdev/landmarks/column/overview.jpg`；10-20 第二遍修订后轮廓 IoU 0.83（框对齐）/ 0.86（按高）、高宽比 5.0（参考 5.35）；机位 1–4 match 全过 | 待评（帧率待 Mac 实测） |
 | 3D 地标第 2 座：大宁芙殿 Nymphaeum Maius | docs/living/nodes/nangang/3d.html?shot=6（第 60 年） | `docs/cs/lookdev/landmarks/nymphaeum/notes.md`、`overview.jpg`；轮廓 IoU 0.59（占位）→ 0.83（框对齐）、高宽比 0.77（参考 0.65）；机位 1–5 match 全过，2–4 逐像素不变 | 待评（帧率待 Mac 实测） |
 
+| 3D r3：地面穿模 + 史诗夸张（主人 10-20 两条） | docs/living/nodes/nangang/3d.html（`?shot=1..6`；机位 5、6 重新对准） | `docs/cs/lookdev/r3_ground_scale/notes.md`、`docs/cs/lookdev/r3_ground_scale/overview.jpg`、`docs/cs/lookdev/r3_ground_scale/numbers.json`；`tools/cs/lookdev/ground_check.py`：第 65 年漏空 26→14、埋墙脚 1671→2；纪功柱 51.9→72.7 m（周边屋顶中位数的 8.2→11.5 倍）、宁芙殿 22.2→30.5 m（3.1→4.2 倍）；每机位 1.62–1.68 M 三角形 | 待评（帧率待 Mac 实测） |
+
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
 
 ## 进行中
+- **r3 地面穿模 + 史诗夸张（10-20，主人：「地面穿模明显，要调整」「史诗城市里地标放大一些，尤其大的」）**：
+  - 落地规矩进了 `docs/cs/lookdev/MODULE_CONTRACT.md` §6 第 13 条：站在地上的一律用 `ctx.groundMesh`（terrain 网格的三角插值，框外读 terrain/outer.js 的 `heightAt`）；有占地的用 `ctx.footing` → 地坪 = 最高地面（民居 max(mid, max−0.45)），台基 / 墙基伸到最低地面 −0.6，`ctx.foot` 登记；验收 `ground_check.py`。
+  - 史诗夸张进了 §7：每座地标 `HERO_SCALE`（纪功柱、宁芙殿 1.4，只放大高，占地照底账）；buildings 里的广场柱廊、粮仓 `LM_SCALE` 1.2。纪功柱、宁芙殿原来的轮廓 IoU 数字不再是目标。
+  - 剩下：14 户在页面框角（区内 / 区外地形接缝高差 20–80 px，要 terrain 缝合）；2 座框外栈桥埋在区外地形里；港池岸仍是沙坡，码头户现在立在高墙基上；陡街上临街铺面墙基最高 ≈2.5 px（主人嫌高可改回中心地坪）。
 - **南港 3D 地标（landmarks，10-20 开）**：主人 10-20 说 Mac 帧率够（60–90）、3D 样子可以接受，史诗/特殊公共建筑按 athenaion 的做法一座座做。已推两座：纪功柱（机位 5）、大宁芙殿（机位 6）。
   - **大宁芙殿（10-20 第二座）**：`docs/living/nodes/nangang/3d/landmarks/nymphaeum.js` + 烘焙像 `tools/cs/landmarks/bake_nymph_statues.py`；`shots.json` 加机位 6；buildings 的半圈柱子 + 水池占位删了（留 15 个零高度空实例保住广场柱廊的色差序号）。
     底账：`nymphaeum_maius` y0=44、`proposals/era_0041.json` dna rotunda/砖/大理石贴面、无 phases（不画施工）；水道桥 aq_hadrian 贴北边过。形制史料无载 → 按两层壁龛式宁芙殿假设（7 折面弧形立面、两端塔、18 尊宁芙像、吐水 + 4 道水瀑 + 鼓出的大池），全在 notes.md。
@@ -42,6 +48,7 @@
 - 古城（gucheng）：另一个会话在做，别碰它的文件。
 
 ## 等主人（Mac 上实测，沙箱的数字不算）
+- **r3**：看 `docs/cs/lookdev/r3_ground_scale/overview.jpg`：穿模修得算不算数、放大 1.4 够不够（要更夸张就改各地标文件的 `HERO_SCALE`）、陡街铺面墙基高不高；Mac 上机位 1–6 帧率。
 - **纪功柱**：`3d.html?shot=5` 看一眼「留 / 再来」；Mac 上机位 5 的帧率（近档 41,288 三角形、远档 3,920）；像要不要更大 / 鎏金、柱头要不要改回史实更可能的多立克式。
 - **大宁芙殿**：`3d.html?shot=6` 看一眼「留 / 再来」；Mac 上机位 6、5 的帧率（宁芙殿近档 58,099、远档 24,159）；立面形制（弧形两层壁龛 + 两端塔）和朝向（朝南偏东、背靠水道桥）认不认。下一座做哪个（候选：粮仓立面、广场凯旋门、蓄水池）。
 - **帧率**：4 个机位在 `quality=high` 和 `quality=preview`、全部模块打开时的 fps 和最差一帧（预算 ≥60 fps、≤25 ms）。控制台 `window.__modStats` / `window.__trisTotal` 给三角形，`window.__crowdStats` 给人群 CPU 毫秒。

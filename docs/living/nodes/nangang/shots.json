@@ -155,16 +155,16 @@
    "ref": "../landmarks/column/refs/ref1_hero.jpg",
    "zh": "狄奥多西广场·纪功柱·人眼高（landmark 试点，第 65 年：柱 64 年立到顶）",
    "pos": [
-    1392,
+    1387,
     1.7,
-    352
+    354
    ],
    "target": [
     1436,
-    26.2,
+    40,
     313
    ],
-   "fov": 57.5,
+   "fov": 66,
    "eye": true,
    "year": 65,
    "bands": [
@@ -197,10 +197,10 @@
    ],
    "target": [
     1576.9,
-    15.0,
+    19,
     200.5
    ],
-   "fov": 44.2,
+   "fov": 50,
    "eye": true,
    "year": 60,
    "bands": [
@@ -225,5 +225,6 @@
  "bands_note": "bands = 参考图构图里自上而下的横带 [起, 止, 归哪个模块]，按参考图定死，compare.py 用它把差距分给模块。动手前定，动手后不改。",
  "camera_note": "2026-10-20 r2 合并（导演）：机位 3 target 由 [1150,0,1560] 改为 [1808,0,1901]（pos 不动；俯角 ≈23°→16°，方位 15.6°→33°，即向左 17°），天空带 0–0.12 → 0–0.14。机位 3 的基线数字因此重拍（docs/cs/lookdev/r2/baseline_shot3_newcam/），旧基线机位 3 不再可比。相机 far 9000 → 16000。",
  "shot5_note": "2026-10-20 landmark 试点（纪功柱）：机位 5 只看狄奥多西广场的纪功柱，参考图在 docs/cs/lookdev/landmarks/column/refs/。year=65 因为底账（proposals/era_0051.json phases）写柱子第 64 年才立到顶。",
- "shot6_note": "2026-10-20 landmark 第 2 座（大宁芙殿）：机位 6 从宁芙殿西南的空场（陶里广场东北角外）斜看凹立面，背后是 aq_hadrian 水道桥；参考图在 docs/cs/lookdev/landmarks/nymphaeum/refs/。year=60 同机位 1–4（宁芙殿 44 年建成，底账没有 phases）。"
+ "shot6_note": "2026-10-20 landmark 第 2 座（大宁芙殿）：机位 6 从宁芙殿西南的空场（陶里广场东北角外）斜看凹立面，背后是 aq_hadrian 水道桥；参考图在 docs/cs/lookdev/landmarks/nymphaeum/refs/。year=60 同机位 1–4（宁芙殿 44 年建成，底账没有 phases）。",
+ "r3_note": "2026-10-20 r3_ground_scale（主人：史诗建筑放大 + 地面穿模）：纪功柱 HERO_SCALE 1.4（总高 51.95→72.7 m）、宁芙殿台基以上 ×1.4，机位 5、6 重新对准让整座进画：机位 5 pos [1392,1.7,352]→[1387,1.7,354]、target [1436,26.2,313]→[1436,40,313]、fov 57.5→66；机位 6 target y 15→19、fov 44.2→50。机位 1–4 不动。旧的机位 5、6 轮廓数字（IoU/高宽比）不再是目标。"
 }

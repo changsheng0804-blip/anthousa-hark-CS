@@ -122,7 +122,9 @@ export function build(ctx){const t0=performance.now(),TM={};const {hsh}=ctx,site
   TM.total=Math.round(performance.now()-t0);check.ms=TM;window.__propsCheck=check}
 
 /* 一堆货：局部坐标 u 沿岸（tx,tz），v 往岸里（-tz,tx 的反向随便，堆是对称的） */
-function cluster(ctx,site,B,x,z,tx,tz,sd,col,white){const {hsh}=ctx,r=hsh(sd,34),vx=-tz,vz=tx;const put=(bk,u,v,yy,ry,s,c,sy=s,rx=0,rz=0)=>{const px=x+tx*u+vx*v,pz=z+tz*u+vz*v;if(site.inHouse(px,pz,.4))return;
+function cluster(ctx,site,B,x,z,tx,tz,sd,col,white){const {hsh}=ctx,r=hsh(sd,34),vx=-tz,vz=tx;
+  /* r3_ground_scale：岸坡太陡（±2.5 像素内地面高差 > 2.4，即港池边那道 45° 沙坡）不堆货：每件按自己脚下落地时，堆在陡坡上会一层层悬空 */
+  {let lo=1e9,hi=-1e9;for(const [a,b] of [[2.5,0],[-2.5,0],[0,2.5],[0,-2.5],[0,0]]){const h=ctx.groundMesh(x+a,z+b);lo=Math.min(lo,h);hi=Math.max(hi,h)}if(hi-lo>2.4)return}const put=(bk,u,v,yy,ry,s,c,sy=s,rx=0,rz=0)=>{const px=x+tx*u+vx*v,pz=z+tz*u+vz*v;if(site.inHouse(px,pz,.4))return;
     bk.m.push(mtx(px,site.yAt(px,pz)+yy,pz,yawOf(tx,tz)+ry,s,sy,rx,rz));bk.c.push(c)};
   const k=i=>hsh(sd,50+i);
   if(r<.12){/* 沿岸一长溜麻袋：两层 */const n=4+Math.floor(k(1)*4),s=.95+.1*k(4);for(let l=0;l<2;l++)for(let a=0;a<n-l;a++)for(let b=0;b<2-l;b++)put(B.sack,(a-(n-l-1)/2)*1.25*s,(b-(1-l)/2)*.95*s,l*.5*s,(k(20+a+b*7)-.5)*.4,s,col(0xb89e70,k(30+a*3+b+l*17),.1))}

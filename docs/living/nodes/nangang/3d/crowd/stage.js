@@ -1,7 +1,7 @@
 /* crowd 的舞台转接（lookdev 第 2 轮，2026-10-20）：把长卷的人群引擎 docs/living/nodes/people/crowd.js（+ pose.js）原样接进 3D。
    引擎不改一个字（长卷也在用），这里只做转接：
    - 场景：引擎往 scene.add 的部件，改走 ctx.add（core 按模块数三角形）；每个部件投影。
-   - 地面：引擎站人的高度 = elevPx + 1.5，这里把 elevPx 换成 ctx.ground − 1.5，人就踩在 3D 地形网格上（含港边软化）。
+   - 地面：引擎站人的高度 = elevPx + 1.5，这里把 elevPx 换成 ctx.groundMesh − 1.5（r3：terrain 网格的三角插值，不是光滑的 ground），人就踩在画出来的地形网格上（含港边软化）。
    - 尺度：3D 里房子不做竖向夸张，人也不夸张（EX=1），人眼高机位 1.7 m 才和人头一样高。
    - 时钟：引擎的一天长 T（people.json，2133 s）；still 模式 t 固定，这里把 3D 的 t 挂到「正午」段里的 930 s（930 + t），同机位同图。
      930 是在正午段里按机位 2 主街上的人数挑的（主街 400 m 内 72 人；T/2 = 1066 时 60 人），可用 ?crowdT= 改。
@@ -40,7 +40,7 @@ export function stage(ctx, cd, pd) {
       X.strokeStyle = g(L[0]); X.lineWidth = 2 * kb; X.beginPath(); X.moveTo(f.g[0], f.g[1]); X.lineTo(f.g[2], f.g[3]); X.stroke() }
     const D = X.getImageData(0, 0, W, H).data; LR = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) LR[i] = D[i * 4]; LW = W; LH = H; liftMs = Math.round(performance.now() - t0) }
   const liftAt = (x, z) => { if (!LR) return 0; const i = x | 0, j = z | 0; return i < 0 || j < 0 || i >= LW || j >= LH ? 0 : LR[j * LW + i] / LQ };
-  const C = initCrowd({THREE, scene: sceneProxy, elevPx: (x, z) => ctx.ground(x, z) - 1.5 + .02 + liftAt(x, z), isLand: () => true,
+  const C = initCrowd({THREE, scene: sceneProxy, elevPx: (x, z) => ctx.groundMesh(x, z) - 1.5 + .02 + liftAt(x, z), isLand: () => true,
     MPP, EX: 1, data: cd, n: N, T});
   let on = false, last = null;
   const triOf = m => { const g = m.geometry; return (g.index ? g.index.count : g.attributes.position.count) / 3 };

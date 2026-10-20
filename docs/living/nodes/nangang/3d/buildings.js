@@ -14,30 +14,55 @@ import {aqueduct} from './arch/aqueduct.js';
 export const name='buildings';
 export const checkShot=4;
 const MARBLE=[238,232,218],STONE=[222,212,190],ROOF=[186,98,62];
-let T=null,LMG=null,MESHES=[],COLM=null,colGeo=null,domeGeo=null,cylGeo=null,mats=null,quadAxes=null,RQ=null,hsh=null;
+let CTX=null,T=null,LMG=null,MESHES=[],COLM=null,colGeo=null,domeGeo=null,cylGeo=null,mats=null,quadAxes=null,RQ=null,hsh=null;
 
 function cyl(x,y,z,r,h,m){const o=new T.Mesh(cylGeo,m);o.scale.set(r,h,r);o.position.set(x,y+h/2,z);o.castShadow=true;LMG.add(o)}
 function dome(x,y,z,r,m,sy=1){const o=new T.Mesh(domeGeo,m);o.scale.set(r,r*sy,r);o.position.set(x,y,z);o.castShadow=true;LMG.add(o)}
-/* 地标用的方块楼：砖石夹层立面 + 四坡/平顶（P 4 角，按轴重建） */
-function block(B,P,base,h,wallS,roofS,kind,pitch=.42){const r=quadAxes(P),C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v],k=[C(-r.hu,-r.hv),C(r.hu,-r.hv),C(r.hu,r.hv),C(-r.hu,r.hv)],y1=base+h;
+/* 史诗夸张（r3_ground_scale，主人 10-20「地标放大一些」）：buildings 里画的地标部件里，广场柱廊和粮仓的高 ×1.2（占地照底账，不动）。
+   纪功柱、宁芙殿各自在自己文件里有 HERO_SCALE（1.4）。见 MODULE_CONTRACT §7「史诗夸张」。 */
+export const LM_SCALE={forum:1.2,granary:1.2};
+/* 石台基（r3）：P 4 角，顶 = top，底 = bot；顶下两级台阶（每级外扩 .5、降 .35），再往下是竖直的墙基。石色。 */
+function podium(B,P,top,bot,col=STONE){const r=quadAxes(P),sc=linC(col);
+  const ring=(o,y0,y1,k)=>{const C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v],q=[C(-r.hu-o,-r.hv-o),C(r.hu+o,-r.hv-o),C(r.hu+o,r.hv+o),C(-r.hu-o,r.hv+o)];
+    for(let i=0;i<4;i++){const a=q[i],b=q[(i+1)%4];wall(B.plain,a,b,y0,y1,mul(sc,k*(i%2?.93:1)),0,0,0)}
+    quad(B.plain,[q[0][0],y1,q[0][1]],[q[3][0],y1,q[3][1]],[q[2][0],y1,q[2][1]],[q[1][0],y1,q[1][1]],mul(sc,k*1.06))};
+  if(top-bot<.05)return;ring(0,Math.min(bot,top-.35),top,.92);if(top-bot>.35)ring(.5,Math.min(bot,top-.7),top-.35,.86);if(top-bot>.7)ring(1.0,bot,top-.7,.8)}
+/* 一块地标楼的落地：占地拟合 → 地坪（墙从这里起）和台基底；登记给 ground_check */
+function fitOf(ctx,P,kind,id){const F=ctx.footing(P,2.5),floor=F.max+.08,bot=F.min-.6;ctx.foot({kind,id,pts:P,bottom:bot,floor});return {floor,bot}}
+/* 地标用的方块楼：砖石夹层立面 + 四坡/平顶（P 4 角，按轴重建）；base = null → 自己按占地落地，并画石台基 */
+function block(B,P,base,h,wallS,roofS,kind,pitch=.42,tag=null){const r=quadAxes(P),C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v],k=[C(-r.hu,-r.hv),C(r.hu,-r.hv),C(r.hu,r.hv),C(-r.hu,r.hv)];
+  if(base==null){const ft=fitOf(CTX,k,'landmark:'+String(tag||'block').split(':')[0],tag);base=ft.floor;podium(B,k,base,ft.bot)}
+  const y1=base+h;
   const wc=linC(wallS),rc=linC(roofS),ns=Math.max(1,Math.min(3,Math.round(h/STH)));
-  for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]),nb=Math.max(1,Math.round(L/BAY));wall(B.opus,a,b,base-3,base,mul(wc,.8),nb,.005,.005);wall(B.opus,a,b,base,y1,wc,nb,0,ns/3)}
-  if(kind==='flat'){quad(B.plain,[k[0][0],y1,k[0][1]],[k[3][0],y1,k[3][1]],[k[2][0],y1,k[2][1]],[k[1][0],y1,k[1][1]],mul(wc,.85));return}
+  for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]),nb=Math.max(1,Math.round(L/BAY));wall(B.opus,a,b,base,y1,wc,nb,0,ns/3)}
+  if(kind==='flat'){quad(B.plain,[k[0][0],y1,k[0][1]],[k[3][0],y1,k[3][1]],[k[2][0],y1,k[2][1]],[k[1][0],y1,k[1][1]],mul(wc,.85));return base}
   const O=.5,rh=r.hv*pitch,rr=Math.max(0,r.hu-r.hv),e=(u,v)=>{const q=C(u,v);return [q[0],y1-.2,q[1]]},t=u=>{const q=C(u,0);return [q[0],y1+rh,q[1]]};
   const e00=e(-r.hu-O,-r.hv-O),e10=e(r.hu+O,-r.hv-O),e11=e(r.hu+O,r.hv+O),e01=e(-r.hu-O,r.hv+O),A=t(-rr),Bq=t(rr);
   roofFace(B.roof,[e00,e10,Bq,A],e00,e10,rc,RT);roofFace(B.roof,[e11,e01,A,Bq],e11,e01,rc,RT);roofFace(B.roof,[e01,e00,A],e01,e00,rc,RT);roofFace(B.roof,[e10,e11,Bq],e10,e11,rc,RT);
-  for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4],ee=[e00,e10,e11,e01];quad(B.plain,[b[0],y1,b[1]],[a[0],y1,a[1]],ee[i],ee[(i+1)%4],SOFFIT)}}
+  for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4],ee=[e00,e10,e11,e01];quad(B.plain,[b[0],y1,b[1]],[a[0],y1,a[1]],ee[i],ee[(i+1)%4],SOFFIT)}
+  return base}
 
 /* ---- 地标部件（代码，不是图） ---- */
 const PARTS={
- forum(B,f,r,b,ctx){const d=10,h=8;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,h,MARBLE,ROOF,'hip',.36);block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,h,MARBLE,ROOF,'hip',.36)}
-  for(let u=-r.hu+d+3;u<r.hu-d;u+=6)for(const s of [-1,1]){const x=r.cx+r.ax*u-r.az*s*(r.hv-d-2),z=r.cz+r.az*u+r.ax*s*(r.hv-d-2);ctx._cols.push([x,b,z,h,2.5])}
+ forum(B,f,r,b,ctx){/* r3：四面柱廊各按地势分段落地（每段 ≤ 30 像素一个台基，坡上成阶梯），内侧柱列站在同一段台基上；高 ×LM_SCALE.forum */
+  const d=10,h=8*LM_SCALE.forum,SEG=30,cd=d+2,ext=d+3.6;let ci=0;
+  const run=(u0,u1,v0,v1,along,cols)=>{const L=along?u1-u0:v1-v0,n=Math.max(1,Math.round(L/SEG));
+    for(let i=0;i<n;i++){const a=(along?u0:v0)+L*i/n,bq=(along?u0:v0)+L*(i+1)/n,Q=along?RQ(r,a,v0,bq,v1):RQ(r,u0,a,u1,bq);
+      const st=cols?(along?RQ(r,a,Math.min(v0,cols.v),bq,Math.max(v1,cols.v)):null):Q;
+      const ft=fitOf(ctx,st,'landmark:forum',f.id+':'+(ci++)),base=ft.floor;podium(B,st,base,ft.bot,MARBLE);block(B,Q,base,h,MARBLE,ROOF,'hip',.36);
+      if(cols)for(let u=(-r.hu+d+3)+Math.max(0,Math.ceil((a-(-r.hu+d+3))/6))*6;u<Math.min(bq,r.hu-d);u+=6){const x=r.cx+r.ax*u-r.az*cols.v,z=r.cz+r.az*u+r.ax*cols.v;cols.out.push([u,[x,base,z,h,2.5]])}}};
+  const C1=[],C2=[];
+  run(-r.hu,r.hu,-r.hv,-r.hv+d,true,{v:-(r.hv-d-2)-1.6,out:C1});run(-r.hu,r.hu,r.hv-d,r.hv,true,{v:(r.hv-d-2)+1.6,out:C2});
+  /* 柱位和改前一样（u 从 −hu+d+3 起每 6 像素，两侧交替推入 ctx._cols），柱心在 ±(hv−d−2)：台基外扩 1.6 把柱脚包进去 */
+  for(let i=0;i<Math.max(C1.length,C2.length);i++){for(const [C,s] of [[C1,-1],[C2,1]])if(C[i]){const q=C[i][1],u=C[i][0];q[0]=r.cx+r.ax*u-r.az*s*(r.hv-d-2);q[2]=r.cz+r.az*u+r.ax*s*(r.hv-d-2);ctx._cols.push(q)}}
+  for(const s of [-1,1])run(s>0?r.hu-d:-r.hu,s>0?r.hu:-r.hu+d,-r.hv+d,r.hv-d,false,null);
   /* 中间的纪功柱 2026-10-20 起归 landmarks 模块（3d/landmarks/column.js），这里不再画占位 */},
- granary(B,f,r,b,ctx){granary(ctx,B,f,r,b)},
+ granary(B,f,r,b,ctx){granary(ctx,B,f,r,b,LM_SCALE.granary)},
  nymphaeum(B,f,r,b,ctx){/* 大宁芙殿 2026-10-20 起归 landmarks（3d/landmarks/nymphaeum.js）：半圈 15 根柱子 + 半圆水池的占位删了；只留 15 个零高度的空实例，好让后面广场柱廊的序号（色差 hsh(i,77)）不变 */for(let k=0;k<15;k++)ctx._cols.push([r.cx,b,r.cz,0,0])},
- cistern(B,f,r,b){for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9)dome(r.cx+r.ax*u-r.az*v,b,r.cz+r.az*u+r.ax*v,3.8,mats.dome,.6);block(B,RQ(r,r.hu-12,r.hv-10,r.hu-2,r.hv-2),b,6,STONE,ROOF,'hip')},
- xenon(B,f,r,b){const d=9;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),b,9,STONE,ROOF,'hip');block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),b,9,STONE,ROOF,'hip')}
-  block(B,RQ(r,-8,-6,8,6),b,10,MARBLE,MARBLE,'flat');dome(r.cx,b+10,r.cz,5.5,mats.dome)}};
+ cistern(B,f,r,b,ctx){/* r3：每个穹顶按自己脚下最低的地面落（坡上一侧埋一点，不漏空） */for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9){const x=r.cx+r.ax*u-r.az*v,z=r.cz+r.az*u+r.ax*v,P=[[x-3.4,z-3.4],[x+3.4,z-3.4],[x+3.4,z+3.4],[x-3.4,z+3.4]],ft=ctx.footing(P,2);dome(x,ft.min-.15,z,3.8,mats.dome,.6);ctx.foot({kind:'landmark:cistern_slope',id:f.id+':dome',pts:P,bottom:ft.min-.15,floor:1e9})}
+  block(B,RQ(r,r.hu-12,r.hv-10,r.hu-2,r.hv-2),null,6,STONE,ROOF,'hip',.42,f.id+':house')},
+ xenon(B,f,r,b){const d=9;let i=0;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),null,9,STONE,ROOF,'hip',.42,f.id+':'+(i++));block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),null,9,STONE,ROOF,'hip',.42,f.id+':'+(i++))}
+  const bc=block(B,RQ(r,-8,-6,8,6),null,10,MARBLE,MARBLE,'flat',.42,f.id+':hall');dome(r.cx,bc+10,r.cz,5.5,mats.dome)}};
 PARTS.monument=PARTS.nymphaeum;PARTS.monastery=PARTS.xenon;
 
 export function init(ctx){T=ctx.THREE;({quadAxes,RQ}=ctx.geom);hsh=ctx.hsh;
@@ -53,7 +78,7 @@ export function init(ctx){T=ctx.THREE;({quadAxes,RQ}=ctx.geom);hsh=ctx.hsh;
     marble:new T.MeshLambertMaterial({color:0xf2eee4}),water:new T.MeshLambertMaterial({color:0x6fa2aa}),dome:new T.MeshLambertMaterial({color:0x9a8a74}),gold:new T.MeshLambertMaterial({color:0xc8a046}),mole:new T.MeshLambertMaterial({color:0xc4b8a0})};
   mats.arcDepth=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking,map:arcTex,alphaTest:.5})}
 
-export function build(ctx){const {by,elevPx}=ctx,live=ctx.live;
+export function build(ctx){CTX=ctx;const {by,elevPx}=ctx,live=ctx.live;
   const B={stucco:bucket(),opus:bucket(),stuccoShop:bucket(),opusShop:bucket(),roof:bucket(),plain:bucket(),gwall:bucket(),ggable:bucket(),arc:bucket()},COLS=[];ctx._cols=COLS;
   const SG=streetGrid(ctx);let nPort=0,nH=0;
   for(const f of by.house){if(!live(f))continue;nH++;nPort+=house(ctx,B,f,SG,COLS)}
@@ -61,7 +86,11 @@ export function build(ctx){const {by,elevPx}=ctx,live=ctx.live;
   let nAq=0;for(const f of by.aqueduct||[])if(live(f))nAq+=aqueduct(ctx,B,f);
   /* 栈桥、石堤：几何照旧（第 1 轮的样子），别的带（水、码头）不受这一轮影响 */
   const PB={pos:[],col:[],uv:[]};
-  for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;pierBox(PB,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56])}
+  for(const f of by.pier||[])if(live(f)){let [a,b]=f.g;/* r3：栈桥只画在水上那一段（陆上那头原来钻进岸坡，最深 10 像素）：沿桥取 24 点，留连着海那一头、网格地面 < 桥面 −0.4 的一段 */
+  {const N=32,wet=[],L0=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ox=-(b[1]-a[1])/L0*f.w/2,oz=(b[0]-a[0])/L0*f.w/2;for(let i=0;i<=N;i++){const t=i/N,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;wet.push(Math.max(ctx.groundMesh(x,z),ctx.groundMesh(x+ox,z+oz),ctx.groundMesh(x-ox,z-oz))<2.1)}
+   if(wet.some(x=>x)&&!wet.every(x=>x)){const end=wet[N]||!wet[0]?1:0;let t0=0,t1=1;if(end){let i=N;while(i>0&&wet[i-1])i--;t0=Math.max(0,i/N)}else{let i=0;while(i<N&&wet[i+1])i++;t1=Math.min(1,i/N)}
+     const A=[a[0]+(b[0]-a[0])*t0,a[1]+(b[1]-a[1])*t0],Bp=[a[0]+(b[0]-a[0])*t1,a[1]+(b[1]-a[1])*t1];a=A;b=Bp}}
+  const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;{const Q=[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]];pierBox(PB,Q,-1,2.6,[120,88,56]);ctx.foot({kind:'pier',id:f.id,pts:Q,bottom:-4,floor:2.6})}}
   if(PB.pos.length){const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(PB.pos,3));g.setAttribute('color',new T.Float32BufferAttribute(PB.col,3));g.computeVertexNormals();const m=new T.Mesh(g,mats.pier||(mats.pier=new T.MeshLambertMaterial({vertexColors:true,side:T.DoubleSide})));m.castShadow=m.receiveShadow=true;MESHES.push(ctx.add(m))}
   for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new T.Shape(P[0].map(p=>new T.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new T.Path(r.map(p=>new T.Vector2(p[0],p[1]))));
     const g=new T.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new T.Mesh(g,mats.mole);m.castShadow=m.receiveShadow=true;LMG.add(m)}

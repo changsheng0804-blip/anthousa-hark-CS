@@ -14,6 +14,9 @@ export function aqueduct(ctx,B,f){const gy=(x,z)=>{const t=ctx.reg.terrainY;cons
   const g=S.map(q=>q.g),t0=S.map((q,i)=>Math.max(avg(g,i,45)+36,q.g+9)),top=S.map((q,i)=>avg(t0,i,8));
   /* 每个点的法线（相邻段平均） */
   for(let i=0;i<N;i++){const a=S[Math.max(0,i-1)],b=S[Math.min(N-1,i+1)],dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz)||1;S[i].nx=-dz/L;S[i].nz=dx/L}
+  /* r3：桥墩底按「桥身全宽下最低的网格地面」落（原来按中线的光滑 ground，横坡上一侧会悬空）；登记给 ground_check */
+  for(const q of S){const F=ctx.footing([[q.x+q.nx*HW,q.z+q.nz*HW],[q.x-q.nx*HW,q.z-q.nz*HW],[q.x,q.z]]);q.g=Math.min(q.g,F.min)}
+  for(let i=0;i<N-1;i++){const a=S[i],b=S[i+1];if(a.x<0||a.z<0||a.x>ctx.W||a.z>ctx.H)continue;ctx.foot({kind:'aqueduct',id:f.id+':'+i,pts:[[a.x+a.nx*HW,a.z+a.nz*HW],[b.x+b.nx*HW,b.z+b.nz*HW],[b.x-b.nx*HW,b.z-b.nz*HW],[a.x-a.nx*HW,a.z-a.nz*HW]],bottom:Math.min(a.g,b.g)-4,floor:1e9})}
   for(let i=0;i<N-1;i++){const a=S[i],b=S[i+1],ta=top[i],tb=top[i+1],da=ta-4,db=tb-4,ya=a.g-4,yb=b.g-4,ua=a.s/BAYA,ub=b.s/BAYA;
     const vv=(d,y)=>1-(d-y)/TH;
     for(const sd of [1,-1]){const ax=a.x+a.nx*HW*sd,az=a.z+a.nz*HW*sd,bx=b.x+b.nx*HW*sd,bz=b.z+b.nz*HW*sd;

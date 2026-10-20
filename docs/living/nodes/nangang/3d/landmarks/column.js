@@ -28,6 +28,10 @@ const BASE = y => DIM.pedTop + (y - 8.75) * (DIM.shaft0 - DIM.pedTop) / (10.6 - 
 const DRUM = y => DIM.cap1 + (y - 40.55) * (DIM.drum1 - DIM.cap1) / (43.55 - 40.55);       // 像座剖面（原 40.55→43.55）映到 cap1→drum1
 const DR = 1.1;                                           // 像座加粗一点，托得住 9 m 的像
 const WIND = 18, DRUMS = 17, LOD_FAR = 450;
+/* 史诗夸张（r3_ground_scale，主人 10-20：史诗城市里地标要放大一些）：整座（台阶、基座、柱身、柱头、像）等比 ×HERO_SCALE，
+   总高 51.95 → 72.7 m；柱身径跟着放大，高径比不变（不会变细）。台阶外沿 7.0 → 9.8 m，仍在广场院子里（院子 ≈ 100 × 80 m）。
+   DIM 照旧按实际比例写（米），只在 build 里给整组一个缩放。见 MODULE_CONTRACT §7「史诗夸张」。 */
+export const HERO_SCALE = 1.4;
 
 let T = null, M = null, CACHE = null;
 
@@ -249,6 +253,10 @@ function construction(ax, az, year) {
   return G;
 }
 
+/* 落地（r3）：占地 = 台阶外沿的方块（顺广场轴），index.js 在它下面取最高的地面当 b；台阶往下伸 3 m×HERO_SCALE，够盖住方块下的坡 */
+const STEP_HALF = 3.95 * PW * K;
+export function footprint(r) { const h = STEP_HALF * HERO_SCALE, C = (u, v) => [r.cx + r.ax * u - r.az * v, r.cz + r.az * u + r.ax * v]; return [C(-h, -h), C(h, -h), C(h, h), C(-h, h)]; }
+export function bottomOf(b) { return b - 3 * PV * K * HERO_SCALE; }
 export function build(ctx, f, r, b) {
   const Y = ctx.year;
   if (Y < PHASE.pedestal) return null;
@@ -263,7 +271,7 @@ export function build(ctx, f, r, b) {
     }
     obj = CACHE.lod;
   } else obj = construction(r.ax, r.az, Y);
-  obj.position.set(r.cx, b, r.cz);
+  obj.position.set(r.cx, b, r.cz); obj.scale.setScalar(HERO_SCALE);
   return obj;
 }
 
@@ -272,6 +280,6 @@ export function stats() {
   const tri = o => { let n = 0; o.traverse(c => { if (c.isMesh) { const g = c.geometry; n += (g.index ? g.index.count : g.attributes.position.count) / 3; } }); return Math.round(n); };
   if (!CACHE) return null;
   const [near, far] = CACHE.lod.levels.map(l => tri(l.object));
-  return { near_tris: near, far_tris: far, geom_build_ms: CACHE.ms, height_px: +((DIM.drum1 + DIM.statue) * K).toFixed(1), height_m: DIM.drum1 + DIM.statue };
+  return { near_tris: near, far_tris: far, geom_build_ms: CACHE.ms, height_px: +((DIM.drum1 + DIM.statue) * K * HERO_SCALE).toFixed(1), height_m: +((DIM.drum1 + DIM.statue) * HERO_SCALE).toFixed(2), hero_scale: HERO_SCALE };
 }
 export function dispose() { /* 完整柱子的几何是缓存的（不随年份变）；施工中的组每次新建，由 index.js 释放 */ }

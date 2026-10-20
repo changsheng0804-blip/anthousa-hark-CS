@@ -143,6 +143,9 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 10. **模块只用相对路径 import**（`'three'` 走页面的 importmap，`three/addons/…` 也行）；不引 CDN、不下载贴图。
 11. **git**：只 `git add` 自己的文件；推之前 `git pull --rebase`（古城线的另一个会话也在推这个仓库，别碰它的文件）。沙箱里 HTTPS fetch 常 502，重试即可。
 12. **沙箱渲染慢**：软件渲染一帧 1–4 秒，`render.py` 全 4 机位约 20 秒（载入 ~2 秒 + 重建 ~1.6 秒）。沙箱 chrome 用 `LOOKDEV_CHROME`/`LOOKDEV_LIBS`/`LOOKDEV_PYLIB` 指路（见第 1 节）。
+13. **落地（2026-10-20 r3_ground_scale，主人「地面穿模明显」）**：凡是站在地上的东西，一律按 `ctx.groundMesh(x,z)`（terrain 网格同样的 4 px 三角插值；页面框外用 terrain/outer.js 的 `heightAt`，经 `reg.outerY`）落地，不用 `elevPx`、不用光滑的 `ground()`。
+    有占地的（房子、地标部件、粮仓长仓、柱廊段）用 `ctx.footing(四角)` → `{min,max,mid}`：**地坪 = max**（墙、柱从这里起，底账的 ht 从这里量；民居取 max(mid, max−0.45)），**台基 / 墙基伸到 min − 0.6**（地标是石色、顶下两级台阶，民居是素面墙基），再 `ctx.foot({kind,id,pts,bottom,floor})` 登记。
+    验收：`python3 tools/cs/lookdev/ground_check.py --year 65`（独立按网格采样，报每类「漏空 > 0.5 px / 埋 > 0.5 px」的个数），不得比上一版多。
 
 ## 7. landmarks：史诗/特殊公共建筑，一座一座按 Athenaion 的做法（2026-10-20 试点：纪功柱）
 
@@ -150,7 +153,7 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 
 **钩子（唯一的一处）**：`3d/core.js` 的 `MODULES` 在 buildings 后面多一项 `landmarks`（`3d/landmarks/index.js`）。index.js 按地标 id 把 `ctx.by.landmark` 分给各自的文件；没有文件的地标照旧由 buildings 画占位。接手一座 = 新文件 + `LM` 列表加一项 + 删 buildings 里那一座的占位（同一次提交）。
 
-**一座地标的文件**（`3d/landmarks/<名字>.js`）导出 `id`、`init(ctx)`（材质、画布贴图，只一次）、`build(ctx, f, r, b)` → Object3D 或 null（`r = rectOf(f.g)`、`b = elevPx(中心)+1.6`）、`stats()`（近/远三角形、建造毫秒）。
+**一座地标的文件**（`3d/landmarks/<名字>.js`）导出 `id`、`init(ctx)`（材质、画布贴图，只一次）、`build(ctx, f, r, b, F)` → Object3D 或 null（`r = rectOf(f.g)`、`b = 占地下最高的网格地面`（r3 起；之前是 elevPx(中心)+1.6）、`F = ctx.footing(占地)` 给台基往下伸）、`stats()`（近/远三角形、建造毫秒）；可选 `footprint(r)`（占地，默认底账矩形）、`bottomOf(b,F)`（最低面，给 ground_check）、`HERO_SCALE`。
 年份照底账：nodes.json 只有 y0/y1，细的阶段（施工、完工）读 `proposals/` 的 phases，写成文件里的常量并注明出处。
 
 **配方（每座照走一遍）**
@@ -162,6 +165,12 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 6. 比（≤ 4 轮）：`render.py` 主机位 + 全 4 机位；`compare.py` 颜色；`silhouette.py` 形；每轮 `read_file` 看并排图，先修形（比例、机位），再修材质（反照率、浮雕对比）。
    远看浮雕浅时先上真几何（纪功柱：`column.js` 的 `helixBand` 螺旋凸棱、基座画框真凹 0.12 m），再加法线/AO；受光面亮在地标反照率里压，不动 sky / 全局光（10-20 修订）。
 7. 交付：`match.py --against <改前>` 证明别的机位只有地标像素变；证据（并排、numbers.json、notes.md、overview.jpg）进 `docs/cs/lookdev/landmarks/<名字>/`；`docs/living/next/` 加链接；NOW.md 覆盖对应一段。
+
+**史诗夸张（主人 10-20 认可：「这个史诗城市里，地标要放大一些做对比，尤其大的史诗建筑」）**
+- 每座地标文件一个常量 `HERO_SCALE`（默认 1.4），**只放大高（和跟着高走的细部）；占地照底账，不动**。纪功柱整座等比 ×1.4（51.95 → 72.7 m，柱径一起放大，不变细；台阶外沿 7.0 → 9.8 m，仍在广场院子里）；宁芙殿台基顶以上的高 ×1.4、神龛 / 壁龛 / 柱子宽粗 ×`HERO_W` 1.2、雕像 ×1.4，弦长、塔的平面不动（22.2 → 30.5 m）。
+- buildings 里还在画的地标部件（`buildings.js` 的 `LM_SCALE`）：广场柱廊和粮仓的高 ×1.2（柱廊 8 → 9.6 px，粮仓 15.5–18 → 18.6–21.6 px）；蓄水池、孤寡院不放大。
+- 这是有意的夸张，不是史料：notes 里的「史料尺寸」照旧按实际写，模型 = 史料 × HERO_SCALE。地标周围的屋脊线（半径 180 px 内民居屋顶中位数 ≈ 8 px）是对比的尺子，数字见 `docs/cs/lookdev/r3_ground_scale/numbers.json`。
+- 新地标照这个做；机位 5、6 已按放大后的高重新对准（`shots.json` 的 `r3_note`），轮廓 IoU 不再是目标。
 
 **第二座（宁芙殿）补的经验（10-20）**
 - 机位先找开阔处：地标多半被房子围着。先用 nodes.json 的房子多边形 + 高度做一遍视线遮挡粗算（几十个候选点，只要几秒），再渲 4–5 个候选看图。**近端 / 远端到相机的距离比要接近参考**（宁芙殿参考约 1.4，太近时 2.0 → 近塔冲出画面、高宽比大一截）；退不出去就接受，在 notes 里写。fov / 俯仰按 lmmask 包围盒反算两轮就收敛（俯仰的号别弄反：内容偏下 → 俯仰减小）。

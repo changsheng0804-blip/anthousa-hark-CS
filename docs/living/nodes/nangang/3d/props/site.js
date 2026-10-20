@@ -26,7 +26,7 @@ export function makeSite(ctx){const {by,W,live}=ctx,CS=16,grid=new Map();
   /* 地：陆地多边形里且地面高于海平面，或在石堤上 */
   function isLand(x,z){if(inMole(x,z))return true;if(x>W-1)return false;return ctx.ground(x,z)>.6&&inRings(land.g,x,z)}
   /* 摆东西的高：石堤顶 3，栈桥面 1.6，其余跟地面 */
-  function yAt(x,z){if(inMole(x,z))return Math.max(3,ctx.ground(x,z));return Math.max(0,ctx.ground(x,z))}
+  function yAt(x,z){/* r3：落在 terrain 网格上（groundMesh） */if(inMole(x,z))return Math.max(3,ctx.groundMesh(x,z));return Math.max(0,ctx.groundMesh(x,z))}
   return {houses,inHouse,inLandmark,inMole,onPier,isWater,isLand,yAt,lms,harbors,moles,piers,land}}
 
 /* 栈桥：哪头在岸上（根）、哪头伸进水里（头） */

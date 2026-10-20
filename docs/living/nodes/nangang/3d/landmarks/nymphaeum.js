@@ -27,9 +27,22 @@ const K = 1 / 0.84, LOD_FAR = 340;
 /* 平面（米，局部：u 顺长边 = 底账 rectOf 的 (ax,az)，v 朝前 = 南偏东；原点 = 地标中心） */
 const PYL = 0.7;                                                                      // 塔面反照率系数（见塔身）
 export const PLAN = { u0: -0.25, front: 4, half: 23.3, sag: 11, bays: 7, pylonW: 6.4, pylonD: 6.0, back: 2.5 };
-export const Y = { pod: 1.4, ped1: 3.3, col1: 10.6, ent1: 12.0, ped2: 13.2, col2: 18.6, ent2: 19.7, top: 21.6, attic: 22.2, tower: 22.0, water: -0.35, trough: 1.05 };   // 池水比台基低：门前地面比基面低 0.5–2 m（地势南低），池栏顶 +0.2
-const N1 = { w: 2.4, y0: 3.5, ys: 7.0 }, N2 = { w: 2.0, y0: 13.4, ys: 16.1 };        // 壁龛：宽、龛底、起拱
-const AE1 = { a: 2.9, d: 1.5, r: 0.38 }, AE2 = { a: 2.5, d: 1.25, r: 0.3 };         // 神龛：两柱间距、柱心离墙、柱下半径
+/* 史诗夸张（r3_ground_scale，主人 10-20「史诗城市里地标要放大一些，尤其大的」）：台基顶（1.4 m）以上的所有高 ×HERO_SCALE，
+   神龛 / 壁龛 / 柱子的宽和粗 ×HERO_W（不然柱子变细长），雕像整体 ×HERO_SCALE；平面（弦长、矢高、塔的平面）照底账占地不动。
+   台基、长槽、水池（贴地的部分）不放大。见 MODULE_CONTRACT §7「史诗夸张」。 */
+export const HERO_SCALE = 1.4, HERO_W = 1.2;
+const Y0 = { pod: 1.4, ped1: 3.3, col1: 10.6, ent1: 12.0, ped2: 13.2, col2: 18.6, ent2: 19.7, top: 21.6, attic: 22.2, tower: 22.0 };   // 改前（实际比例）的高
+const SY = y => y <= Y0.pod ? y : Y0.pod + (y - Y0.pod) * HERO_SCALE;
+export const Y = { ...Object.fromEntries(Object.entries(Y0).map(([k, v]) => [k, SY(v)])), water: -0.35, trough: 1.05 };   // 池水比台基低，池栏顶 +0.2
+const N1 = { w: 2.4 * HERO_W, y0: SY(3.5), ys: SY(7.0) }, N2 = { w: 2.0 * HERO_W, y0: SY(13.4), ys: SY(16.1) };        // 壁龛：宽、龛底、起拱
+const AE1 = { a: 2.9 * HERO_W, d: 1.5 * HERO_W, r: 0.38 * HERO_W }, AE2 = { a: 2.5 * HERO_W, d: 1.25 * HERO_W, r: 0.3 * HERO_W };         // 神龛：两柱间距、柱心离墙、柱下半径
+/* 落地（r3）：基面 b = 占地下最高的地面（index.js 给）；所有往下伸的面（台基、背墙、塔基、长槽、池栏）伸到 −DEPTH 米 = 占地下最低地面 −0.6 像素；
+   池栏外面做成台阶（每级高 0.38、宽 0.42 m），坡下那一侧成一圈石阶。DEPTH 在第一次 build 时按地形定（几何缓存，不随年份变）。 */
+let DEPTH = 3;
+function poolSteps() { const rise = 0.38, run = 0.42, n = Math.max(0, Math.ceil((DEPTH - 0.9) / rise)), out = [];
+  out.push([.3 + n * run, -DEPTH]);
+  for (let k = n; k >= 1; k--) { const top = -0.9 - (k - 1) * rise; out.push([.3 + k * run, top], [.3 + (k - 1) * run, top]); }
+  return n ? out.slice(0, -1) : out; }
 const CASCADES = [1, 3, 4, 6];                                                       // 上层水瀑从哪几个折角落下（Q_i）
 
 let T = null, M = null, CACHE = null, WU = null, FALL_TEX = null;
@@ -111,8 +124,8 @@ function sweep(path, prof, closed = false) {
 }
 /* 剖面（d 朝前，y 向上）：檐部（额枋三道 + 楣 + 檐口出挑）、台基线脚、顶檐 */
 const ENT = (y0, y1, base = 0.32) => { const h = y1 - y0, k = h / 1.4; return [[0, y0 - .02], [base * .8, y0], [base * .8, y0 + .16 * k], [base * .9, y0 + .2 * k], [base * .9, y0 + .34 * k], [base, y0 + .38 * k], [base, y0 + .55 * k], [base * .95, y0 + .58 * k], [base * .95, y0 + .9 * k], [base + .1, y0 + .95 * k], [base + .14, y0 + 1.02 * k], [base + .42, y0 + 1.1 * k], [base + .45, y0 + 1.28 * k], [base + .5, y0 + 1.33 * k], [base + .5, y1], [0, y1]]; };
-const PLINTH = [[0, -3], [2.6, -3], [2.6, .9], [2.55, 1.0], [2.55, 1.12], [2.43, 1.2], [2.43, 1.32], [2.35, 1.4], [0, 1.4]];   // 立面前的台基（伸到 2.6 m，神龛柱座站在上面）
-const PYL_PLINTH = [[0, -3], [.45, -3], [.45, .9], [.4, 1.0], [.4, 1.12], [.28, 1.2], [.28, 1.32], [.2, 1.4], [0, 1.4]];
+const PLINTH = () => [[0, -DEPTH], [2.6, -DEPTH], [2.6, .9], [2.55, 1.0], [2.55, 1.12], [2.43, 1.2], [2.43, 1.32], [2.35, 1.4], [0, 1.4]];   // 立面前的台基（伸到 2.6 m，神龛柱座站在上面）
+const PYL_PLINTH = () => [[0, -DEPTH], [.45, -DEPTH], [.45, .9], [.4, 1.0], [.4, 1.12], [.28, 1.2], [.28, 1.32], [.2, 1.4], [0, 1.4]];
 
 /* ---------- 部件（立面坐标 s, y, d：s 顺折面，d 朝前） ---------- */
 function shapeGeo(sh, curve = 6) { return new T.ShapeGeometry(sh, curve); }
@@ -199,7 +212,7 @@ function buildGroup(far) {
     if (!far) { B.rev.add(niche(cx, N1), m, 1, true); B.rev.add(niche(cx, N2), m, 1, true); }
     else for (const N of [N1, N2]) { const sh = new T.Shape(); archPath(sh, cx, N.w, N.y0, N.ys); const g = shapeGeo(sh, 4); g.translate(0, 0, 0.02); S(g, B.rev, 0.45); }
     // 神龛：柱座、柱、檐部凸块（下层、上层）
-    for (const [AE, y0, y1, yE, c, bk, pedH, pedW] of [[AE1, Y.pod, Y.ped1, Y.ent1, c1, B.colA, Y.ped1 - Y.pod, 0.98], [AE2, Y.ent1, Y.ped2, Y.ent2, c2, B.colB, Y.ped2 - Y.ent1, 0.78]]) {
+    for (const [AE, y0, y1, yE, c, bk, pedH, pedW] of [[AE1, Y.pod, Y.ped1, Y.ent1, c1, B.colA, Y.ped1 - Y.pod, 0.98 * HERO_W], [AE2, Y.ent1, Y.ped2, Y.ent2, c2, B.colB, Y.ped2 - Y.ent1, 0.78 * HERO_W]]) {
       const yc = AE === AE1 ? Y.col1 : Y.col2;
       for (const sx of [-1, 1]) {
         const x = cx + sx * AE.a / 2;
@@ -216,30 +229,30 @@ function buildGroup(far) {
     // 雕像（每龛一尊，站在小座上）
     {
       const lod = far ? 'lo' : 'hi', rot = (i - 3) * 0.08;
-      S(boxAt(1.1, .3, .8, cx, N1.y0, -.55), B.rev, 0.85); S(statueGeo(POSE1[i], lod, 1.3, cx, N1.y0 + .3, -.55, rot), B.statue);
-      S(boxAt(.95, .26, .7, cx, N2.y0, -.45), B.rev, 0.85); S(statueGeo(POSE2[i], lod, 1.05, cx, N2.y0 + .26, -.45, rot), B.statue);
+      S(boxAt(1.1 * HERO_W, .3, .8 * HERO_W, cx, N1.y0, -.55 * HERO_W), B.rev, 0.85); S(statueGeo(POSE1[i], lod, 1.3 * HERO_SCALE, cx, N1.y0 + .3, -.55 * HERO_W, rot), B.statue);
+      S(boxAt(.95 * HERO_W, .26, .7 * HERO_W, cx, N2.y0, -.45 * HERO_W), B.rev, 0.85); S(statueGeo(POSE2[i], lod, 1.05 * HERO_SCALE, cx, N2.y0 + .26, -.45 * HERO_W, rot), B.statue);
     }
     // 下层龛下吐水：兽头（小椭球）+ 落进长槽的水帘
-    if (!far) { const sp = new T.SphereGeometry(.22, 8, 6); sp.scale(1, .9, .8); sp.translate(cx, 2.8, .12); S(sp, B.orn); }
-    B.fall.add(fallGeo(cx, .3, 2.75, Y.trough, 4.4, .26, far ? 4 : 10), m, 1, true);
+    if (!far) { const sp = new T.SphereGeometry(.22, 8, 6); sp.scale(1, .9, .8); sp.translate(cx, SY(2.8), .12); S(sp, B.orn); }
+    B.fall.add(fallGeo(cx, .3, SY(2.75), Y.trough, 4.4, .26, far ? 4 : 10), m, 1, true);
   });
   // 连续的檐带（沿整条折线）：下层檐、上层檐、顶檐；台基；砖背墙、女儿墙
   const L = Q.map(q => [q[0], q[1]]);
   B.orn.add(sweep(L, ENT(Y.col1, Y.ent1, .32))); B.orn.add(sweep(L, ENT(Y.col2, Y.ent2, .28)));
   B.orn.add(sweep(L, [[0, Y.ent2], [.06, Y.ent2], [.06, Y.top - .7], [.12, Y.top - .64], [.18, Y.top - .5], [.5, Y.top - .38], [.55, Y.top - .2], [.6, Y.top - .16], [.6, Y.top], [-PLAN.back, Y.top]]));
-  B.orn.add(sweep(L, PLINTH));
+  B.orn.add(sweep(L, PLINTH()));
   B.brick.add(sweep(L, [[-.8, Y.top], [-.8, Y.attic - .2], [-.7, Y.attic - .14], [-.7, Y.attic], [-PLAN.back - .05, Y.attic]]));
-  B.brick.add(sweep(L.slice().reverse(), [[PLAN.back, -3], [PLAN.back, Y.top]]));                       // 背墙（反向走 → 左手法线朝后）
+  B.brick.add(sweep(L.slice().reverse(), [[PLAN.back, -DEPTH], [PLAN.back, Y.top]]));                       // 背墙（反向走 → 左手法线朝后）
   // 长槽：台基前面一道（槽底 + 外沿），水面在槽里
   const off = (d) => sweepLine(L, d);
-  B.orn.add(sweep(off(2.55), [[1.75, -3], [1.75, 1.32], [1.68, 1.4], [1.5, 1.4], [1.45, 1.32], [1.45, .4], [0, .4]]));
+  B.orn.add(sweep(off(2.55), [[1.75, -DEPTH], [1.75, 1.32], [1.68, 1.4], [1.5, 1.4], [1.45, 1.32], [1.45, .4], [0, .4]]));
   waterPoly(B.water, off(2.55), off(4.0), Y.trough);
   // 两端方塔
   const { pylonW: pw, pylonD: pd } = PLAN, py = [[Q[0][0] - pw / 2 - .3, PLAN.front - pd / 2 + 1.75], [Q[PLAN.bays][0] + pw / 2 + .3, PLAN.front - pd / 2 + 1.75]];
   for (const [ux, vz] of py) {
     const rr = [[ux - pw / 2, vz + pd / 2], [ux + pw / 2, vz + pd / 2], [ux + pw / 2, vz - pd / 2], [ux - pw / 2, vz - pd / 2]];   // 逆时针（从上看 u 右、v 下）→ 左手法线朝外
     B.rev.add(sweep(rr, [[0, Y.pod], [0, Y.tower - 1.0]], true), null, PYL);          // 塔身：西塔的西面是全座唯一整片受光的面，反照率压到 0.7（局部，不动 sky）
-    B.orn.add(sweep(rr, PYL_PLINTH, true)); B.orn.add(sweep(rr, ENT(Y.col1, Y.ent1, .2), true)); B.orn.add(sweep(rr, ENT(Y.col2, Y.ent2, .2), true));
+    B.orn.add(sweep(rr, PYL_PLINTH(), true)); B.orn.add(sweep(rr, ENT(Y.col1, Y.ent1, .2), true)); B.orn.add(sweep(rr, ENT(Y.col2, Y.ent2, .2), true));
     B.orn.add(sweep(rr, [[0, Y.tower - 1.0], [.1, Y.tower - .9], [.1, Y.tower - .6], [.35, Y.tower - .45], [.4, Y.tower - .2], [.4, Y.tower], [0, Y.tower]], true)); B.orn.add(boxAt(pw + .7, .04, pd + .7, ux, Y.tower - .02, vz));
     // 塔面：四角壁柱（两层）、正面和外侧面每层一个凹框（四条细框）、正面每层一尊像站在托座上
     const outer = ux < 0 ? -1 : 1;
@@ -254,7 +267,7 @@ function buildGroup(far) {
           for (const g of fr) B.orn.add(g);
         }
       }
-      const sc = ya < 5 ? 1.25 : 1.0, key = ya < 5 ? 'b' : 'a';
+      const sc = (ya < 5 ? 1.25 : 1.0) * HERO_SCALE, key = ya < 5 ? 'b' : 'a';
       B.orn.add(boxAt(1.2, .35, .9, ux, fy + .4, vz + pd / 2 + .45));                                        // 托座
       B.statue.add(statueGeo(key, far ? 'lo' : 'hi', sc, ux, fy + .75, vz + pd / 2 + .45, 0));
     }
@@ -263,14 +276,14 @@ function buildGroup(far) {
   const W0 = [py[0][0] + pw / 2, PLAN.front + 1.75], W1 = [py[1][0] - pw / 2, PLAN.front + 1.75], arc = [];
   const bulge = 9.5, ch = (W1[0] - W0[0]) / 2, Rb = (ch * ch + bulge * bulge) / (2 * bulge), cxb = (W0[0] + W1[0]) / 2, cvb = W0[1] + bulge - Rb, ab = Math.asin(ch / Rb);
   for (let k = 0; k <= 24; k++) { const t = -ab + 2 * ab * k / 24; arc.push([cxb + Rb * Math.sin(t), cvb + Rb * Math.cos(t)]); }
-  B.orn.add(sweep(arc, [[.3, -3], [.3, -.9], [.38, -.82], [.38, -.72], [.3, -.64], [.3, .0], [.36, .07], [.3, .14], [0, .2], [-.3, .14], [-.3, -.6]]));
+  B.orn.add(sweep(arc, [...poolSteps(), [.3, -.9], [.38, -.82], [.38, -.72], [.3, -.64], [.3, .0], [.36, .07], [.3, .14], [0, .2], [-.3, .14], [-.3, -.6]]));
   waterPoly(B.water, arc, L.slice().reverse(), Y.water, true);
   // 上层水瀑：从折角处的面具吐出，越过下层檐，落进长槽
   for (const qi of CASCADES) {
     const a = F[Math.max(0, qi - 1)], b = F[Math.min(F.length - 1, qi)], n = [(a.n[0] + b.n[0]) / 2, (a.n[1] + b.n[1]) / 2], nl = Math.hypot(n[0], n[1]), nn = [n[0] / nl, n[1] / nl], t = [nn[1], -nn[0]];
     const m = new T.Matrix4().set(t[0], 0, nn[0], Q[qi][0], 0, 1, 0, 0, t[1], 0, nn[1], Q[qi][1], 0, 0, 0, 1);
-    B.fall.add(fallGeo(0, .85, Y.ent1 + 2.0, Y.trough, 1.75, .55, far ? 5 : 14), m, 1, true);
-    if (!far) { const mk = new T.SphereGeometry(.42, 10, 8); mk.scale(1, 1.1, .7); mk.translate(0, Y.ent1 + 2.2, .2); B.orn.add(mk, m); const sp = boxAt(.5, .16, 1.0, 0, Y.ent1 + 1.9, .45); B.orn.add(sp, m); }
+    B.fall.add(fallGeo(0, .85, Y.ent1 + 2.0 * HERO_SCALE, Y.trough, 1.75, .55, far ? 5 : 14), m, 1, true);
+    if (!far) { const mk = new T.SphereGeometry(.42, 10, 8); mk.scale(1, 1.1, .7); mk.translate(0, Y.ent1 + 2.2 * HERO_SCALE, .2); B.orn.add(mk, m); const sp = boxAt(.5, .16, 1.0, 0, Y.ent1 + 1.9 * HERO_SCALE, .45); B.orn.add(sp, m); }
   }
   const G = new T.Group();
   for (const [k, mat, cast] of [['rev', M.rev, true], ['colA', M.colA, true], ['colB', M.colB, true], ['orn', M.orn, true], ['brick', M.brick, true], ['statue', M.statue, true], ['water', M.water, false], ['fall', M.fall, false]]) {
@@ -395,9 +408,10 @@ export function init(ctx) {
   M._tex_ms = Math.round(performance.now() - t0);
 }
 
-export function build(ctx, f, r, b) {
+export function build(ctx, f, r, b, F) {
   if (ctx.year < f.y0) return null;
   if (!CACHE) {
+    if (F) DEPTH = Math.max(3, (b - F.min + 0.6) / K);         // 像素 → 米（K = 1/0.84）
     const t0 = performance.now();
     const lod = new T.LOD(); lod.name = 'nymphaeum-lod';
     lod.addLevel(buildGroup(false), 0); lod.addLevel(buildGroup(true), LOD_FAR);
@@ -407,6 +421,8 @@ export function build(ctx, f, r, b) {
   CACHE.lod.position.set(r.cx, b, r.cz);
   return CACHE.lod;
 }
+/* ground_check：最低的面（台基、池栏台阶）到哪 */
+export function bottomOf(b, F) { return Math.min(b - 3 * K, F.min - 0.6); }
 export function tick(ctx, t) {
   if (WU) WU.uT.value = t;
   if (FALL_TEX) FALL_TEX.offset.y = (t * 1.6) % 1;
@@ -414,6 +430,6 @@ export function tick(ctx, t) {
 export function stats() {
   if (!CACHE) return null;
   const [near, far] = CACHE.lod.levels.map(l => tri(l.object));
-  return { near_tris: near, far_tris: far, geom_build_ms: CACHE.ms, tex_ms: M._tex_ms, height_m: Y.tower, width_m: 2 * PLAN.half + 2 * PLAN.pylonW + .6 };
+  return { near_tris: near, far_tris: far, geom_build_ms: CACHE.ms, tex_ms: M._tex_ms, height_m: Y.attic, hero_scale: HERO_SCALE, depth_m: +DEPTH.toFixed(2), width_m: 2 * PLAN.half + 2 * PLAN.pylonW + .6 };
 }
 export function dispose() { /* 几何缓存着（不随年份变） */ }

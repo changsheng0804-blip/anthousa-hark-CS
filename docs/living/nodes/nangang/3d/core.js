@@ -72,10 +72,29 @@ function cover(x,y){const fx=Math.max(0,Math.min(mask.width-1.001,x/4-.5)),fy=Ma
 /* 地面高（海底 -6 → 陆地），x,z 页面像素 */
 const ground=(x,y)=>{const c=cover(x,y),t=Math.min(1,Math.max(0,(c-.3)/.4)),s=t*t*(3-2*t);return -6+(elevPx(x,y)+7.5)*s};
 
+/* ---- 落地（2026-10-20 r3_ground_scale）：terrain 网格的三角插值高度 + 占地拟合。房子、地标、树、人、货堆都按它落地，
+   和画出来的地面一个像素不差（ground() 是光滑的，网格是 4 px 格的三角面，陡处差 0.3 px）。每次重建清缓存（港池随年份变）。 */
+const GM_S=4,GM_NX=Math.ceil(W/GM_S)+1,GM_NZ=Math.ceil(H/GM_S)+1;let GM=null;
+function groundMesh(x,z){if(!GM)GM=new Float32Array(GM_NX*GM_NZ).fill(NaN);
+  if((x<0||z<0||x>W||z>H)&&ctx.reg.outerY){const v=ctx.reg.outerY(x,z);if(v!=null)return v}/* 框外：terrain 的区外网格（terrain/outer.js heightAt） */
+  x=Math.max(0,Math.min(W,x));z=Math.max(0,Math.min(H,z));
+  const g=(i,j)=>{i=Math.max(0,Math.min(GM_NX-1,i));j=Math.max(0,Math.min(GM_NZ-1,j));const k=j*GM_NX+i;let v=GM[k];if(v!==v)v=GM[k]=ground(Math.min(W,i*GM_S),Math.min(H,j*GM_S));return v};
+  const fx0=x/GM_S,fz0=z/GM_S,i=Math.floor(fx0),j=Math.floor(fz0),fx=fx0-i,fz=fz0-j;
+  if(fx+fz<=1)return g(i,j)+(g(i+1,j)-g(i,j))*fx+(g(i,j+1)-g(i,j))*fz;return g(i+1,j+1)+(g(i,j+1)-g(i+1,j+1))*(1-fx)+(g(i+1,j)-g(i+1,j+1))*(1-fz)}
+/* 占地拟合：P = 4 角 [x,z]（或任意点列），角 + ≤step 像素的网格采样。返回 {min,max,mid}：min 用「看得见的地面」（海面 y=0 以下算 0）。
+   规矩（MODULE_CONTRACT §6.13）：地坪 = max（墙/柱从这里起，ht 从这里量），台基/墙脚一直伸到 min − 0.6。 */
+function footing(P,step=2){let mn=1e9,mx=-1e9;const add=(x,z)=>{const h=groundMesh(x,z);mx=Math.max(mx,h);mn=Math.min(mn,Math.max(h,0))};
+  if(P.length===4){const n=Math.max(1,Math.ceil(Math.max(Math.hypot(P[1][0]-P[0][0],P[1][1]-P[0][1]),Math.hypot(P[3][0]-P[0][0],P[3][1]-P[0][1]))/step));
+    for(let a=0;a<=n;a++)for(let b=0;b<=n;b++){const s=a/n,t=b/n;add((P[0][0]*(1-s)+P[1][0]*s)*(1-t)+(P[3][0]*(1-s)+P[2][0]*s)*t,(P[0][1]*(1-s)+P[1][1]*s)*(1-t)+(P[3][1]*(1-s)+P[2][1]*s)*t)}}
+  else for(const p of P)add(p[0],p[1]);
+  const cx=P.reduce((a,p)=>a+p[0],0)/P.length,cz=P.reduce((a,p)=>a+p[1],0)/P.length;return {min:mn,max:mx,mid:groundMesh(cx,cz),inMap:(cx>=0&&cz>=0&&cx<=W&&cz<=H)||!!ctx.reg.outerY}}
+/* 登记给 tools/cs/lookdev/ground_check.py：{kind,id,pts,bottom,floor} */
+const foot=(q)=>{(ctx.reg.footings=ctx.reg.footings||[]).push(q)};
+
 /* ---- ctx：交给每个模块 ---- */
 let CUR=null;
 export const ctx={THREE,scene,camera:cam,renderer:rnd,controls:ctl,WD,by,W,H,year:+$('yr').value,
-  live:f=>f.y0<=ctx.year&&(f.y1==null||f.y1>ctx.year),elevPx,ground,hsh,
+  live:f=>f.y0<=ctx.year&&(f.y1==null||f.y1>ctx.year),elevPx,ground,groundMesh,footing,foot,hsh,
   geom:{quadAxes,rectOf,RQ,pathRings},
   groundCanvas:tex,groundTex:gtex,groundScale:TS,
   reg:{},                       /* 共享注册表：生产者写、消费者读（如 reg.frontage、reg.slots.fountain）；每次重建前清空 */
@@ -89,11 +108,11 @@ for(const m of ACTIVE){CUR=m.name;m.init?.(ctx)}CUR=null;
 function modTris(stats){for(const k in stats)delete stats[k].tris;for(const o of scene.children){const k=o.userData.mod;if(k)(stats[k]=stats[k]||{}).tris=(stats[k].tris||0)+tris(o)}
   let n=0;for(const k in stats)n+=stats[k].tris||0;window.__trisTotal=n;return stats}
 let built=false;
-function rebuild(){const t0=performance.now();ctx.reg={};const stats={};
+function rebuild(){const t0=performance.now();ctx.reg={};GM=null;const stats={};
   if(built)for(const m of ACTIVE){CUR=m.name;m.dispose?.(ctx)}
   X.setTransform(TS,0,0,TS,0,0);
   for(const m of ACTIVE)if(m.paint){X.save();X.setTransform(TS,0,0,TS,0,0);const t=performance.now();m.paint(ctx,X);X.restore();stats[m.name]={paint_ms:Math.round(performance.now()-t)}}
-  buildMask();
+  buildMask();GM=null;
   for(const m of ACTIVE){CUR=m.name;const t=performance.now();m.build?.(ctx);(stats[m.name]=stats[m.name]||{}).build_ms=Math.round(performance.now()-t)}
   CUR=null;gtex.needsUpdate=true;built=true;
   modTris(stats);

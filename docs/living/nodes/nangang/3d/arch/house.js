@@ -12,6 +12,8 @@ const WALLS={stucco:[[248,238,214],[238,208,156],[230,186,128],[214,162,104],[23
 const ROOFS=[[206,116,56],[186,94,46],[166,80,40],[128,70,40],[218,144,80],[150,76,44],[108,58,36],[194,104,52]];
 const OPUS_P={fine:.7,water:.6,garrison:.8,market:.45,shops:.35,horrea:1,dock:.5,planned:.3,homes:.22,workshop:.3,garden:.2};
 const FLAT={workshop:.45,garden:.5,water:.12,garrison:.15,homes:.15,market:.04,shops:.05,dock:.25,planned:.1,horrea:0};
+/* 墙基（r3）：素面石灰石色；最高 14 像素（崖边的户，再深就是海崖，不画成塔） */
+export const SOCLE=linC([178,166,142]),SOCLE_MAX=14;
 export const RIDGE=linC([232,222,204]),SOFFIT=linC([46,34,26]), CEIL=linC([96,78,60]), MARBLE_C=linC([233,223,204]);
 
 /* 街段网格：只收 m/s 街，给 frontage 兜底用 */
@@ -35,7 +37,11 @@ function frontage(ctx,f,C,u0,u1,v0,v1,SG){const mids=[C((u0+u1)/2,v0),C(u1,(v0+v
 export function house(ctx,B,f,SG,COLS){const {hsh,elevPx,geom:{quadAxes}}=ctx,p=f.p,P=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]];
   const cx=(p[0]+p[2]+p[4]+p[6])/4,cz=(p[1]+p[3]+p[5]+p[7])/4,ins=P.map(q=>[cx+(q[0]-cx)*.92,cz+(q[1]-cz)*.92]);
   const r=quadAxes(ins),C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v];let u0=-r.hu,u1=r.hu,v0=-r.hv,v1=r.hv;
-  const base=elevPx(cx,cz)+1.5,H=Math.max(3,(f.ht||5)*1.15),fn=f.fn||'homes';
+  /* 落地（r3_ground_scale）：地坪 = 占地下最高的地面 −0.45（上坡那角最多埋 0.45 像素 ≈ 0.4 m，看不出；少抬 0.45，临街铺面不至于架得太高），素面墙基一直伸到最低的地面 −0.6（下坡不再漏空）；ht 从地坪量。
+     区外（底账有几户在页面边外，地形网格到边为止）照旧：中心高 +1.5、墙脚 3 像素。 */
+  const P0=[C(-r.hu,-r.hv),C(r.hu,-r.hv),C(r.hu,r.hv),C(-r.hu,r.hv)],FT=ctx.footing(P0,2.5);
+  const base=FT.inMap?Math.max(FT.mid,FT.max-.45)+.05:elevPx(cx,cz)+1.5,bot=FT.inMap?Math.max(FT.min-.6,base-SOCLE_MAX):base-3,H=Math.max(3,(f.ht||5)*1.15),fn=f.fn||'homes';
+  ctx.foot({kind:FT.inMap?'house':'house-offmap',id:f.id,pts:P0,bottom:bot,floor:base});
   const kind=hsh(f.id,21)<(OPUS_P[fn]??.25)?'opus':'stucco',WP=WALLS[kind],wc=WP[Math.floor(hsh(f.id,3)*WP.length)];
   const wcol=linC(mul(wc,.96+.08*hsh(f.id,4))),rc=ROOFS[Math.floor(hsh(f.id,14)*ROOFS.length)],rcol=linC(mul(rc,.92+.16*hsh(f.id,15)));
   /* 柱廊 */
@@ -47,7 +53,10 @@ export function house(ctx,B,f,SG,COLS){const {hsh,elevPx,geom:{quadAxes}}=ctx,p=
   if(fr){if(fr.e===0)v0+=pd;else if(fr.e===1)u1-=pd;else if(fr.e===2)v1-=pd;else u0+=pd}
   const k=[C(u0,v0),C(u1,v0),C(u1,v1),C(u0,v1)],y1=base+H,ns=Math.max(1,Math.min(3,Math.round(H/STH))),vt=ns/3,WB=B[kind+((fn==='shops'||fn==='market'||fn==='dock')?'Shop':'')],uoff=Math.floor(hsh(f.id,5)*4);
   for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]),nb=Math.max(1,Math.round(L/BAY));
-    wall(WB,a,b,base-3,base,mul(wcol,.8),nb,.005,.005,uoff);wall(WB,a,b,base,y1,wcol,nb,0,vt,uoff)}
+    wall(WB,a,b,base,y1,wcol,nb,0,vt,uoff)}
+  /* 素面墙基（石灰石色，占地全宽，柱廊也站在上面）：四面 + 顶 */
+  {const sc=mul(SOCLE,.9+.16*hsh(f.id,6));for(let i=0;i<4;i++){const a=P0[i],b=P0[(i+1)%4];wall(B.plain,a,b,bot,base,mul(sc,i%2?.94:1),0,0,0)}
+   quad(B.plain,[P0[0][0],base-.02,P0[0][1]],[P0[3][0],base-.02,P0[3][1]],[P0[2][0],base-.02,P0[2][1]],[P0[1][0],base-.02,P0[1][1]],mul(sc,1.05))}
   const flat=hsh(f.id,17)<(FLAT[fn]??.1);
   const hu=(u1-u0)/2,hv=(v1-v0)/2,mu=(u0+u1)/2,mv=(v0+v1)/2,O=.5;/* 出檐 */
   if(flat){const kk=[C(u0,v0),C(u0,v1),C(u1,v1),C(u1,v0)];quad(B.plain,[kk[0][0],y1,kk[0][1]],[kk[1][0],y1,kk[1][1]],[kk[2][0],y1,kk[2][1]],[kk[3][0],y1,kk[3][1]],mul(wcol,.82));

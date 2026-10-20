@@ -153,7 +153,19 @@ export function init(ctx) {
   initRing(ctx);
 }
 
+/* r3_ground_scale：区外网格的高度（同网格的三角插值 a,c,b / b,c,d）；没有格子（海）给 null。core 的 groundMesh 在页面框外用它，
+   框外的房子、地标（蓄水池、孤寡院）、水道桥墩才落得到画出来的区外地面上。 */
+const bs = (A, v) => { let lo = 0, hi = A.length - 2; if (v < A[0] || v > A[A.length - 1]) return -1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (A[m] <= v) lo = m; else hi = m - 1; } return lo; };
+export function heightAt(x, z) {
+  if (!geo) return null; const i = bs(D.xs, x), j = bs(D.zs, z); if (i < 0 || j < 0) return null;
+  const nx = D.xs.length; if (!CELL[j * (nx - 1) + i]) return null;
+  const p = geo.attributes.position.array, h = (a, b) => p[((j + b) * nx + i + a) * 3 + 1];
+  const fx = (x - D.xs[i]) / (D.xs[i + 1] - D.xs[i]), fz = (z - D.zs[j]) / (D.zs[j + 1] - D.zs[j]);
+  if (fx + fz <= 1) return h(0, 0) + (h(1, 0) - h(0, 0)) * fx + (h(0, 1) - h(0, 0)) * fz;
+  return h(1, 1) + (h(0, 1) - h(1, 1)) * (1 - fx) + (h(1, 0) - h(1, 1)) * (1 - fz);
+}
 export function build(ctx) {
+  ctx.reg.outerY = heightAt;
   /* 框边一圈顶点按 core 的 ground() 取高（当年石堤/港池可能改到框边） */
   const p = geo.attributes.position.array, nx = D.xs.length, nz = D.zs.length, W = D.W, Hh = D.H;
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
