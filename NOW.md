@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 01:10 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 01:20 PDT ——Hark（CS线）
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
@@ -16,12 +16,15 @@
 | 水系节点（水道桥/蓄水池/井） | scroll.html | water_report.json | 待评 |
 | 长卷街区细化（街名路牌、招牌、坡地台基台阶、柱廊额枋） | scroll.html | 10-20 提交 b506e82、ff210df | 待评 |
 | 居民：姿势引擎 + 人群 + 户籍关系 | scroll.html?n=net&crowd=N | tools/cs/people/README.md；Mac 实测一万人 100 fps | 模型不再细抠（10-19）；关系接入待评 |
-| 3D 试作 | docs/living/nodes/nangang/3d.html | lookdev 基线：docs/cs/lookdev/baseline/report.md | 待评 |
+| 3D 试作（10-20 拆成 ES 模块，样子不变） | docs/living/nodes/nangang/3d.html + docs/living/nodes/nangang/3d/ | lookdev 基线：docs/cs/lookdev/baseline/report.md；拆分对照 docs/cs/lookdev/r2/split_match.json | 待评 |
 
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口）。
 
 ## 进行中
-- **南港 3D lookdev 第 1 轮（10-20 完成基线）**：4 张参考图 docs/cs/lookdev/refs/（按底账核过，南港无教堂）；ART_BIBLE.md、MODULE_CONTRACT.md；固定机位 docs/living/nodes/nangang/shots.json，3d.html 加了 ?shot=N&clean=1&still=1 钩子（不带参数行为不变）；工具 tools/cs/lookdev/render.py（无头出图）和 compare.py（Lab/反差/直方图/饱和/冷暖/边缘密度 + 并排图）。基线结论：骨架对，样子是白模 + 正午平光；前五差距 = 光和调色（sky-atmosphere）、房子白模（buildings）、街面平涂（streets）、水平色 + 区外空海（water/terrain）、没有船和人（props/crowd）。沙箱只看样子，帧率没测。
+- **南港 3D lookdev 第 2 轮**：
+  - 第 0 步（10-20 完成）：3d.html 拆成 docs/living/nodes/nangang/3d/ 下 9 个 ES 模块（core + sky terrain water streets buildings props flora crowd；props、crowd 是空壳）。用 render.py 重渲 4 机位，match.py 对基线：4 机位全局 + 12 条带 ΔL* 全 +0.00、边缘差全 +0.0%，过。新增 match.py（「没变样」判据）、`&only=`、`&quality=`、每模块 build 毫秒/三角形数。接口、谁能改哪个文件、并行的坑：docs/cs/lookdev/MODULE_CONTRACT.md 第 2、6 节。
+  - 第 1 波（未开）：7 个模块代理并行，各按 MODULE_CONTRACT.md 第 6 节只改自己的文件，验收数字见 docs/cs/lookdev/baseline/report.md 第 4 节；证据放 docs/cs/lookdev/r2/ 下各自子目录，不改 NOW.md，导演合并时统一更新。
+  - 第 1 轮基线结论不变：骨架对，样子是白模 + 正午平光；前五差距 = 光和调色、房子白模、街面平涂、水平色 + 区外空海、没有船和人。沙箱只看样子，帧率没测。
 - 古城（gucheng）：户籍、街名、招牌、大地标部件已推（436984f），另一个会话在做。
 
 ## 等主人
@@ -29,5 +32,5 @@
 - 南港节点版「留」还是「再来」；2D 长卷还是 3D 继续走。
 
 ## 下一步（主人点头后）
-- lookdev 第 2 轮：先由一个代理把 3d.html 拆成 docs/living/nodes/nangang/3d/ 下的模块（数字要和基线对上），再并行 7 个模块代理（sky-atmosphere、buildings、streets、water、terrain、props+flora、crowd），每个按 report.md 第 4 节的自查机位和验收数字跑；最后导演代理合并复测，主人 Mac 上看帧率。
+- lookdev 第 2 轮第 1 波：并行 7 个模块代理（sky-atmosphere、buildings、streets、water、terrain、props+flora、crowd），每个按 report.md 第 4 节的自查机位和验收数字跑；然后导演代理合并复测写 r2 报告，主人 Mac 上看帧率（拆分后的帧率也待 Mac 实测）。
 - 节点链往外长一块街区，验证跨街区接缝从结构上消失。

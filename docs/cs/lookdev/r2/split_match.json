@@ -1,0 +1,178 @@
+[
+ {
+  "shot": 1,
+  "part": "global",
+  "L_base": 60.74,
+  "L_new": 60.74,
+  "dL": 0.0,
+  "edge_base": 0.0297,
+  "edge_new": 0.0297,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 1,
+  "part": "0.00-0.25 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 82.35,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 1,
+  "part": "0.25-0.60 buildings",
+  "L_base": 62.52,
+  "L_new": 62.52,
+  "dL": 0.0,
+  "edge_base": 0.0484,
+  "edge_new": 0.0484,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 1,
+  "part": "0.60-1.00 water",
+  "L_base": 45.72,
+  "L_new": 45.72,
+  "dL": 0.0,
+  "edge_base": 0.0316,
+  "edge_new": 0.0316,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "global",
+  "L_base": 63.96,
+  "L_new": 63.96,
+  "dL": 0.0,
+  "edge_base": 0.0114,
+  "edge_new": 0.0114,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.00-0.25 sky-atmosphere",
+  "L_base": 77.41,
+  "L_new": 77.41,
+  "dL": 0.0,
+  "edge_base": 0.0148,
+  "edge_new": 0.0148,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.25-0.70 buildings+crowd",
+  "L_base": 62.83,
+  "L_new": 62.83,
+  "dL": 0.0,
+  "edge_base": 0.0171,
+  "edge_new": 0.0171,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 2,
+  "part": "0.70-1.00 streets+props",
+  "L_base": 54.49,
+  "L_new": 54.49,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "global",
+  "L_base": 62.74,
+  "L_new": 62.74,
+  "dL": 0.0,
+  "edge_base": 0.049,
+  "edge_new": 0.049,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "0.00-0.12 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 82.35,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "0.12-0.40 water+terrain",
+  "L_base": 63.82,
+  "L_new": 63.82,
+  "dL": 0.0,
+  "edge_base": 0.0001,
+  "edge_new": 0.0001,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 3,
+  "part": "0.40-1.00 buildings+streets",
+  "L_base": 58.33,
+  "L_new": 58.33,
+  "dL": 0.0,
+  "edge_base": 0.0814,
+  "edge_new": 0.0814,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "global",
+  "L_base": 65.13,
+  "L_new": 65.13,
+  "dL": 0.0,
+  "edge_base": 0.0164,
+  "edge_new": 0.0164,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "0.00-0.18 sky-atmosphere",
+  "L_base": 82.35,
+  "L_new": 82.35,
+  "dL": 0.0,
+  "edge_base": 0.0,
+  "edge_new": 0.0,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "0.18-0.60 buildings",
+  "L_base": 71.25,
+  "L_new": 71.25,
+  "dL": 0.0,
+  "edge_base": 0.028,
+  "edge_new": 0.028,
+  "dEdge_pct": 0.0,
+  "ok": true
+ },
+ {
+  "shot": 4,
+  "part": "0.60-1.00 props+crowd+water",
+  "L_base": 51.02,
+  "L_new": 51.02,
+  "dL": 0.0,
+  "edge_base": 0.0117,
+  "edge_new": 0.0117,
+  "dEdge_pct": 0.0,
+  "ok": true
+ }
+]
