@@ -1,0 +1,1012 @@
+[
+ {
+  "year": 20,
+  "piers_in_use_nodes_json": 5,
+  "ships_in_scene": 5,
+  "piers_with_ship": 5,
+  "unmatched_ships": 0,
+  "ok": true,
+  "self_report": {
+   "piers_in_use": 5,
+   "ships_at_piers": 5,
+   "fallbacks": 0,
+   "shore_boats": 30,
+   "cranes": 2,
+   "clusters": 134
+  },
+  "per_pier": [
+   {
+    "harbor": "harbor_julian",
+    "y0": 1,
+    "a": [
+     1979.7,
+     1618.4
+    ],
+    "b": [
+     1982.6,
+     1582.2
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 5,
+    "a": [
+     1810.7,
+     1269.0
+    ],
+    "b": [
+     1805.0,
+     1328.0
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.2
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 9,
+    "a": [
+     1799.3,
+     1617.7
+    ],
+    "b": [
+     1796.2,
+     1586.4
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 13,
+    "a": [
+     1664.4,
+     1620.8
+    ],
+    "b": [
+     1659.6,
+     1565.9
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 17,
+    "a": [
+     1765.4,
+     1268.7
+    ],
+    "b": [
+     1759.9,
+     1317.8
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.3
+   }
+  ]
+ },
+ {
+  "year": 40,
+  "piers_in_use_nodes_json": 12,
+  "ships_in_scene": 12,
+  "piers_with_ship": 12,
+  "unmatched_ships": 0,
+  "ok": true,
+  "self_report": {
+   "piers_in_use": 12,
+   "ships_at_piers": 12,
+   "fallbacks": 0,
+   "shore_boats": 45,
+   "cranes": 5,
+   "clusters": 443
+  },
+  "per_pier": [
+   {
+    "harbor": "harbor_julian",
+    "y0": 1,
+    "a": [
+     1979.7,
+     1618.4
+    ],
+    "b": [
+     1982.6,
+     1582.2
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 5,
+    "a": [
+     1810.7,
+     1269.0
+    ],
+    "b": [
+     1805.0,
+     1328.0
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.2
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 9,
+    "a": [
+     1799.3,
+     1617.7
+    ],
+    "b": [
+     1796.2,
+     1586.4
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 13,
+    "a": [
+     1664.4,
+     1620.8
+    ],
+    "b": [
+     1659.6,
+     1565.9
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 17,
+    "a": [
+     1765.4,
+     1268.7
+    ],
+    "b": [
+     1759.9,
+     1317.8
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.3
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 21,
+    "a": [
+     1753.5,
+     1619.2
+    ],
+    "b": [
+     1748.5,
+     1571.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 25,
+    "a": [
+     2001.2,
+     1313.4
+    ],
+    "b": [
+     1957.8,
+     1306.5
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 29,
+    "a": [
+     2000.7,
+     1494.7
+    ],
+    "b": [
+     1965.0,
+     1496.0
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 33,
+    "a": [
+     1999.9,
+     1449.0
+    ],
+    "b": [
+     1954.3,
+     1448.8
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 37,
+    "a": [
+     1539.7,
+     1554.7
+    ],
+    "b": [
+     1601.8,
+     1553.9
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.4
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 33,
+    "a": [
+     347.4,
+     1561.8
+    ],
+    "b": [
+     406.9,
+     1572.6
+    ],
+    "ship": "round0",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 37,
+    "a": [
+     652.1,
+     1478.7
+    ],
+    "b": [
+     593.4,
+     1473.8
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.9
+   }
+  ]
+ },
+ {
+  "year": 60,
+  "piers_in_use_nodes_json": 22,
+  "ships_in_scene": 22,
+  "piers_with_ship": 22,
+  "unmatched_ships": 0,
+  "ok": true,
+  "self_report": {
+   "piers_in_use": 22,
+   "ships_at_piers": 22,
+   "fallbacks": 0,
+   "shore_boats": 65,
+   "cranes": 10,
+   "clusters": 896
+  },
+  "per_pier": [
+   {
+    "harbor": "harbor_julian",
+    "y0": 1,
+    "a": [
+     1979.7,
+     1618.4
+    ],
+    "b": [
+     1982.6,
+     1582.2
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 5,
+    "a": [
+     1810.7,
+     1269.0
+    ],
+    "b": [
+     1805.0,
+     1328.0
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.2
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 9,
+    "a": [
+     1799.3,
+     1617.7
+    ],
+    "b": [
+     1796.2,
+     1586.4
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 13,
+    "a": [
+     1664.4,
+     1620.8
+    ],
+    "b": [
+     1659.6,
+     1565.9
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 17,
+    "a": [
+     1765.4,
+     1268.7
+    ],
+    "b": [
+     1759.9,
+     1317.8
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.3
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 21,
+    "a": [
+     1753.5,
+     1619.2
+    ],
+    "b": [
+     1748.5,
+     1571.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 25,
+    "a": [
+     2001.2,
+     1313.4
+    ],
+    "b": [
+     1957.8,
+     1306.5
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 29,
+    "a": [
+     2000.7,
+     1494.7
+    ],
+    "b": [
+     1965.0,
+     1496.0
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 33,
+    "a": [
+     1999.9,
+     1449.0
+    ],
+    "b": [
+     1954.3,
+     1448.8
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 37,
+    "a": [
+     1539.7,
+     1554.7
+    ],
+    "b": [
+     1601.8,
+     1553.9
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 41,
+    "a": [
+     1844.7,
+     1617.2
+    ],
+    "b": [
+     1845.6,
+     1572.6
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 45,
+    "a": [
+     1542.9,
+     1378.3
+    ],
+    "b": [
+     1574.9,
+     1378.0
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.6
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 49,
+    "a": [
+     1538.9,
+     1599.9
+    ],
+    "b": [
+     1598.8,
+     1606.9
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.5
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 53,
+    "a": [
+     2003.6,
+     1540.7
+    ],
+    "b": [
+     1969.9,
+     1533.5
+    ],
+    "ship": "galley",
+    "dist_to_pier": 13.1
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 57,
+    "a": [
+     1673.9,
+     1268.3
+    ],
+    "b": [
+     1672.2,
+     1322.2
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.5
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 33,
+    "a": [
+     347.4,
+     1561.8
+    ],
+    "b": [
+     406.9,
+     1572.6
+    ],
+    "ship": "round0",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 37,
+    "a": [
+     652.1,
+     1478.7
+    ],
+    "b": [
+     593.4,
+     1473.8
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.9
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 41,
+    "a": [
+     628.9,
+     1603.8
+    ],
+    "b": [
+     630.0,
+     1549.1
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 45,
+    "a": [
+     345.2,
+     1516.4
+    ],
+    "b": [
+     395.4,
+     1527.6
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.5
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 49,
+    "a": [
+     582.7,
+     1604.3
+    ],
+    "b": [
+     597.7,
+     1546.9
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.8
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 53,
+    "a": [
+     538.2,
+     1603.6
+    ],
+    "b": [
+     540.2,
+     1568.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 57,
+    "a": [
+     494.7,
+     1412.2
+    ],
+    "b": [
+     482.6,
+     1450.5
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   }
+  ]
+ },
+ {
+  "year": 70,
+  "piers_in_use_nodes_json": 28,
+  "ships_in_scene": 28,
+  "piers_with_ship": 28,
+  "unmatched_ships": 0,
+  "ok": true,
+  "self_report": {
+   "piers_in_use": 28,
+   "ships_at_piers": 28,
+   "fallbacks": 0,
+   "shore_boats": 60,
+   "cranes": 12,
+   "clusters": 891
+  },
+  "per_pier": [
+   {
+    "harbor": "harbor_julian",
+    "y0": 1,
+    "a": [
+     1979.7,
+     1618.4
+    ],
+    "b": [
+     1982.6,
+     1582.2
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 5,
+    "a": [
+     1810.7,
+     1269.0
+    ],
+    "b": [
+     1805.0,
+     1328.0
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.2
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 9,
+    "a": [
+     1799.3,
+     1617.7
+    ],
+    "b": [
+     1796.2,
+     1586.4
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 13,
+    "a": [
+     1664.4,
+     1620.8
+    ],
+    "b": [
+     1659.6,
+     1565.9
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 17,
+    "a": [
+     1765.4,
+     1268.7
+    ],
+    "b": [
+     1759.9,
+     1317.8
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.3
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 21,
+    "a": [
+     1753.5,
+     1619.2
+    ],
+    "b": [
+     1748.5,
+     1571.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 25,
+    "a": [
+     2001.2,
+     1313.4
+    ],
+    "b": [
+     1957.8,
+     1306.5
+    ],
+    "ship": "round0",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 29,
+    "a": [
+     2000.7,
+     1494.7
+    ],
+    "b": [
+     1965.0,
+     1496.0
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 33,
+    "a": [
+     1999.9,
+     1449.0
+    ],
+    "b": [
+     1954.3,
+     1448.8
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 37,
+    "a": [
+     1539.7,
+     1554.7
+    ],
+    "b": [
+     1601.8,
+     1553.9
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 41,
+    "a": [
+     1844.7,
+     1617.2
+    ],
+    "b": [
+     1845.6,
+     1572.6
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 45,
+    "a": [
+     1542.9,
+     1378.3
+    ],
+    "b": [
+     1574.9,
+     1378.0
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.6
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 49,
+    "a": [
+     1538.9,
+     1599.9
+    ],
+    "b": [
+     1598.8,
+     1606.9
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.5
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 53,
+    "a": [
+     2003.6,
+     1540.7
+    ],
+    "b": [
+     1969.9,
+     1533.5
+    ],
+    "ship": "galley",
+    "dist_to_pier": 13.1
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 57,
+    "a": [
+     1673.9,
+     1268.3
+    ],
+    "b": [
+     1672.2,
+     1322.2
+    ],
+    "ship": "round1",
+    "dist_to_pier": 8.5
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 61,
+    "a": [
+     1538.7,
+     1335.4
+    ],
+    "b": [
+     1593.0,
+     1314.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.4
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 65,
+    "a": [
+     1855.9,
+     1271.8
+    ],
+    "b": [
+     1853.9,
+     1304.2
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.7
+   },
+   {
+    "harbor": "harbor_julian",
+    "y0": 69,
+    "a": [
+     1543.6,
+     1466.6
+    ],
+    "b": [
+     1583.3,
+     1466.3
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.1
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 33,
+    "a": [
+     347.4,
+     1561.8
+    ],
+    "b": [
+     406.9,
+     1572.6
+    ],
+    "ship": "round0",
+    "dist_to_pier": 8.6
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 37,
+    "a": [
+     652.1,
+     1478.7
+    ],
+    "b": [
+     593.4,
+     1473.8
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.9
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 41,
+    "a": [
+     628.9,
+     1603.8
+    ],
+    "b": [
+     630.0,
+     1549.1
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 45,
+    "a": [
+     345.2,
+     1516.4
+    ],
+    "b": [
+     395.4,
+     1527.6
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.5
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 49,
+    "a": [
+     582.7,
+     1604.3
+    ],
+    "b": [
+     597.7,
+     1546.9
+    ],
+    "ship": "galley",
+    "dist_to_pier": 11.8
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 53,
+    "a": [
+     538.2,
+     1603.6
+    ],
+    "b": [
+     540.2,
+     1568.7
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 57,
+    "a": [
+     494.7,
+     1412.2
+    ],
+    "b": [
+     482.6,
+     1450.5
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.2
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 61,
+    "a": [
+     402.4,
+     1411.3
+    ],
+    "b": [
+     403.8,
+     1441.9
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.5
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 65,
+    "a": [
+     346.5,
+     1473.6
+    ],
+    "b": [
+     406.8,
+     1464.2
+    ],
+    "ship": "round1",
+    "dist_to_pier": 9.0
+   },
+   {
+    "harbor": "harbor_theodosius",
+    "y0": 69,
+    "a": [
+     646.8,
+     1434.5
+    ],
+    "b": [
+     584.4,
+     1428.5
+    ],
+    "ship": "galley",
+    "dist_to_pier": 12.5
+   }
+  ]
+ }
+]

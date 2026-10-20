@@ -1,0 +1,239 @@
+{
+ "module": "props+flora",
+ "round": "lookdev r2 wave 1",
+ "render": "full (no only=), 1376x768, year 60, on main 935d225 (terrain/streets/crowd merged) + this commit; before = same tree with props/flora reverted to 935d225; sandbox SwiftShader — looks only, no fps",
+ "acceptance": {
+  "shot4_quay_band_edge": {
+   "target": ">= 0.12",
+   "before": 0.0119,
+   "after": 0.1243,
+   "ref": 0.2609,
+   "met": true
+  },
+  "one_ship_per_in_use_pier": {
+   "target": "ships == piers in use (nodes.json), each pier exactly one",
+   "year60": {
+    "piers_in_use": 22,
+    "ships": 22,
+    "piers_with_ship": 22,
+    "unmatched": 0
+   },
+   "all_years_checked": {
+    "20": true,
+    "40": true,
+    "60": true,
+    "70": true
+   },
+   "met": true,
+   "script": "docs/cs/lookdev/r2/props/check_ships.py",
+   "detail": "docs/cs/lookdev/r2/props/numbers_ships.json"
+  }
+ },
+ "triangles": {
+  "props": 419304,
+  "flora": 198060,
+  "flora_before": 42625,
+  "props_before": 0,
+  "note": "from window.__modStats, quality=high, year 60"
+ },
+ "build_ms_sandbox": {
+  "props": 342,
+  "flora": 14,
+  "note": "software sandbox, Mac will be faster; not an fps claim"
+ },
+ "instances_year60": {
+  "round0": 4,
+  "round1": 6,
+  "galley": 12,
+  "skiff": 46,
+  "lighter": 19,
+  "amph": 3117,
+  "sack": 2856,
+  "crate": 364,
+  "bale": 276,
+  "cart": 46,
+  "crane": 10,
+  "bollard": 220
+ },
+ "flora_instances_year60": {
+  "cypress": 285,
+  "olive": 458,
+  "garden": 176,
+  "shrub": 590,
+  "pergola": 54
+ },
+ "determinism": {
+  "same_code_same_shot_pixel_diff": 0,
+  "year_sweep_60_20_60_shot4_pixel_diff": 0
+ },
+ "bands": [
+  {
+   "shot": 1,
+   "part": "global",
+   "edge_before": 0.0353,
+   "edge_after": 0.0572,
+   "L_before": 59.8,
+   "L_after": 58.9,
+   "edge_ref": 0.2032
+  },
+  {
+   "shot": 1,
+   "part": "0.00-0.25 sky-atmosphere",
+   "edge_before": 0.0,
+   "edge_after": 0.0,
+   "sat_before": 0.0991,
+   "sat_after": 0.0991,
+   "L_before": 82.35,
+   "L_after": 82.35,
+   "edge_ref": 0.0445
+  },
+  {
+   "shot": 1,
+   "part": "0.25-0.60 buildings",
+   "edge_before": 0.0644,
+   "edge_after": 0.0816,
+   "sat_before": 0.2689,
+   "sat_after": 0.2718,
+   "L_before": 59.84,
+   "L_after": 59.33,
+   "edge_ref": 0.3632
+  },
+  {
+   "shot": 1,
+   "part": "0.60-1.00 water",
+   "edge_before": 0.0316,
+   "edge_after": 0.0713,
+   "sat_before": 0.2932,
+   "sat_after": 0.3131,
+   "L_before": 45.72,
+   "L_after": 43.9,
+   "edge_ref": 0.1618
+  },
+  {
+   "shot": 2,
+   "part": "global",
+   "edge_before": 0.095,
+   "edge_after": 0.095,
+   "L_before": 60.91,
+   "L_after": 60.91,
+   "edge_ref": 0.1984
+  },
+  {
+   "shot": 2,
+   "part": "0.00-0.25 sky-atmosphere",
+   "edge_before": 0.0148,
+   "edge_after": 0.0148,
+   "sat_before": 0.1278,
+   "sat_after": 0.1278,
+   "L_before": 77.41,
+   "L_after": 77.41,
+   "edge_ref": 0.1935
+  },
+  {
+   "shot": 2,
+   "part": "0.25-0.70 buildings+crowd",
+   "edge_before": 0.054,
+   "edge_after": 0.054,
+   "sat_before": 0.2193,
+   "sat_after": 0.2193,
+   "L_before": 60.32,
+   "L_after": 60.32,
+   "edge_ref": 0.2194
+  },
+  {
+   "shot": 2,
+   "part": "0.70-1.00 streets+props",
+   "edge_before": 0.2208,
+   "edge_after": 0.2208,
+   "sat_before": 0.2312,
+   "sat_after": 0.2312,
+   "L_before": 48.14,
+   "L_after": 48.14,
+   "edge_ref": 0.1696
+  },
+  {
+   "shot": 3,
+   "part": "global",
+   "edge_before": 0.0614,
+   "edge_after": 0.0657,
+   "L_before": 62.06,
+   "L_after": 61.91,
+   "edge_ref": 0.3373
+  },
+  {
+   "shot": 3,
+   "part": "0.00-0.12 sky-atmosphere",
+   "edge_before": 0.0,
+   "edge_after": 0.0,
+   "sat_before": 0.0998,
+   "sat_after": 0.0998,
+   "L_before": 81.85,
+   "L_after": 81.85,
+   "edge_ref": 0.0
+  },
+  {
+   "shot": 3,
+   "part": "0.12-0.40 water+terrain",
+   "edge_before": 0.0001,
+   "edge_after": 0.0001,
+   "sat_before": 0.1728,
+   "sat_after": 0.1728,
+   "L_before": 63.82,
+   "L_after": 63.82,
+   "edge_ref": 0.2764
+  },
+  {
+   "shot": 3,
+   "part": "0.40-1.00 buildings+streets",
+   "edge_before": 0.102,
+   "edge_after": 0.1092,
+   "sat_before": 0.344,
+   "sat_after": 0.3435,
+   "L_before": 57.3,
+   "L_after": 57.05,
+   "edge_ref": 0.4321
+  },
+  {
+   "shot": 4,
+   "part": "global",
+   "edge_before": 0.0171,
+   "edge_after": 0.0799,
+   "L_before": 65.01,
+   "L_after": 60.46,
+   "edge_ref": 0.2385
+  },
+  {
+   "shot": 4,
+   "part": "0.00-0.18 sky-atmosphere",
+   "edge_before": 0.0,
+   "edge_after": 0.0,
+   "sat_before": 0.0991,
+   "sat_after": 0.0991,
+   "L_before": 82.35,
+   "L_after": 82.35,
+   "edge_ref": 0.1172
+  },
+  {
+   "shot": 4,
+   "part": "0.18-0.60 buildings",
+   "edge_before": 0.0294,
+   "edge_after": 0.0702,
+   "sat_before": 0.172,
+   "sat_after": 0.1926,
+   "L_before": 70.99,
+   "L_after": 68.9,
+   "edge_ref": 0.2675
+  },
+  {
+   "shot": 4,
+   "part": "0.60-1.00 props+crowd+water",
+   "edge_before": 0.0119,
+   "edge_after": 0.1243,
+   "sat_before": 0.3082,
+   "sat_after": 0.4154,
+   "L_before": 51.0,
+   "L_after": 41.84,
+   "edge_ref": 0.2609
+  }
+ ]
+}
