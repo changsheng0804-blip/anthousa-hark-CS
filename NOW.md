@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 08:00 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 06:50 PDT ——Hark（CS线）
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
@@ -19,7 +19,6 @@
 | 3D lookdev 第 2 轮（8 模块合并：低太阳 + 调色、立面/柱廊/粮仓、石板街、港水倒影、区外陆地和远岸、船吊车货堆、树、5966 口人） | docs/living/nodes/nangang/3d.html（`?shot=1..4` 看固定机位） | `docs/cs/lookdev/r2/report.md`、`docs/cs/lookdev/r2/overview.jpg`；沙箱：模块验收 9/12 条过，三角形 1.58–1.60 M | 待评（帧率待 Mac 实测） |
 | 3D 地标试点：狄奥多西广场纪功柱（landmarks 模块第一座） | docs/living/nodes/nangang/3d.html?shot=5（第 65 年；第 60 年是施工中） | `docs/cs/lookdev/landmarks/column/notes.md`、`docs/cs/lookdev/landmarks/column/overview.jpg`；10-20 第二遍修订后轮廓 IoU 0.83（框对齐）/ 0.86（按高）、高宽比 5.0（参考 5.35）；机位 1–4 match 全过 | 待评（帧率待 Mac 实测） |
 | 3D 地标第 2 座：大宁芙殿 Nymphaeum Maius | docs/living/nodes/nangang/3d.html?shot=6（第 60 年） | `docs/cs/lookdev/landmarks/nymphaeum/notes.md`、`overview.jpg`；轮廓 IoU 0.59（占位）→ 0.83（框对齐）、高宽比 0.77（参考 0.65）；机位 1–5 match 全过，2–4 逐像素不变 | 待评（帧率待 Mac 实测） |
-| 3D 民居类型细模试点 house_kit（开关后，默认关） | docs/living/nodes/nangang/3d.html?shot=2&flag=house_kit、?shot=4&flag=house_kit | `docs/cs/lookdev/house_kit/notes.md`、`docs/cs/lookdev/house_kit/overview.jpg`、`numbers.json`；关开关 6 机位逐像素不变；开：近圈 0–145 户、每户 750–880 三角形，全场最多 1.83 M | 待评（帧率待 Mac 实测；留 / 删） |
 
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
 
@@ -40,17 +39,11 @@
   - 导演改了：相机 far 9000→16000；机位 3 抬头左转（地平线 ≈0.14，看得到东岸和远岸），机位 3 旧基线数字不再可比，已在新机位重拍；sky 加冷灰天光补光，粮仓山墙不再是黑的；`__modStats` 改在出图后数三角形。
   - 剩下的差距（排名和归属见报告）：机位 2 太亮太平；粮仓码头没人（要 folk.py 加搬运工路线）；码头岸是沙坡不是石墙；机位 3 远处没细节；区外的城是空的。
   - 怎么看：打开 `docs/living/nodes/nangang/3d.html`，加 `?shot=1`（港）、`?shot=2`（主街）、`?shot=3`（高空）、`?shot=4`（粮仓）；加 `&quality=preview` 看低档；`&only=buildings,streets` 只开几个模块。
-- **南港 3D 民居类型细模 house_kit（10-20 试点，开关 `house_kit`，默认关，到期 2026-11-19）**：普通房子不逐户建模，3 种类型——A 临街公寓（底层铺面 + 上层百叶窗 + 木挑廊 + 遮阳布）、B 院宅（素墙一门 + 大户开内院）、C 近港仓 / 作坊（砖拱大门 + 两坡顶 + 雨棚 + 吊货梁）——按底账 fn / ty / po / ht / 临街等级 / 离港距离 + 户 id 种子确定性地挑，只在相机 150 m 内换成参数化细模（懒生成，每帧 ≤ 5 ms），远处照旧 box。代码 `docs/living/nodes/nangang/3d/arch/kit/`，规则和数字在 `docs/cs/lookdev/house_kit/notes.md`。
-  - 不变量：墙线、檐高照 box 版（底账 p / ht），凸出物 ≤ 出檐；关开关时 6 机位和改前逐像素相同。
-  - 数字：机位 2 近圈 145 户（A 78 / B 67）+127,546 三角形；机位 4 32 户 +27,220；机位 5、6 约 +100 k；机位 1、3 近圈为空。建造多 56 ms（attach），近圈一次生成 177 ms（静帧）。
-  - 剩下的差：固定机位的整带边缘 / 颜色几乎不变（机位 2 近处都有柱廊，box 立面贴图本来就有窗），好处在走近时的深度；B 素墙比 box 版拱窗立面空；内院户很少；远近硬切。
-  - 回滚：不带开关就是关；删代码 `git checkout backup/pre-house-kit-2026-10-20`（8c19581）。
 - 古城（gucheng）：另一个会话在做，别碰它的文件。
 
 ## 等主人（Mac 上实测，沙箱的数字不算）
 - **纪功柱**：`3d.html?shot=5` 看一眼「留 / 再来」；Mac 上机位 5 的帧率（近档 41,288 三角形、远档 3,920）；像要不要更大 / 鎏金、柱头要不要改回史实更可能的多立克式。
 - **大宁芙殿**：`3d.html?shot=6` 看一眼「留 / 再来」；Mac 上机位 6、5 的帧率（宁芙殿近档 58,099、远档 24,159）；立面形制（弧形两层壁龛 + 两端塔）和朝向（朝南偏东、背靠水道桥）认不认。下一座做哪个（候选：粮仓立面、广场凯旋门、蓄水池）。
-- **house_kit**：Mac 上 `3d.html?shot=2` 和 `?shot=5` 各开 / 关一次（加 / 去 `&flag=house_kit`），记 fps 和最差一帧；走一段主街看 150 m 处换模跳不跳；**留还是删**（留的话下一步：B 立面加砖带 / 门头、远近淡入、转正删开关）。
 - **帧率**：4 个机位在 `quality=high` 和 `quality=preview`、全部模块打开时的 fps 和最差一帧（预算 ≥60 fps、≤25 ms）。控制台 `window.__modStats` / `window.__trisTotal` 给三角形，`window.__crowdStats` 给人群 CPU 毫秒。
 - **三角形预算**：现在每个机位约 1.6 M（契约上限 3 M）；若 Mac 吃紧，先砍 props 港区货堆、terrain 远档。
 - **倒影开销**：water 的半分辨率平面倒影每帧多渲一遍场景，机位 1 开/关倒影各测一次帧率，决定要不要只在近水时开。
