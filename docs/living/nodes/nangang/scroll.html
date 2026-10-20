@@ -15,7 +15,7 @@ canvas{display:block;touch-action:none}
 </head><body>
 <div id="tag"><b>南港 · 长卷</b>　界画式斜俯，线稿淡彩。左右拖动展卷，双指缩放。<a href="./">2D</a> · <a href="3d.html">3D</a></div>
 <div id="fps"></div>
-<div id="walkUI" style="display:none;position:fixed;right:14px;bottom:80px;gap:8px;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;touch-action:none"><button id="wF" class="wb">前</button><div style="display:flex;gap:8px"><button id="wL" class="wb">左</button><button id="wB" class="wb">后</button><button id="wR" class="wb">右</button></div></div>
+<div id="stN" style="display:none;position:fixed;left:50%;top:74px;transform:translateX(-50%);padding:5px 16px;background:rgba(236,228,210,.92);border:1px solid #8a3a2a;color:#7a2a1e;font:600 17px 'Songti SC',serif;letter-spacing:2px;border-radius:3px;pointer-events:none"></div><div id="walkUI" style="display:none;position:fixed;right:14px;bottom:80px;gap:8px;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;touch-action:none"><button id="wF" class="wb">前</button><div style="display:flex;gap:8px"><button id="wL" class="wb">左</button><button id="wB" class="wb">后</button><button id="wR" class="wb">右</button></div></div>
 <div id="bar"><button id="walkB" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">漫步</button><button id="day" style="font:inherit;border:1px solid #b9a582;background:#fbf5e6;border-radius:8px;padding:2px 8px">粮船日</button><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
 <script type="module">
 /* CS 线 · 节点渲染器 3D（2026-10-17）：只吃 nodes.json。地面 = 高程格起伏 + 地面层（陆地、沙岸、港池、街）画成贴图披上去；
@@ -30,6 +30,19 @@ const hsh=(n,k=0)=>{let x=(Math.imul(n|0,2654435761)+Math.imul(k,40503))>>>0;x^=
 const live=f=>f.y0<=YEAR&&(f.y1==null||f.y1>YEAR);
 const by={};for(const f of WD.features)(by[f.t]=by[f.t]||[]).push(f);
 const EX=1.3;/* 高度夸张一点，七丘才显得出来 */
+/* ---- 街名、路牌、招牌（signs.py 从住户推出来的；主人 10-20）：字画进一张图集，牌子是贴图的小面 ---- */
+const SGN=QP.get('q')==='city'?null:await fetch('signs.json').then(r=>r.ok?r.json():null).catch(()=>null);
+let ATL=null;if(SGN){const labs=[...new Set(SGN.posts.map(p=>'st:'+p[0]))].concat([...new Set(Object.values(SGN.shops))].map(l=>'sh:'+l));
+  const cv=document.createElement('canvas'),cx=cv.getContext('2d'),FS=44,RH=64,AW=2048,FONT=`600 ${FS}px "Songti SC","STSong","Noto Serif SC","Noto Serif CJK SC",serif`;cx.font=FONT;
+  const cell={};let x=0,y=0;const L=labs.map(k=>{const t=k.slice(3),w=Math.ceil(cx.measureText(t).width)+(k[1]==='t'?40:34);if(x+w>AW){x=0;y+=RH}const r={k,t,x,y,w};x+=w;return r});
+  cv.width=AW;cv.height=y+RH;cx.font=FONT;cx.textAlign='center';cx.textBaseline='middle';
+  for(const r of L){const st=r.k[1]==='t';cx.fillStyle=st?'#ece4d2':'#4a3424';cx.fillRect(r.x,r.y,r.w,RH);cx.strokeStyle=st?'#8a3a2a':'#c9a45a';cx.lineWidth=3;cx.strokeRect(r.x+5,r.y+5,r.w-10,RH-10);
+    cx.fillStyle=st?'#7a2a1e':'#f0dca0';cx.fillText(r.t,r.x+r.w/2,r.y+RH/2+2);cell[r.k]={u0:r.x/AW,u1:(r.x+r.w)/AW,v1:1-r.y/cv.height,v0:1-(r.y+RH)/cv.height,a:r.w/RH}}
+  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=8;tx.generateMipmaps=true;tx.minFilter=THREE.LinearMipmapLinearFilter;
+  ATL={cell,tex:tx,mat:new THREE.MeshLambertMaterial({map:tx,emissive:0x777777,emissiveMap:tx,side:THREE.DoubleSide})}}
+const TX={pos:[],uv:[]};/* n=朝着看牌人的方向 [x,z]；字总是从看牌人的左往右排 */
+function TXQ(a,b,c,d,n,cl){const rx=n[1],rz=-n[0];if((b[0]-a[0])*rx+(b[2]-a[2])*rz<0){[a,b]=[b,a];[c,d]=[d,c]}
+  TX.pos.push(...a,...b,...c,...a,...c,...d);TX.uv.push(cl.u0,cl.v0,cl.u1,cl.v0,cl.u1,cl.v1,cl.u0,cl.v0,cl.u1,cl.v1,cl.u0,cl.v1)}
 function elevPx(x,y){const s=E.st,gx=Math.max(0,Math.min(E.w-1.001,x/s)),gy=Math.max(0,Math.min(E.h-1.001,y/s)),i=gx|0,j=gy|0,fx=gx-i,fy=gy-j,g=(a,b)=>E.dm[b*E.w+a]/10;
   const m=(g(i,j)*(1-fx)+g(i+1,j)*fx)*(1-fy)+(g(i,j+1)*(1-fx)+g(i+1,j+1)*fx)*fy;return m/MPP*EX}
 /* ---- 地面层：陆地、沙岸、等高带、港池、街，画进一张贴图（运行时算的，不是画师的图） ---- */
@@ -42,6 +55,12 @@ function paintGround(){X.setTransform(TS,0,0,TS,0,0);X.fillStyle='rgb(200,214,20
   X.restore();
   for(const f of by.water)if(f.k==='harbor'&&live(f)){X.beginPath();path(f.g);X.fillStyle='rgb(200,214,206)';X.fill();X.save();X.beginPath();path(L.g);X.clip();X.beginPath();path(f.g);X.strokeStyle='rgb(150,136,110)';X.lineWidth=2;X.stroke();X.restore()}
   for(const f of by.mole||[])if(live(f)){X.beginPath();path(f.g);X.fillStyle='rgb(196,184,160)';X.fill()}
+  /* 后院地色（房子的进深往后 yd 像素），画进地面贴图，坡上也贴着地 */
+  for(const f of by.house||[]){if(!live(f)||!(f.yd>1.5))continue;const p=f.p,pt=[[p[0],p[1]],[p[2],p[3]],[p[4],p[5]],[p[6],p[7]]],fr=f.fr??2,A=pt[fr],Bp=pt[(fr+1)%4],Cp=pt[(fr+2)%4],Dp=pt[(fr+3)%4];
+    const m1=[(A[0]+Bp[0])/2,(A[1]+Bp[1])/2],m2=[(Cp[0]+Dp[0])/2,(Cp[1]+Dp[1])/2],Lu=Math.hypot(Bp[0]-A[0],Bp[1]-A[1]),Lv=Math.hypot(m2[0]-m1[0],m2[1]-m1[1]);if(Lu<1||Lv<1)continue;
+    const ex=[(Bp[0]-A[0])/Lu,(Bp[1]-A[1])/Lu],nv=[(m2[0]-m1[0])/Lv,(m2[1]-m1[1])/Lv],o=[m1[0]-ex[0]*Lu/2,m1[1]-ex[1]*Lu/2],Pp=(u,v)=>[o[0]+ex[0]*u+nv[0]*v,o[1]+ex[1]*u+nv[1]*v];
+    const q=[Pp(.2,Lv+.2),Pp(Lu-.2,Lv+.2),Pp(Lu-.2,Lv+f.yd),Pp(.2,Lv+f.yd)],G=[[168,170,118],[178,168,120],[160,166,112]][(hsh(f.id,90)*3)|0];
+    X.beginPath();X.moveTo(q[0][0],q[0][1]);for(let i=1;i<4;i++)X.lineTo(q[i][0],q[i][1]);X.closePath();X.fillStyle=`rgb(${G})`;X.fill()}
   const SC={m:['rgba(70,54,40,.75)','rgb(226,214,188)'],s:['rgba(70,54,40,.45)','rgb(240,232,214)'],c:['rgba(70,54,40,.35)','rgb(240,232,214)'],l:[null,'rgba(238,228,206,.9)']};X.lineCap='round';
   for(let pas=0;pas<2;pas++)for(const k of 'lcsm'){const col=SC[k][pas];if(!col)continue;X.strokeStyle=col;for(const f of by.street){if(f.k!==k||!live(f))continue;const q=f.g;X.beginPath();X.moveTo(q[0],q[1]);X.lineTo(q[2],q[3]);X.lineWidth=f.w+(pas?-.4:.8);X.stroke()}}
   /* 地标地皮（广场铺石、院子） */for(const f of by.landmark||[])if(live(f)){X.beginPath();f.g.forEach((p,i)=>i?X.lineTo(p[0],p[1]):X.moveTo(p[0],p[1]));X.closePath();X.fillStyle=f.k==='forum'?'rgb(244,238,224)':'rgb(236,226,204)';X.fill();X.strokeStyle='rgba(70,54,40,.5)';X.lineWidth=.8;X.stroke()}
@@ -141,13 +160,16 @@ function houseGeom(B,f){
   const m1=[(A[0]+Bp[0])/2,(A[1]+Bp[1])/2],m2=[(Cp[0]+Dp[0])/2,(Cp[1]+Dp[1])/2];
   let Lu=Math.hypot(Bp[0]-A[0],Bp[1]-A[1]),Lv=Math.hypot(m2[0]-m1[0],m2[1]-m1[1]);if(Lu<1||Lv<1)return;
   const ex=[(Bp[0]-A[0])/Lu,(Bp[1]-A[1])/Lu],nv=[(m2[0]-m1[0])/Lv,(m2[1]-m1[1])/Lv];
-  const ins=ty==='row'||ty==='std'?.3:.6;const o=[m1[0]-ex[0]*Lu/2,m1[1]-ex[1]*Lu/2];
+  const ins=ty==='row'||ty==='std'?.3:.6,insU=ty==='row'||ty==='std'?-.15:.6;/* 连排铺面左右是共用的山墙，不留缝（主人 10-20：接缝） */const o=[m1[0]-ex[0]*Lu/2,m1[1]-ex[1]*Lu/2];
   const P=(u,v)=>[o[0]+ex[0]*u+nv[0]*v,o[1]+ex[1]*u+nv[1]*v];
-  const cx=(p[0]+p[4])/2,cz=(p[1]+p[5])/2,base=elevPx(cx,cz)+1.5;if(cx<0||cz<0||cx>W||cz>H)return;/* 街区框外的户不画：框外没有陆地，画了就站在水上 */
+  const cx=(p[0]+p[4])/2,cz=(p[1]+p[5])/2;if(cx<0||cz<0||cx>W||cz>H)return;/* 街区框外的户不画：框外没有陆地，画了就站在水上 */
+  /* 坡地（主人 10-20：斜坡上悬空）：地坪按临街门口的地面定，后头高出来的埋进坡里（最多埋 2.2），低下去的用石砌台基一直垫到坡底 */
+  const gP=(u,v)=>{const q=P(u,v);return ground(q[0],q[1])},gF=gP(Lu/2,0),gC=[gP(0,0),gP(Lu,0),gP(Lu,Lv),gP(0,Lv),gP(Lu/2,Lv/2),gF],gMin=Math.min(...gC),gMax=Math.max(...gC);
+  const base=Math.max(gF,gMax-2.2),gL=(u,v)=>gP(u,v)-base;
   const c3=c=>[c[0]/255,c[1]/255,c[2]/255];
   const tri=(a,b,c,col)=>{B.pos.push(a[0],a[1],a[2],b[0],b[1],b[2],c[0],c[1],c[2]);const k=c3(col);for(let i=0;i<3;i++)B.col.push(k[0],k[1],k[2])};
   const quad=(a,b,c,d,col)=>{tri(a,b,c,col);tri(a,c,d,col)};
-  const V=(u,v,y)=>{const q=P(u,v);return [q[0],base+y,q[1]]};
+  const V=(u,v,y)=>{const q=P(u,v);return [q[0],base+y,q[1]]};const txt=TXQ;
   const box=(u0,v0,u1,v1,y0,y1,col,top)=>{const k=[[u0,v0],[u1,v0],[u1,v1],[u0,v1]];for(let i=0;i<4;i++){const a=k[i],b=k[(i+1)%4];quad(V(a[0],a[1],y0),V(b[0],b[1],y0),V(b[0],b[1],y1),V(a[0],a[1],y1),col)}
     if(top)quad(V(u0,v0,y1),V(u1,v0,y1),V(u1,v1,y1),V(u0,v1,y1),top)};
   const fface=(u0,u1,y0,y1,v,col)=>quad(V(u0,v,y0),V(u1,v,y0),V(u1,v,y1),V(u0,v,y1),col);  /* 正面上的一块（窗、门、带） */
@@ -169,11 +191,15 @@ function houseGeom(B,f){
   const pick=(a,k)=>a[(h(k)*a.length)|0];
   const wall=(PALW[fn]||PALW.homes)[(h(3)*(PALW[fn]||PALW.homes).length)|0].map(c=>c*(.96+.06*h(4))),rc=pick(PALR,14);
   const FH=4.0,ht=Math.max(3.4,(f.ht||4.6)*1.1);let nF=Math.max(1,Math.min(4,Math.round(ht/FH)));
-  const u0=ins,u1=Lu-ins,v0=ins,v1=Lv-ins,W_=u1-u0;
+  const u0=insU,u1=Lu-insU,v0=ins,v1=Lv-ins,W_=u1-u0;let DU=u0+W_/2;
+  /* 贴着坡的东西：boxG 的底落到它自己那块地面以下，顶按它中心的地面算 */
+  const boxG=(a0,b0,a1,b1,hh,col,top)=>{const g=[gL(a0,b0),gL(a1,b0),gL(a1,b1),gL(a0,b1)],gm=Math.min(...g),gc=gL((a0+a1)/2,(b0+b1)/2);box(a0,b0,a1,b1,gm-.4,gc+hh,col,top)};
+  const wallG=(a0,b0,a1,b1,hh,col)=>{const L=Math.max(a1-a0,b1-b0),n=Math.max(1,Math.ceil(L/2.5)),al=a1-a0>=b1-b0;for(let i=0;i<n;i++){const t0=i/n,t1=(i+1)/n;al?boxG(a0+(a1-a0)*t0,b0,a0+(a1-a0)*t1,b1,hh,col):boxG(a0,b0+(b1-b0)*t0,a1,b0+(b1-b0)*t1,hh,col)}};
+  const fd=gMin-base;if(fd<-.15)box(u0-.15,v0-.15,u1+.15,v1+.15,fd-1.2,.05,[198,186,160]);/* 台基 */
   /* 远景（LOW）：一块房身 + 一面屋顶，后院只留一块地色；屋顶样式、颜色、高度和近景同一套哈希，切换时不跳 */
   if(LOW){const top=ty==='row'||ty==='std'?Math.max(4.5,nF*FH*.88):nF*FH*.88,r=h(15),kind=ty==='row'?'gable':r<.42?'hip':r<.8?'gable':'flat';box(u0,v0,u1,v1,0,top,wall);
     roof(u0,v0,u1,v1,top,kind==='flat'?0:Math.min(3.6,(v1-v0)*.32),rc,kind,true,wall);
-    if(f.yd>1.5)quad(V(.2,Lv+.2,.08),V(Lu-.2,Lv+.2,.08),V(Lu-.2,Lv+f.yd,.08),V(.2,Lv+f.yd,.08),[168,170,118]);return}
+    return}
   /* 正面开窗：每层按宽度排，位置抖一点 */
   const windows=(vf,y0,n,ww,wh,col,skipMid)=>{for(let i=0;i<n;i++){if(skipMid&&i===((n-1)/2|0))continue;const uc=u0+W_*(i+.5)/n+(h(60+i)-.5)*.6;fface(uc-ww/2,uc+ww/2,y0,y0+wh,vf,col)}};
   if(ty==='row'){
@@ -186,8 +212,10 @@ function houseGeom(B,f){
     if(up!==wall)for(let k=0;k<=Math.round(W_/2.2);k++){const uu=u0+W_*k/Math.round(W_/2.2);fface(uu-.12,uu+.12,gH,top,v0-jet-.05,TIMBER.map(c=>c*.7))}
     for(let fl=1;fl<nF;fl++)windows(v0-jet-.07,gH+(fl-1)*FH*.9+1.1,Math.max(1,Math.round(W_/3.2)),1.0,1.6,DARK);
     if(!f.po&&h(8)<.6){const ac=pick(AWN,9),y=gH*.95;quad(V(u0+.2,v0,y),V(u1-.2,v0,y),V(u1-.2,v0-2.2,y-1.2),V(u0+.2,v0-2.2,y-1.2),ac)}
-    if(f.po){const D=2.4,y=3.0*1.1;for(let k=0;k<=Math.max(1,Math.round(W_/3));k++){const uu=u0+.3+(W_-.6)*k/Math.max(1,Math.round(W_/3));box(uu-.3,v0-D,uu+.3,v0-D+.6,0,y,MORTAR)}
-      quad(V(u0,v0,y+1),V(u1,v0,y+1),V(u1,v0-D-.3,y),V(u0,v0-D-.3,y),rc)}
+    if(f.po){/* 柱廊：披檐的上沿收在挑楼底板下面（不再穿进挑楼），柱头顶到披檐底，柱脚落到台阶上 */const D=2.4,yT=gH-.08,yB=3.0,vT=v0-jet,vB=v0-D-.3,rY=v=>yB+(v-vB)/(vT-vB)*(yT-yB);
+      const sg=Math.min(0,gL(u0+.5,v0-D),gL(u1-.5,v0-D),gL(DU,v0-D))-.5;box(u0,vB,u1,v0,sg,.12,STONEW,STONEW);
+      const nC=Math.max(1,Math.round(W_/3));for(let k=0;k<nC;k++){const uu=u0+W_*(k+.5)/nC;box(uu-.3,v0-D,uu+.3,v0-D+.6,.12,rY(v0-D+.3)+.06,MORTAR)}/* 柱子排在每户门面中间，相邻两户不在分界上各立一根挤成双柱 */
+      quad(V(u0,vT,yT),V(u1,vT,yT),V(u1,vB,yB),V(u0,vB,yB),rc)}
     for(let fl=1;fl<nF;fl++)windows(v1+.07,gH+(fl-1)*FH*.9+1.1,Math.max(1,Math.round(W_/3.6)),.9,1.4,DARK);
     roof(u0,v0-jet,u1,v1,top,Math.min(3.4,(v1-v0+jet)*.32),rc,h(10)<.7?'gable':'hip',true,up);
   }else if(ty==='insula'){
@@ -214,26 +242,35 @@ function houseGeom(B,f){
     roof(u0,v0,u1,v1,top,Math.min(3,(v1-v0)*.3),[180,98,64],'gable',true,[230,218,194]);
   }else{
     /* 民居（casa）：一到两层，门开在临街面；屋顶四坡、双坡（两个方向）、平顶露台随房；后面可能有披屋、侧面可能有外梯 */
-    const gard=Lv>=11&&h(51)<.5&&(fn==='homes'||fn==='water');const vb=gard?v0+(v1-v0)*.62:v1;
+    const gard=Lv>=11&&h(51)<.5&&(fn==='homes'||fn==='water');const lean=!gard&&v1-v0>6&&h(20)<.35,lv=v1-Math.min(3,(v1-v0)*.35);const vb=gard?v0+(v1-v0)*.62:lean?lv:v1;/* 有披屋的，正屋只到披屋为止，披屋不再埋在正屋里 */
     if(nF===1&&h(12)<.3)nF=2;const top=nF*FH*.88;box(u0,v0,u1,vb,0,top,wall);
-    const du=u0+W_*(.25+.5*h(13));fface(du-.6,du+.6,0,2.4,v0-.06,DOOR);
+    const du=u0+W_*(.25+.5*h(13));DU=du;fface(du-.6,du+.6,0,2.4,v0-.06,DOOR);
     if(W_>3.5)fface(du>u0+W_/2?u0+W_*.22-.45:u0+W_*.78-.45,du>u0+W_/2?u0+W_*.22+.45:u0+W_*.78+.45,1.2,2.4,v0-.06,DARK);
     if(nF>1)windows(v0-.06,FH*.88+1.1,Math.max(1,Math.round(W_/3.4)),.8,1.3,DARK);
     /* 背面和侧面也开小窗（镜头从海上看，很多房子背对着我们） */for(let fl=0;fl<nF;fl++){const y=fl*FH*.88+1.3;if(h(70+fl)<.8)windows(vb+.06,y,Math.max(1,Math.round(W_/4)),.7,1.1,DARK);const sv=v0+(vb-v0)*(.35+.3*h(74+fl));if(vb-v0>3.5&&h(76+fl)<.6)sface(sv-.35,sv+.35,y,y+1.1,h(78)<.5?u0-.06:u1+.06,DARK)}
     const r=h(15),kind=r<.42?'hip':r<.8?'gable':'flat',ridgeU=h(16)<.6;
     if(kind==='flat'){roof(u0,v0,u1,vb,top,0,rc,'flat',true,wall);if(h(17)<.5){const a=u0+.4,b=Math.min(u1,a+3.2),c=Math.min(vb,v0+3.2);box(a,v0+.4,b,c,top,top+2.2,wall);roof(a,v0+.4,b,c,top+2.2,1.1,rc,'shed',true,wall)}}
     else roof(u0,v0,u1,vb,top,Math.min(3.8,(ridgeU?vb-v0:W_)*(.3+.06*h(21))),rc,kind,ridgeU,wall);
-    if(nF>1&&h(18)<.35){const su=h(19)<.5?u0:u1,sg=su===u0?-1:1;for(let k=0;k<6;k++){const y=top*.88*(k+1)/6;box(su+sg*.05,v0+.6+k*.45,su+sg*1.0,v0+1.05+k*.45,0,y,STONEW)}}
-    if(!gard&&vb-v0>6&&h(20)<.35){const lv=v1-Math.min(3,(v1-v0)*.35);roof(u0+.4,lv,u1-.4,v1,top*.45,top*.25,rc,'shed',true,wall);box(u0+.4,lv,u1-.4,v1,0,top*.45,wall)}
-    if(gard){box(u0,vb,u0+.25,v1,0,1.4,STONEW);box(u1-.25,vb,u1,v1,0,1.4,STONEW);box(u0,v1-.25,u1,v1,0,1.4,STONEW)}
+    if(nF>1&&h(18)<.35){const su=h(19)<.5?u0:u1,sg=su===u0?-1:1;for(let k=0;k<6;k++){const y=top*.88*(k+1)/6,a=su+sg*.05,b=su+sg*1.0,c0=v0+.6+k*.45;box(Math.min(a,b),c0,Math.max(a,b),c0+.45,Math.min(0,gL(su+sg*.5,c0+.2))-.4,y,STONEW)}}/* 外梯落到坡上 */
+    if(lean){roof(u0+.4,lv,u1-.4,v1,top*.45,top*.25,rc,'shed',true,wall);box(u0+.4,lv,u1-.4,v1,0,top*.45,wall)}/* 披屋顶的高边贴在正屋后墙上 */
+    if(gard){wallG(u0,vb,u0+.25,v1,1.4,STONEW);wallG(u1-.25,vb,u1,v1,1.4,STONEW);wallG(u0,v1-.25,u1,v1,1.4,STONEW)}
   }
   /* 后院（路网节点 yd）：街廓中间的地分给挨着的人家，矮石墙围起来，里面是菜畦、葡萄架或一棵树；按房号哈希定 */
   if(f.yd>1.5){const y0=Lv+.2,y1=Lv+f.yd,w=.28,GARD=[[168,170,118],[178,168,120],[160,166,112]][(h(90)*3)|0];
-    quad(V(.2,y0,.08),V(Lu-.2,y0,.08),V(Lu-.2,y1,.08),V(.2,y1,.08),GARD);
-    if(ty==='casa'||ty==='std'){box(0,y0,w,y1,0,.9,STONEW);box(Lu-w,y0,Lu,y1,0,.9,STONEW);box(0,y1-w,Lu,y1,0,.9,STONEW);} /* 连排、公寓背后是共用的内院，不各自砌墙 */
-    const r=h(91);if(r<.4){for(let k=0;k<Math.min(4,Math.floor((y1-y0)/2.2));k++)box(.8,y0+.8+k*2.2,Lu-.8,y0+1.6+k*2.2,0,.35,[128,146,92])}
-    else if(r<.65&&Lu>4){const pv=[200,170,120];box(.9,y0+.6,1.2,y0+3,0,2.4,pv);box(Lu-1.2,y0+.6,Lu-.9,y0+3,0,2.4,pv);box(.9,y0+.6,Lu-.9,y0+3,2.3,2.55,[120,140,80])}
-    else if(r<.9){const uc=Lu*(.3+.4*h(92)),vc=(y0+y1)/2,rr=Math.min(2.2,(y1-y0)*.35+.6);box(uc-.2,vc-.2,uc+.2,vc+.2,0,2,[120,96,70]);box(uc-rr,vc-rr,uc+rr,vc+rr,2,2+rr*1.3,[118,140,96],[132,154,104])}}
+    /* 院子地色画进地面贴图（paintGround），不再是一块浮着的平板 */
+    if(ty==='casa'||ty==='std'){wallG(0,y0,w,y1,.9,STONEW);wallG(Lu-w,y0,Lu,y1,.9,STONEW);wallG(0,y1-w,Lu,y1,.9,STONEW);} /* 连排、公寓背后是共用的内院，不各自砌墙 */
+    const r=h(91);if(r<.4){for(let k=0;k<Math.min(4,Math.floor((y1-y0)/2.2));k++)boxG(.8,y0+.8+k*2.2,Lu-.8,y0+1.6+k*2.2,.35,[128,146,92])}
+    else if(r<.65&&Lu>4){const pv=[200,170,120],g=gL(Lu/2,y0+1.8);boxG(.9,y0+.6,1.2,y0+3,2.4+g-gL(1,y0+1.8),pv);boxG(Lu-1.2,y0+.6,Lu-.9,y0+3,2.4+g-gL(Lu-1,y0+1.8),pv);box(.9,y0+.6,Lu-.9,y0+3,g+2.3,g+2.55,[120,140,80])}
+    else if(r<.9){const uc=Lu*(.3+.4*h(92)),vc=(y0+y1)/2,rr=Math.min(2.2,(y1-y0)*.35+.6),g=gL(uc,vc);box(uc-.2,vc-.2,uc+.2,vc+.2,g-.4,g+2,[120,96,70]);box(uc-rr,vc-rr,uc+rr,vc+rr,g+2,g+2+rr*1.3,[118,140,96],[132,154,104])}}
+  /* 门口台阶：门前地面比地坪低，就砌几级石阶下到街面 */
+  {const dh=-gL(DU,v0-.4);if(dh>.45&&!(ty==='row'&&f.po)){const n=Math.min(6,Math.ceil(dh/.5)),hs=dh/n;for(let k=0;k<n;k++){const a=v0-.15-(k+1)*.5,b=v0-.15-k*.5;box(DU-.85,a,DU+.85,b,gL(DU,a)-.4,-(k+1)*hs+hs,STONEW,STONEW)}}}
+  /* 招牌（signs.json：这户的行当）：连排铺面挂在挑楼正面，公寓挂在拱门上方，别的人家门边挑出一块吊牌 */
+  const lab=SGN&&SGN.shops[id];if(lab&&ATL){const c=ATL.cell['sh:'+lab],nS=[-nv[0],-nv[1]];
+    if(ty==='row'){const jt=.7+.5*h(5),gH=FH*.95,vv=v0-jt,ww=Math.min(W_*.72,.8*c.a),uc=u0+W_/2;box(uc-ww/2-.08,vv-.08,uc+ww/2+.08,vv-.01,gH+.07,gH+1.03,DARK);txt(V(uc-ww/2,vv-.1,gH+.15),V(uc+ww/2,vv-.1,gH+.15),V(uc+ww/2,vv-.1,gH+.95),V(uc-ww/2,vv-.1,gH+.95),nS,c)}
+    else if(ty==='insula'){const ww=Math.min(W_*.6,.8*c.a),uc=u0+W_/2,y0=FH*.75+.12;box(uc-ww/2-.08,v0-.18,uc+ww/2+.08,v0-.05,y0-.08,y0+.88,DARK);txt(V(uc-ww/2,v0-.2,y0),V(uc+ww/2,v0-.2,y0),V(uc+ww/2,v0-.2,y0+.8),V(uc-ww/2,v0-.2,y0+.8),nS,c)}
+    else{const ub=DU+1.15<u1-.2?DU+1.15:DU-1.15,bw=Math.max(.8,Math.min(1.7,.72*c.a)),bh=.72,y0=2.65,va=v0-.4,vb2=va-bw;
+      box(ub-.04,vb2-.12,ub+.04,v0,y0+bh+.12,y0+bh+.22,DARK);/* 铁挑杆 */box(ub-.045,vb2,ub+.045,va,y0,y0+bh,DARK);
+      txt(V(ub+.06,va,y0+.04),V(ub+.06,vb2,y0+.04),V(ub+.06,vb2,y0+bh-.04),V(ub+.06,va,y0+bh-.04),ex,c);txt(V(ub-.06,va,y0+.04),V(ub-.06,vb2,y0+.04),V(ub-.06,vb2,y0+bh-.04),V(ub-.06,va,y0+bh-.04),[-ex[0],-ex[1]],c)}}
 }
 /* ---- 地标部件（代码，不是图） ---- */
 const MARBLE=[250,248,240],STONE=[238,230,210],ROOF=[184,104,76];
@@ -264,9 +301,11 @@ let HM=null,PM=null;const M4=new THREE.Matrix4();
 let DESC=0,FOGF=1e9,STROLL=false,HG=null,HL=null,PM2=null;const poolMat=new THREE.MeshBasicMaterial({color:0x6f9a9c,side:THREE.DoubleSide});function lod(){if(!HG)return;const PV=STROLL||DESC>0,hi=PV||cam.zoom>=LODZ;HG.visible=hi;HL.visible=!hi;window.__lod=hi?'hi':'lo';
   let n=window.__nvFix;if(hi){const AC=PV?pcam:cam;const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(AC.projectionMatrix,AC.matrixWorldInverse));for(const m of HG.children){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();const bs=m.geometry.boundingSphere;m.visible=!(PV&&DESC>.6)||bs.center.distanceTo(pcam.position)-bs.radius<FOGF;/* 街上只画雾以内的街区 */if(m.visible&&fr.intersectsSphere(bs))n+=m.geometry.attributes.position.count}}else n+=window.__nvLo;window.__nv=n}
 function build(){const t0=performance.now();paintGround();setTerrain();
-  const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();
+  const B={pos:[],col:[]},BL={pos:[],col:[]},BK=new Map();TX.pos.length=0;TX.uv.length=0;
   for(const f of by.house){if(!live(f))continue;const k=((f.p[0]/CH)|0)+'_'+((f.p[1]/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});LOW=false;houseGeom(b,f);LOW=true;houseGeom(BL,f)}LOW=false;
-  LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6)}
+  LMG.clear();for(const f of by.landmark||[])if(live(f)){const r=rectOf(f.g),b0=elevPx(r.cx,r.cz)+1.6;(PARTS[f.k]||PARTS.granary)(B,f,r,b0);
+    /* 地标坐在坡上：四角和边中点的地面比地坪低的，砌一圈石台基垫到坡底（主人 10-20：悬空） */let gm=1e9;for(const [u,v] of [[-1,-1],[1,-1],[1,1],[-1,1],[0,-1],[0,1],[-1,0],[1,0]])gm=Math.min(gm,ground(r.cx+r.ax*u*r.hu-r.az*v*r.hv,r.cz+r.az*u*r.hu+r.ax*v*r.hv));
+    if(gm<b0-.3)pushBuilding(B,RQ(r,-r.hu,-r.hv,r.hu,r.hv),gm+2,b0-.08-gm-2,[198,186,160],[198,186,160],'flat')}
   for(const f of by.pier||[])if(live(f)){const [a,b]=f.g,dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L*f.w/2,nz=dx/L*f.w/2;
     pushBuilding(B,[[a[0]+nx,a[1]+nz],[b[0]+nx,b[1]+nz],[b[0]-nx,b[1]-nz],[a[0]-nx,a[1]-nz]],-1,2.6,[120,88,56],[150,112,74],'flat')}
   /* 水系（water.py）：水道桥只在洼地露出拱廊、埋着的段每 80 像素一个检修井；露天蓄水池矮墙围着、水面同海一个着色器；街边喷泉，高处人家打井 */
@@ -290,13 +329,24 @@ function build(){const t0=performance.now();paintGround();setTerrain();
   for(const f of by.mole||[])if(live(f))for(const P of f.g){const sh=new THREE.Shape(P[0].map(p=>new THREE.Vector2(p[0],p[1])));for(const r of P.slice(1))sh.holes.push(new THREE.Path(r.map(p=>new THREE.Vector2(p[0],p[1]))));
     const g=new THREE.ExtrudeGeometry(sh,{depth:9,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,3,0);const m=new THREE.Mesh(g,moleMat);m.castShadow=m.receiveShadow=true;LMG.add(m)}
   if(HM){scene.remove(HM);HM.geometry.dispose()}HM=meshOf(B,VMAT);scene.add(HM);
-  if(HG){scene.remove(HG);HG.traverse(o=>o.geometry&&o.geometry.dispose())}HG=new THREE.Group();let nh=0;for(const b of BK.values()){if(!b.pos.length)continue;nh+=b.pos.length/3;HG.add(meshOf(b,VMAT))}scene.add(HG);
+  /* 路牌：街口往里一点、立在街沿上的一根石柱，顶上横一块白石牌，两面都刻街名；牌子顺着这条街 */
+  if(SGN&&ATL)for(const p of SGN.posts){if(p[5]>YEAR)continue;const [nm,x,z,ux,uz]=p,c=ATL.cell['st:'+nm],g=ground(x,z),k=((x/CH)|0)+'_'+((z/CH)|0);let b=BK.get(k);if(!b)BK.set(k,b={pos:[],col:[]});
+    const vx=-uz,vz=ux,R4=(a,t)=>[[x-ux*a-vx*t,z-uz*a-vz*t],[x+ux*a-vx*t,z+uz*a-vz*t],[x+ux*a+vx*t,z+uz*a+vz*t],[x-ux*a+vx*t,z-uz*a+vz*t]];
+    const pw=Math.min(3.4,.55*c.a),ph=.58,yb=g+3.05;pushBuilding(b,R4(.15,.15),g+2.4,yb-g-2.4-.04,[176,164,140],[176,164,140],'flat');/* 柱子只到牌子底，牌子坐在柱头上，不挡字 */pushBuilding(b,R4(pw/2+.06,.08),yb+3-.06,ph+.12-3,[150,138,116],[150,138,116],'flat');
+    for(const sd of [1,-1]){const ox=vx*.1*sd,oz=vz*.1*sd;TXQ([x-ux*pw/2+ox,yb,z-uz*pw/2+oz],[x+ux*pw/2+ox,yb,z+uz*pw/2+oz],[x+ux*pw/2+ox,yb+ph,z+uz*pw/2+oz],[x-ux*pw/2+ox,yb+ph,z-uz*pw/2+oz],[vx*sd,vz*sd],c)}}
+  if(HG){scene.remove(HG);HG.traverse(o=>o.geometry&&o.geometry.dispose())}HG=new THREE.Group();let nh=0;for(const b of BK.values()){if(!b.pos.length)continue;nh+=b.pos.length/3;HG.add(meshOf(b,VMAT))}
+  if(ATL&&TX.pos.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(TX.pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(TX.uv,2));g.computeVertexNormals();const m=new THREE.Mesh(g,ATL.mat);m.receiveShadow=true;m.name='signs';HG.add(m);window.__nSign=TX.pos.length/18}
+  scene.add(HG);
   if(HL){scene.remove(HL);HL.geometry.dispose()}HL=meshOf(BL,VMAT);scene.add(HL);window.__nvHi=nh;window.__nvLo=BL.pos.length/3;window.__nvFix=B.pos.length/3;lod();
   let nc=0,no=0;for(const t of WD.trees){if(!(t[3]<=YEAR&&(t[4]==null||t[4]>YEAR))||t[2]==='garden')continue;const y=elevPx(t[0],t[1])+1.5,s=t[5];
     if(t[2]==='cypress'){M4.makeScale(s*.7,s*4.2,s*.7).setPosition(t[0],y,t[1]);cyp.setMatrixAt(nc++,M4)}else{M4.makeScale(s*1.2,s*1,s*1.2).setPosition(t[0],y+s*1.1,t[1]);oli.setMatrixAt(no++,M4)}}
   cyp.count=nc;oli.count=no;cyp.instanceMatrix.needsUpdate=oli.instanceMatrix.needsUpdate=true;
   window.__buildMs=Math.round(performance.now()-t0)}
 build();
+/* 街上走的时候，顶上写着脚下这条街叫什么 */
+if(SGN)setInterval(()=>{const el=$('stN');if(!(STROLL||DESC>.8)){el.style.display='none';return}let best=null;
+  for(const [nm,k,pts] of SGN.streets)for(let i=0;i+1<pts.length;i++){const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],L2=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((wx-a[0])*dx+(wz-a[1])*dz)/L2)),d=Math.hypot(wx-a[0]-dx*t,wz-a[1]-dz*t);if(!best||d<best[0])best=[d,nm]}
+  if(best&&best[0]<14){el.textContent=best[1];el.style.display='block'}else el.style.display='none'},400);
 /* ---- 粮船日：只在港池里、只沿栈桥；人走栈桥和岸边。船行走只在底账和蒙版都是水的线上 ---- */
 const hullG=new THREE.BoxGeometry(1,1,1).translate(0,.5,0),mastG=new THREE.CylinderGeometry(.25,.3,1,5).translate(0,.5,0),sailG=new THREE.PlaneGeometry(1,1).translate(0,.5,0);
 const SH=60,PP=900;const hull=new THREE.InstancedMesh(hullG,new THREE.MeshLambertMaterial({color:0x8a6a48}),SH),mast=new THREE.InstancedMesh(mastG,INK,SH),sail=new THREE.InstancedMesh(sailG,new THREE.MeshLambertMaterial({color:0xfaf6ea,side:THREE.DoubleSide}),SH);
@@ -340,7 +390,7 @@ if(QP.get('people')&&QP.get('q')!=='city'){const pd=await fetch('people.json').t
   ui.append(row1,row2);document.body.append(ui);
   if(QP.get('key')){const k=document.createElement('div');k.style.cssText='font-size:12px;line-height:1.5;border-top:1px solid #d8c8a8;padding-top:4px';k.innerHTML=pd.people.filter(p=>p.n).sort((a,b)=>a.n-b.n).map(p=>p.n+'　'+p.role).join('<br>');ui.append(k)}
   /* 人群压力试作（2026-10-19）：?crowd=人数 。&full=近景关节人上限（默认 300）。fps 角落多一行：在街上的人 / 关节人 / 远景柱 / 每帧算人用的毫秒 */
-  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261020b');
+  if(QP.get('crowd')){const cd=await fetch('crowd.json').then(r=>r.json());const {initCrowd}=await import('../people/crowd.js?v=20261020c');
     CRW=initCrowd({THREE,scene,elevPx,isLand,MPP,EX,data:cd,n:+QP.get('crowd'),T:PPL.T,getMerchant:()=>PPL.posOf(2)});CRW.maxFull=+(QP.get('full')||300);if(QP.get('spr')!=='0'){const t0=performance.now();CRW.buildAtlas(rnd);window.__atlasMs=performance.now()-t0}
     window.__crowd={get stat(){return CRW.stat},n:+QP.get('crowd'),C:CRW}}
   window.__ppl={get t(){return PT},set t(v){PT=v},follow:n=>follow(n),pos:n=>PPL.posOf(n),T:PPL.T,phases:PPL.phases};

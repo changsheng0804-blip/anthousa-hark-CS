@@ -305,6 +305,8 @@ out = {'q': Q, 'year': Y, 'mpp': MPP, 'routes': RT, 'people': people, 'labels': 
        'note': '户籍 + 社会关系：每个人是一栋真房子里活着的一口人；去哪、跟谁，由他在家里的位置和这户跟别户的关系推出来。——Hark（CS线）'}
 dst = os.path.join(ROOT, 'docs/living/nodes', Q, 'crowd.json')
 json.dump(out, open(dst, 'w'), ensure_ascii=False, separators=(',', ':'))
+# 给招牌和街名用的户表（signs.py 读）：房号 → 行当、籍贯
+json.dump([[POOL[i]['id'], HH[i]['cur']['trade'], HH[i]['cur']['origin'], HH[i].get('headN', ''), HH[i]['cur']['B']] for i in range(len(POOL))], open(os.path.join(ROOT, 'docs/living/nodes', Q, 'folk_h.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 import collections
 print('户', len(POOL), '合并的嫁娶', merged, '路线', len(RT), '上街的人', len(people), os.path.getsize(dst), '字节')
 print(collections.Counter(x[7] for x in people)); print(collections.Counter(x[2] for x in people))
