@@ -1,0 +1,63 @@
+{
+ "module": "water",
+ "renders": "full 4-shot render, no only=, sandbox SwiftShader 1376x768, year 60",
+ "acceptance": {
+  "shot1_water_band_0.60-1.00": {
+   "target": "edge>=0.08, sat 0.25-0.35",
+   "before": {
+    "edge": 0.0316,
+    "sat": 0.293,
+    "L": 45.7,
+    "ref_edge": 0.1618,
+    "ref_sat": 0.298
+   },
+   "after": {
+    "edge": 0.0912,
+    "sat": 0.278,
+    "L": 51.1,
+    "ref_edge": 0.1618,
+    "ref_sat": 0.298
+   }
+  }
+ },
+ "secondary": {
+  "shot3_water+terrain_band_0.12-0.40": {
+   "before": {
+    "edge": 0.0001,
+    "sat": 0.173,
+    "L": 63.8,
+    "ref_edge": 0.2764,
+    "ref_sat": 0.378
+   },
+   "after": {
+    "edge": 0.0006,
+    "sat": 0.201,
+    "L": 67.9,
+    "ref_edge": 0.2764,
+    "ref_sat": 0.378
+   }
+  },
+  "shot4_props+crowd+water_band_0.60-1.00": {
+   "before": {
+    "edge": 0.0117,
+    "sat": 0.308,
+    "L": 51.0,
+    "ref_edge": 0.2609,
+    "ref_sat": 0.409
+   },
+   "after": {
+    "edge": 0.0364,
+    "sat": 0.297,
+    "L": 49.8,
+    "ref_edge": 0.2609,
+    "ref_sat": 0.409
+   }
+  }
+ },
+ "triangles": {
+  "water_module": 2,
+  "note": "one 20000x20000 plane; the planar reflection re-renders the scene once per frame at half resolution (quality=high only; quality=preview turns it off)"
+ },
+ "build_ms_sandbox": 38,
+ "match_skip_water": "shot1 band 0.25-0.60 edge +28% / dL* +1.06 because ~21% of that band is harbour water (reflections + wet coast); pixels outside water have identical edge density (unchanged_px_edges.json). All other bands ok."
+}

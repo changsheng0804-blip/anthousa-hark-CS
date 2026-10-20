@@ -1,0 +1,17 @@
+{
+ "shot1_0.25-0.6": {
+  "changed_frac": 0.21138493578618536,
+  "edge_unchanged_px_before": 0.05677856216683475,
+  "edge_unchanged_px_after": 0.05693704077222302
+ },
+ "shot4_0.18-0.6": {
+  "changed_frac": 0.014318214646829409,
+  "edge_unchanged_px_before": 0.02859904270986745,
+  "edge_unchanged_px_after": 0.02859904270986745
+ },
+ "shot3_0.4-1.0": {
+  "changed_frac": 0.2089059196617336,
+  "edge_unchanged_px_before": 0.0851261255069077,
+  "edge_unchanged_px_after": 0.08507457557220427
+ }
+}
