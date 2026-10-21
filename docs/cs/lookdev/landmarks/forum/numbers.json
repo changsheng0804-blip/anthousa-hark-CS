@@ -1,0 +1,214 @@
+{
+ "landmark": "forum_theodosius (forum.js; column.js unchanged)",
+ "shot": 7,
+ "year": 65,
+ "note": "沙箱 SwiftShader，只看样子；帧率待主人 Mac 实测。silhouette 只看 iou_bbox_aligned 和 h_to_w（四段分法是给柱子写的）；凯旋门蒙版 = ?only=landmarks&lmmask=1&lmonly=arch 减去改前（只有纪功柱）的蒙版；参考蒙版是手画的多边形（refs/ref1_mask.png）。参考和机位 7 视角不同（参考更近、更平），IoU 上限受这个限制。",
+ "triangles": {
+  "forum_near": 119932,
+  "forum_far": 24580,
+  "forum_construction_year62": 124658,
+  "portico_columns": 186,
+  "arch_club_columns": 16,
+  "scene_total_shot7_after": 1824002,
+  "scene_total_shot7_before": 1682242,
+  "landmarks_module_shot7_after": 274378,
+  "landmarks_module_shot7_before": 129866,
+  "buildings_module_shot7_after": 366092,
+  "buildings_module_shot7_before": 368844,
+  "contract_budget_scene": 3000000,
+  "note": "__modStats 按 traverse 数，THREE.LOD 的近远两档都算进去（纪功柱、宁芙殿同样）；forum_near/far 是 forum.js stats() 单档的数（实例柱 × 实例数）"
+ },
+ "build_ms": {
+  "geom_complete_both_lods": 69,
+  "tex_init": 449,
+  "construction_year62": 50
+ },
+ "heights_m": {
+  "portico_wall_top": 16.92,
+  "portico_real_before_scale": 14.1,
+  "arch_attic_top": 32.76,
+  "arch_incl_statues": 39.55,
+  "arch_width": 39.5,
+  "column_total": 72.73,
+  "neighbour_roof_median_px": 8
+ },
+ "silhouette_arch": {
+  "round1": {
+   "iou_bbox_aligned": 0.577,
+   "h_to_w": 1.141
+  },
+  "round3_final": {
+   "iou_bbox_aligned": 0.576,
+   "h_to_w": 1.102
+  },
+  "ref_h_to_w": 0.961,
+  "in_mask_colour_ref": {
+   "L_mean": 60.2,
+   "L_sd": 21.0,
+   "L_p10_p90": [
+    33.0,
+    85.0
+   ],
+   "b_mean": 16.9,
+   "sat": 0.297,
+   "edge": 0.198,
+   "px": 214460
+  },
+  "in_mask_colour_round1": {
+   "L_mean": 71.4,
+   "L_sd": 28.1,
+   "L_p10_p90": [
+    16.5,
+    91.7
+   ],
+   "b_mean": 31.5,
+   "sat": 0.433,
+   "edge": 0.266,
+   "px": 91974
+  },
+  "in_mask_colour_final": {
+   "L_mean": 64.6,
+   "L_sd": 28.3,
+   "L_p10_p90": [
+    10.3,
+    86.9
+   ],
+   "b_mean": 30.7,
+   "sat": 0.468,
+   "edge": 0.272,
+   "px": 94747
+  }
+ },
+ "compare_shot7": {
+  "ref": {
+   "L": [
+    58.96,
+    22.71
+   ],
+   "b": [
+    8.82,
+    16.38
+   ],
+   "pct": [
+    11.7,
+    26.1,
+    65.1,
+    84.8,
+    90.7
+   ],
+   "sat": 0.3036,
+   "edge": 0.1811
+  },
+  "after": {
+   "L": [
+    61.68,
+    24.26
+   ],
+   "b": [
+    19.87,
+    18.67
+   ],
+   "pct": [
+    2.7,
+    16.4,
+    72.7,
+    83.0,
+    88.7
+   ],
+   "sat": 0.3678,
+   "edge": 0.1965
+  },
+  "before_placeholder": {
+   "L": [
+    59.4,
+    26.81
+   ],
+   "b": [
+    17.93,
+    17.52
+   ],
+   "pct": [
+    0.8,
+    12.1,
+    72.6,
+    82.7,
+    97.7
+   ],
+   "sat": 0.3836,
+   "edge": 0.2001
+  },
+  "after_delta": {
+   "dL": 2.72,
+   "emd": 6.602,
+   "edge_ratio": 1.085
+  },
+  "before_delta": {
+   "dL": 0.44,
+   "emd": 6.452,
+   "edge_ratio": 1.104
+  },
+  "bands_after": [
+   {
+    "owner": "sky-atmosphere+column",
+    "L": 73.36,
+    "L_ref": 76.85,
+    "sat": 0.0582,
+    "sat_ref": 0.2166,
+    "edge": 0.0077,
+    "edge_ref": 0.0548
+   },
+   {
+    "owner": "forum+buildings",
+    "L": 59.31,
+    "L_ref": 54.44,
+    "sat": 0.4516,
+    "sat_ref": 0.3157,
+    "edge": 0.2565,
+    "edge_ref": 0.2236
+   },
+   {
+    "owner": "streets+buildings",
+    "L": 50.15,
+    "L_ref": 43.54,
+    "sat": 0.6211,
+    "sat_ref": 0.4033,
+    "edge": 0.3255,
+    "edge_ref": 0.263
+   }
+  ]
+ },
+ "match_other_shots": {
+  "method": "match.py --against 改前（同 HEAD f60046e 的 worktree、每机位单独渲）",
+  "shots_2_3_4_6": "逐像素 0 变化，全局 + 带 ΔL* 0.00",
+  "shot1": "751 像素变（远档广场，在港后坡上），全局 ΔL* −0.01、边缘 +0.1%",
+  "shot5": "FAIL（预期）：机位 5 站在广场里，四面柱廊从单层占位变两层、西柱廊在低太阳下把前景铺地罩进阴影：全局 L* 60.1→57.4、底带 46.4→33.6"
+ },
+ "ground_check_year65": {
+  "before": {
+   "n": 4995,
+   "gap": 14,
+   "buried": 2
+  },
+  "after": {
+   "n": 5000,
+   "gap": 14,
+   "buried": 2
+  },
+  "forum_after": {
+   "n": 21,
+   "gap": 0,
+   "buried": 0,
+   "max_gap": 0,
+   "max_buried": 0,
+   "relief_max": 1.85
+  },
+  "arch_after": {
+   "n": 1,
+   "gap": 0,
+   "buried": 0,
+   "max_gap": 0,
+   "max_buried": 0,
+   "relief_max": 1.76
+  }
+ }
+}

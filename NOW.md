@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 20:30 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 21:50 PDT ——Hark（CS线）
 
 ## 方向登记表（主人 2026-10-20：分支要及时跟进，别再长成新分支）
 规矩：只有一条主线 main；实验只能是 main 上的「开关」或独立页面，不开长期分支。每个方向一行，主人 3 天内没说法，我给出「收进主线 / 撤」的建议；撤的打 archive 标签不丢。别的线的提交每天并一次。
@@ -9,7 +9,7 @@
 |---|---|---|---|
 | 全城瓦片 | living/tiles/（线上） | 主线；街巷层 10-18 起吃全城节点 | 远级旧画要不要改成 3D 引擎烘 |
 | 节点长卷 + 2D 街景 | scroll.html，开关 nodes-nangang | 10-20 主人选 3D 做近景：2D 街景冻结不再加功能，3D 接上瓦片后撤 | — |
-| 南港 3D（r3、纪功柱、宁芙殿） | nodes/nangang/3d.html | 10-20 主人定为近景主力（「3D 的史诗建筑效果好很多」） | 瓦片→3D 无缝接入的灰度 |
+| 南港 3D（r3、纪功柱、宁芙殿、狄奥多西广场） | nodes/nangang/3d.html（`?shot=1..7`） | 10-20 主人定为近景主力（「3D 的史诗建筑效果好很多……从最大的开始做起」）；地标按从大到小做，第 3 座广场 10-20 已推 | 瓦片→3D 无缝接入的灰度；广场「留 / 再来」；下一座 |
 | 行当上街 | scroll.html（70da6db） | 待评 | 留/撤 |
 | 居民人群 | scroll.html?crowd=N | 待评 | 关系接入留/撤 |
 | 民居细模 house_kit | — | 已撤 10-20 | — |
@@ -34,6 +34,8 @@
 | 3D 地标试点：狄奥多西广场纪功柱（landmarks 模块第一座） | docs/living/nodes/nangang/3d.html?shot=5（第 65 年；第 60 年是施工中） | `docs/cs/lookdev/landmarks/column/notes.md`、`docs/cs/lookdev/landmarks/column/overview.jpg`；10-20 第二遍修订后轮廓 IoU 0.83（框对齐）/ 0.86（按高）、高宽比 5.0（参考 5.35）；机位 1–4 match 全过 | 待评（帧率待 Mac 实测） |
 | 3D 地标第 2 座：大宁芙殿 Nymphaeum Maius | docs/living/nodes/nangang/3d.html?shot=6（第 60 年） | `docs/cs/lookdev/landmarks/nymphaeum/notes.md`、`overview.jpg`；轮廓 IoU 0.59（占位）→ 0.83（框对齐）、高宽比 0.77（参考 0.65）；机位 1–5 match 全过，2–4 逐像素不变 | 待评（帧率待 Mac 实测） |
 
+| 3D 地标第 3 座（最大的）：狄奥多西广场本身——两层柱廊、西侧凯旋门（棍棒束柱）、东门楼、南北拱门、57–64 年施工 | docs/living/nodes/nangang/3d.html?shot=7（第 65 年；year 改 60 看施工）、`?shot=5` 站在广场里 | `docs/cs/lookdev/landmarks/forum/notes.md`、`overview.jpg`、`numbers.json`；近档 119,932 / 远档 24,580 三角形，机位 7 全场 1.82 M；凯旋门 IoU 0.58（视角不同）、高宽比 1.10（参考 0.96）；机位 2–4、6 逐像素不变；ground_check 不变 | 待评（帧率待 Mac 实测） |
+
 | 3D r3：地面穿模 + 史诗夸张（主人 10-20 两条） | docs/living/nodes/nangang/3d.html（`?shot=1..6`；机位 5、6 重新对准） | `docs/cs/lookdev/r3_ground_scale/notes.md`、`docs/cs/lookdev/r3_ground_scale/overview.jpg`、`docs/cs/lookdev/r3_ground_scale/numbers.json`；`tools/cs/lookdev/ground_check.py`：第 65 年漏空 26→14、埋墙脚 1671→2；纪功柱 51.9→72.7 m（周边屋顶中位数的 8.2→11.5 倍）、宁芙殿 22.2→30.5 m（3.1→4.2 倍）；每机位 1.62–1.68 M 三角形 | 待评（帧率待 Mac 实测） |
 
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
@@ -43,7 +45,11 @@
   - 落地规矩进了 `docs/cs/lookdev/MODULE_CONTRACT.md` §6 第 13 条：站在地上的一律用 `ctx.groundMesh`（terrain 网格的三角插值，框外读 terrain/outer.js 的 `heightAt`）；有占地的用 `ctx.footing` → 地坪 = 最高地面（民居 max(mid, max−0.45)），台基 / 墙基伸到最低地面 −0.6，`ctx.foot` 登记；验收 `ground_check.py`。
   - 史诗夸张进了 §7：每座地标 `HERO_SCALE`（纪功柱、宁芙殿 1.4，只放大高，占地照底账）；buildings 里的广场柱廊、粮仓 `LM_SCALE` 1.2。纪功柱、宁芙殿原来的轮廓 IoU 数字不再是目标。
   - 剩下：14 户在页面框角（区内 / 区外地形接缝高差 20–80 px，要 terrain 缝合）；2 座框外栈桥埋在区外地形里；港池岸仍是沙坡，码头户现在立在高墙基上；陡街上临街铺面墙基最高 ≈2.5 px（主人嫌高可改回中心地坪）。
-- **南港 3D 地标（landmarks，10-20 开）**：主人 10-20 说 Mac 帧率够（60–90）、3D 样子可以接受，史诗/特殊公共建筑按 athenaion 的做法一座座做。已推两座：纪功柱（机位 5）、大宁芙殿（机位 6）。
+- **南港 3D 地标（landmarks，10-20 开）**：主人 10-20 说 Mac 帧率够（60–90）、3D 样子可以接受，史诗/特殊公共建筑按 athenaion 的做法一座座做，晚上又定 3D 为近景主力、「从最大的开始」。已推三座：纪功柱（机位 5）、大宁芙殿（机位 6）、狄奥多西广场（机位 7）。
+  - **狄奥多西广场（10-20 第三座，主人「从最大的开始」）**：`docs/living/nodes/nangang/3d/landmarks/forum.js` + 新部件 `docs/living/nodes/nangang/3d/landmarks/kit/club.js`（棍棒 / 树干束柱 + 握拳）、`docs/living/nodes/nangang/3d/landmarks/kit/fill.js`（补光通用版）；`index.js` 改成一个 id 挂几个文件（纪功柱 + 广场同 id）、`selfFoot` 自己分段落地；`shots.json` 加机位 7；buildings 的单层柱廊占位删了（`LM_SCALE.forum` → `PORTICO_SCALE` 1.2）。
+    底账：框 142×114 px、y0=57，phases 57 划地 · 59 铺地起墙 · 60 西凯旋门 · 64 完工；Mese 西 z≈311 进、东 z≈297 出，小街 c 在 x=1444。史料：三门凯旋门、中门 7 m、4 墩各 4 根赫拉克勒斯棍棒柱、有握拳、顶上 3 像（Wikipedia、Byzantine Legacy、Naumann 1976）。
+    假设（notes.md）：两层柱廊 16.9 m（×1.2）、外墙砖带石 + 内墙赭色灰泥、凯旋门 28.2 m 宽 ×HERO 1.4 → 女儿墙 32.8 m / 含像 39.6 m、东口只做柱廊门楼（底账只写西门）、施工中间年份怎么分。
+    剩下：streets 57 年就铺广场石板（我用土盖住，根治要 streets 按 phases）；凯旋门受光面偏暖偏饱和（sky 的太阳）、拱腹偏黑；拱肩没浮雕；柱廊端墙平、屋面角上没斜脊；远档还能省。
   - **大宁芙殿（10-20 第二座）**：`docs/living/nodes/nangang/3d/landmarks/nymphaeum.js` + 烘焙像 `tools/cs/landmarks/bake_nymph_statues.py`；`shots.json` 加机位 6；buildings 的半圈柱子 + 水池占位删了（留 15 个零高度空实例保住广场柱廊的色差序号）。
     底账：`nymphaeum_maius` y0=44、`proposals/era_0041.json` dna rotunda/砖/大理石贴面、无 phases（不画施工）；水道桥 aq_hadrian 贴北边过。形制史料无载 → 按两层壁龛式宁芙殿假设（7 折面弧形立面、两端塔、18 尊宁芙像、吐水 + 4 道水瀑 + 鼓出的大池），全在 notes.md。
     立面整片背光（太阳西北偏西）：在地标材质里加了按法线的西南天光补光、塔面反照率 ×0.7，sky 没动。机位 6：IoU 0.59→0.83、高宽比 0.34→0.77（0.65）、蒙版 L* 41.9（43.1）、边缘 0.134（0.125）、饱和 0.31（0.27）、受光 p90 94.4（87.8）。近档 58,099 / 远档 24,159 三角形，几何 ≈0.1 s，贴图 init ≈0.7 s（沙箱）。
@@ -64,7 +70,8 @@
 ## 等主人（Mac 上实测，沙箱的数字不算）
 - **r3**：看 `docs/cs/lookdev/r3_ground_scale/overview.jpg`：穿模修得算不算数、放大 1.4 够不够（要更夸张就改各地标文件的 `HERO_SCALE`）、陡街铺面墙基高不高；Mac 上机位 1–6 帧率。
 - **纪功柱**：`3d.html?shot=5` 看一眼「留 / 再来」；Mac 上机位 5 的帧率（近档 41,288 三角形、远档 3,920）；像要不要更大 / 鎏金、柱头要不要改回史实更可能的多立克式。
-- **大宁芙殿**：`3d.html?shot=6` 看一眼「留 / 再来」；Mac 上机位 6、5 的帧率（宁芙殿近档 58,099、远档 24,159）；立面形制（弧形两层壁龛 + 两端塔）和朝向（朝南偏东、背靠水道桥）认不认。下一座做哪个（候选：粮仓立面、广场凯旋门、蓄水池）。
+- **狄奥多西广场**：`3d.html?shot=7` 看一眼「留 / 再来」（总览 `docs/cs/lookdev/landmarks/forum/overview.jpg`）；Mac 上机位 7、5 的帧率（广场近档 119,932、远档 24,580，机位 7 全场 1.82 M）；凯旋门要不要更夸张 / 加拱肩浮雕、柱廊两层认不认、东口要不要也做凯旋门（史料说两头各一座，底账只写西门）、内墙赭色灰泥认不认。下一座候选：粮仓立面、蓄水池。
+- **大宁芙殿**：`3d.html?shot=6` 看一眼「留 / 再来」；Mac 上机位 6、5 的帧率（宁芙殿近档 58,099、远档 24,159）；立面形制（弧形两层壁龛 + 两端塔）和朝向（朝南偏东、背靠水道桥）认不认。
 - **帧率**：4 个机位在 `quality=high` 和 `quality=preview`、全部模块打开时的 fps 和最差一帧（预算 ≥60 fps、≤25 ms）。控制台 `window.__modStats` / `window.__trisTotal` 给三角形，`window.__crowdStats` 给人群 CPU 毫秒。
 - **三角形预算**：现在每个机位约 1.6 M（契约上限 3 M）；若 Mac 吃紧，先砍 props 港区货堆、terrain 远档。
 - **倒影开销**：water 的半分辨率平面倒影每帧多渲一遍场景，机位 1 开/关倒影各测一次帧率，决定要不要只在近水时开。

@@ -20,7 +20,7 @@ function cyl(x,y,z,r,h,m){const o=new T.Mesh(cylGeo,m);o.scale.set(r,h,r);o.posi
 function dome(x,y,z,r,m,sy=1){const o=new T.Mesh(domeGeo,m);o.scale.set(r,r*sy,r);o.position.set(x,y,z);o.castShadow=true;LMG.add(o)}
 /* 史诗夸张（r3_ground_scale，主人 10-20「地标放大一些」）：buildings 里画的地标部件里，广场柱廊和粮仓的高 ×1.2（占地照底账，不动）。
    纪功柱、宁芙殿各自在自己文件里有 HERO_SCALE（1.4）。见 MODULE_CONTRACT §7「史诗夸张」。 */
-export const LM_SCALE={forum:1.2,granary:1.2};
+export const LM_SCALE={granary:1.2};   // forum 的 1.2 搬进 landmarks/forum.js 的 PORTICO_SCALE（2026-10-20）
 /* 石台基（r3）：P 4 角，顶 = top，底 = bot；顶下两级台阶（每级外扩 .5、降 .35），再往下是竖直的墙基。石色。 */
 function podium(B,P,top,bot,col=STONE){const r=quadAxes(P),sc=linC(col);
   const ring=(o,y0,y1,k)=>{const C=(u,v)=>[r.cx+r.ax*u-r.az*v,r.cz+r.az*u+r.ax*v],q=[C(-r.hu-o,-r.hv-o),C(r.hu+o,-r.hv-o),C(r.hu+o,r.hv+o),C(-r.hu-o,r.hv+o)];
@@ -44,19 +44,8 @@ function block(B,P,base,h,wallS,roofS,kind,pitch=.42,tag=null){const r=quadAxes(
 
 /* ---- 地标部件（代码，不是图） ---- */
 const PARTS={
- forum(B,f,r,b,ctx){/* r3：四面柱廊各按地势分段落地（每段 ≤ 30 像素一个台基，坡上成阶梯），内侧柱列站在同一段台基上；高 ×LM_SCALE.forum */
-  const d=10,h=8*LM_SCALE.forum,SEG=30,cd=d+2,ext=d+3.6;let ci=0;
-  const run=(u0,u1,v0,v1,along,cols)=>{const L=along?u1-u0:v1-v0,n=Math.max(1,Math.round(L/SEG));
-    for(let i=0;i<n;i++){const a=(along?u0:v0)+L*i/n,bq=(along?u0:v0)+L*(i+1)/n,Q=along?RQ(r,a,v0,bq,v1):RQ(r,u0,a,u1,bq);
-      const st=cols?(along?RQ(r,a,Math.min(v0,cols.v),bq,Math.max(v1,cols.v)):null):Q;
-      const ft=fitOf(ctx,st,'landmark:forum',f.id+':'+(ci++)),base=ft.floor;podium(B,st,base,ft.bot,MARBLE);block(B,Q,base,h,MARBLE,ROOF,'hip',.36);
-      if(cols)for(let u=(-r.hu+d+3)+Math.max(0,Math.ceil((a-(-r.hu+d+3))/6))*6;u<Math.min(bq,r.hu-d);u+=6){const x=r.cx+r.ax*u-r.az*cols.v,z=r.cz+r.az*u+r.ax*cols.v;cols.out.push([u,[x,base,z,h,2.5]])}}};
-  const C1=[],C2=[];
-  run(-r.hu,r.hu,-r.hv,-r.hv+d,true,{v:-(r.hv-d-2)-1.6,out:C1});run(-r.hu,r.hu,r.hv-d,r.hv,true,{v:(r.hv-d-2)+1.6,out:C2});
-  /* 柱位和改前一样（u 从 −hu+d+3 起每 6 像素，两侧交替推入 ctx._cols），柱心在 ±(hv−d−2)：台基外扩 1.6 把柱脚包进去 */
-  for(let i=0;i<Math.max(C1.length,C2.length);i++){for(const [C,s] of [[C1,-1],[C2,1]])if(C[i]){const q=C[i][1],u=C[i][0];q[0]=r.cx+r.ax*u-r.az*s*(r.hv-d-2);q[2]=r.cz+r.az*u+r.ax*s*(r.hv-d-2);ctx._cols.push(q)}}
-  for(const s of [-1,1])run(s>0?r.hu-d:-r.hu,s>0?r.hu:-r.hu+d,-r.hv+d,r.hv-d,false,null);
-  /* 中间的纪功柱 2026-10-20 起归 landmarks 模块（3d/landmarks/column.js），这里不再画占位 */},
+ forum(B,f,r,b,ctx){/* 狄奥多西广场 2026-10-20 起整座归 landmarks（3d/landmarks/forum.js：两层柱廊、西侧凯旋门、东门、施工阶段；纪功柱在 column.js）。
+   这里原来的单层柱廊占位（四翼分段方块 + 内侧柱列，高 8×LM_SCALE.forum）删了；它推进 ctx._cols 的柱子排在所有民居柱廊之后、后面的地标（蓄水池、孤寡院）不推柱子，所以不用留空实例。 */},
  granary(B,f,r,b,ctx){granary(ctx,B,f,r,b,LM_SCALE.granary)},
  nymphaeum(B,f,r,b,ctx){/* 大宁芙殿 2026-10-20 起归 landmarks（3d/landmarks/nymphaeum.js）：半圈 15 根柱子 + 半圆水池的占位删了；只留 15 个零高度的空实例，好让后面广场柱廊的序号（色差 hsh(i,77)）不变 */for(let k=0;k<15;k++)ctx._cols.push([r.cx,b,r.cz,0,0])},
  cistern(B,f,r,b,ctx){/* r3：每个穹顶按自己脚下最低的地面落（坡上一侧埋一点，不漏空） */for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9){const x=r.cx+r.ax*u-r.az*v,z=r.cz+r.az*u+r.ax*v,P=[[x-3.4,z-3.4],[x+3.4,z-3.4],[x+3.4,z+3.4],[x-3.4,z+3.4]],ft=ctx.footing(P,2);dome(x,ft.min-.15,z,3.8,mats.dome,.6);ctx.foot({kind:'landmark:cistern_slope',id:f.id+':dome',pts:P,bottom:ft.min-.15,floor:1e9})}
