@@ -44,15 +44,30 @@ function block(B,P,base,h,wallS,roofS,kind,pitch=.42,tag=null){const r=quadAxes(
 
 /* ---- 地标部件（代码，不是图） ---- */
 const PARTS={
- forum(B,f,r,b,ctx){/* 狄奥多西广场 2026-10-20 起整座归 landmarks（3d/landmarks/forum.js：两层柱廊、西侧凯旋门、东门、施工阶段；纪功柱在 column.js）。
+ forum(B,f,r,b,ctx){if(ctx.landmarkIds&&!ctx.landmarkIds.has(f.id))return GENERIC.forum(B,f,r,b,ctx);/* 全城页：landmarks 没接手的广场（创城者广场、四柱廊集市）画旧的通用柱廊占位 */
+  /* 狄奥多西广场 2026-10-20 起整座归 landmarks（3d/landmarks/forum.js：两层柱廊、西侧凯旋门、东门、施工阶段；纪功柱在 column.js）。
    这里原来的单层柱廊占位（四翼分段方块 + 内侧柱列，高 8×LM_SCALE.forum）删了；它推进 ctx._cols 的柱子排在所有民居柱廊之后、后面的地标（蓄水池、孤寡院）不推柱子，所以不用留空实例。 */},
  granary(B,f,r,b,ctx){granary(ctx,B,f,r,b,LM_SCALE.granary)},
- nymphaeum(B,f,r,b,ctx){/* 大宁芙殿 2026-10-20 起归 landmarks（3d/landmarks/nymphaeum.js）：半圈 15 根柱子 + 半圆水池的占位删了；只留 15 个零高度的空实例，好让后面广场柱廊的序号（色差 hsh(i,77)）不变 */for(let k=0;k<15;k++)ctx._cols.push([r.cx,b,r.cz,0,0])},
+ nymphaeum(B,f,r,b,ctx){if(ctx.landmarkIds&&!ctx.landmarkIds.has(f.id))return GENERIC.nymphaeum(B,f,r,b,ctx);/* 全城页：别的水殿/纪念物画旧的半圈柱子占位 */
+  /* 大宁芙殿 2026-10-20 起归 landmarks（3d/landmarks/nymphaeum.js）：半圈 15 根柱子 + 半圆水池的占位删了；只留 15 个零高度的空实例，好让后面广场柱廊的序号（色差 hsh(i,77)）不变 */for(let k=0;k<15;k++)ctx._cols.push([r.cx,b,r.cz,0,0])},
  cistern(B,f,r,b,ctx){/* r3：每个穹顶按自己脚下最低的地面落（坡上一侧埋一点，不漏空） */for(let u=-r.hu+6;u<r.hu-3;u+=9)for(let v=-r.hv+6;v<r.hv-3;v+=9){const x=r.cx+r.ax*u-r.az*v,z=r.cz+r.az*u+r.ax*v,P=[[x-3.4,z-3.4],[x+3.4,z-3.4],[x+3.4,z+3.4],[x-3.4,z+3.4]],ft=ctx.footing(P,2);dome(x,ft.min-.15,z,3.8,mats.dome,.6);ctx.foot({kind:'landmark:cistern_slope',id:f.id+':dome',pts:P,bottom:ft.min-.15,floor:1e9})}
   block(B,RQ(r,r.hu-12,r.hv-10,r.hu-2,r.hv-2),null,6,STONE,ROOF,'hip',.42,f.id+':house')},
  xenon(B,f,r,b){const d=9;let i=0;for(const s of [-1,1]){block(B,RQ(r,-r.hu,s*r.hv,r.hu,s*(r.hv-d)),null,9,STONE,ROOF,'hip',.42,f.id+':'+(i++));block(B,RQ(r,s*r.hu,-r.hv+d,s*(r.hu-d),r.hv-d),null,9,STONE,ROOF,'hip',.42,f.id+':'+(i++))}
   const bc=block(B,RQ(r,-8,-6,8,6),null,10,MARBLE,MARBLE,'flat',.42,f.id+':hall');dome(r.cx,bc+10,r.cz,5.5,mats.dome)}};
 PARTS.monument=PARTS.nymphaeum;PARTS.monastery=PARTS.xenon;
+export const PART_KINDS=new Set([...Object.keys(PARTS),'warehouse']);PARTS.warehouse=PARTS.granary;/* warehouse：南港没有，原来就落 granary 兜底，全城页照旧 */
+/* 通用占位（2026-10-20 全城页）：landmarks 模块接手前 buildings 原来的样子（git 1543c3c / ff84e83^），只在 ctx.landmarkIds 给了（全城页）且这座没被接手时用。
+   南港页不给 ctx.landmarkIds，一个像素不变。 */
+const GENERIC={
+ forum(B,f,r,b,ctx){const d=10,h=8*1.2,SEG=30;let ci=0;
+  const run=(u0,u1,v0,v1,along,cols)=>{const L=along?u1-u0:v1-v0,n=Math.max(1,Math.round(L/SEG));
+    for(let i=0;i<n;i++){const a=(along?u0:v0)+L*i/n,bq=(along?u0:v0)+L*(i+1)/n,Q=along?RQ(r,a,v0,bq,v1):RQ(r,u0,a,u1,bq);
+      const st=cols?(along?RQ(r,a,Math.min(v0,cols.v),bq,Math.max(v1,cols.v)):null):Q;
+      const ft=fitOf(ctx,st,'landmark:forum',f.id+':'+(ci++)),base=ft.floor;podium(B,st,base,ft.bot,MARBLE);block(B,Q,base,h,MARBLE,ROOF,'hip',.36);
+      if(cols)for(let u=(-r.hu+d+3)+Math.max(0,Math.ceil((a-(-r.hu+d+3))/6))*6;u<Math.min(bq,r.hu-d);u+=6){const x=r.cx+r.ax*u-r.az*cols.v,z=r.cz+r.az*u+r.ax*cols.v;ctx._cols.push([x,base,z,h,2.5])}}};
+  run(-r.hu,r.hu,-r.hv,-r.hv+d,true,{v:-(r.hv-d-2)});run(-r.hu,r.hu,r.hv-d,r.hv,true,{v:(r.hv-d-2)});
+  for(const s of [-1,1])run(s>0?r.hu-d:-r.hu,s>0?r.hu:-r.hu+d,-r.hv+d,r.hv-d,false,null)},
+ nymphaeum(B,f,r,b,ctx){const R_=Math.min(r.hu,r.hv*1.6)*.85,a0=Math.atan2(r.az,r.ax);for(let k=0;k<=14;k++){const t=Math.PI+k/14*Math.PI+a0,x=r.cx+Math.cos(t)*R_,z=r.cz+Math.sin(t)*R_*.6;ctx._cols.push([x,ctx.groundMesh(x,z)-.3,z,14,4.4])}}};
 
 export function init(ctx){T=ctx.THREE;({quadAxes,RQ}=ctx.geom);hsh=ctx.hsh;
   LMG=new T.Group();ctx.add(LMG);
@@ -71,7 +86,7 @@ export function build(ctx){CTX=ctx;const {by,elevPx}=ctx,live=ctx.live;
   const B={stucco:bucket(),opus:bucket(),stuccoShop:bucket(),opusShop:bucket(),roof:bucket(),plain:bucket(),gwall:bucket(),ggable:bucket(),arc:bucket()},COLS=[];ctx._cols=COLS;
   const SG=streetGrid(ctx);let nPort=0,nH=0;
   for(const f of by.house){if(!live(f))continue;nH++;nPort+=house(ctx,B,f,SG,COLS)}
-  for(const f of by.landmark||[])if(live(f)){const r=ctx.geom.rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6,ctx)}
+  for(const f of by.landmark||[])if(live(f)){if(ctx.landmarkIds&&!PARTS[f.k])continue;/* 全城页：buildings 没有部件的地标（教堂、竞技场、皇宫、城堡、城门、浴场、市场……）不再落成粮仓，交给全城导演的剪影体块（citylod） */const r=ctx.geom.rectOf(f.g);(PARTS[f.k]||PARTS.granary)(B,f,r,elevPx(r.cx,r.cz)+1.6,ctx)}
   let nAq=0;for(const f of by.aqueduct||[])if(live(f))nAq+=aqueduct(ctx,B,f);
   /* 栈桥、石堤：几何照旧（第 1 轮的样子），别的带（水、码头）不受这一轮影响 */
   const PB={pos:[],col:[],uv:[]};

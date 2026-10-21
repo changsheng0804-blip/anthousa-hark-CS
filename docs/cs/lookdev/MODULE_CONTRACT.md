@@ -188,3 +188,11 @@ export function tick(ctx, t) { … }        // 每帧；still 模式只在 __sti
 实例柱放在世界坐标时设 `frustumCulled = false`（网格本体在原点，默认包围球会把整排裁掉）；`ExtrudeGeometry` 搬进别的坐标架后按 (t, up, n) 的手性翻绕序，再 `computeVertexNormals`；贴地的施工土要比 streets 的 polygonOffset（广场 −5）更狠。证据在 `docs/cs/lookdev/landmarks/forum/`。
 
 **可以复用的部件**：`kit/lathe.js`（lathe / squareLathe / merge / box）、`kit/relief.js`（relief（`aoMin` 凹缝最暗、`low` 地压暗、`patina` 暖色风化；默认同旧）+ soldier / captive / victory / garland / frame / ell / poly / line / rect）、`kit/acanthus.js`（corinthian，近/远）、`kit/baked.js`（读烘焙网格）、`kit/fill.js`（地标材质的天光补光，宁芙殿 withFill 的通用版）、`kit/club.js`（棍棒 / 树干柱 + 握拳）、`tools/cs/landmarks/bake_statue.py`（SDF 原语 + 平滑并 + marching cubes + 量化写盘的模板）、`tools/cs/landmarks/bake_nymph_statues.py`（同一套原语出 3 种站姿女像：顶罐、披袍、捧贝，近 / 远两档）、`tools/cs/lookdev/silhouette.py`。
+
+## 8. 全城页（2026-10-20，主人「可以」：南港 3D 推到全城）
+- 全城页 `docs/living/nodes/city/3d.html` 的导演是 `3d/citycore.js`（+ 远景 `3d/citylod.js`），**模块不复制**，和南港页同一份。南港页仍走 `core.js`。
+- 全城页里 ctx 是「近景窗口」：4×4 个瓦片块（1820 px）平移成窗口局部坐标，`ctx.W/H` = 窗口大小；`ctx.ground/elevPx` 读全城高度，窗口外也有值。模块照常按 init/paint/build/dispose 写，**不要假设只有南港**。
+- ctx 上的可选参数（core 不给，南港不受影响）：`noOuter`（terrain 不画南港区外烘焙）、`landmarkIds`（buildings 给没被 landmarks 接手的同类地标画通用占位、没部件的 kind 交给远景剪影）、`ox/oz`（窗口原点：按位置取哈希的地方加上它，窗口挪了样子不变；flora 已改）、`city`（全城宽高、块边长）。
+- 模块文件里按位置取 `hsh` 的，请用全城坐标（`x+(ctx.ox||0)`），别用窗口局部坐标；按「第几个要素」取哈希的会随窗口内容变。
+- 改任何模块后：南港页机位 1–7 逐像素比 + 全城页 `tools/cs/lookdev/city3d_check.py shots` 各跑一遍。报告 `docs/cs/lookdev/city3d/report.md`。
+

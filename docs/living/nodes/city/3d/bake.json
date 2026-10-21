@@ -1,0 +1,12 @@
+{
+ "full_raw": 4789122,
+ "full_gz": 871061,
+ "low_raw": 1944754,
+ "low_gz": 621516,
+ "base_raw": 729229,
+ "base_gz": 162189,
+ "chunks": 116,
+ "houses_per_chunk_max": 515,
+ "houses": 17646,
+ "full_gz_max": 19291
+}

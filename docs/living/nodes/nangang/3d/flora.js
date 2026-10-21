@@ -18,7 +18,7 @@ export function build(ctx){const {WD,year:Y,hsh}=ctx,site=ctx.reg.propsSite||mak
   const B={};for(const k in G)B[k]=G[k].map(()=>({m:[],c:[]}));
   const tint=(k,a)=>new T.Color(1,1,1).multiplyScalar(1-a+2*a*k);
   const okSpot=(x,z,m)=>site.isLand(x,z)&&!site.inHouse(x,z,m)&&!site.inLandmark(x,z,m);
-  WD.trees.forEach((t,i)=>{if(!(t[3]<=Y&&(t[4]==null||t[4]>Y)))return;const [x,z,kind]=t,s=t[5],y=ctx.groundMesh(x,z),id=(x*7+z*13)|0,ry=hsh(id,1)*Math.PI*2,v=G[kind]?(hsh(id,2)*G[kind].length)|0:0;
+  WD.trees.forEach((t,i)=>{if(!(t[3]<=Y&&(t[4]==null||t[4]>Y)))return;const [x,z,kind]=t,s=t[5],y=ctx.groundMesh(x,z),id=((x+(ctx.ox||0))*7+(z+(ctx.oz||0))*13)|0/* ctx.ox/oz：全城页近景窗口的原点（南港 = 0），树的样子按全城坐标定，窗口挪了不变 */,ry=hsh(id,1)*Math.PI*2,v=G[kind]?(hsh(id,2)*G[kind].length)|0:0;
     if(kind==='cypress'){const h=s*3.33*(.9+.2*hsh(id,3));B.cypress[0].m.push(mtx(x,y,z,ry,s*1.4,h,s*1.4));B.cypress[0].c.push(tint(hsh(id,4),.1))}
     else if(kind==='olive'){const k=s*.88*(.9+.2*hsh(id,3));B.olive[v].m.push(mtx(x,y,z,ry,k,k*(.9+.15*hsh(id,5)),k));B.olive[v].c.push(tint(hsh(id,4),.08))}
     else if(kind==='garden'){const k=s*.7*(.9+.2*hsh(id,3));B.garden[v].m.push(mtx(x,y,z,ry,k,k,k));B.garden[v].c.push(tint(hsh(id,4),.1));

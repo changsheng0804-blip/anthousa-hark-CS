@@ -12,6 +12,8 @@ export const name = 'landmarks';
 export const checkShot = 5;
 const LM = [column, nymphaeum, forum];
 const BY = {}; for (const m of LM) (BY[m.id] = BY[m.id] || []).push(m);
+/* 这几座由本模块整座接手；全城页把它交给 buildings（ctx.landmarkIds），其余同类地标仍画 buildings 的通用占位 */
+export const IDS = new Set(Object.keys(BY));
 let LIVE = [];
 export function init(ctx) { for (const m of LM) m.init(ctx); }
 export function build(ctx) {

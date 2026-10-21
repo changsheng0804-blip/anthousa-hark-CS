@@ -1,0 +1,82 @@
+{
+ "note": "全城 3D 固定机位（nodes/city/3d.html?shot=N，tools/cs/lookdev/render.py --page docs/living/nodes/city/3d.html --shots docs/living/nodes/city/3d/shots.json）。坐标 = 全城节点像素（瓦片级 0 像素）：x 向东，z 向南，y 高（像素，1 像素≈0.84 米）。eye=true 时 y 是离地高。",
+ "size": [
+  1376,
+  768
+ ],
+ "start": "mid",
+ "shots": [
+  {
+   "id": 1,
+   "name": "aerial",
+   "zh": "全城航拍（从南面马尔马拉海上看）",
+   "pos": [
+    2700,
+    4300,
+    8700
+   ],
+   "target": [
+    2620,
+    0,
+    3450
+   ],
+   "fov": 40,
+   "eye": false,
+   "year": 60
+  },
+  {
+   "id": 2,
+   "name": "mid",
+   "zh": "中景：老城（竞技场、大教堂、皇宫）从西南看",
+   "pos": [
+    2650,
+    820,
+    4950
+   ],
+   "target": [
+    3420,
+    0,
+    3800
+   ],
+   "fov": 40,
+   "eye": false,
+   "year": 60
+  },
+  {
+   "id": 3,
+   "name": "ground",
+   "zh": "人眼高：老城南坡一条支街，向北看竞技场、大教堂方向",
+   "pos": [
+    3480.2,
+    2.0,
+    4552
+   ],
+   "target": [
+    3485.5,
+    12,
+    4420
+   ],
+   "fov": 50,
+   "eye": true,
+   "year": 60
+  },
+  {
+   "id": 4,
+   "name": "nangang",
+   "zh": "全城页里的南港（对照南港页机位 3）",
+   "pos": [
+    1800,
+    1100,
+    5650
+   ],
+   "target": [
+    1650,
+    0,
+    4250
+   ],
+   "fov": 40,
+   "eye": false,
+   "year": 60
+  }
+ ]
+}

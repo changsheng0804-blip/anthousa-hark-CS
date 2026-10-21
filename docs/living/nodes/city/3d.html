@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>全城 · 3D（分块流式）</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#b9cbd0;font-family:"Noto Serif SC","Songti SC",serif;color:#2b2218}
+canvas{display:block;touch-action:none}
+#bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(250,244,230,.92);border:1px solid #b9a582;border-radius:14px;padding:8px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#yr{width:min(56vw,420px)}#yl{min-width:72px;text-align:right;font-size:15px}
+#tag{position:fixed;left:12px;top:10px;background:rgba(250,244,230,.88);border:1px solid #b9a582;border-radius:10px;padding:6px 10px;font-size:13px;line-height:1.5;max-width:70vw}
+#tag a{color:#7a3e1c}#fps{position:fixed;right:10px;top:10px;font:12px monospace;background:rgba(250,244,230,.8);padding:2px 6px;border-radius:6px}
+#cst{position:fixed;right:10px;top:34px;font:12px sans-serif;background:rgba(250,244,230,.8);padding:2px 6px;border-radius:6px}
+#load{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);font-size:15px;background:rgba(250,244,230,.9);padding:8px 14px;border-radius:10px}
+</style>
+<script type="importmap">{"imports":{"three":"../lib/three/three.module.js","three/addons/":"../lib/three/addons/"}}</script>
+<script>globalThis.CS3D={base:'3d/',crowd:null};</script>
+</head><body>
+<div id="tag"><b>全城 · 3D</b>　和南港 3D 同一套模块；近处 4×4 块按南港的样子现建，远处是体块。单指转、双指缩放平移。<a href="../nangang/3d.html">南港 3D</a> · <a href="scroll.html">长卷</a></div>
+<div id="fps"></div><div id="cst"></div>
+<div id="load">载入全城……</div>
+<div id="bar"><span>年</span><input id="yr" type="range" min="0" max="70" step="1" value="60"><span id="yl">建城 60 年</span></div>
+<!-- CS 线 · 全城 3D（2026-10-20）：导演 ../nangang/3d/citycore.js，模块和南港 3d.html 同一份（不复制）；数据 3d/base.json + 3d/chunks/（tools/cs/nodes/city3d_chunks.py 烘）。
+     参数：?shot=1..4（3d/shots.json）&clean=1 &still=1 &year=N &quality=preview &win=4 &altFull=2600 &loFar=11000。报告 docs/cs/lookdev/city3d/report.md -->
+<script type="module">
+import('../nangang/3d/citycore.js').then(()=>{document.getElementById('load').remove()}).catch(e=>{document.getElementById('load').textContent='载入失败：'+e;console.error(e)});
+</script>
+</body></html>

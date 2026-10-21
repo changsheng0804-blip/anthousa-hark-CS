@@ -7,11 +7,13 @@ export const name = 'crowd';
 export const checkShot = 2;
 
 const QS = new URLSearchParams(location.search), ONLY = QS.get('only');
-const WANT = !ONLY || ONLY.split(',').map(s => s.trim()).includes('crowd');
+/* 全城页（nodes/city/3d.html，2026-10-20）在载入前设 globalThis.CS3D = {crowd: null | url, people: url}：null = 不取人群；不设 = 南港原样 */
+const CFG = globalThis.CS3D || {};
+const WANT = (!ONLY || ONLY.split(',').map(s => s.trim()).includes('crowd')) && CFG.crowd !== null;
 /* 数据在模块载入时取（core 的 init 是同步的）；不建 crowd 时不取，省 2 MB */
 const [CD, PD] = WANT ? await Promise.all([
-  fetch(new URL('../crowd.json', import.meta.url)).then(r => r.ok ? r.json() : null).catch(() => null),
-  fetch(new URL('../people.json', import.meta.url)).then(r => r.ok ? r.json() : null).catch(() => null)]) : [null, null];
+  fetch(CFG.crowd || new URL('../crowd.json', import.meta.url)).then(r => r.ok ? r.json() : null).catch(() => null),
+  fetch(CFG.people || new URL('../people.json', import.meta.url)).then(r => r.ok ? r.json() : null).catch(() => null)]) : [null, null];
 
 let S = null;
 export function init(ctx) { if (CD) S = stage(ctx, CD, PD) }

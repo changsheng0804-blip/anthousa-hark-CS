@@ -14,8 +14,8 @@ export function init(ctx){const {THREE,W,H}=ctx;nx=Math.ceil(W/SEG)+1;nz=Math.ce
   const pos=new Float32Array(nx*nz*3),uv=new Float32Array(nx*nz*2),idx=[];for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const k=j*nx+i;pos[k*3]=Math.min(W,i*SEG);pos[k*3+2]=Math.min(H,j*SEG);uv[k*2]=pos[k*3]/W;uv[k*2+1]=1-pos[k*3+2]/H}
   for(let j=0;j<nz-1;j++)for(let i=0;i<nx-1;i++){const a=j*nx+i,b=a+1,c=a+nx,d=c+1;idx.push(a,c,b,b,c,d)}tg.setAttribute('position',new THREE.BufferAttribute(pos,3));tg.setAttribute('uv',new THREE.BufferAttribute(uv,2));tg.setIndex(idx);
   const terr=new THREE.Mesh(tg,new THREE.MeshLambertMaterial({map:ctx.groundTex}));terr.receiveShadow=true;ctx.add(terr);
-  outer.init(ctx)}
+  if(!ctx.noOuter)outer.init(ctx)}/* 全城页（2026-10-20）：ctx.noOuter = 区外由全城远景地形接，不画南港的区外烘焙 */
 export function build(ctx){const p=tg.attributes.position.array;for(let k=0;k<nx*nz;k++)p[k*3+1]=ctx.ground(p[k*3],p[k*3+2]);tg.attributes.position.needsUpdate=true;tg.computeVertexNormals();
-  outer.build(ctx)}
-export function tick(ctx,t){outer.tick(ctx,t)}
+  if(!ctx.noOuter)outer.build(ctx)}
+export function tick(ctx,t){if(!ctx.noOuter)outer.tick(ctx,t)}
 export function dispose(ctx){}

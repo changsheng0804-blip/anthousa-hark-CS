@@ -8,10 +8,10 @@ import {linC,mul,wall,quad,tri,roofFace,box} from './geo.js';
 
 export const STH=4.2, BAY=4.5, RT=3.2;
 /* 灰泥色（sRGB，按美术圣经调色板 + 晒褪） */
-const WALLS={stucco:[[248,238,214],[238,208,156],[230,186,128],[214,162,104],[236,196,162],[200,146,96],[244,220,172],[246,230,200],[190,136,92]],opus:[[236,214,176],[222,190,144],[210,176,130]]};
-const ROOFS=[[206,116,56],[186,94,46],[166,80,40],[128,70,40],[218,144,80],[150,76,44],[108,58,36],[194,104,52]];
-const OPUS_P={fine:.7,water:.6,garrison:.8,market:.45,shops:.35,horrea:1,dock:.5,planned:.3,homes:.22,workshop:.3,garden:.2};
-const FLAT={workshop:.45,garden:.5,water:.12,garrison:.15,homes:.15,market:.04,shops:.05,dock:.25,planned:.1,horrea:0};
+export const WALLS={stucco:[[248,238,214],[238,208,156],[230,186,128],[214,162,104],[236,196,162],[200,146,96],[244,220,172],[246,230,200],[190,136,92]],opus:[[236,214,176],[222,190,144],[210,176,130]]};
+export const ROOFS=[[206,116,56],[186,94,46],[166,80,40],[128,70,40],[218,144,80],[150,76,44],[108,58,36],[194,104,52]];
+export const OPUS_P={fine:.7,water:.6,garrison:.8,market:.45,shops:.35,horrea:1,dock:.5,planned:.3,homes:.22,workshop:.3,garden:.2};
+export const FLAT={workshop:.45,garden:.5,water:.12,garrison:.15,homes:.15,market:.04,shops:.05,dock:.25,planned:.1,horrea:0};
 /* 墙基（r3）：素面石灰石色；最高 14 像素（崖边的户，再深就是海崖，不画成塔） */
 export const SOCLE=linC([178,166,142]),SOCLE_MAX=14;
 export const RIDGE=linC([232,222,204]),SOFFIT=linC([46,34,26]), CEIL=linC([96,78,60]), MARBLE_C=linC([233,223,204]);
