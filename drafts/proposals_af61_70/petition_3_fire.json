@@ -1,0 +1,58 @@
+{
+ "era": {
+  "from": 61,
+  "to": 70,
+  "title": "横穿干山的防火巷"
+ },
+ "actions": [
+  {
+   "faction": "people",
+   "op": "build",
+   "structure": {
+    "id": "r_firebreak_hill",
+    "type": "road",
+    "name": "Firebreak of the Dry Hill",
+    "geom": {
+     "type": "line",
+     "coords": [
+      [
+       421.0,
+       464.0
+      ],
+      [
+       430.0,
+       430.0
+      ],
+      [
+       441.0,
+       404.0
+      ],
+      [
+       456.0,
+       388.0
+      ],
+      [
+       466.0,
+       369.0
+      ]
+     ]
+    },
+    "width": 2.0
+   },
+   "why": "The families burned out of the South Harbor in AF 48 rebuilt wall to wall on the hill. They ask for a lane cut from the Mese to the Modestus road, wide enough that a fire cannot jump it, and give up the houses in its way.",
+   "year": 61
+  }
+ ],
+ "review": [
+  {
+   "round": 1,
+   "rejected": [
+    {
+     "id": "r_firebreak",
+     "reason": "r_firebreak: id already used (the Street of the Embers, AF 22)",
+     "fix": "renamed r_firebreak_hill"
+    }
+   ]
+  }
+ ]
+}

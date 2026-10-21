@@ -1,0 +1,72 @@
+{
+ "51": {
+  "ledger_houses": 684,
+  "households": 4092,
+  "empty_ledger_houses": 127,
+  "households_per_ledger_house": {
+   "mean": 5.98,
+   "p50": 1.0,
+   "p95": 2.0,
+   "max": 575
+  },
+  "landlords_new": 105,
+  "landlords_v1": 309,
+  "v1_tenants": 1552,
+  "v1_tenants_same_landlord": 13,
+  "ration_books_new": 684,
+  "owner_households_rule_A": 2412
+ },
+ "55": {
+  "ledger_houses": 703,
+  "households": 4228,
+  "empty_ledger_houses": 129,
+  "households_per_ledger_house": {
+   "mean": 6.01,
+   "p50": 1.0,
+   "p95": 2.0,
+   "max": 1234
+  },
+  "landlords_new": 103,
+  "landlords_v1": 345,
+  "v1_tenants": 1734,
+  "v1_tenants_same_landlord": 8,
+  "ration_books_new": 703,
+  "owner_households_rule_A": 2350
+ },
+ "60": {
+  "ledger_houses": 746,
+  "households": 4383,
+  "empty_ledger_houses": 144,
+  "households_per_ledger_house": {
+   "mean": 5.88,
+   "p50": 1.0,
+   "p95": 2.0,
+   "max": 1305
+  },
+  "landlords_new": 109,
+  "landlords_v1": 380,
+  "v1_tenants": 1967,
+  "v1_tenants_same_landlord": 12,
+  "ration_books_new": 746,
+  "owner_households_rule_A": 2240
+ },
+ "65": {
+  "ledger_houses": 701,
+  "households": 4277,
+  "empty_ledger_houses": 131,
+  "households_per_ledger_house": {
+   "mean": 6.1,
+   "p50": 1.0,
+   "p95": 3.0,
+   "max": 1279
+  },
+  "landlords_new": 119,
+  "landlords_v1": 370,
+  "v1_tenants": 1916,
+  "v1_tenants_same_landlord": 10,
+  "ration_books_new": 701,
+  "owner_households_rule_A": 2171
+ },
+ "ego_ms_mean": 0.0126,
+ "seconds": 0.094
+}

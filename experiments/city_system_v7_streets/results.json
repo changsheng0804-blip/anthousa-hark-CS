@@ -1,0 +1,1793 @@
+{
+ "params": {
+  "SNAP_MAX": 6.0,
+  "HULL_GROW": 1.02,
+  "F_MIN": 20.0,
+  "F_MAX": 100.0,
+  "F_DEPTH": 20.0,
+  "F_SECTOR": 4,
+  "node_quantum": 0.01,
+  "TOPK": 48
+ },
+ "compare": {
+  "affine_upstream_to_ledger": {
+   "matched_houses": 4831,
+   "rms": 5.635430927962646,
+   "median": 5.2753111431446715,
+   "p95": 7.703453415752428,
+   "scale": 0.07053909237770606
+  },
+  "upstream_clip": {
+   "streets": 83,
+   "kept_runs": 83,
+   "segs_total": 1679,
+   "segs_kept": 1580
+  },
+  "segments_total": 1625,
+  "streets_total": 102,
+  "vs_v6": {
+   "41": {
+    "households": 11204,
+    "changed_any_of_water_parish_watch_grain": 10818,
+    "changed_ratio": 0.9655,
+    "changed_by_field": {
+     "water": 2564,
+     "parish": 5201,
+     "arian": 0,
+     "watch": 10691,
+     "grain": 896
+    },
+    "changed_ratio_by_field": {
+     "water": 0.2288,
+     "parish": 0.4642,
+     "arian": 0.0,
+     "watch": 0.9542,
+     "grain": 0.08
+    },
+    "top3_v7_fang_by_ratio(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>604.00,410.00.0",
+      "changed": 498,
+      "households": 498,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@548.00,340.00>548.46,346.97.0",
+      "changed": 457,
+      "households": 457,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@530.00,441.00>560.00,438.00.0",
+      "changed": 455,
+      "households": 455,
+      "ratio": 1.0
+     }
+    ],
+    "top3_v6_fang_by_count": [
+     {
+      "v6_fang": "d_byzas#f12",
+      "changed": 144,
+      "households": 144
+     },
+     {
+      "v6_fang": "d_byzas#f10",
+      "changed": 143,
+      "households": 143
+     },
+     {
+      "v6_fang": "d_harbor#f16",
+      "changed": 140,
+      "households": 140
+     }
+    ],
+    "changed_any_of_water_parish_grain": 6255,
+    "changed_ratio_excl_watch": 0.5583,
+    "top3_v7_fang_excl_watch_by_count(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>604.00,410.00.0",
+      "changed": 498,
+      "households": 498,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@604.00,410.00>600.00,360.00.0",
+      "changed": 449,
+      "households": 449,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@530.00,441.00>560.00,438.00.0",
+      "changed": 439,
+      "households": 455,
+      "ratio": 0.965
+     }
+    ],
+    "door_street_source": {
+     "ledger": 7866,
+     "upstream": 3338
+    },
+    "upstream_ledger_ids_standing": 2788,
+    "door_access": {
+     "median": 7.55,
+     "p90": 27.39,
+     "max": 85.01,
+     "share_le_3": 0.3023
+    },
+    "graph": {
+     "nodes": 1831,
+     "edges": 1996,
+     "streets_standing": 88,
+     "snap_links": 132,
+     "faces": 165
+    },
+    "fang": {
+     "n": 363,
+     "min": 1,
+     "median": 6.0,
+     "p90": 54.80000000000001,
+     "max": 498,
+     "households_weighted_median": 129.0,
+     "n_le_5": 170,
+     "households_in_fang_le_5": 353
+    },
+    "nodes_by_title": {
+     "区长": 4,
+     "坊长": 363,
+     "长老": 4,
+     "水役头": 3,
+     "哨长": 6,
+     "行会头": 6
+    },
+    "one_office": {
+     "multi_office_households": 0,
+     "holders": 386,
+     "vacant": 0
+    },
+    "ledger_only_door_access": {
+     "median": 11.51,
+     "p90": 29.72,
+     "upstream_area_houses_median_ledger_only": 10.04,
+     "upstream_area_houses_median_with_upstream": 1.37
+    }
+   },
+   "55": {
+    "households": 15950,
+    "changed_any_of_water_parish_watch_grain": 15788,
+    "changed_ratio": 0.9898,
+    "changed_by_field": {
+     "water": 3285,
+     "parish": 3511,
+     "arian": 217,
+     "watch": 14242,
+     "grain": 6177
+    },
+    "changed_ratio_by_field": {
+     "water": 0.206,
+     "parish": 0.2201,
+     "arian": 0.0136,
+     "watch": 0.8929,
+     "grain": 0.3873
+    },
+    "top3_v7_fang_by_ratio(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>602.66,393.23.0",
+      "changed": 558,
+      "households": 558,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@548.00,340.00>548.46,346.97.0",
+      "changed": 509,
+      "households": 509,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@530.00,441.00>560.00,438.00.0",
+      "changed": 506,
+      "households": 506,
+      "ratio": 1.0
+     }
+    ],
+    "top3_v6_fang_by_count": [
+     {
+      "v6_fang": "d_byzas#f20",
+      "changed": 148,
+      "households": 148
+     },
+     {
+      "v6_fang": "d_forum#f36",
+      "changed": 147,
+      "households": 147
+     },
+     {
+      "v6_fang": "d_byzas#f12",
+      "changed": 147,
+      "households": 147
+     }
+    ],
+    "changed_any_of_water_parish_grain": 11183,
+    "changed_ratio_excl_watch": 0.7011,
+    "top3_v7_fang_excl_watch_by_count(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>602.66,393.23.0",
+      "changed": 551,
+      "households": 558,
+      "ratio": 0.987
+     },
+     {
+      "fang": "坊@548.00,340.00>548.46,346.97.0",
+      "changed": 509,
+      "households": 509,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@489.87,356.17>485.11,355.93.0",
+      "changed": 440,
+      "households": 440,
+      "ratio": 1.0
+     }
+    ],
+    "door_street_source": {
+     "ledger": 10355,
+     "upstream": 5595
+    },
+    "upstream_ledger_ids_standing": 4263,
+    "door_access": {
+     "median": 8.88,
+     "p90": 39.84,
+     "max": 86.77,
+     "share_le_3": 0.308
+    },
+    "graph": {
+     "nodes": 1955,
+     "edges": 2138,
+     "streets_standing": 100,
+     "snap_links": 157,
+     "faces": 181
+    },
+    "fang": {
+     "n": 403,
+     "min": 1,
+     "median": 10.0,
+     "p90": 77.80000000000001,
+     "max": 558,
+     "households_weighted_median": 126.0,
+     "n_le_5": 173,
+     "households_in_fang_le_5": 355
+    },
+    "nodes_by_title": {
+     "区长": 4,
+     "坊长": 403,
+     "长老": 5,
+     "水役头": 4,
+     "哨长": 6,
+     "行会头": 6,
+     "长老(阿里乌)": 1
+    },
+    "one_office": {
+     "multi_office_households": 0,
+     "holders": 429,
+     "vacant": 0
+    },
+    "ledger_only_door_access": {
+     "median": 14.98,
+     "p90": 43.31,
+     "upstream_area_houses_median_ledger_only": 12.84,
+     "upstream_area_houses_median_with_upstream": 1.34
+    }
+   },
+   "70": {
+    "households": 17633,
+    "changed_any_of_water_parish_watch_grain": 17462,
+    "changed_ratio": 0.9903,
+    "changed_by_field": {
+     "water": 4511,
+     "parish": 3880,
+     "arian": 551,
+     "watch": 15727,
+     "grain": 6658
+    },
+    "changed_ratio_by_field": {
+     "water": 0.2558,
+     "parish": 0.22,
+     "arian": 0.0312,
+     "watch": 0.8919,
+     "grain": 0.3776
+    },
+    "top3_v7_fang_by_ratio(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>602.66,393.23.0",
+      "changed": 580,
+      "households": 580,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@548.00,340.00>548.46,346.97.0",
+      "changed": 543,
+      "households": 543,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@560.00,438.00>560.32,438.11.0",
+      "changed": 516,
+      "households": 516,
+      "ratio": 1.0
+     }
+    ],
+    "top3_v6_fang_by_count": [
+     {
+      "v6_fang": "d_harbor#f31",
+      "changed": 150,
+      "households": 150
+     },
+     {
+      "v6_fang": "d_harbor#f30",
+      "changed": 150,
+      "households": 150
+     },
+     {
+      "v6_fang": "d_harbor#f29",
+      "changed": 150,
+      "households": 150
+     }
+    ],
+    "changed_any_of_water_parish_grain": 12781,
+    "changed_ratio_excl_watch": 0.7248,
+    "top3_v7_fang_excl_watch_by_count(>=30户)": [
+     {
+      "fang": "坊@600.00,360.00>602.66,393.23.0",
+      "changed": 573,
+      "households": 580,
+      "ratio": 0.988
+     },
+     {
+      "fang": "坊@548.00,340.00>548.46,346.97.0",
+      "changed": 543,
+      "households": 543,
+      "ratio": 1.0
+     },
+     {
+      "fang": "坊@489.87,356.17>485.11,355.93.0",
+      "changed": 457,
+      "households": 457,
+      "ratio": 1.0
+     }
+    ],
+    "door_street_source": {
+     "ledger": 11533,
+     "upstream": 6100
+    },
+    "upstream_ledger_ids_standing": 4397,
+    "door_access": {
+     "median": 8.9,
+     "p90": 39.88,
+     "max": 86.77,
+     "share_le_3": 0.3007
+    },
+    "graph": {
+     "nodes": 1972,
+     "edges": 2163,
+     "streets_standing": 102,
+     "snap_links": 160,
+     "faces": 189
+    },
+    "fang": {
+     "n": 426,
+     "min": 1,
+     "median": 11.0,
+     "p90": 84.5,
+     "max": 580,
+     "households_weighted_median": 128.0,
+     "n_le_5": 183,
+     "households_in_fang_le_5": 394
+    },
+    "nodes_by_title": {
+     "区长": 5,
+     "坊长": 426,
+     "长老": 5,
+     "水役头": 5,
+     "哨长": 6,
+     "行会头": 6,
+     "长老(阿里乌)": 2
+    },
+    "one_office": {
+     "multi_office_households": 0,
+     "holders": 455,
+     "vacant": 0
+    },
+    "ledger_only_door_access": {
+     "median": 14.53,
+     "p90": 42.58,
+     "upstream_area_houses_median_ledger_only": 11.7,
+     "upstream_area_houses_median_with_upstream": 1.35
+    }
+   }
+  },
+  "perf": {
+   "prepare_s": 1.797,
+   "build_Y70_s": [
+    0.343,
+    0.344,
+    0.346
+   ],
+   "build_mem_peak_MB": 34.2,
+   "state_mem_MB": 24.8,
+   "state_bytes_per_household": 1476.4,
+   "records_json_bytes": 4663667,
+   "records_gz_bytes": 915098,
+   "bytes_per_household_gz": 51.9,
+   "n_nodes_70": 455
+  }
+ },
+ "incr": {
+  "all_years_equal": true,
+  "times": {
+   "struct_add": {
+    "n": 8,
+    "median_ms": 33.474,
+    "p90_ms": 49.02,
+    "max_ms": 60.541
+   },
+   "street_add": {
+    "n": 16,
+    "median_ms": 14.983,
+    "p90_ms": 35.97,
+    "max_ms": 40.847
+   },
+   "build": {
+    "n": 7356,
+    "median_ms": 0.024,
+    "p90_ms": 0.032,
+    "max_ms": 0.921
+   },
+   "struct_add_nonfacility": {
+    "n": 5,
+    "median_ms": 0.004,
+    "p90_ms": 0.005,
+    "max_ms": 0.005
+   },
+   "destroy": {
+    "n": 9,
+    "median_ms": 0.101,
+    "p90_ms": 0.503,
+    "max_ms": 1.193
+   }
+  },
+  "topology_events": [
+   {
+    "Y": 41,
+    "ev": "struct_add",
+    "id": "cistern_modestus",
+    "ms": 35.46,
+    "households_moved": 3075
+   },
+   {
+    "Y": 41,
+    "ev": "street_add",
+    "id": "u:铜匠街#0",
+    "ms": 9.98,
+    "households_moved": 15
+   },
+   {
+    "Y": 41,
+    "ev": "street_add",
+    "id": "u:城墙根街#0",
+    "ms": 27.38,
+    "households_moved": 1229
+   },
+   {
+    "Y": 43,
+    "ev": "street_add",
+    "id": "u:哥特人巷#0",
+    "ms": 15.63,
+    "households_moved": 181
+   },
+   {
+    "Y": 43,
+    "ev": "street_add",
+    "id": "u:摊子巷#0",
+    "ms": 10.64,
+    "households_moved": 9
+   },
+   {
+    "Y": 43,
+    "ev": "street_add",
+    "id": "u:木匠街#0",
+    "ms": 35.4,
+    "households_moved": 378
+   },
+   {
+    "Y": 44,
+    "ev": "street_add",
+    "id": "u:大麦街#0",
+    "ms": 8.88,
+    "households_moved": 84
+   },
+   {
+    "Y": 45,
+    "ev": "street_add",
+    "id": "u:箍桶匠巷#0",
+    "ms": 8.75,
+    "households_moved": 64
+   },
+   {
+    "Y": 46,
+    "ev": "struct_add",
+    "id": "horrea_troadensia",
+    "ms": 44.08,
+    "households_moved": 1201
+   },
+   {
+    "Y": 48,
+    "ev": "street_add",
+    "id": "u:井台巷#0",
+    "ms": 11.02,
+    "households_moved": 12
+   },
+   {
+    "Y": 48,
+    "ev": "street_add",
+    "id": "u:新井巷#0",
+    "ms": 36.54,
+    "households_moved": 304
+   },
+   {
+    "Y": 48,
+    "ev": "street_add",
+    "id": "u:皮匠巷#0",
+    "ms": 15.27,
+    "households_moved": 27
+   },
+   {
+    "Y": 49,
+    "ev": "struct_add",
+    "id": "church_anastasia",
+    "ms": 60.54,
+    "households_moved": 5057
+   },
+   {
+    "Y": 49,
+    "ev": "street_add",
+    "id": "u:城门里街#0",
+    "ms": 11.04,
+    "households_moved": 47
+   },
+   {
+    "Y": 49,
+    "ev": "street_add",
+    "id": "u:旧衣巷#0",
+    "ms": 14.69,
+    "households_moved": 123
+   },
+   {
+    "Y": 49,
+    "ev": "street_add",
+    "id": "u:灯油巷#0",
+    "ms": 12.04,
+    "households_moved": 132
+   },
+   {
+    "Y": 52,
+    "ev": "struct_add",
+    "id": "arian_meeting",
+    "ms": 32.57,
+    "households_moved": 2378
+   },
+   {
+    "Y": 54,
+    "ev": "struct_add",
+    "id": "cistern_carriers",
+    "ms": 34.38,
+    "households_moved": 2763
+   },
+   {
+    "Y": 55,
+    "ev": "struct_add",
+    "id": "horrea_alexandrina",
+    "ms": 29.84,
+    "households_moved": 0
+   },
+   {
+    "Y": 55,
+    "ev": "street_add",
+    "id": "u:浴场后街#0",
+    "ms": 30.13,
+    "households_moved": 43
+   },
+   {
+    "Y": 62,
+    "ev": "struct_add",
+    "id": "cistern_slope",
+    "ms": 6.05,
+    "households_moved": 185
+   },
+   {
+    "Y": 62,
+    "ev": "street_add",
+    "id": "r_carriers",
+    "ms": 40.85,
+    "households_moved": 361
+   },
+   {
+    "Y": 63,
+    "ev": "street_add",
+    "id": "r_exo",
+    "ms": 16.57,
+    "households_moved": 203
+   },
+   {
+    "Y": 64,
+    "ev": "struct_add",
+    "id": "church_arian_brick",
+    "ms": 12.17,
+    "households_moved": 113
+   }
+  ],
+  "yearly": [
+   {
+    "Y": 41,
+    "events": 494,
+    "built": 491,
+    "destroyed": 0,
+    "streets_added": [
+     "u:铜匠街#0",
+     "u:城墙根街#0"
+    ],
+    "structs": [
+     "cistern_modestus+"
+    ],
+    "houses": 11204,
+    "ledger_houses": 11204,
+    "bread_books": 11204,
+    "pop": 100836,
+    "food_cap": 153202,
+    "ration": 13.6739,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 386,
+    "rebuild_s": 0.233,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 42,
+    "events": 490,
+    "built": 489,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [
+     "d_xerolophos+"
+    ],
+    "houses": 11693,
+    "ledger_houses": 11693,
+    "bread_books": 11693,
+    "pop": 105237,
+    "food_cap": 153202,
+    "ration": 13.102,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 392,
+    "rebuild_s": 0.25,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 43,
+    "events": 479,
+    "built": 476,
+    "destroyed": 0,
+    "streets_added": [
+     "u:哥特人巷#0",
+     "u:摊子巷#0",
+     "u:木匠街#0"
+    ],
+    "structs": [],
+    "houses": 12169,
+    "ledger_houses": 12169,
+    "bread_books": 12169,
+    "pop": 109521,
+    "food_cap": 153202,
+    "ration": 12.5895,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 400,
+    "rebuild_s": 0.235,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 44,
+    "events": 503,
+    "built": 500,
+    "destroyed": 6,
+    "streets_added": [
+     "u:大麦街#0"
+    ],
+    "structs": [
+     "nymphaeum_maius+"
+    ],
+    "houses": 12663,
+    "ledger_houses": 12663,
+    "bread_books": 12663,
+    "pop": 113967,
+    "food_cap": 153202,
+    "ration": 12.0984,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 408,
+    "rebuild_s": 0.271,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 45,
+    "events": 474,
+    "built": 473,
+    "destroyed": 0,
+    "streets_added": [
+     "u:箍桶匠巷#0"
+    ],
+    "structs": [],
+    "houses": 13136,
+    "ledger_houses": 13136,
+    "bread_books": 13136,
+    "pop": 118224,
+    "food_cap": 153202,
+    "ration": 11.6628,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 412,
+    "rebuild_s": 0.277,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 46,
+    "events": 491,
+    "built": 489,
+    "destroyed": 16,
+    "streets_added": [],
+    "structs": [
+     "horrea_troadensia+"
+    ],
+    "houses": 13609,
+    "ledger_houses": 13609,
+    "bread_books": 13609,
+    "pop": 122481,
+    "food_cap": 173202,
+    "ration": 12.727,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 413,
+    "rebuild_s": 0.261,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 47,
+    "events": 504,
+    "built": 504,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 14113,
+    "ledger_houses": 14113,
+    "bread_books": 14113,
+    "pop": 127017,
+    "food_cap": 173202,
+    "ration": 12.2725,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 414,
+    "rebuild_s": 0.296,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 48,
+    "events": 465,
+    "built": 461,
+    "destroyed": 287,
+    "streets_added": [
+     "u:井台巷#0",
+     "u:新井巷#0",
+     "u:皮匠巷#0"
+    ],
+    "structs": [],
+    "houses": 14287,
+    "ledger_houses": 14287,
+    "bread_books": 14287,
+    "pop": 128583,
+    "food_cap": 173202,
+    "ration": 12.123,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 413,
+    "rebuild_s": 0.298,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 49,
+    "events": 514,
+    "built": 509,
+    "destroyed": 8,
+    "streets_added": [
+     "u:城门里街#0",
+     "u:旧衣巷#0",
+     "u:灯油巷#0"
+    ],
+    "structs": [
+     "church_anastasia+"
+    ],
+    "houses": 14788,
+    "ledger_houses": 14788,
+    "bread_books": 14788,
+    "pop": 133092,
+    "food_cap": 173202,
+    "ration": 11.7123,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 418,
+    "rebuild_s": 0.316,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 50,
+    "events": 508,
+    "built": 508,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 15296,
+    "ledger_houses": 15296,
+    "bread_books": 15296,
+    "pop": 137664,
+    "food_cap": 173202,
+    "ration": 11.3234,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 425,
+    "rebuild_s": 0.329,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 51,
+    "events": 121,
+    "built": 121,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 15417,
+    "ledger_houses": 15417,
+    "bread_books": 15417,
+    "pop": 138753,
+    "food_cap": 173202,
+    "ration": 11.2345,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 426,
+    "rebuild_s": 0.3,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 52,
+    "events": 153,
+    "built": 152,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [
+     "arian_meeting+"
+    ],
+    "houses": 15569,
+    "ledger_houses": 15569,
+    "bread_books": 15569,
+    "pop": 140121,
+    "food_cap": 173202,
+    "ration": 11.1248,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 427,
+    "rebuild_s": 0.338,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 53,
+    "events": 139,
+    "built": 139,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 15708,
+    "ledger_houses": 15708,
+    "bread_books": 15708,
+    "pop": 141372,
+    "food_cap": 173202,
+    "ration": 11.0264,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 428,
+    "rebuild_s": 0.339,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 54,
+    "events": 143,
+    "built": 141,
+    "destroyed": 17,
+    "streets_added": [],
+    "structs": [
+     "cistern_carriers+"
+    ],
+    "houses": 15832,
+    "ledger_houses": 15832,
+    "bread_books": 15832,
+    "pop": 142488,
+    "food_cap": 173202,
+    "ration": 10.94,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 429,
+    "rebuild_s": 0.358,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 55,
+    "events": 126,
+    "built": 123,
+    "destroyed": 5,
+    "streets_added": [
+     "u:浴场后街#0"
+    ],
+    "structs": [
+     "horrea_alexandrina+"
+    ],
+    "houses": 15950,
+    "ledger_houses": 15950,
+    "bread_books": 15950,
+    "pop": 143550,
+    "food_cap": 193202,
+    "ration": 12.113,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 429,
+    "rebuild_s": 0.353,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 56,
+    "events": 147,
+    "built": 147,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 16097,
+    "ledger_houses": 16097,
+    "bread_books": 16097,
+    "pop": 144873,
+    "food_cap": 193202,
+    "ration": 12.0024,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 431,
+    "rebuild_s": 0.349,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 57,
+    "events": 140,
+    "built": 138,
+    "destroyed": 29,
+    "streets_added": [],
+    "structs": [
+     "forum_theodosius+"
+    ],
+    "houses": 16206,
+    "ledger_houses": 16206,
+    "bread_books": 16206,
+    "pop": 145854,
+    "food_cap": 193202,
+    "ration": 11.9216,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 431,
+    "rebuild_s": 0.348,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 58,
+    "events": 125,
+    "built": 125,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 16331,
+    "ledger_houses": 16331,
+    "bread_books": 16331,
+    "pop": 146979,
+    "food_cap": 193202,
+    "ration": 11.8304,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 431,
+    "rebuild_s": 0.354,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 59,
+    "events": 123,
+    "built": 123,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 16454,
+    "ledger_houses": 16454,
+    "bread_books": 16454,
+    "pop": 148086,
+    "food_cap": 193202,
+    "ration": 11.7419,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 433,
+    "rebuild_s": 0.364,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 60,
+    "events": 123,
+    "built": 123,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 16577,
+    "ledger_houses": 16577,
+    "bread_books": 16577,
+    "pop": 149193,
+    "food_cap": 193202,
+    "ration": 11.6548,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 433,
+    "rebuild_s": 0.363,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 61,
+    "events": 126,
+    "built": 126,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 16703,
+    "ledger_houses": 16703,
+    "bread_books": 16703,
+    "pop": 150327,
+    "food_cap": 193202,
+    "ration": 11.5669,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 444,
+    "rebuild_s": 0.359,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 62,
+    "events": 114,
+    "built": 111,
+    "destroyed": 55,
+    "streets_added": [
+     "r_carriers"
+    ],
+    "structs": [
+     "cistern_slope+"
+    ],
+    "houses": 16759,
+    "ledger_houses": 16759,
+    "bread_books": 16759,
+    "pop": 150831,
+    "food_cap": 193202,
+    "ration": 11.5283,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 449,
+    "rebuild_s": 0.369,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 63,
+    "events": 112,
+    "built": 110,
+    "destroyed": 0,
+    "streets_added": [
+     "r_exo"
+    ],
+    "structs": [
+     "d_exokionion+"
+    ],
+    "houses": 16869,
+    "ledger_houses": 16869,
+    "bread_books": 16869,
+    "pop": 151821,
+    "food_cap": 193202,
+    "ration": 11.4531,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 450,
+    "rebuild_s": 0.365,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 64,
+    "events": 119,
+    "built": 118,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [
+     "church_arian_brick+"
+    ],
+    "houses": 16987,
+    "ledger_houses": 16987,
+    "bread_books": 16987,
+    "pop": 152883,
+    "food_cap": 193202,
+    "ration": 11.3735,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 451,
+    "rebuild_s": 0.391,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 65,
+    "events": 100,
+    "built": 98,
+    "destroyed": 13,
+    "streets_added": [],
+    "structs": [
+     "xenon_xerolophos+"
+    ],
+    "houses": 17072,
+    "ledger_houses": 17072,
+    "bread_books": 17072,
+    "pop": 153648,
+    "food_cap": 193202,
+    "ration": 11.3169,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 451,
+    "rebuild_s": 0.368,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 66,
+    "events": 116,
+    "built": 116,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 17188,
+    "ledger_houses": 17188,
+    "bread_books": 17188,
+    "pop": 154692,
+    "food_cap": 193202,
+    "ration": 11.2405,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 453,
+    "rebuild_s": 0.374,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 67,
+    "events": 106,
+    "built": 106,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 17294,
+    "ledger_houses": 17294,
+    "bread_books": 17294,
+    "pop": 155646,
+    "food_cap": 193202,
+    "ration": 11.1716,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 453,
+    "rebuild_s": 0.373,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 68,
+    "events": 114,
+    "built": 114,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 17408,
+    "ledger_houses": 17408,
+    "bread_books": 17408,
+    "pop": 156672,
+    "food_cap": 193202,
+    "ration": 11.0985,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 454,
+    "rebuild_s": 0.372,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 69,
+    "events": 121,
+    "built": 121,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 17529,
+    "ledger_houses": 17529,
+    "bread_books": 17529,
+    "pop": 157761,
+    "food_cap": 193202,
+    "ration": 11.0218,
+    "ration_sum_err": 0.0,
+    "multi_office_households": 0,
+    "nodes": 454,
+    "rebuild_s": 0.341,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   },
+   {
+    "Y": 70,
+    "events": 104,
+    "built": 104,
+    "destroyed": 0,
+    "streets_added": [],
+    "structs": [],
+    "houses": 17633,
+    "ledger_houses": 17633,
+    "bread_books": 17633,
+    "pop": 158697,
+    "food_cap": 193202,
+    "ration": 10.9568,
+    "ration_sum_err": 2.9103830456733704e-11,
+    "multi_office_households": 0,
+    "nodes": 455,
+    "rebuild_s": 0.377,
+    "incr_eq_full": true,
+    "missing": 0,
+    "field_mismatch": {},
+    "node_mismatch": 0
+   }
+  ]
+ },
+ "rt_street": {
+  "n": 33,
+  "all_equal": true,
+  "remove_ms": {
+   "n": 33,
+   "median_ms": 84.563,
+   "p90_ms": 189.596,
+   "max_ms": 311.307
+  },
+  "add_ms": {
+   "n": 33,
+   "median_ms": 86.682,
+   "p90_ms": 190.066,
+   "max_ms": 309.21
+  },
+  "items": [
+   {
+    "id": "r_old_harbor",
+    "remove_ms": 95.65,
+    "add_ms": 94.9,
+    "moved_remove": 2447,
+    "moved_add": 2447,
+    "equal": true
+   },
+   {
+    "id": "r_acropolis",
+    "remove_ms": 160.68,
+    "add_ms": 161.59,
+    "moved_remove": 8597,
+    "moved_add": 8597,
+    "equal": true
+   },
+   {
+    "id": "r_south",
+    "remove_ms": 152.89,
+    "add_ms": 158.0,
+    "moved_remove": 6596,
+    "moved_add": 6596,
+    "equal": true
+   },
+   {
+    "id": "r_east",
+    "remove_ms": 87.17,
+    "add_ms": 86.68,
+    "moved_remove": 1904,
+    "moved_add": 1904,
+    "equal": true
+   },
+   {
+    "id": "r_west",
+    "remove_ms": 169.05,
+    "add_ms": 179.16,
+    "moved_remove": 7872,
+    "moved_add": 7872,
+    "equal": true
+   },
+   {
+    "id": "r_mese",
+    "remove_ms": 311.31,
+    "add_ms": 309.21,
+    "moved_remove": 13423,
+    "moved_add": 13423,
+    "equal": true
+   },
+   {
+    "id": "r_hippo",
+    "remove_ms": 94.73,
+    "add_ms": 94.09,
+    "moved_remove": 894,
+    "moved_add": 894,
+    "equal": true
+   },
+   {
+    "id": "r_harbor_south",
+    "remove_ms": 140.93,
+    "add_ms": 139.8,
+    "moved_remove": 3696,
+    "moved_add": 3696,
+    "equal": true
+   },
+   {
+    "id": "r_north1",
+    "remove_ms": 116.27,
+    "add_ms": 116.91,
+    "moved_remove": 1495,
+    "moved_add": 1495,
+    "equal": true
+   },
+   {
+    "id": "r_north2",
+    "remove_ms": 212.71,
+    "add_ms": 215.08,
+    "moved_remove": 10452,
+    "moved_add": 10452,
+    "equal": true
+   },
+   {
+    "id": "r_north3",
+    "remove_ms": 128.18,
+    "add_ms": 127.76,
+    "moved_remove": 4745,
+    "moved_add": 4745,
+    "equal": true
+   },
+   {
+    "id": "r_west_s",
+    "remove_ms": 51.02,
+    "add_ms": 51.7,
+    "moved_remove": 750,
+    "moved_add": 750,
+    "equal": true
+   },
+   {
+    "id": "r_south2",
+    "remove_ms": 193.44,
+    "add_ms": 194.73,
+    "moved_remove": 10401,
+    "moved_add": 10401,
+    "equal": true
+   },
+   {
+    "id": "r_mese_north",
+    "remove_ms": 84.56,
+    "add_ms": 86.99,
+    "moved_remove": 511,
+    "moved_add": 511,
+    "equal": true
+   },
+   {
+    "id": "r_firebreak",
+    "remove_ms": 191.83,
+    "add_ms": 191.82,
+    "moved_remove": 9522,
+    "moved_add": 9522,
+    "equal": true
+   },
+   {
+    "id": "r_egnatia",
+    "remove_ms": 168.34,
+    "add_ms": 169.12,
+    "moved_remove": 10295,
+    "moved_add": 10295,
+    "equal": true
+   },
+   {
+    "id": "r_mocius",
+    "remove_ms": 30.81,
+    "add_ms": 31.68,
+    "moved_remove": 1204,
+    "moved_add": 1204,
+    "equal": true
+   },
+   {
+    "id": "r_exo",
+    "remove_ms": 22.41,
+    "add_ms": 28.66,
+    "moved_remove": 544,
+    "moved_add": 544,
+    "equal": true
+   },
+   {
+    "id": "r_carriers",
+    "remove_ms": 46.54,
+    "add_ms": 47.04,
+    "moved_remove": 676,
+    "moved_add": 676,
+    "equal": true
+   },
+   {
+    "id": "u:铜匠街#0",
+    "remove_ms": 14.06,
+    "add_ms": 18.29,
+    "moved_remove": 207,
+    "moved_add": 207,
+    "equal": true
+   },
+   {
+    "id": "u:哥特人巷#0",
+    "remove_ms": 26.45,
+    "add_ms": 24.7,
+    "moved_remove": 217,
+    "moved_add": 217,
+    "equal": true
+   },
+   {
+    "id": "u:浴场后街#0",
+    "remove_ms": 33.4,
+    "add_ms": 33.53,
+    "moved_remove": 154,
+    "moved_add": 154,
+    "equal": true
+   },
+   {
+    "id": "u:城门里街#0",
+    "remove_ms": 24.08,
+    "add_ms": 24.18,
+    "moved_remove": 186,
+    "moved_add": 186,
+    "equal": true
+   },
+   {
+    "id": "u:城墙根街#0",
+    "remove_ms": 177.36,
+    "add_ms": 160.48,
+    "moved_remove": 9164,
+    "moved_add": 9164,
+    "equal": true
+   },
+   {
+    "id": "u:摊子巷#0",
+    "remove_ms": 11.77,
+    "add_ms": 12.68,
+    "moved_remove": 10,
+    "moved_add": 10,
+    "equal": true
+   },
+   {
+    "id": "u:井台巷#0",
+    "remove_ms": 11.22,
+    "add_ms": 12.36,
+    "moved_remove": 12,
+    "moved_add": 12,
+    "equal": true
+   },
+   {
+    "id": "u:新井巷#0",
+    "remove_ms": 36.2,
+    "add_ms": 37.11,
+    "moved_remove": 382,
+    "moved_add": 382,
+    "equal": true
+   },
+   {
+    "id": "u:木匠街#0",
+    "remove_ms": 180.67,
+    "add_ms": 183.05,
+    "moved_remove": 10252,
+    "moved_add": 10252,
+    "equal": true
+   },
+   {
+    "id": "u:旧衣巷#0",
+    "remove_ms": 25.63,
+    "add_ms": 26.38,
+    "moved_remove": 194,
+    "moved_add": 194,
+    "equal": true
+   },
+   {
+    "id": "u:灯油巷#0",
+    "remove_ms": 19.06,
+    "add_ms": 19.3,
+    "moved_remove": 164,
+    "moved_add": 164,
+    "equal": true
+   },
+   {
+    "id": "u:大麦街#0",
+    "remove_ms": 12.53,
+    "add_ms": 13.03,
+    "moved_remove": 173,
+    "moved_add": 173,
+    "equal": true
+   },
+   {
+    "id": "u:箍桶匠巷#0",
+    "remove_ms": 12.27,
+    "add_ms": 12.58,
+    "moved_remove": 57,
+    "moved_add": 57,
+    "equal": true
+   },
+   {
+    "id": "u:皮匠巷#0",
+    "remove_ms": 18.98,
+    "add_ms": 19.79,
+    "moved_remove": 37,
+    "moved_add": 37,
+    "equal": true
+   }
+  ]
+ },
+ "rt_fac": {
+  "n": 18,
+  "all_equal": true,
+  "remove_ms": {
+   "n": 18,
+   "median_ms": 45.917,
+   "p90_ms": 88.721,
+   "max_ms": 113.572
+  },
+  "add_ms": {
+   "n": 18,
+   "median_ms": 45.904,
+   "p90_ms": 87.928,
+   "max_ms": 113.778
+  },
+  "items": [
+   {
+    "id": "gate_founder",
+    "remove_ms": 113.57,
+    "add_ms": 113.78,
+    "moved_remove": 11541,
+    "moved_add": 11541,
+    "equal": true
+   },
+   {
+    "id": "wall_founder",
+    "remove_ms": 81.5,
+    "add_ms": 82.47,
+    "moved_remove": 6092,
+    "moved_add": 6092,
+    "equal": true
+   },
+   {
+    "id": "church_peace",
+    "remove_ms": 30.34,
+    "add_ms": 31.75,
+    "moved_remove": 2069,
+    "moved_add": 2069,
+    "equal": true
+   },
+   {
+    "id": "granary_founder",
+    "remove_ms": 56.67,
+    "add_ms": 57.63,
+    "moved_remove": 2206,
+    "moved_add": 2206,
+    "equal": true
+   },
+   {
+    "id": "cistern_founder",
+    "remove_ms": 82.5,
+    "add_ms": 62.08,
+    "moved_remove": 6235,
+    "moved_add": 6235,
+    "equal": true
+   },
+   {
+    "id": "nymphaeum_great",
+    "remove_ms": 46.28,
+    "add_ms": 46.9,
+    "moved_remove": 3344,
+    "moved_add": 3344,
+    "equal": true
+   },
+   {
+    "id": "church_apostles",
+    "remove_ms": 103.24,
+    "add_ms": 100.67,
+    "moved_remove": 8232,
+    "moved_add": 8232,
+    "equal": true
+   },
+   {
+    "id": "church_megale",
+    "remove_ms": 16.97,
+    "add_ms": 17.5,
+    "moved_remove": 1003,
+    "moved_add": 1003,
+    "equal": true
+   },
+   {
+    "id": "horrea_theodosius",
+    "remove_ms": 65.22,
+    "add_ms": 65.04,
+    "moved_remove": 0,
+    "moved_add": 0,
+    "equal": true
+   },
+   {
+    "id": "church_mocius",
+    "remove_ms": 7.26,
+    "add_ms": 7.08,
+    "moved_remove": 665,
+    "moved_add": 665,
+    "equal": true
+   },
+   {
+    "id": "cistern_modestus",
+    "remove_ms": 45.55,
+    "add_ms": 44.9,
+    "moved_remove": 4562,
+    "moved_add": 4562,
+    "equal": true
+   },
+   {
+    "id": "horrea_troadensia",
+    "remove_ms": 51.47,
+    "add_ms": 51.6,
+    "moved_remove": 1387,
+    "moved_add": 1387,
+    "equal": true
+   },
+   {
+    "id": "church_anastasia",
+    "remove_ms": 69.72,
+    "add_ms": 67.51,
+    "moved_remove": 5664,
+    "moved_add": 5664,
+    "equal": true
+   },
+   {
+    "id": "arian_meeting",
+    "remove_ms": 38.71,
+    "add_ms": 39.83,
+    "moved_remove": 2975,
+    "moved_add": 2975,
+    "equal": true
+   },
+   {
+    "id": "cistern_carriers",
+    "remove_ms": 40.22,
+    "add_ms": 39.79,
+    "moved_remove": 3547,
+    "moved_add": 3547,
+    "equal": true
+   },
+   {
+    "id": "horrea_alexandrina",
+    "remove_ms": 28.92,
+    "add_ms": 29.28,
+    "moved_remove": 0,
+    "moved_add": 0,
+    "equal": true
+   },
+   {
+    "id": "cistern_slope",
+    "remove_ms": 5.36,
+    "add_ms": 5.81,
+    "moved_remove": 176,
+    "moved_add": 176,
+    "equal": true
+   },
+   {
+    "id": "church_arian_brick",
+    "remove_ms": 11.6,
+    "add_ms": 12.49,
+    "moved_remove": 289,
+    "moved_add": 289,
+    "equal": true
+   }
+  ]
+ },
+ "junctions": {
+  "upstream_junctions": 262,
+  "nearest_node_median": 0.398,
+  "share_within_1": 0.9237,
+  "share_within_3": 0.9771,
+  "nearest_deg3_node_median": 4.438,
+  "share_deg3_within_3": 0.3817
+ }
+}

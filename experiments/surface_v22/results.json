@@ -1,0 +1,2544 @@
+{
+ "_doc": "surface_v22 结果——Hark（刘线）",
+ "affine_page_to_ledger": {
+  "matched": 4831,
+  "rms_ledger": 0.014420549488189884,
+  "p95_ledger": 0.025092555059145757
+ },
+ "street_thresholds": {
+  "trade_per_house": [
+   0.7,
+   5.6,
+   12.29
+  ],
+  "craft_per_street": [
+   47.2,
+   143.5,
+   519.7
+  ]
+ },
+ "ledger_only_in_page_bbox": {
+  "60": 0,
+  "65": 113,
+  "70": 208
+ },
+ "nodes": [
+  {
+   "id": "harbor_prosphorion",
+   "kind": "harbor",
+   "name": "普洛斯佛里昂港",
+   "xy": [
+    3612,
+    334
+   ],
+   "built": -657,
+   "inpage": false
+  },
+  {
+   "id": "agora_tetrastoon",
+   "kind": "market",
+   "name": "四柱廊市集",
+   "xy": [
+    3782,
+    1365
+   ],
+   "built": -657,
+   "inpage": false
+  },
+  {
+   "id": "forum_founder",
+   "kind": "market",
+   "name": "建城者广场",
+   "xy": [
+    3000,
+    1393
+   ],
+   "built": 1,
+   "inpage": false
+  },
+  {
+   "id": "church_peace",
+   "kind": "church",
+   "name": "和平教堂",
+   "xy": [
+    3995,
+    1351
+   ],
+   "built": 1,
+   "inpage": false
+  },
+  {
+   "id": "harbor_julian",
+   "kind": "harbor",
+   "name": "尤利安港",
+   "xy": [
+    2410,
+    2325
+   ],
+   "built": 1,
+   "inpage": false
+  },
+  {
+   "id": "church_apostles",
+   "kind": "church",
+   "name": "使徒教堂",
+   "xy": [
+    852,
+    -74
+   ],
+   "built": 11,
+   "inpage": true
+  },
+  {
+   "id": "harbor_neorion",
+   "kind": "harbor",
+   "name": "涅奥里昂港",
+   "xy": [
+    3142,
+    71
+   ],
+   "built": 11,
+   "inpage": false
+  },
+  {
+   "id": "warehouse_horn",
+   "kind": "warehouse",
+   "name": "金角货栈",
+   "xy": [
+    3014,
+    299
+   ],
+   "built": 11,
+   "inpage": false
+  },
+  {
+   "id": "market_embers",
+   "kind": "market",
+   "name": "余烬市集",
+   "xy": [
+    2161,
+    -256
+   ],
+   "built": 23,
+   "inpage": false
+  },
+  {
+   "id": "church_megale",
+   "kind": "church",
+   "name": "大教堂",
+   "xy": [
+    3882,
+    1436
+   ],
+   "built": 30,
+   "inpage": false
+  },
+  {
+   "id": "harbor_theodosius",
+   "kind": "harbor",
+   "name": "狄奥多西港",
+   "xy": [
+    1138,
+    2389
+   ],
+   "built": 33,
+   "inpage": false
+  },
+  {
+   "id": "church_mocius",
+   "kind": "church",
+   "name": "莫基乌斯教堂",
+   "xy": [
+    -313,
+    1166
+   ],
+   "built": 35,
+   "inpage": false
+  },
+  {
+   "id": "church_anastasia",
+   "kind": "church",
+   "name": "阿纳斯塔西娅教堂",
+   "xy": [
+    2886,
+    1564
+   ],
+   "built": 49,
+   "inpage": false
+  },
+  {
+   "id": "arian_meeting",
+   "kind": "church",
+   "name": "阿里乌聚会所",
+   "xy": [
+    43,
+    1706
+   ],
+   "built": 52,
+   "inpage": true
+  },
+  {
+   "id": "forum_theodosius",
+   "kind": "market",
+   "name": "狄奥多西广场",
+   "xy": [
+    2076,
+    1194
+   ],
+   "built": 57,
+   "inpage": false
+  },
+  {
+   "id": "church_arian_brick",
+   "kind": "church",
+   "name": "阿里乌砖堂",
+   "xy": [
+    -85,
+    1564
+   ],
+   "built": 64,
+   "inpage": true
+  }
+ ],
+ "summary": {
+  "AF40": {
+   "year": 40,
+   "households": 10713,
+   "page_houses_present": 2638,
+   "page_matched": 2638,
+   "match_rate": 1.0,
+   "maint_city": {
+    "新修": 3885,
+    "寻常": 5452,
+    "失修": 1375,
+    "破败": 1
+   },
+   "maint_page": {
+    "新修": 1044,
+    "寻常": 712,
+    "失修": 882,
+    "破败": 0
+   },
+   "facade_city": {
+    "住家": 7550,
+    "开张的铺子": 1900,
+    "作坊开工": 464,
+    "关门的铺面": 62,
+    "行号": 737
+   },
+   "facade_page": {
+    "住家": 1834,
+    "开张的铺子": 701,
+    "作坊开工": 38,
+    "关门的铺面": 20,
+    "行号": 45
+   },
+   "closed_shopfronts_city": 62,
+   "closed_shopfronts_page": 20,
+   "closed_low_revenue_city": 0,
+   "open_shops_city": 1900,
+   "workshops_city": 464,
+   "poor_city": 299,
+   "poor_page": 108,
+   "nosmoke_city": 10,
+   "nosmoke_page": 0,
+   "loans_city": 104,
+   "lender_loans_city": 30,
+   "loan_src_city": {
+    "放债人": 30,
+    "亲属": 60,
+    "同区盈余户": 8,
+    "同行会": 6
+   },
+   "alms_city": 0,
+   "renting_out_city": 0,
+   "tenants_city": 0,
+   "ships": 600.0,
+   "path": "基准"
+  },
+  "AF50": {
+   "year": 50,
+   "households": 15296,
+   "page_houses_present": 4078,
+   "page_matched": 4078,
+   "match_rate": 1.0,
+   "maint_city": {
+    "新修": 4706,
+    "寻常": 7217,
+    "失修": 3330,
+    "破败": 43
+   },
+   "maint_page": {
+    "新修": 1233,
+    "寻常": 1513,
+    "失修": 1302,
+    "破败": 30
+   },
+   "facade_city": {
+    "住家": 10668,
+    "开张的铺子": 2336,
+    "作坊开工": 639,
+    "关门的铺面": 603,
+    "行号": 1050
+   },
+   "facade_page": {
+    "住家": 2960,
+    "开张的铺子": 675,
+    "作坊开工": 126,
+    "关门的铺面": 162,
+    "行号": 155
+   },
+   "closed_shopfronts_city": 603,
+   "closed_shopfronts_page": 162,
+   "closed_low_revenue_city": 517,
+   "open_shops_city": 2336,
+   "workshops_city": 639,
+   "poor_city": 426,
+   "poor_page": 109,
+   "nosmoke_city": 194,
+   "nosmoke_page": 62,
+   "loans_city": 546,
+   "lender_loans_city": 74,
+   "loan_src_city": {
+    "亲属": 380,
+    "放债人": 74,
+    "同区盈余户": 71,
+    "同行会": 17,
+    "坊长": 4
+   },
+   "alms_city": 84,
+   "renting_out_city": 758,
+   "tenants_city": 4318,
+   "ships": 600.0,
+   "path": "基准"
+  },
+  "AF60": {
+   "year": 60,
+   "households": 16577,
+   "page_houses_present": 4465,
+   "page_matched": 4465,
+   "match_rate": 1.0,
+   "maint_city": {
+    "新修": 3887,
+    "寻常": 3968,
+    "失修": 8385,
+    "破败": 337
+   },
+   "maint_page": {
+    "新修": 916,
+    "寻常": 1068,
+    "失修": 2175,
+    "破败": 306
+   },
+   "facade_city": {
+    "住家": 11489,
+    "开张的铺子": 2375,
+    "作坊开工": 671,
+    "关门的铺面": 806,
+    "行号": 1236
+   },
+   "facade_page": {
+    "住家": 3202,
+    "开张的铺子": 709,
+    "作坊开工": 127,
+    "关门的铺面": 180,
+    "行号": 247
+   },
+   "closed_shopfronts_city": 806,
+   "closed_shopfronts_page": 180,
+   "closed_low_revenue_city": 706,
+   "open_shops_city": 2375,
+   "workshops_city": 671,
+   "poor_city": 842,
+   "poor_page": 525,
+   "nosmoke_city": 119,
+   "nosmoke_page": 22,
+   "loans_city": 511,
+   "lender_loans_city": 94,
+   "loan_src_city": {
+    "放债人": 94,
+    "亲属": 315,
+    "同行会": 23,
+    "坊长": 11,
+    "同区盈余户": 68
+   },
+   "alms_city": 351,
+   "renting_out_city": 967,
+   "tenants_city": 5573,
+   "ships": 600.0,
+   "path": "基准"
+  },
+  "AF70": {
+   "year": 70,
+   "households": 17633,
+   "page_houses_present": 4465,
+   "page_matched": 4397,
+   "match_rate": 0.9848,
+   "maint_city": {
+    "新修": 4082,
+    "寻常": 4989,
+    "失修": 8128,
+    "破败": 434
+   },
+   "maint_page": {
+    "新修": 846,
+    "寻常": 1224,
+    "失修": 1937,
+    "破败": 390
+   },
+   "facade_city": {
+    "住家": 11976,
+    "开张的铺子": 2463,
+    "作坊开工": 721,
+    "关门的铺面": 883,
+    "行号": 1590
+   },
+   "facade_page": {
+    "住家": 3148,
+    "开张的铺子": 669,
+    "作坊开工": 127,
+    "关门的铺面": 215,
+    "行号": 238
+   },
+   "closed_shopfronts_city": 883,
+   "closed_shopfronts_page": 215,
+   "closed_low_revenue_city": 776,
+   "open_shops_city": 2463,
+   "workshops_city": 721,
+   "poor_city": 960,
+   "poor_page": 613,
+   "nosmoke_city": 94,
+   "nosmoke_page": 18,
+   "loans_city": 544,
+   "lender_loans_city": 108,
+   "loan_src_city": {
+    "放债人": 108,
+    "亲属": 346,
+    "同区盈余户": 70,
+    "坊长": 4,
+    "同行会": 16
+   },
+   "alms_city": 729,
+   "renting_out_city": 1081,
+   "tenants_city": 6227,
+   "ships": 600.0,
+   "path": "基准"
+  },
+  "AF64": {
+   "year": 64,
+   "households": 16987,
+   "page_houses_present": 4465,
+   "page_matched": 4410,
+   "match_rate": 0.9877,
+   "maint_city": {
+    "新修": 3935,
+    "寻常": 4655,
+    "失修": 7998,
+    "破败": 399
+   },
+   "maint_page": {
+    "新修": 818,
+    "寻常": 1226,
+    "失修": 1989,
+    "破败": 377
+   },
+   "facade_city": {
+    "住家": 11678,
+    "开张的铺子": 2408,
+    "作坊开工": 695,
+    "关门的铺面": 838,
+    "行号": 1368
+   },
+   "facade_page": {
+    "住家": 3156,
+    "开张的铺子": 676,
+    "作坊开工": 127,
+    "关门的铺面": 210,
+    "行号": 241
+   },
+   "closed_shopfronts_city": 838,
+   "closed_shopfronts_page": 210,
+   "closed_low_revenue_city": 737,
+   "open_shops_city": 2408,
+   "workshops_city": 695,
+   "poor_city": 986,
+   "poor_page": 620,
+   "nosmoke_city": 105,
+   "nosmoke_page": 22,
+   "loans_city": 525,
+   "lender_loans_city": 109,
+   "loan_src_city": {
+    "放债人": 109,
+    "亲属": 339,
+    "同区盈余户": 56,
+    "同行会": 20,
+    "坊长": 1
+   },
+   "alms_city": 641,
+   "renting_out_city": 1020,
+   "tenants_city": 5847,
+   "ships": 600.0,
+   "path": "骤降路径"
+  },
+  "AF65": {
+   "year": 65,
+   "households": 17072,
+   "page_houses_present": 4465,
+   "page_matched": 4397,
+   "match_rate": 0.9848,
+   "maint_city": {
+    "新修": 3746,
+    "寻常": 4787,
+    "失修": 7740,
+    "破败": 799
+   },
+   "maint_page": {
+    "新修": 761,
+    "寻常": 1231,
+    "失修": 2021,
+    "破败": 384
+   },
+   "facade_city": {
+    "住家": 11719,
+    "开张的铺子": 2425,
+    "作坊开工": 700,
+    "关门的铺面": 836,
+    "行号": 1392
+   },
+   "facade_page": {
+    "住家": 3148,
+    "开张的铺子": 672,
+    "作坊开工": 127,
+    "关门的铺面": 212,
+    "行号": 238
+   },
+   "closed_shopfronts_city": 836,
+   "closed_shopfronts_page": 212,
+   "closed_low_revenue_city": 734,
+   "open_shops_city": 2425,
+   "workshops_city": 700,
+   "poor_city": 1805,
+   "poor_page": 768,
+   "nosmoke_city": 67,
+   "nosmoke_page": 13,
+   "loans_city": 775,
+   "lender_loans_city": 78,
+   "loan_src_city": {
+    "亲属": 588,
+    "放债人": 78,
+    "同区盈余户": 89,
+    "坊长": 9,
+    "同行会": 7,
+    "坊长代发官贷": 4
+   },
+   "alms_city": 705,
+   "renting_out_city": 1030,
+   "tenants_city": 5903,
+   "ships": 180.0,
+   "path": "骤降路径"
+  },
+  "AF66": {
+   "year": 66,
+   "households": 17188,
+   "page_houses_present": 4465,
+   "page_matched": 4397,
+   "match_rate": 0.9848,
+   "maint_city": {
+    "新修": 3791,
+    "寻常": 5412,
+    "失修": 7406,
+    "破败": 579
+   },
+   "maint_page": {
+    "新修": 791,
+    "寻常": 1308,
+    "失修": 1798,
+    "破败": 500
+   },
+   "facade_city": {
+    "住家": 11771,
+    "开张的铺子": 2405,
+    "作坊开工": 702,
+    "关门的铺面": 879,
+    "行号": 1431
+   },
+   "facade_page": {
+    "住家": 3148,
+    "开张的铺子": 664,
+    "作坊开工": 127,
+    "关门的铺面": 220,
+    "行号": 238
+   },
+   "closed_shopfronts_city": 879,
+   "closed_shopfronts_page": 220,
+   "closed_low_revenue_city": 775,
+   "open_shops_city": 2405,
+   "workshops_city": 702,
+   "poor_city": 1281,
+   "poor_page": 830,
+   "nosmoke_city": 62,
+   "nosmoke_page": 11,
+   "loans_city": 565,
+   "lender_loans_city": 123,
+   "loan_src_city": {
+    "放债人": 123,
+    "亲属": 321,
+    "同区盈余户": 90,
+    "同行会": 25,
+    "坊长": 6
+   },
+   "alms_city": 1354,
+   "renting_out_city": 1043,
+   "tenants_city": 5968,
+   "ships": 600.0,
+   "path": "骤降路径"
+  }
+ },
+ "files": {
+  "surface_AF40.json": 269243,
+  "surface_AF50.json": 418360,
+  "surface_AF60.json": 456578,
+  "surface_AF70.json": 451203,
+  "surface_AF65.json": 450753
+ },
+ "shock": {
+  "page_common": 4397,
+  "maint_transitions_page": {
+   "破败→失修": 273,
+   "失修→破败": 267,
+   "寻常→失修": 113,
+   "新修→寻常": 110,
+   "失修→寻常": 86,
+   "寻常→新修": 60,
+   "新修→失修": 36,
+   "失修→新修": 34,
+   "寻常→破败": 13,
+   "新修→破败": 4,
+   "破败→新修": 2,
+   "破败→寻常": 1
+  },
+  "facade_transitions_page": {
+   "开张的铺子→关门的铺面": 5,
+   "关门的铺面→开张的铺子": 3
+  },
+  "harbors": {
+   "64": [
+    {
+     "id": "harbor_prosphorion",
+     "ships": 155,
+     "porters": 1512,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_julian",
+     "ships": 240,
+     "porters": 1419,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_neorion",
+     "ships": 115,
+     "porters": 892,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_theodosius",
+     "ships": 90,
+     "porters": 688,
+     "casual": 581,
+     "fill": 1.0,
+     "store": "满"
+    }
+   ],
+   "65": [
+    {
+     "id": "harbor_prosphorion",
+     "ships": 46,
+     "porters": 388,
+     "casual": 0,
+     "fill": 0.3,
+     "store": "空"
+    },
+    {
+     "id": "harbor_julian",
+     "ships": 72,
+     "porters": 674,
+     "casual": 0,
+     "fill": 0.3,
+     "store": "空"
+    },
+    {
+     "id": "harbor_neorion",
+     "ships": 35,
+     "porters": 380,
+     "casual": 0,
+     "fill": 0.3,
+     "store": "空"
+    },
+    {
+     "id": "harbor_theodosius",
+     "ships": 27,
+     "porters": 196,
+     "casual": 586,
+     "fill": 0.3,
+     "store": "空"
+    }
+   ],
+   "66": [
+    {
+     "id": "harbor_prosphorion",
+     "ships": 155,
+     "porters": 1515,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_julian",
+     "ships": 240,
+     "porters": 1429,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_neorion",
+     "ships": 115,
+     "porters": 894,
+     "casual": 0,
+     "fill": 1.0,
+     "store": "满"
+    },
+    {
+     "id": "harbor_theodosius",
+     "ships": 90,
+     "porters": 698,
+     "casual": 648,
+     "fill": 1.0,
+     "store": "满"
+    }
+   ]
+  },
+  "churches": {
+   "64": {
+    "church_peace": 17,
+    "church_apostles": 355,
+    "church_megale": 13,
+    "church_mocius": 0,
+    "church_anastasia": 115,
+    "arian_meeting": 236,
+    "church_arian_brick": 0
+   },
+   "65": {
+    "church_peace": 13,
+    "church_apostles": 348,
+    "church_megale": 8,
+    "church_mocius": 0,
+    "church_anastasia": 123,
+    "arian_meeting": 262,
+    "church_arian_brick": 0
+   },
+   "66": {
+    "church_peace": 208,
+    "church_apostles": 325,
+    "church_megale": 158,
+    "church_mocius": 1,
+    "church_anastasia": 358,
+    "arian_meeting": 363,
+    "church_arian_brick": 0
+   }
+  },
+  "streets_crowd_page": {
+   "64": {
+    "2": 11,
+    "1": 29,
+    "0": 31,
+    "3": 8
+   },
+   "65": {
+    "2": 15,
+    "1": 26,
+    "0": 34,
+    "3": 4
+   },
+   "66": {
+    "2": 16,
+    "1": 27,
+    "0": 32,
+    "3": 4
+   }
+  },
+  "streets_trade_page": {
+   "64": 12734.6,
+   "65": 10756.4,
+   "66": 12196.7
+  },
+  "streets_beg_page": {
+   "64": 515,
+   "65": 567,
+   "66": 610
+  }
+ },
+ "unmatched": {
+  "AF40": {
+   "n": 0,
+   "ledger_dest": {},
+   "ids": []
+  },
+  "AF50": {
+   "n": 0,
+   "ledger_dest": {},
+   "ids": []
+  },
+  "AF60": {
+   "n": 0,
+   "ledger_dest": {},
+   "ids": []
+  },
+  "AF70": {
+   "n": 68,
+   "ledger_dest": {
+    "65": 13,
+    "62": 55
+   },
+   "ids": [
+    11617,
+    11623,
+    11642,
+    11777,
+    11782,
+    11822,
+    11851,
+    11865,
+    11892,
+    11916,
+    11940,
+    11970,
+    12038,
+    12092,
+    12118,
+    12148,
+    12170,
+    12186,
+    12236,
+    12250,
+    12280,
+    12397,
+    12448,
+    12461,
+    12516,
+    12549,
+    12684,
+    12849,
+    12862,
+    12887,
+    12907,
+    12955,
+    13007,
+    13020,
+    13115,
+    13123,
+    13344,
+    13395,
+    13462,
+    13488,
+    13574,
+    13631,
+    13714,
+    13883,
+    13887,
+    14053,
+    14069,
+    14093,
+    14115,
+    14222,
+    14331,
+    14368,
+    14379,
+    14708,
+    14890,
+    14894,
+    14913,
+    15036,
+    15131,
+    15328,
+    16535,
+    16637,
+    16799,
+    16847,
+    16985,
+    17421,
+    17451,
+    17632
+   ]
+  },
+  "AF64": {
+   "n": 55,
+   "ledger_dest": {
+    "62": 55
+   },
+   "ids": [
+    11777,
+    11782,
+    11851,
+    11865,
+    11916,
+    11970,
+    12092,
+    12118,
+    12148,
+    12170,
+    12250,
+    12280,
+    12397,
+    12448,
+    12461,
+    12549,
+    12684,
+    12849,
+    12862,
+    12887,
+    12907,
+    12955,
+    13115,
+    13123,
+    13344,
+    13395,
+    13462,
+    13488,
+    13574,
+    13631,
+    13714,
+    13883,
+    13887,
+    14053,
+    14069,
+    14093,
+    14115,
+    14222,
+    14331,
+    14368,
+    14379,
+    14708,
+    14890,
+    14894,
+    14913,
+    15036,
+    15131,
+    15328,
+    16535,
+    16637,
+    16847,
+    16985,
+    17421,
+    17451,
+    17632
+   ]
+  },
+  "AF65": {
+   "n": 68,
+   "ledger_dest": {
+    "65": 13,
+    "62": 55
+   },
+   "ids": [
+    11617,
+    11623,
+    11642,
+    11777,
+    11782,
+    11822,
+    11851,
+    11865,
+    11892,
+    11916,
+    11940,
+    11970,
+    12038,
+    12092,
+    12118,
+    12148,
+    12170,
+    12186,
+    12236,
+    12250,
+    12280,
+    12397,
+    12448,
+    12461,
+    12516,
+    12549,
+    12684,
+    12849,
+    12862,
+    12887,
+    12907,
+    12955,
+    13007,
+    13020,
+    13115,
+    13123,
+    13344,
+    13395,
+    13462,
+    13488,
+    13574,
+    13631,
+    13714,
+    13883,
+    13887,
+    14053,
+    14069,
+    14093,
+    14115,
+    14222,
+    14331,
+    14368,
+    14379,
+    14708,
+    14890,
+    14894,
+    14913,
+    15036,
+    15131,
+    15328,
+    16535,
+    16637,
+    16799,
+    16847,
+    16985,
+    17421,
+    17451,
+    17632
+   ]
+  },
+  "AF66": {
+   "n": 68,
+   "ledger_dest": {
+    "65": 13,
+    "62": 55
+   },
+   "ids": [
+    11617,
+    11623,
+    11642,
+    11777,
+    11782,
+    11822,
+    11851,
+    11865,
+    11892,
+    11916,
+    11940,
+    11970,
+    12038,
+    12092,
+    12118,
+    12148,
+    12170,
+    12186,
+    12236,
+    12250,
+    12280,
+    12397,
+    12448,
+    12461,
+    12516,
+    12549,
+    12684,
+    12849,
+    12862,
+    12887,
+    12907,
+    12955,
+    13007,
+    13020,
+    13115,
+    13123,
+    13344,
+    13395,
+    13462,
+    13488,
+    13574,
+    13631,
+    13714,
+    13883,
+    13887,
+    14053,
+    14069,
+    14093,
+    14115,
+    14222,
+    14331,
+    14368,
+    14379,
+    14708,
+    14890,
+    14894,
+    14913,
+    15036,
+    15131,
+    15328,
+    16535,
+    16637,
+    16799,
+    16847,
+    16985,
+    17421,
+    17451,
+    17632
+   ]
+  }
+ },
+ "streets_dist": {
+  "AF40": {
+   "crowd": {
+    "1": 31,
+    "2": 10,
+    "0": 21,
+    "3": 2
+   },
+   "smoke": {
+    "1": 13,
+    "0": 44,
+    "3": 1,
+    "2": 6
+   },
+   "beg_spots": 0,
+   "n": 64
+  },
+  "AF50": {
+   "crowd": {
+    "2": 16,
+    "1": 31,
+    "0": 28,
+    "3": 3
+   },
+   "smoke": {
+    "2": 8,
+    "0": 55,
+    "3": 3,
+    "1": 12
+   },
+   "beg_spots": 6,
+   "n": 78
+  },
+  "AF60": {
+   "crowd": {
+    "2": 16,
+    "1": 26,
+    "0": 31,
+    "3": 6
+   },
+   "smoke": {
+    "2": 9,
+    "0": 52,
+    "3": 4,
+    "1": 14
+   },
+   "beg_spots": 8,
+   "n": 79
+  },
+  "AF70": {
+   "crowd": {
+    "2": 13,
+    "1": 27,
+    "0": 32,
+    "3": 7
+   },
+   "smoke": {
+    "2": 8,
+    "1": 16,
+    "3": 4,
+    "0": 51
+   },
+   "beg_spots": 7,
+   "n": 79
+  },
+  "AF64": {
+   "crowd": {
+    "2": 11,
+    "1": 29,
+    "0": 31,
+    "3": 8
+   },
+   "smoke": {
+    "2": 9,
+    "1": 14,
+    "3": 4,
+    "0": 52
+   },
+   "beg_spots": 8,
+   "n": 79
+  },
+  "AF65": {
+   "crowd": {
+    "2": 15,
+    "1": 26,
+    "0": 34,
+    "3": 4
+   },
+   "smoke": {
+    "2": 8,
+    "1": 14,
+    "3": 1,
+    "0": 56
+   },
+   "beg_spots": 7,
+   "n": 79
+  },
+  "AF66": {
+   "crowd": {
+    "2": 16,
+    "1": 27,
+    "0": 32,
+    "3": 4
+   },
+   "smoke": {
+    "2": 8,
+    "1": 12,
+    "3": 4,
+    "0": 55
+   },
+   "beg_spots": 8,
+   "n": 79
+  }
+ },
+ "nodes_by_year": {
+  "AF40": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 202,
+    "sellers_closed": 12,
+    "trade": 4457.5,
+    "buyers": 892,
+    "ships": 155,
+    "porters": 1310,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 398,
+    "sellers_closed": 0,
+    "trade": 7373.4,
+    "buyers": 1667
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 296,
+    "sellers_closed": 3,
+    "trade": 6181.0,
+    "buyers": 1619
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 6
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 96,
+    "sellers_closed": 4,
+    "trade": 3198.7,
+    "buyers": 934,
+    "ships": 240,
+    "porters": 1039,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 2
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 4,
+    "sellers_closed": 0,
+    "trade": 54.6,
+    "buyers": 12,
+    "ships": 115,
+    "porters": 721,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 162,
+    "sellers_closed": 11,
+    "trade": 4572.3,
+    "buyers": 984
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 914,
+    "sellers_closed": 14,
+    "trade": 10526.0,
+    "buyers": 2861
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 2
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 422,
+    "sellers_closed": 18,
+    "trade": 4380.9,
+    "buyers": 1744,
+    "ships": 90,
+    "porters": 752,
+    "casual": 0,
+    "load_fee": 2152.0,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 0
+   }
+  ],
+  "AF50": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 215,
+    "sellers_closed": 13,
+    "trade": 5485.7,
+    "buyers": 952,
+    "ships": 155,
+    "porters": 1464,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 425,
+    "sellers_closed": 0,
+    "trade": 8587.7,
+    "buyers": 1764
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 360,
+    "sellers_closed": 3,
+    "trade": 7762.4,
+    "buyers": 2027
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 16
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 156,
+    "sellers_closed": 6,
+    "trade": 5197.7,
+    "buyers": 1249,
+    "ships": 240,
+    "porters": 1330,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 213
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 95.3,
+    "buyers": 18,
+    "ships": 115,
+    "porters": 840,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 197,
+    "sellers_closed": 11,
+    "trade": 5908.1,
+    "buyers": 1158
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 1145,
+    "sellers_closed": 544,
+    "trade": 20364.0,
+    "buyers": 4870
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 10
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 653,
+    "sellers_closed": 26,
+    "trade": 11087.7,
+    "buyers": 3258,
+    "ships": 90,
+    "porters": 746,
+    "casual": 0,
+    "load_fee": 2152.0,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 1
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 38
+   }
+  ],
+  "AF60": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 220,
+    "sellers_closed": 13,
+    "trade": 5284.9,
+    "buyers": 988,
+    "ships": 155,
+    "porters": 1508,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 444,
+    "sellers_closed": 0,
+    "trade": 8272.8,
+    "buyers": 1837
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 275,
+    "sellers_closed": 8,
+    "trade": 4909.4,
+    "buyers": 1363
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 19
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 162,
+    "sellers_closed": 7,
+    "trade": 4541.0,
+    "buyers": 958,
+    "ships": 240,
+    "porters": 1400,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 208
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 82.0,
+    "buyers": 19,
+    "ships": 115,
+    "porters": 885,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 180,
+    "sellers_closed": 13,
+    "trade": 5195.1,
+    "buyers": 1079
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 826,
+    "sellers_closed": 613,
+    "trade": 17448.8,
+    "buyers": 4126
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 13
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 475,
+    "sellers_closed": 23,
+    "trade": 8899.6,
+    "buyers": 2634,
+    "ships": 90,
+    "porters": 669,
+    "casual": 444,
+    "load_fee": 2152.0,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 0
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 69
+   },
+   {
+    "id": "arian_meeting",
+    "kind": "church",
+    "name": "阿里乌聚会所",
+    "x": 43,
+    "y": 1706,
+    "inpage": true,
+    "alms_queue": 160
+   },
+   {
+    "id": "forum_theodosius",
+    "kind": "market",
+    "name": "狄奥多西广场",
+    "x": 2076,
+    "y": 1194,
+    "inpage": false,
+    "sellers_open": 666,
+    "sellers_closed": 129,
+    "trade": 8942.8,
+    "buyers": 3573
+   }
+  ],
+  "AF70": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 229,
+    "sellers_closed": 13,
+    "trade": 5492.5,
+    "buyers": 1019,
+    "ships": 155,
+    "porters": 1517,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 450,
+    "sellers_closed": 0,
+    "trade": 8484.7,
+    "buyers": 1876
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 288,
+    "sellers_closed": 3,
+    "trade": 5188.4,
+    "buyers": 1408
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 19
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 172,
+    "sellers_closed": 7,
+    "trade": 4835.0,
+    "buyers": 993,
+    "ships": 240,
+    "porters": 1436,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 366
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 92.1,
+    "buyers": 19,
+    "ships": 115,
+    "porters": 906,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 185,
+    "sellers_closed": 15,
+    "trade": 5268.5,
+    "buyers": 1109
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 846,
+    "sellers_closed": 651,
+    "trade": 13548.9,
+    "buyers": 4296
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 13
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 855,
+    "sellers_closed": 26,
+    "trade": 17375.5,
+    "buyers": 3244,
+    "ships": 90,
+    "porters": 717,
+    "casual": 604,
+    "load_fee": 2151.9,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 4
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 132
+   },
+   {
+    "id": "arian_meeting",
+    "kind": "church",
+    "name": "阿里乌聚会所",
+    "x": 43,
+    "y": 1706,
+    "inpage": true,
+    "alms_queue": 286
+   },
+   {
+    "id": "forum_theodosius",
+    "kind": "market",
+    "name": "狄奥多西广场",
+    "x": 2076,
+    "y": 1194,
+    "inpage": false,
+    "sellers_open": 645,
+    "sellers_closed": 168,
+    "trade": 9131.4,
+    "buyers": 3669
+   },
+   {
+    "id": "church_arian_brick",
+    "kind": "church",
+    "name": "阿里乌砖堂",
+    "x": -85,
+    "y": 1564,
+    "inpage": true,
+    "alms_queue": 2
+   }
+  ],
+  "AF64": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 224,
+    "sellers_closed": 13,
+    "trade": 5301.3,
+    "buyers": 1003,
+    "ships": 155,
+    "porters": 1512,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 447,
+    "sellers_closed": 0,
+    "trade": 8328.3,
+    "buyers": 1852
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 284,
+    "sellers_closed": 3,
+    "trade": 5073.4,
+    "buyers": 1383
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 17
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 169,
+    "sellers_closed": 7,
+    "trade": 4727.9,
+    "buyers": 981,
+    "ships": 240,
+    "porters": 1419,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 355
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 72.3,
+    "buyers": 19,
+    "ships": 115,
+    "porters": 892,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 182,
+    "sellers_closed": 13,
+    "trade": 5097.4,
+    "buyers": 1089
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 854,
+    "sellers_closed": 609,
+    "trade": 13335.7,
+    "buyers": 4194
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 13
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 615,
+    "sellers_closed": 24,
+    "trade": 14931.3,
+    "buyers": 2851,
+    "ships": 90,
+    "porters": 688,
+    "casual": 581,
+    "load_fee": 2152.0,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 0
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 115
+   },
+   {
+    "id": "arian_meeting",
+    "kind": "church",
+    "name": "阿里乌聚会所",
+    "x": 43,
+    "y": 1706,
+    "inpage": true,
+    "alms_queue": 236
+   },
+   {
+    "id": "forum_theodosius",
+    "kind": "market",
+    "name": "狄奥多西广场",
+    "x": 2076,
+    "y": 1194,
+    "inpage": false,
+    "sellers_open": 633,
+    "sellers_closed": 169,
+    "trade": 8847.5,
+    "buyers": 3615
+   },
+   {
+    "id": "church_arian_brick",
+    "kind": "church",
+    "name": "阿里乌砖堂",
+    "x": -85,
+    "y": 1564,
+    "inpage": true,
+    "alms_queue": 0
+   }
+  ],
+  "AF65": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 225,
+    "sellers_closed": 13,
+    "trade": 4557.8,
+    "buyers": 1007,
+    "ships": 46,
+    "porters": 388,
+    "casual": 0,
+    "load_fee": 1115.1,
+    "store_fee": 334.5,
+    "fill": 0.3,
+    "store": "空"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 447,
+    "sellers_closed": 0,
+    "trade": 6879.9,
+    "buyers": 1854
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 285,
+    "sellers_closed": 3,
+    "trade": 4283.5,
+    "buyers": 1388
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 13
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 169,
+    "sellers_closed": 7,
+    "trade": 4240.9,
+    "buyers": 983,
+    "ships": 72,
+    "porters": 674,
+    "casual": 0,
+    "load_fee": 1729.3,
+    "store_fee": 518.8,
+    "fill": 0.3,
+    "store": "空"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 348
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 87.1,
+    "buyers": 19,
+    "ships": 35,
+    "porters": 380,
+    "casual": 0,
+    "load_fee": 830.1,
+    "store_fee": 1113.0,
+    "fill": 0.3,
+    "store": "空"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 182,
+    "sellers_closed": 13,
+    "trade": 4401.5,
+    "buyers": 1091
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 868,
+    "sellers_closed": 603,
+    "trade": 11234.3,
+    "buyers": 4214
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 8
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 644,
+    "sellers_closed": 24,
+    "trade": 13658.7,
+    "buyers": 2894,
+    "ships": 27,
+    "porters": 196,
+    "casual": 586,
+    "load_fee": 645.6,
+    "store_fee": 193.7,
+    "fill": 0.3,
+    "store": "空"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 0
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 123
+   },
+   {
+    "id": "arian_meeting",
+    "kind": "church",
+    "name": "阿里乌聚会所",
+    "x": 43,
+    "y": 1706,
+    "inpage": true,
+    "alms_queue": 262
+   },
+   {
+    "id": "forum_theodosius",
+    "kind": "market",
+    "name": "狄奥多西广场",
+    "x": 2076,
+    "y": 1194,
+    "inpage": false,
+    "sellers_open": 631,
+    "sellers_closed": 173,
+    "trade": 7200.2,
+    "buyers": 3622
+   },
+   {
+    "id": "church_arian_brick",
+    "kind": "church",
+    "name": "阿里乌砖堂",
+    "x": -85,
+    "y": 1564,
+    "inpage": true,
+    "alms_queue": 0
+   }
+  ],
+  "AF66": [
+   {
+    "id": "harbor_prosphorion",
+    "kind": "harbor",
+    "name": "普洛斯佛里昂港",
+    "x": 3612,
+    "y": 334,
+    "inpage": false,
+    "sellers_open": 226,
+    "sellers_closed": 13,
+    "trade": 4879.4,
+    "buyers": 1009,
+    "ships": 155,
+    "porters": 1515,
+    "casual": 0,
+    "load_fee": 3717.0,
+    "store_fee": 1115.1,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "agora_tetrastoon",
+    "kind": "market",
+    "name": "四柱廊市集",
+    "x": 3782,
+    "y": 1365,
+    "inpage": false,
+    "sellers_open": 438,
+    "sellers_closed": 11,
+    "trade": 7990.3,
+    "buyers": 1859
+   },
+   {
+    "id": "forum_founder",
+    "kind": "market",
+    "name": "建城者广场",
+    "x": 3000,
+    "y": 1393,
+    "inpage": false,
+    "sellers_open": 282,
+    "sellers_closed": 7,
+    "trade": 4873.1,
+    "buyers": 1391
+   },
+   {
+    "id": "church_peace",
+    "kind": "church",
+    "name": "和平教堂",
+    "x": 3995,
+    "y": 1351,
+    "inpage": false,
+    "alms_queue": 208
+   },
+   {
+    "id": "harbor_julian",
+    "kind": "harbor",
+    "name": "尤利安港",
+    "x": 2410,
+    "y": 2325,
+    "inpage": false,
+    "sellers_open": 169,
+    "sellers_closed": 7,
+    "trade": 4216.2,
+    "buyers": 984,
+    "ships": 240,
+    "porters": 1429,
+    "casual": 0,
+    "load_fee": 5764.2,
+    "store_fee": 1729.3,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_apostles",
+    "kind": "church",
+    "name": "使徒教堂",
+    "x": 852,
+    "y": -74,
+    "inpage": true,
+    "alms_queue": 325
+   },
+   {
+    "id": "harbor_neorion",
+    "kind": "harbor",
+    "name": "涅奥里昂港",
+    "x": 3142,
+    "y": 71,
+    "inpage": false,
+    "sellers_open": 6,
+    "sellers_closed": 0,
+    "trade": 91.2,
+    "buyers": 19,
+    "ships": 115,
+    "porters": 894,
+    "casual": 0,
+    "load_fee": 2766.8,
+    "store_fee": 3710.0,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "warehouse_horn",
+    "kind": "warehouse",
+    "name": "金角货栈",
+    "x": 3014,
+    "y": 299,
+    "inpage": false,
+    "sellers_open": 182,
+    "sellers_closed": 14,
+    "trade": 4624.1,
+    "buyers": 1095
+   },
+   {
+    "id": "market_embers",
+    "kind": "market",
+    "name": "余烬市集",
+    "x": 2161,
+    "y": -256,
+    "inpage": false,
+    "sellers_open": 852,
+    "sellers_closed": 625,
+    "trade": 12434.1,
+    "buyers": 4231
+   },
+   {
+    "id": "church_megale",
+    "kind": "church",
+    "name": "大教堂",
+    "x": 3882,
+    "y": 1436,
+    "inpage": false,
+    "alms_queue": 158
+   },
+   {
+    "id": "harbor_theodosius",
+    "kind": "harbor",
+    "name": "狄奥多西港",
+    "x": 1138,
+    "y": 2389,
+    "inpage": false,
+    "sellers_open": 682,
+    "sellers_closed": 25,
+    "trade": 14874.0,
+    "buyers": 2969,
+    "ships": 90,
+    "porters": 698,
+    "casual": 648,
+    "load_fee": 2152.0,
+    "store_fee": 645.6,
+    "fill": 1.0,
+    "store": "满"
+   },
+   {
+    "id": "church_mocius",
+    "kind": "church",
+    "name": "莫基乌斯教堂",
+    "x": -313,
+    "y": 1166,
+    "inpage": false,
+    "alms_queue": 1
+   },
+   {
+    "id": "church_anastasia",
+    "kind": "church",
+    "name": "阿纳斯塔西娅教堂",
+    "x": 2886,
+    "y": 1564,
+    "inpage": false,
+    "alms_queue": 358
+   },
+   {
+    "id": "arian_meeting",
+    "kind": "church",
+    "name": "阿里乌聚会所",
+    "x": 43,
+    "y": 1706,
+    "inpage": true,
+    "alms_queue": 363
+   },
+   {
+    "id": "forum_theodosius",
+    "kind": "market",
+    "name": "狄奥多西广场",
+    "x": 2076,
+    "y": 1194,
+    "inpage": false,
+    "sellers_open": 629,
+    "sellers_closed": 177,
+    "trade": 8617.7,
+    "buyers": 3631
+   },
+   {
+    "id": "church_arian_brick",
+    "kind": "church",
+    "name": "阿里乌砖堂",
+    "x": -85,
+    "y": 1564,
+    "inpage": true,
+    "alms_queue": 0
+   }
+  ]
+ }
+}

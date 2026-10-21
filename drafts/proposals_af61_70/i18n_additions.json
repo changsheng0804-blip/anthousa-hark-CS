@@ -1,0 +1,17 @@
+{
+ "names_zh": {
+  "cistern_slope": "运水人第二蓄水池",
+  "r_carriers": "运水人石阶",
+  "r_exo": "新来人巷",
+  "d_exokionion": "城墙外新区",
+  "r_firebreak_hill": "干山防火巷",
+  "church_arian_brick": "城门外阿里乌派礼拜堂",
+  "xenon_xerolophos": "干山孤寡院"
+ },
+ "labels_zh": {
+  "cistern_slope": "运水人二池",
+  "d_exokionion": "城墙外新区",
+  "church_arian_brick": "阿里乌派礼拜堂",
+  "xenon_xerolophos": "孤寡院"
+ }
+}
