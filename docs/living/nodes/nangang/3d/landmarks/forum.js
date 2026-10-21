@@ -9,8 +9,8 @@
    中门约 7 m 宽、比两侧门高，四个墩子每个是 4 根束柱，柱子雕成赫拉克勒斯的棍棒（树干状，有「泪滴 / 孔雀眼」纹），其中几根柱头下有握拳；
    顶上中间狄奥多西像、两边阿卡狄乌斯和霍诺留像。东西两个主入口（Columbia 的 Istanbul Documentation Project 说两头各一座凯旋门；底账只写西门 → 东边只做一座柱廊门楼）。
    假设（都写在 notes.md，可推翻）：柱廊两层（下层科林斯柱 + 上层矮柱和栏板），进深 11 px ≈ 9.2 m，柱距 3.2 m；外墙砖带石，下层每两开间一个铺面门洞、上层拱窗；
-   单坡瓦顶朝院子；南北两侧在小街 c 的位置各开一个拱门；凯旋门总宽 28.2 m（侧门 4.2 m，第 2 轮按参考的宽高比放宽）、深 4 m、到女儿墙顶 23.4 m、雕像 4.2 / 3.6 m（复用纪功柱的烘焙像）。
-   史诗夸张（MODULE_CONTRACT §7）：凯旋门整座 ×HERO_SCALE 1.4（同纪功柱，占地是这里假设的，不是底账）；柱廊只放大高 ×PORTICO_SCALE 1.2（同改前 buildings 的 LM_SCALE.forum），占地照底账。
+   单坡瓦顶朝院子；南北两侧在小街 c 的位置各开一个拱门；凯旋门总宽 28.2 m（侧门 4.2 m，第 2 轮按参考的宽高比放宽）、深 4 m、到女儿墙顶 26.7 m（第 1 轮 23.4）、雕像 6.0 / 5.0 m（第 1 轮 4.2 / 3.6；复用纪功柱的烘焙像）。
+   史诗夸张（MODULE_CONTRACT §7）：凯旋门宽 / 进深 ×HERO_SCALE 1.4、高 ×ARCH_HERO_Y 1.65（第 2 轮，主人「留，可以夸张一点」；第 1 轮整座 ×1.4）；柱廊只放大高 ×PORTICO_SCALE 1.3（第 1 轮 1.2），占地照底账。
    落地（§6 第 13 条）：每翼按 ≤ 30 px 分段，每段 ctx.footing → 地坪 = max、台基伸到 min − 0.6，ctx.foot 登记；凯旋门、东门、角墩各自落地。
    结构：完工（≥ 64 年）的几何不随年份变，建一次缓存成 THREE.LOD（近 / 远，LOD_FAR 像素）；57–63 年每次按年份新建（施工中，只一档）。?lmmask=1 全换品红。
    确定性：随机只用 ctx.hsh / 底账 seed。 */
@@ -27,7 +27,11 @@ export const id = 'forum_theodosius';
 export const key = 'forum_theodosius:forum';                 // __landmarkStats 里的键（纪功柱占着 forum_theodosius）
 export const selfFoot = true;                                 // 落地自己分段登记，index.js 不替它算整块占地
 export const PHASE = { site: 57, frame: 59, arch: 60, done: 64 };   // proposals/era_0051.json
-export const HERO_SCALE = 1.4, PORTICO_SCALE = 1.2;
+export const HERO_SCALE = 1.4, PORTICO_SCALE = 1.3;
+/* 10-20 第 2 轮（主人「留，可以夸张一点」）：凯旋门的高再单独 ×ARCH_HERO_Y（宽、进深仍 ×HERO_SCALE 1.4，占地不变，MODULE_CONTRACT §7「只放大高」）；
+   拱券、像按 EY = HERO_SCALE / ARCH_HERO_Y 在局部压回去，放大后仍是正圆拱、像不拉长。柱廊 PORTICO_SCALE 1.2 → 1.3（只放大高）。 */
+export const ARCH_HERO_Y = 1.65;
+const EY = HERO_SCALE / ARCH_HERO_Y;
 const K = 1 / 0.84, LOD_FAR = 600;
 /* 平面（页面像素）：柱廊进深 D、外墙厚 WT、柱心离院边 DC、柱距 BAY；入口位置（沿各翼的 s） */
 const D = 11, WT = 0.9 * K, DC = 1.25, BAY = 3.2 * K, SEG = 30;
@@ -37,7 +41,8 @@ const PM = m => m * PORTICO_SCALE * K;
 const Y = { c1: PM(6.0), e1: PM(6.9), par: PM(8.0), c2: PM(11.3), e2: PM(12.0), roof: PM(13.8), wall: PM(14.1) };
 const R1 = 0.5 * K, R2 = 0.4 * K;                            // 下 / 上层柱半径（不放大：只放大高）
 /* 凯旋门（米，局部：x 横跨 = 沿西翼，z = 进深，y 向上；整组 × K × HERO_SCALE） */
-const AR = { inner: 5.1, outer: 12.5, half: 14.1, depth: 2.0, ped: 2.2, col: 9.6, imp: 13.0, attic0: 19.0, attic1: 22.0, top: 22.5, mid: 23.4, cr: 3.5, sr: 2.1, colR: 0.42, colGap: 0.75 };
+/* 第 2 轮：女儿墙 3.0 → 4.6 m 深、中段再高 1.6 m、拱肩留出胜利女神的位置（attic0 19.0 → 19.6）；束柱粗 0.42 → 0.46、柱心距 1.5 → 1.8 m（机位 7 读得出一墩 4 根）；像 4.2 / 3.6 → 6.0 / 5.0 m */
+const AR = { inner: 5.1, outer: 12.5, half: 14.1, depth: 2.0, ped: 2.2, col: 9.6, imp: 13.0, attic0: 19.6, attic1: 24.2, top: 24.8, mid: 26.4, cr: 3.5, sr: 2.1, colR: 0.46, colGap: 0.9, stC: 6.0, stS: 5.0 };
 const ARCH_HALF_PX = AR.half * K * HERO_SCALE + 0.6;
 
 let T = null, M = null, CACHE = null, FILL = null, LAST = { near: 0, far: 0, ms: 0 };
@@ -192,6 +197,7 @@ export function init(ctx) {
   const f = (ctx.by.landmark || []).find(x => x.id === id), seed = (f ? f.seed : 1) + 101;
   const t0 = performance.now();
   FILL = makeFill(T, { tag: 'forum' });
+  const FB = makeFill(T, { tag: 'forum-arch', base: 0.3, bounce: [0.5, 0.44, 0.36] });   // 第 2 轮：拱腹 / 檐口底朝下，补一项铺地暖反光
   const mb = marbleTex(seed), wl = wallTex(seed + 1), rf = roofTex(seed + 2), cl = colTex(seed + 3), cb = clubTex(seed + 4), at = atticTex(seed + 5);
   const L = (o, k) => FILL(new T.MeshLambertMaterial(o), k);
   M = {
@@ -199,11 +205,13 @@ export function init(ctx) {
     wall: L({ map: wl.map, normalMap: wl.normalMap, color: 0xb4a894, side: T.DoubleSide }, 'wall'),
     roof: L({ map: rf.map, normalMap: rf.normalMap, side: T.DoubleSide }, 'roof'),
     col: L({ map: cl.map, normalMap: cl.normalMap, color: 0xe2dccf }, 'col'),
-    club: L({ map: cb.map, normalMap: cb.normalMap, color: 0xbcb9b0 }, 'club'),
+    club: FB(new T.MeshLambertMaterial({ map: cb.map, normalMap: cb.normalMap, color: 0xbcb9b0 }), 'club'),
     attic: L({ map: at.map, normalMap: at.normalMap, color: 0xb9b6ae }, 'attic'),
     ceil: new T.MeshLambertMaterial({ color: 0x8a7f6e, side: T.DoubleSide }),
     inner: L({ map: mb.map, color: 0xb88e6c, side: T.DoubleSide }, 'inner'),   // 柱廊里的内墙：赭色灰泥（假设），好让白柱子跳出来
-    statue: new T.MeshPhongMaterial({ color: 0x6f6658, specular: 0x4a443a, shininess: 22 }),   // 青铜，风化暗色（假设）
+    statue: new T.MeshPhongMaterial({ color: 0x3e4034, specular: 0x262820, shininess: 14 }),   // 青铜，风化出铜绿的暗色（假设；第 2 轮从 0x6f6658 压暗偏绿：受光面原来发白）
+    archM: FB(new T.MeshLambertMaterial({ map: mb.map, normalMap: mb.normalMap, color: 0xb3b0a8, side: T.DoubleSide }), 'archM'),   // 凯旋门大理石：多吃一项铺地反光（拱腹）
+    victory: L({ map: mb.map, color: 0x9a968c }, 'victory'),   // 浮雕：同大理石贴图、略暗（不带贴图时平躺的面正对低太阳会发白）
     timber: new T.MeshLambertMaterial({ color: 0x7b5b3c }),
     rope: new T.MeshLambertMaterial({ color: 0xc9b48a }),
     stone: new T.MeshLambertMaterial({ color: 0xcfc6b2 }),
@@ -347,7 +355,7 @@ function archGroup(far, part = 1) {
     /* 拱身：一整片墙，三个半圆拱（中门 7 m、侧门 3.6 m）在 imp 起拱，拉深 4 m → 筒拱 */
     const sh = new T.Shape(), arcs = [[-(AR.outer + AR.inner) / 2, AR.sr], [0, AR.cr], [(AR.outer + AR.inner) / 2, AR.sr]];
     sh.moveTo(-AR.half, AR.imp);
-    for (const [cx, rr] of arcs) { sh.lineTo(cx - rr, AR.imp); sh.absarc(cx, AR.imp, rr, Math.PI, 0, true); }
+    for (const [cx, rr] of arcs) { sh.lineTo(cx - rr, AR.imp); sh.absellipse(cx, AR.imp, rr, rr * EY, Math.PI, 0, true); }
     sh.lineTo(AR.half, AR.imp); sh.lineTo(AR.half, AR.attic0 - .8); sh.lineTo(-AR.half, AR.attic0 - .8); sh.lineTo(-AR.half, AR.imp);
     const body = new T.ExtrudeGeometry(sh, { depth: AR.depth * 2, bevelEnabled: false, curveSegments: far ? 5 : 12 }); body.translate(0, 0, -AR.depth);
     body.deleteAttribute('uv'); body.deleteAttribute('normal'); body.computeVertexNormals();
@@ -356,9 +364,9 @@ function archGroup(far, part = 1) {
     /* 拱圈线脚（两面）+ 拱心石 */
     const ring = [];
     for (const [cx, rr] of arcs) for (const zf of [-AR.depth - .18, AR.depth]) {
-      const s2 = new T.Shape(); s2.absarc(cx, AR.imp, rr + .75, 0, Math.PI, false); s2.lineTo(cx - rr, AR.imp); s2.absarc(cx, AR.imp, rr, Math.PI, 0, true); s2.lineTo(cx + rr + .75, AR.imp);
+      const s2 = new T.Shape(); s2.absellipse(cx, AR.imp, rr + .75, (rr + .75) * EY, 0, Math.PI, false); s2.lineTo(cx - rr, AR.imp); s2.absellipse(cx, AR.imp, rr, rr * EY, Math.PI, 0, true); s2.lineTo(cx + rr + .75, AR.imp);
       const g = new T.ExtrudeGeometry(s2, { depth: .18, bevelEnabled: false, curveSegments: far ? 5 : 12 }); g.translate(0, 0, zf); g.deleteAttribute('uv'); g.deleteAttribute('normal'); g.computeVertexNormals(); ring.push(g);
-      if (!far) box(cx - .45, cx + .45, zf < 0 ? -AR.depth - .3 : AR.depth, zf < 0 ? -AR.depth : AR.depth + .3, AR.imp + rr - .1, AR.imp + rr + 1.1);
+      if (!far) box(cx - .45, cx + .45, zf < 0 ? -AR.depth - .3 : AR.depth, zf < 0 ? -AR.depth : AR.depth + .3, AR.imp + (rr - .1) * EY, AR.imp + (rr + 1.1) * EY);
     }
     /* 檐口（两面出挑）+ 女儿墙 + 中段加高 + 顶檐 */
     const cor = [[-AR.depth - .55, 0], [-AR.depth, -.2], [-AR.depth, -.8], [AR.depth, -.8], [AR.depth, -.2], [AR.depth + .55, 0], [AR.depth + .55, .3], [-AR.depth - .55, .3]];
@@ -378,16 +386,26 @@ function archGroup(far, part = 1) {
       }
       const am = new T.Mesh(merge(T, ap), M.attic); am.receiveShadow = true; G.add(am);
     }
-    const bg = merge(T, [body, ...ring]); worldUV(bg, 4.8); const bm = new T.Mesh(bg, M.marble); bm.castShadow = bm.receiveShadow = true; G.add(bm);
+    const bg = merge(T, [body, ...ring]); worldUV(bg, 4.8); const bm = new T.Mesh(bg, M.archM); bm.castShadow = bm.receiveShadow = true; G.add(bm);
     /* 顶上的像：中间狄奥多西（4.2 m），两侧墩上阿卡狄乌斯、霍诺留（3.6 m）；面朝西（城外来的人先看见）—— 复用纪功柱的烘焙低模像 */
     const st = [];
-    for (const [x, h, y0] of [[0, 4.2, AR.mid + .3], [-AR.outer, 3.6, AR.top], [AR.outer, 3.6, AR.top]]) {
-      const g = geoOf(T, STATUE_LO, 1); g.computeBoundingBox(); const sc = h / g.boundingBox.max.y; g.scale(sc, sc, sc); g.translate(x, y0, 0);   // 局部不转：整组转 −90° 后像朝西（同纪功柱的朝向）
+    for (const [x, h, y0] of [[0, AR.stC, AR.mid + .3], [-AR.outer, AR.stS, AR.top], [AR.outer, AR.stS, AR.top]]) {
+      const g = geoOf(T, STATUE_LO, 1); g.computeBoundingBox(); const sc = h / g.boundingBox.max.y; g.scale(sc, sc * EY, sc); g.translate(x, y0, 0);   // 局部不转：整组转 −90° 后像朝西（同纪功柱的朝向）
       st.push(g);
-      box(x - .8, x + .8, -.8, .8, y0 - .01, y0 + .35);
-      st[st.length - 1].translate(0, .35, 0);
+      box(x - 1.1, x + 1.1, -1.1, 1.1, y0 - .01, y0 + .5);
+      st[st.length - 1].translate(0, .5, 0);
     }
     const sm = new T.Mesh(merge(T, st), M.statue); sm.castShadow = true; G.add(sm);
+    /* 中门拱肩的两位飞翔的胜利女神（两面；第 2 轮，原来贴图里画不出）：复用烘焙像，压扁成 0.35 m 厚的高浮雕，顺着拱背斜躺、头朝拱心 */
+    if (!far) {
+      const vg = [];
+      for (const zs of [-1, 1]) for (const xs of [-1, 1]) {
+        const g = geoOf(T, STATUE_LO, 1); g.computeBoundingBox(); const bb = g.boundingBox, sc = 4.0 / bb.max.y, dz = (bb.max.z + bb.min.z) / 2;
+        g.translate(0, 0, -dz); g.scale(sc, sc, sc * 0.4); g.rotateZ(xs * 0.9);           // 右边的头朝左上、左边的朝右上
+        g.scale(1, EY, 1); g.translate(xs * 4.75, AR.imp + 2.0 * EY, zs * (AR.depth + .22)); vg.push(g);
+      }
+      const vm = new T.Mesh(worldUV(merge(T, vg), 4.8), M.victory); vm.castShadow = vm.receiveShadow = true; G.add(vm);
+    }
   } else {
     /* 59 年：墩座 + 半高的束柱 + 木脚手架和拱架（centering） */
     const tg = new GB(), F0 = frame(O, X, Z), top = colY + colH + 1.5;
@@ -395,7 +413,7 @@ function archGroup(far, part = 1) {
     for (const px of piers) for (let yy = 1.8; yy < top; yy += 1.8) { boxF(tg, F0, px - 2.2, px + 2.2, -2.25, -2.15, yy, yy + .1, 'side'); boxF(tg, F0, px - 2.2, px + 2.2, 2.15, 2.25, yy, yy + .1, 'side'); }
     const tm = new T.Mesh(tg.geo(), M.timber); tm.castShadow = true; G.add(tm);
   }
-  const g = gb.geo(); worldUV(g, 4.8); const m = new T.Mesh(g, far ? M.far : M.marble); m.castShadow = m.receiveShadow = true; G.add(m);
+  const g = gb.geo(); worldUV(g, 4.8); const m = new T.Mesh(g, far ? M.far : M.archM); m.castShadow = m.receiveShadow = true; G.add(m);
   return G;
 }
 
@@ -479,7 +497,7 @@ function buildAll(ctx, r, Yr, far) {
   foots.push({ kind: 'landmark:forum_arch', id: 'forum:arch', pts: AP, bottom: AF.min - .6, floor: ab });
   boxF(B.marble, W.F, MESE_W - ah, MESE_W + ah, ad - adep, ad + adep, AF.min - .6, ab);
   const archPart = Yr >= PHASE.arch ? 1 : 0.5;
-  const A = archGroup(far, archPart); A.scale.setScalar(K * HERO_SCALE); A.position.set(ac[0], ab, ac[1]); A.rotation.y = Math.atan2(-W.F.t[1], W.F.t[0]); G.add(A);
+  const A = archGroup(far, archPart); A.scale.set(K * HERO_SCALE, K * ARCH_HERO_Y, K * HERO_SCALE); A.position.set(ac[0], ab, ac[1]); A.rotation.y = Math.atan2(-W.F.t[1], W.F.t[0]); G.add(A);
   /* 柱子：两种（下 / 上层）各一个 InstancedMesh */
   const segs = far ? 6 : 10;
   for (const [L, rr, h] of [[cols.c1, R1, Y.c1], [cols.c2, R2, Y.c2 - Y.e1 - (Y.par - Y.e1) * 0]]) {
@@ -525,6 +543,6 @@ export function build(ctx, f, r) {
 const tri = (o) => { let n = 0; o.traverse(c => { if (c.isMesh) n += (c.geometry.index ? c.geometry.index.count : c.geometry.attributes.position.count) / 3 * (c.isInstancedMesh ? c.count : 1); }); return Math.round(n); };
 export function stats() {
   return { near_tris: LAST.near, far_tris: LAST.far, geom_build_ms: LAST.ms, tex_ms: M && M._tex_ms, columns: CACHE ? CACHE.nCols : null,
-    portico_height_m: +(Y.wall / K).toFixed(2), arch_height_m: +((AR.mid + .3 + .35 + 4.2) * HERO_SCALE).toFixed(2), arch_attic_m: +(AR.mid * HERO_SCALE).toFixed(2), arch_width_m: +(2 * AR.half * HERO_SCALE).toFixed(1), hero_scale: HERO_SCALE, portico_scale: PORTICO_SCALE };
+    portico_height_m: +(Y.wall / K).toFixed(2), arch_height_m: +((AR.mid + .3 + .5) * ARCH_HERO_Y + AR.stC * HERO_SCALE).toFixed(2), arch_attic_m: +((AR.mid + .3) * ARCH_HERO_Y).toFixed(2), arch_hero_y: ARCH_HERO_Y, arch_width_m: +(2 * AR.half * HERO_SCALE).toFixed(1), hero_scale: HERO_SCALE, portico_scale: PORTICO_SCALE };
 }
 export function dispose() { /* 完工的几何缓存着；施工中的组每次新建，由 index.js 释放 */ }
