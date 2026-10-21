@@ -1,7 +1,21 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 09:40 PDT ——Hark（CS线）
+> 最后更新：2026-10-20 20:30 PDT ——Hark（CS线）
+
+## 方向登记表（主人 2026-10-20：分支要及时跟进，别再长成新分支）
+规矩：只有一条主线 main；实验只能是 main 上的「开关」或独立页面，不开长期分支。每个方向一行，主人 3 天内没说法，我给出「收进主线 / 撤」的建议；撤的打 archive 标签不丢。别的线的提交每天并一次。
+| 方向 | 在哪 | 状态 | 要主人定的 |
+|---|---|---|---|
+| 全城瓦片 | living/tiles/（线上） | 主线；街巷层 10-18 起吃全城节点 | 远级旧画要不要改成 3D 引擎烘 |
+| 节点长卷 + 2D 街景 | scroll.html，开关 nodes-nangang | 灰度 | 和 3D 二选一做「近景」 |
+| 南港 3D（r3、纪功柱、宁芙殿） | nodes/nangang/3d.html | 独立页；主人 10-20 认为比瓦片好 | 留/再来；是否当近景主力 |
+| 行当上街 | scroll.html（70da6db） | 待评 | 留/撤 |
+| 居民人群 | scroll.html?crowd=N | 待评 | 关系接入留/撤 |
+| 民居细模 house_kit | — | 已撤 10-20 | — |
+| 古城 gucheng | nodes/gucheng | 另一会话在做 | — |
+| 刘线经济/社会/surface v23 | experiments/、liu3 | 10-20 代码已并入 main，不上页面 | 哪项先按开关上街面 |
+| 谭线 forge v0 | 已在 main | 预览 | — |
 
 ## 方向（主人 2026-10-17 定）
 底账 → 节点 → 渲染器（学 WorldGacha）：节点按顺序、可重抽，中间层是 OSM 形状 + 年份，近/远/地平线分层，一个渲染器。AI 写生成器和部件，不画内容。拆解见 tools/cs/nodes/README.md。
