@@ -1,7 +1,7 @@
 # NOW · CS 线现在到哪了
 
 > 只覆盖不追加。接手的智能体先读这页，再读 AGENTS.md。历史看 git log、CS_LINE.md、tools/cs/factory/verdicts.json。
-> 最后更新：2026-10-20 23:25 PDT ——Hark（CS线）
+> 最后更新：2026-11-05 02:10 CST ——Hark（CS线）
 
 ## 方向登记表（主人 2026-10-20：分支要及时跟进，别再长成新分支）
 规矩：只有一条主线 main；实验只能是 main 上的「开关」或独立页面，不开长期分支。每个方向一行，主人 3 天内没说法，我给出「收进主线 / 撤」的建议；撤的打 archive 标签不丢。别的线的提交每天并一次。
@@ -11,6 +11,7 @@
 | 节点长卷 + 2D 街景 | scroll.html，开关 nodes-nangang | 10-20 主人选 3D 做近景：2D 街景冻结不再加功能，3D 接上瓦片后撤 | — |
 | 南港 3D（r3、纪功柱、宁芙殿、狄奥多西广场） | nodes/nangang/3d.html（`?shot=1..7`） | 10-20 主人定为近景主力（「3D 的史诗建筑效果好很多……从最大的开始做起」）；地标按从大到小做，第 3 座广场 10-20 主人「留，可以夸张一点」，第 2 轮已推 | 瓦片→3D 无缝接入的灰度；广场第 2 轮的夸张够不够；下一座 |
 | 3D 全城（分块流式） | nodes/city/3d.html（`?shot=1..4`，独立页） | 10-20 主人「可以」后做出 v1：同一套模块、4×4 块近景窗口跟着看点走 + 全城体块远景；报告 docs/cs/lookdev/city3d/report.md | Mac 上飞一圈（帧率、挪窗口卡不卡）；留/撤；下一步先做哪个 |
+| 狄奥多西广场一景（第 65 年一个下午，~300 人、指着就说名字、5 扇门） | nodes/nangang/forum.html（独立页） | 11-05 主人「看看」后做出 v1；3d.html 机位 1–7 不变 | 留/撤；iPhone 上帧率；要不要一天里的时间、更多门 |
 | 行当上街 | scroll.html（70da6db） | 待评 | 留/撤 |
 | 居民人群 | scroll.html?crowd=N | 待评 | 关系接入留/撤 |
 | 民居细模 house_kit | — | 已撤 10-20 | — |
@@ -39,11 +40,17 @@
 
 | 3D r3：地面穿模 + 史诗夸张（主人 10-20 两条） | docs/living/nodes/nangang/3d.html（`?shot=1..6`；机位 5、6 重新对准） | `docs/cs/lookdev/r3_ground_scale/notes.md`、`docs/cs/lookdev/r3_ground_scale/overview.jpg`、`docs/cs/lookdev/r3_ground_scale/numbers.json`；`tools/cs/lookdev/ground_check.py`：第 65 年漏空 26→14、埋墙脚 1671→2；纪功柱 51.9→72.7 m（周边屋顶中位数的 8.2→11.5 倍）、宁芙殿 22.2→30.5 m（3.1→4.2 倍）；每机位 1.62–1.68 M 三角形 | 待评（帧率待 Mac 实测） |
 
+| 狄奥多西广场一景：第 65 年的一个下午（学 Forum Romanum AD 210 的主意，样子用南港 3D） | docs/living/nodes/nangang/forum.html | `docs/cs/lookdev/scene_forum/notes.md`、`docs/cs/lookdev/scene_forum/overview.jpg`；305 个户籍人（folk.py 第 65 年重跑 → `tools/cs/scene/forum_cast.py` → `docs/living/nodes/nangang/forum/cast.json`），`tools/cs/scene/check_forum_cast.py` 逐人对账全过；开场 1.94 M 三角形；页自己 168 KB（整页 2.9 MB / gzip 0.85 MB）；验收 `tools/cs/scene/shoot_forum.py` | 待评（真机帧率待测） |
+
 灰度入口：docs/living/next/（主页加 ?flag=nodes-nangang 才露入口），第 2 轮总览和报告的链接在那页。
 
 | 3D 全城 v1：南港渲染器推到全城，分块流式 | docs/living/nodes/city/3d.html（`?shot=1` 航拍、`2` 老城中景、`3` 老城南坡人眼高、`4` 全城页里的南港） | `docs/cs/lookdev/city3d/report.md`、`overview.jpg`、`numbers.json`；116 块（瓦片格 455 px）；飞行路线 31 帧最大 1.55 M 三角形（≤3 M）；首屏中景 gzip ≈1.66 MB、航拍 ≈1.47 MB，全城 3D 数据 ≈1.66 MB gzip；南港页机位 1–7 逐像素不变 | 待评（帧率待 Mac 实测） |
 
 ## 进行中
+- **狄奥多西广场一景（11-05，主人「看看」）**：独立页 `docs/living/nodes/nangang/forum.html` + `docs/living/nodes/nangang/3d/scene_forum.js`，core 和所有 3D 模块原样 import（年份固定 65、不取全南港人群 `CS3D.crowd=null`）。
+  人：`tools/cs/people/folk.py` 加了 61–70 年来历一行 + `FOLK_OUT`（第 60 年输出逐字节不变），按第 65 年重跑；`tools/cs/scene/forum_cast.py` 从广场 320 m 内的人家派去处（摆摊 77、逛摊 40、柱下 36、穿过 30、跟着 30、打水 26、脚夫 20、写状子 6 + 排队 12、凯旋门下 10、玩 12、运水 6）；签上除「此刻」半句外全是户籍原文。演员 = 长卷人群引擎原样（关节人，近景半径 320 m）。
+  指：悬停 / 点（手机），人按屏幕距离、建筑按看不见的盒子；实心的挡人。门：4 间柱廊铺面（镜头进柱廊 + 卡片一次一个人）+ 纪功柱小门（只出卡，史料螺旋梯，门里没人不编人）。手机自动 preview 档。
+  没做：一天里的时间、官员（户籍里没有，没编）、声音；脚夫借的是全南港最近的 laborer。刘线 voices 写的是别处人家（房号重号但户主不同），没用。
 - **r3 地面穿模 + 史诗夸张（10-20，主人：「地面穿模明显，要调整」「史诗城市里地标放大一些，尤其大的」）**：
   - 落地规矩进了 `docs/cs/lookdev/MODULE_CONTRACT.md` §6 第 13 条：站在地上的一律用 `ctx.groundMesh`（terrain 网格的三角插值，框外读 terrain/outer.js 的 `heightAt`）；有占地的用 `ctx.footing` → 地坪 = 最高地面（民居 max(mid, max−0.45)），台基 / 墙基伸到最低地面 −0.6，`ctx.foot` 登记；验收 `ground_check.py`。
   - 史诗夸张进了 §7：每座地标 `HERO_SCALE`（纪功柱、宁芙殿 1.4，只放大高，占地照底账）；buildings 里的广场柱廊、粮仓 `LM_SCALE` 1.2。纪功柱、宁芙殿原来的轮廓 IoU 数字不再是目标。
@@ -73,6 +80,7 @@
 - 古城（gucheng）：另一个会话在做，别碰它的文件。
 
 ## 等主人（Mac 上实测，沙箱的数字不算）
+- **狄奥多西广场一景（11-05）**：iPhone 上开 `docs/living/nodes/nangang/forum.html`：转、缩、点人点建筑、进一间铺子；帧率（300 个关节人 + 1.9 M 三角形，吃紧就降 `fullM`/`maxFull` 或只建广场周围的模块）；留 / 撤；要不要加一天里的时间（人随钟点换事）、更多能进的门。
 - **3D 全城 v1（10-20）**：Mac 上打开 `docs/living/nodes/city/3d.html` 飞一圈：帧率、挪近景窗口那一下卡不卡（沙箱每次 3–16 s，不算数）、窗口边看不看得出来、年份滑块；留 / 撤；留的话下一步先做哪个：①窗口按块增量建（去卡顿）②长卷里的教堂/皇宫/竞技场/卫城/城门部件搬进 3D（现在是体块占位）③城框外地形（西、北边现在是直崖）④全城人群。
 - **r3**：看 `docs/cs/lookdev/r3_ground_scale/overview.jpg`：穿模修得算不算数、放大 1.4 够不够（要更夸张就改各地标文件的 `HERO_SCALE`）、陡街铺面墙基高不高；Mac 上机位 1–6 帧率。
 - **纪功柱**：`3d.html?shot=5` 看一眼「留 / 再来」；Mac 上机位 5 的帧率（近档 41,288 三角形、远档 3,920）；像要不要更大 / 鎏金、柱头要不要改回史实更可能的多立克式。

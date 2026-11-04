@@ -21,7 +21,7 @@ NF = [n for n in CITY['names_f'] if n != '达芙涅'] + ['阿格尼丝','马克�
 ORIG, FAITH = CITY['origins'], CITY['faiths']
 TR = dict(CITY['trades']); TR['market'] = ['卖油的', '卖布的', '卖鱼的', '卖果子的', '卖陶器的', '面包师']
 OBJ = ['一盏印着凯乐符号的陶灯','一枚瓦伦斯的铜币，被摸得发亮','从{o}带来的一只陶罐，补过两次','一块蜡板，上面记着谁还欠他们钱','门楣上一个刻歪了的十字','一副骨头骰子，藏在枕头底下','一张蓝党的赛马签，已经输了','一小瓶从圣地带回来的油','一把铜钥匙，门早就换过了','墙角一尊没人敢扔的家神像','一卷写着孩子生日的莎草纸','一只少了把手的玻璃杯，是嫁妆']
-ARRIVE = [(-999,0,'祖上就住在拜扎斯旧城'),(1,10,'跟着奠基的工程来的'),(11,20,'水渠修通后来的'),(21,30,'大教堂开工那几年来的'),(31,40,'跟着粮船进的城'),(41,47,'瓦伦斯在位时来的'),(48,50,'南港大火烧了原来的家，才搬来这里'),(51,55,'狄奥多西刚登基那几年来的'),(56,60,'跟着埃及的粮船来的')]
+ARRIVE = [(-999,0,'祖上就住在拜扎斯旧城'),(1,10,'跟着奠基的工程来的'),(11,20,'水渠修通后来的'),(21,30,'大教堂开工那几年来的'),(31,40,'跟着粮船进的城'),(41,47,'瓦伦斯在位时来的'),(48,50,'南港大火烧了原来的家，才搬来这里'),(51,55,'狄奥多西刚登基那几年来的'),(56,60,'跟着埃及的粮船来的'),(61,70,'修狄奥多西广场那几年来的')]   # 61–70：第 65 年的狄奥多西广场一景要用（2026-11-05），第 60 年的输出不变
 AWAY = ['去当了兵', '去码头上找活干', '去给一个石匠当学徒', '进了修道院', '跟着粮船出了海']
 cen = lambda h: (sum(poly(h)[i][0] for i in range(len(poly(h)))) / len(poly(h)), sum(q[1] for q in poly(h)) / len(poly(h)))
 
@@ -311,10 +311,11 @@ for k, o in enumerate(OUT):
 out = {'q': Q, 'year': Y, 'mpp': MPP, 'routes': RT, 'people': people, 'labels': list(LAB), 'houses': HOUT, 'htie': list(TYH.values()),
        'fields': 'id 路线 身份 性别 年龄 一句谁 一件事 去干什么 去谁家 跟着谁 约了谁 关系[[人,称呼]] 户',
        'note': '户籍 + 社会关系：每个人是一栋真房子里活着的一口人；去哪、跟谁，由他在家里的位置和这户跟别户的关系推出来。——Hark（CS线）'}
-dst = os.path.join(ROOT, 'docs/living/nodes', Q, 'crowd.json')
+OUTD = os.environ.get('FOLK_OUT') or os.path.join(ROOT, 'docs/living/nodes', Q)   # FOLK_OUT：写到别处（不覆盖节点的 crowd.json / folk_h.json）
+dst = os.path.join(OUTD, 'crowd.json')
 json.dump(out, open(dst, 'w'), ensure_ascii=False, separators=(',', ':'))
 # 给招牌和街名用的户表（signs.py 读）：房号 → 行当、籍贯
-json.dump([[POOL[i]['id'], HH[i]['cur']['trade'], HH[i]['cur']['origin'], HH[i].get('headN', ''), HH[i]['cur']['B']] for i in range(len(POOL))], open(os.path.join(ROOT, 'docs/living/nodes', Q, 'folk_h.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
+json.dump([[POOL[i]['id'], HH[i]['cur']['trade'], HH[i]['cur']['origin'], HH[i].get('headN', ''), HH[i]['cur']['B']] for i in range(len(POOL))], open(os.path.join(OUTD, 'folk_h.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 import collections
 print('户', len(POOL), '合并的嫁娶', merged, '路线', len(RT), '上街的人', len(people), os.path.getsize(dst), '字节')
 print(collections.Counter(x[7] for x in people)); print(collections.Counter(x[2] for x in people))
