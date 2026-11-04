@@ -1,0 +1,63 @@
+{
+ "render": {
+  "note": "参照：底账投影与 3D 渲染逐像素对齐（overlay_render 目测完全重合）；渲染的水是深绿、屋顶多在阴影里，颜色分类阈值不适用，故不打分"
+ },
+ "A": {
+  "aff": null,
+  "water_IoU_vs_ledger": 0.777,
+  "house_recall": 0.968,
+  "roof_precision": 0.968,
+  "roof_on_ledger_water": 0.027,
+  "edge_F_vs_render(3px)": 0.951,
+  "edge_F_vs_render(1px)": 0.833,
+  "house_recall_tight": 0.947,
+  "water_IoU_by_quadrant": {
+   "TL": null,
+   "TR": null,
+   "BL": 0.923,
+   "BR": 0.539
+  }
+ },
+ "B1": {
+  "aff": [
+   0.96,
+   1.04,
+   0.0,
+   0.0
+  ],
+  "water_IoU_vs_ledger": 0.362,
+  "house_recall": 0.891,
+  "roof_precision": 0.755,
+  "roof_on_ledger_water": 0.176,
+  "edge_F_vs_render(3px)": 0.783,
+  "edge_F_vs_render(1px)": 0.553,
+  "house_recall_tight": 0.775,
+  "water_IoU_by_quadrant": {
+   "TL": null,
+   "TR": null,
+   "BL": 0.364,
+   "BR": 0.36
+  }
+ },
+ "B2": {
+  "aff": [
+   0.96,
+   1.03,
+   0.0,
+   0.0
+  ],
+  "water_IoU_vs_ledger": 0.749,
+  "house_recall": 0.927,
+  "roof_precision": 0.771,
+  "roof_on_ledger_water": 0.034,
+  "edge_F_vs_render(3px)": 0.866,
+  "edge_F_vs_render(1px)": 0.657,
+  "house_recall_tight": 0.891,
+  "water_IoU_by_quadrant": {
+   "TL": null,
+   "TR": null,
+   "BL": 0.887,
+   "BR": 0.519
+  }
+ }
+}
