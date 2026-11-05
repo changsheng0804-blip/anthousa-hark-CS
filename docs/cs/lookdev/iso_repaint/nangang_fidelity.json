@@ -1,0 +1,850 @@
+{
+ "windows": [
+  {
+   "k": 0,
+   "win": [
+    5,
+    2
+   ],
+   "new": [
+    [
+     5,
+     2
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     5,
+     3
+    ],
+    [
+     6,
+     3
+    ]
+   ],
+   "ctx_n": 0,
+   "gens": 1,
+   "files": [
+    "g_0_b.png"
+   ],
+   "used": "g_0_b.png",
+   "houses": 710,
+   "house_hit": 0.956,
+   "edgeF3": 0.915,
+   "roof_dE": null,
+   "blue": null,
+   "ctx_absdiff": null,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 1,
+   "win": [
+    6,
+    2
+   ],
+   "new": [
+    [
+     7,
+     2
+    ],
+    [
+     7,
+     3
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_1_b.png"
+   ],
+   "used": "g_1_b.png",
+   "houses": 358,
+   "house_hit": 0.947,
+   "edgeF3": 0.866,
+   "roof_dE": 13.3,
+   "blue": null,
+   "ctx_absdiff": 8.4,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 2,
+   "win": [
+    6,
+    3
+   ],
+   "new": [
+    [
+     6,
+     4
+    ],
+    [
+     7,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_2_a.png"
+   ],
+   "used": "g_2_a.png",
+   "houses": 406,
+   "house_hit": 0.973,
+   "edgeF3": 0.922,
+   "roof_dE": 8.1,
+   "blue": 3,
+   "ctx_absdiff": 7.5,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 3,
+   "win": [
+    7,
+    3
+   ],
+   "new": [
+    [
+     8,
+     3
+    ],
+    [
+     8,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 3,
+   "files": [
+    "g_3_a.png",
+    "g_3_b.png",
+    "g_3_c.png"
+   ],
+   "used": "g_3_c.png",
+   "houses": 387,
+   "house_hit": 0.972,
+   "edgeF3": 0.908,
+   "roof_dE": 9.7,
+   "blue": 0,
+   "ctx_absdiff": 7.0,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 4,
+   "win": [
+    4,
+    2
+   ],
+   "new": [
+    [
+     4,
+     2
+    ],
+    [
+     4,
+     3
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 3,
+   "files": [
+    "g_4_b.png",
+    "g_4_c.png",
+    "g_4_d.png"
+   ],
+   "used": "g_4_d.png",
+   "houses": 315,
+   "house_hit": 0.978,
+   "edgeF3": 0.934,
+   "roof_dE": 4.1,
+   "blue": 219,
+   "ctx_absdiff": 11.9,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 5,
+   "win": [
+    8,
+    3
+   ],
+   "new": [
+    [
+     9,
+     3
+    ],
+    [
+     9,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 2,
+   "files": [
+    "g_5_a.png",
+    "g_5_b.png"
+   ],
+   "used": "g_5_b.png",
+   "houses": 279,
+   "house_hit": 0.943,
+   "edgeF3": 0.904,
+   "roof_dE": 19.5,
+   "blue": 26,
+   "ctx_absdiff": 7.7,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 6,
+   "win": [
+    5,
+    1
+   ],
+   "new": [
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 2,
+   "files": [
+    "g_6_a.png",
+    "g_6_b.png"
+   ],
+   "used": "g_6_b.png",
+   "houses": 326,
+   "house_hit": 0.896,
+   "edgeF3": 0.951,
+   "roof_dE": 3.6,
+   "blue": 0,
+   "ctx_absdiff": 8.6,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 7,
+   "win": [
+    3,
+    2
+   ],
+   "new": [
+    [
+     3,
+     2
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_7_b.png"
+   ],
+   "used": "g_7_b.png",
+   "houses": 276,
+   "house_hit": 0.96,
+   "edgeF3": 0.893,
+   "roof_dE": 25.1,
+   "blue": 0,
+   "ctx_absdiff": 6.8,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 8,
+   "win": [
+    4,
+    3
+   ],
+   "new": [
+    [
+     4,
+     4
+    ],
+    [
+     5,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_8_a.png"
+   ],
+   "used": "g_8_a.png",
+   "houses": 189,
+   "house_hit": 0.979,
+   "edgeF3": 0.92,
+   "roof_dE": 12.4,
+   "blue": 3,
+   "ctx_absdiff": 7.2,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 9,
+   "win": [
+    8,
+    2
+   ],
+   "new": [
+    [
+     8,
+     2
+    ],
+    [
+     9,
+     2
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_9_a.png"
+   ],
+   "used": "g_9_a.png",
+   "houses": 254,
+   "house_hit": 0.941,
+   "edgeF3": 0.917,
+   "roof_dE": 11.0,
+   "blue": 2,
+   "ctx_absdiff": 7.2,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 10,
+   "win": [
+    6,
+    4
+   ],
+   "new": [
+    [
+     6,
+     5
+    ],
+    [
+     7,
+     5
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_10_a.png"
+   ],
+   "used": "g_10_a.png",
+   "houses": 203,
+   "house_hit": 0.975,
+   "edgeF3": 0.927,
+   "roof_dE": 3.0,
+   "blue": 1,
+   "ctx_absdiff": 7.4,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 11,
+   "win": [
+    9,
+    3
+   ],
+   "new": [
+    [
+     10,
+     3
+    ],
+    [
+     10,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_11_a.png"
+   ],
+   "used": "g_11_a.png",
+   "houses": 166,
+   "house_hit": 0.976,
+   "edgeF3": 0.896,
+   "roof_dE": 17.3,
+   "blue": 2,
+   "ctx_absdiff": 6.9,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 12,
+   "win": [
+    7,
+    1
+   ],
+   "new": [
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 2,
+   "files": [
+    "g_12_a.png",
+    "g_12_b.png"
+   ],
+   "used": "g_12_b.png",
+   "houses": 105,
+   "house_hit": 0.895,
+   "edgeF3": 0.935,
+   "roof_dE": 15.4,
+   "blue": 1,
+   "ctx_absdiff": 7.4,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 13,
+   "win": [
+    4,
+    4
+   ],
+   "new": [
+    [
+     4,
+     5
+    ],
+    [
+     5,
+     5
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_13_a.png"
+   ],
+   "used": "g_13_a.png",
+   "houses": 24,
+   "house_hit": 0.917,
+   "edgeF3": 0.851,
+   "roof_dE": 1.4,
+   "blue": 0,
+   "ctx_absdiff": 6.1,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 14,
+   "win": [
+    3,
+    4
+   ],
+   "new": [
+    [
+     3,
+     4
+    ],
+    [
+     3,
+     5
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_14_a.png"
+   ],
+   "used": "g_14_a.png",
+   "houses": 32,
+   "house_hit": 1.0,
+   "edgeF3": 0.857,
+   "roof_dE": 59.0,
+   "blue": 0,
+   "ctx_absdiff": 7.8,
+   "forced": true,
+   "sliver": false
+  },
+  {
+   "k": 15,
+   "win": [
+    2,
+    3
+   ],
+   "new": [
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_15_a.png"
+   ],
+   "used": "g_15_a.png",
+   "houses": 341,
+   "house_hit": 0.924,
+   "edgeF3": 0.961,
+   "roof_dE": 26.0,
+   "blue": 0,
+   "ctx_absdiff": 7.8,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 16,
+   "win": [
+    1,
+    3
+   ],
+   "new": [
+    [
+     1,
+     3
+    ],
+    [
+     1,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_16_a.png"
+   ],
+   "used": "g_16_a.png",
+   "houses": 218,
+   "house_hit": 0.945,
+   "edgeF3": 0.961,
+   "roof_dE": 2.2,
+   "blue": 0,
+   "ctx_absdiff": 6.8,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 17,
+   "win": [
+    7,
+    4
+   ],
+   "new": [
+    [
+     8,
+     5
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 2,
+   "files": [
+    "g_17_a.png",
+    "g_17_b.png"
+   ],
+   "used": "g_17_b.png",
+   "houses": 103,
+   "house_hit": 0.981,
+   "edgeF3": 0.93,
+   "roof_dE": 13.2,
+   "blue": 0,
+   "ctx_absdiff": 7.5,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 18,
+   "win": [
+    10,
+    3
+   ],
+   "new": [
+    [
+     11,
+     3
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 2,
+   "files": [
+    "g_18_a.png",
+    "g_18_b.png"
+   ],
+   "used": "g_18_b.png",
+   "houses": 18,
+   "house_hit": 0.778,
+   "edgeF3": 0.83,
+   "roof_dE": 54.5,
+   "blue": 0,
+   "ctx_absdiff": 7.0,
+   "forced": true,
+   "sliver": false
+  },
+  {
+   "k": 19,
+   "win": [
+    0,
+    3
+   ],
+   "new": [
+    [
+     0,
+     4
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_19_a.png"
+   ],
+   "used": "g_19_a.png",
+   "houses": 21,
+   "house_hit": 1.0,
+   "edgeF3": 0.899,
+   "roof_dE": null,
+   "blue": 113,
+   "ctx_absdiff": 9.7,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 20,
+   "win": [
+    4,
+    1
+   ],
+   "new": [
+    [
+     4,
+     1
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 1,
+   "files": [
+    "g_20_a.png"
+   ],
+   "used": "g_20_a.png",
+   "houses": 13,
+   "house_hit": 1.0,
+   "edgeF3": 0.921,
+   "roof_dE": 3.7,
+   "blue": 0,
+   "ctx_absdiff": 8.3,
+   "forced": false,
+   "sliver": false
+  },
+  {
+   "k": 21,
+   "win": [
+    5,
+    0
+   ],
+   "new": [
+    [
+     6,
+     0
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_21_a.png"
+   ],
+   "used": "g_21_a.png",
+   "houses": 4,
+   "house_hit": 1.0,
+   "edgeF3": 0.925,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 9.1,
+   "forced": false,
+   "sliver": true
+  },
+  {
+   "k": 22,
+   "win": [
+    2,
+    2
+   ],
+   "new": [
+    [
+     2,
+     2
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 1,
+   "files": [
+    "g_22_a.png"
+   ],
+   "used": "g_22_a.png",
+   "houses": 1,
+   "house_hit": 1.0,
+   "edgeF3": 0.907,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 8.1,
+   "forced": false,
+   "sliver": true
+  },
+  {
+   "k": 23,
+   "win": [
+    9,
+    2
+   ],
+   "new": [
+    [
+     10,
+     2
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 1,
+   "files": [
+    "g_23_a.png"
+   ],
+   "used": "g_23_a.png",
+   "houses": 7,
+   "house_hit": 1.0,
+   "edgeF3": 0.787,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 7.2,
+   "forced": true,
+   "sliver": true
+  },
+  {
+   "k": 24,
+   "win": [
+    2,
+    4
+   ],
+   "new": [
+    [
+     2,
+     5
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 1,
+   "files": [
+    "g_24_a.png"
+   ],
+   "used": "g_24_a.png",
+   "houses": 0,
+   "house_hit": 0.0,
+   "edgeF3": 0.798,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 10.1,
+   "forced": true,
+   "sliver": true
+  },
+  {
+   "k": 25,
+   "win": [
+    8,
+    4
+   ],
+   "new": [
+    [
+     9,
+     5
+    ]
+   ],
+   "ctx_n": 3,
+   "gens": 1,
+   "files": [
+    "g_25_a.png"
+   ],
+   "used": "g_25_a.png",
+   "houses": 2,
+   "house_hit": 1.0,
+   "edgeF3": 0.894,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 7.9,
+   "forced": false,
+   "sliver": true
+  },
+  {
+   "k": 26,
+   "win": [
+    3,
+    5
+   ],
+   "new": [
+    [
+     4,
+     6
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_26_a.png"
+   ],
+   "used": "g_26_a.png",
+   "houses": 0,
+   "house_hit": 0.0,
+   "edgeF3": 0.646,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 4.6,
+   "forced": true,
+   "sliver": true
+  },
+  {
+   "k": 27,
+   "win": [
+    5,
+    5
+   ],
+   "new": [
+    [
+     6,
+     6
+    ]
+   ],
+   "ctx_n": 2,
+   "gens": 1,
+   "files": [
+    "g_27_a.png"
+   ],
+   "used": "g_27_a.png",
+   "houses": 0,
+   "house_hit": 0.0,
+   "edgeF3": 0.807,
+   "roof_dE": null,
+   "blue": 0,
+   "ctx_absdiff": 7.1,
+   "forced": true,
+   "sliver": true
+  }
+ ],
+ "global": {
+  "house_hit": 0.955,
+  "ledger_houses_on_land": 4758,
+  "raw_render_house_hit_same_test": 0.938
+ }
+}
