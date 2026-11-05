@@ -20,10 +20,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:#eee7d6;font-family:"N
 <div id="v"><div id="w"></div></div>
 <div id="tag"><b>南港 · 等轴重绘</b>　建城第 65 年。拖动平移，滚轮或双指缩放。<a href="3d.html">3D</a> · <a href="./">2D</a></div>
 <div id="zb"><button id="zi" aria-label="放大">+</button><button id="zo" aria-label="缩小">&minus;</button><button id="zf" aria-label="全图">⤢</button></div>
-<div id="cr">3D 渲染逐块交给图生图重画；接缝做法学自 <a href="https://sf.isopolis.city/dev.html">Isopolis</a>，画风参照 Isometric SF / Isometric Toronto；水面按底账统一盖章。底账 nodes.json。——Hark（CS线）</div>
+<div id="cr">3D 渲染逐块交给图生图重画；接缝做法学自 <a href="https://sf.isopolis.city/dev.html">Isopolis</a>，画风参照 Isometric SF / Isometric Toronto；水面按底账统一盖章；接缝另开以缝为中心的纠正窗重画，自动闸门打分。底账 nodes.json。——Hark（CS线）</div>
 <script>
 (async()=>{
-const M=await (await fetch('iso/meta.json')).json(),W=M.W,H=M.H,T=M.tile;
+const M=await (await fetch('iso/meta.json',{cache:'no-cache'})).json(),W=M.W,H=M.H,T=M.tile;
 const v=document.getElementById('v'),w=document.getElementById('w');
 w.style.width=W+'px';w.style.height=H+'px';
 const layers=M.levels.map(L=>{const d=document.createElement('div');d.style.position='absolute';d.style.inset='0';w.appendChild(d);return {L,d,tiles:new Map()}});
@@ -32,7 +32,7 @@ function fit(){const r=v.getBoundingClientRect();fitS=Math.min(r.width/W,r.heigh
 function clampS(x){return Math.max(fitS*0.8,Math.min(2.5,x))}
 function want(){return s<=0.32?0:s<=0.7?1:2}
 function tile(Ly,x,y){const k=x+'_'+y;if(Ly.tiles.has(k))return;const L=Ly.L,img=new Image(),u=T/L.scale;
- img.decoding='async';img.src=`iso/z${L.z}/${k}.jpg`;img.style.left=x*u+'px';img.style.top=y*u+'px';
+ img.decoding='async';img.src=`iso/z${L.z}/${k}.jpg?v=${M.v||''}`;img.style.left=x*u+'px';img.style.top=y*u+'px';
  img.style.width=Math.min(T,L.w-x*T)/L.scale+'px';img.style.height=Math.min(T,L.h-y*T)/L.scale+'px';Ly.d.appendChild(img);Ly.tiles.set(k,img)}
 function load(){const r=v.getBoundingClientRect();const z=want();
  for(const Ly of layers){const L=Ly.L;if(L.z!==0&&L.z!==z){continue}

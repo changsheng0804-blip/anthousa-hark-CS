@@ -1,0 +1,528 @@
+[
+ {
+  "line": [
+   "H",
+   [
+    7,
+    2
+   ]
+  ],
+  "delta_Lab": [
+   -1.0,
+   0.0,
+   0.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.09,
+   "colour_dE": 17.0
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.09,
+   "colour_dE": 16.1
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   [
+    6,
+    2
+   ]
+  ],
+  "delta_Lab": [
+   -3.0,
+   1.0,
+   -1.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.51,
+   "colour_dE": 9.5
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.42,
+   "colour_dE": 6.9
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "H",
+   [
+    6,
+    1
+   ]
+  ],
+  "delta_Lab": [
+   -1.0,
+   0.0,
+   1.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.45,
+   "colour_dE": 8.3
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.47,
+   "colour_dE": 7.6
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   [
+    9,
+    3
+   ]
+  ],
+  "delta_Lab": [
+   -3.0,
+   0.0,
+   13.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.18,
+   "colour_dE": 9.7
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.46,
+   "colour_dE": 10.5
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   [
+    2,
+    3
+   ]
+  ],
+  "delta_Lab": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.18,
+   "colour_dE": 6.6
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.18,
+   "colour_dE": 5.7
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   [
+    6,
+    1
+   ]
+  ],
+  "delta_Lab": [
+   3.0,
+   0.0,
+   -1.0
+  ],
+  "before": {
+   "land_px": 397,
+   "edge_ratio": 1.13,
+   "colour_dE": 6.9
+  },
+  "after": {
+   "land_px": 397,
+   "edge_ratio": 1.18,
+   "colour_dE": 9.5
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   [
+    6,
+    4
+   ]
+  ],
+  "delta_Lab": [
+   -2.0,
+   0.0,
+   2.0
+  ],
+  "before": {
+   "land_px": 512,
+   "edge_ratio": 1.07,
+   "colour_dE": 6.7
+  },
+  "after": {
+   "land_px": 512,
+   "edge_ratio": 1.06,
+   "colour_dE": 5.9
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "H",
+   2280,
+   [
+    3096,
+    3560
+   ],
+   "patch H,6,3 bottom"
+  ],
+  "delta_Lab": [
+   -4.0,
+   0.0,
+   0.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 1.22,
+   "colour_dE": 38.1
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 1.25,
+   "colour_dE": 35.5
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   4120,
+   [
+    792,
+    1256
+   ],
+   "patch H,8,1 left"
+  ],
+  "delta_Lab": [
+   3.0,
+   -1.0,
+   2.0
+  ],
+  "before": {
+   "land_px": 291,
+   "edge_ratio": 1.35,
+   "colour_dE": 16.8
+  },
+  "after": {
+   "land_px": 291,
+   "edge_ratio": 1.4,
+   "colour_dE": 19.7
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   1000,
+   [
+    3352,
+    3816
+   ],
+   "patch V,6,1 bottom"
+  ],
+  "delta_Lab": [
+   -1.0,
+   0.0,
+   0.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 1.3,
+   "colour_dE": 17.1
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 1.31,
+   "colour_dE": 18.0
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "V",
+   3304,
+   [
+    2584,
+    3048
+   ],
+   "patch V,5,5 right"
+  ],
+  "delta_Lab": [
+   0.0,
+   1.0,
+   3.0
+  ],
+  "before": {
+   "land_px": 210,
+   "edge_ratio": 1.22,
+   "colour_dE": 13.4
+  },
+  "after": {
+   "land_px": 210,
+   "edge_ratio": 1.28,
+   "colour_dE": 13.5
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   1304,
+   [
+    4120,
+    4584
+   ],
+   "patch H,8,2 top"
+  ],
+  "delta_Lab": [
+   -29.0,
+   0.0,
+   -1.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.98,
+   "colour_dE": 14.9
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 2.05,
+   "colour_dE": 0.0
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   1768,
+   [
+    4120,
+    4584
+   ],
+   "patch H,8,2 bottom"
+  ],
+  "delta_Lab": [
+   5.0,
+   1.0,
+   -2.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.95,
+   "colour_dE": 14.7
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 1.0,
+   "colour_dE": 18.6
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "V",
+   1560,
+   [
+    1816,
+    2280
+   ],
+   "patch H,3,3 left"
+  ],
+  "delta_Lab": [
+   -19.5,
+   0.0,
+   -4.0
+  ],
+  "before": {
+   "land_px": 382,
+   "edge_ratio": 1.17,
+   "colour_dE": 11.3
+  },
+  "after": {
+   "land_px": 382,
+   "edge_ratio": 1.75,
+   "colour_dE": 0.0
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   1816,
+   [
+    1560,
+    2024
+   ],
+   "patch H,3,3 top"
+  ],
+  "delta_Lab": [
+   -2.0,
+   1.0,
+   -4.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.8,
+   "colour_dE": 12.9
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 0.85,
+   "colour_dE": 14.2
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "V",
+   4584,
+   [
+    1304,
+    1768
+   ],
+   "patch H,8,2 right"
+  ],
+  "delta_Lab": [
+   0.0,
+   0.0,
+   -4.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.92,
+   "colour_dE": 9.1
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 0.97,
+   "colour_dE": 9.7
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "V",
+   3560,
+   [
+    1816,
+    2280
+   ],
+   "patch H,6,3 right"
+  ],
+  "delta_Lab": [
+   7.0,
+   1.0,
+   -1.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.87,
+   "colour_dE": 7.9
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 0.99,
+   "colour_dE": 2.4
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   4120,
+   [
+    1304,
+    1768
+   ],
+   "patch H,8,2 left"
+  ],
+  "delta_Lab": [
+   -7.0,
+   0.0,
+   0.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.9,
+   "colour_dE": 7.7
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 1.05,
+   "colour_dE": 2.6
+  },
+  "kept": true
+ },
+ {
+  "line": [
+   "V",
+   3864,
+   [
+    1048,
+    1512
+   ],
+   "patch V,7,2 left"
+  ],
+  "delta_Lab": [
+   0.0,
+   -1.0,
+   2.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.85,
+   "colour_dE": 6.8
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 0.88,
+   "colour_dE": 7.1
+  },
+  "kept": false
+ },
+ {
+  "line": [
+   "H",
+   1512,
+   [
+    1816,
+    2280
+   ],
+   "patch V,3,2 bottom"
+  ],
+  "delta_Lab": [
+   -8.0,
+   0.0,
+   1.0
+  ],
+  "before": {
+   "land_px": 464,
+   "edge_ratio": 0.77,
+   "colour_dE": 6.4
+  },
+  "after": {
+   "land_px": 464,
+   "edge_ratio": 0.87,
+   "colour_dE": 0.7
+  },
+  "kept": true
+ }
+]
