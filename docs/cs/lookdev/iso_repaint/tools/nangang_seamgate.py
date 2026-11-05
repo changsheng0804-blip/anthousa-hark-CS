@@ -1,7 +1,7 @@
 # 接缝闸门（自动）：在全幅 canvas 上给每条「两侧都画过的象限边界」打分，再加上修缝补丁自己的四条边；
 # 对照组是象限中线（同一次生成的内部，不是边界），被补丁边压到的中线不算对照。
 #  edge_ratio = 跨线相邻两列像素的 Lab 差 ÷ 线两侧 8–40px 内部相邻列差的中位数（≈1 看不出线）
-#  colour_dE  = 线两侧 24px 条带（只取陆地像素）的 Lab 均值差 − 同侧往里两条带之差的平均（扣掉内容本身的渐变）
+#  colour_dE  = 线两侧 24px 条带（v2，主人 11-05「可以」：只取空地像素——离房子>8px、街道>5px、去植被与水色；两侧空地各不足 300px 则不比色）的 Lab 中位色差 − 同侧往里两条带之差的平均（扣掉内容本身的渐变）
 # 判失败：edge_ratio > 1.6，或 colour_dE > 对照组 colour_dE 的 p90（同一张图上现算，下限 6.0）。
 # 用法（工作目录 = 原始件目录）：python3 nangang_seamgate.py [canvas.png] [out.json]
 #   有任何一条失败 → 退出码 1。补丁清单读 seamfix_patches.json（nangang_seamfix.py 写），没有就当没有补丁。
@@ -11,23 +11,32 @@ EDGE_MAX=1.6;DE_FLOOR=6.0
 f=sys.argv[1] if len(sys.argv)>1 else 'canvas.png';outf=sys.argv[2] if len(sys.argv)>2 else 'nangang_seams.json'
 A0=cv2.cvtColor(np.asarray(Image.open(f).convert('RGB')),cv2.COLOR_RGB2LAB).astype(float)
 L0=np.asarray(Image.open('mask_land.png').convert('L'))>127
+_ld=lambda n:np.asarray(Image.open(n).convert('L'))>127
+_dist=lambda m:cv2.distanceTransform((~m).astype(np.uint8),cv2.DIST_L2,5)
+_C=np.asarray(Image.open(f).convert('RGB')).astype(int)
+# 空地 = 陆地，离底账房子 >8px、街道 >5px，且不是植被、不是水色（与 nangang_tone.py 同一定义）
+G0=L0&(_dist(_ld('ledger_houses.png'))>8)&(_dist(_ld('ledger_streets.png'))>5)&~(_C[...,1]>_C[...,0]+8)&~(_C[...,2]>_C[...,0]+12)
+GMODE='landonly' not in sys.argv
 S=json.load(open('state_pre_seamfix.json' if os.path.exists('state_pre_seamfix.json') else 'state.json'));P={tuple(c) for c in S['painted']}
 PATCH=json.load(open('seamfix_patches.json')) if os.path.exists('seamfix_patches.json') and 'nopatch' not in sys.argv else []
-def meas(A,L,X,ys):
+def meas(A,L,X,ys,G=None):
     """竖线 X（列 X-1|X），行范围 ys；横线用转置数组调用"""
     m=L[ys,X-1]&L[ys,X]
     if m.sum()<150:return None
     e=np.linalg.norm(A[ys,X-1]-A[ys,X],axis=-1)[m].mean()
     inner=[np.linalg.norm(A[ys,X+k-1]-A[ys,X+k],axis=-1)[m].mean() for k in list(range(-40,-8,4))+list(range(8,40,4))]
     def band(a,b):
+        if GMODE and G is not None:
+            mg=G[ys,a:b]
+            return np.median(A[ys,a:b][mg],0) if mg.sum()>300 else None   # 空地不够：这条线不比色，只看边缘比
         mm=L[ys,a:b];return A[ys,a:b][mm].mean(0) if mm.sum()>500 else None
     ca,cb,ca2,cb2=band(X-24,X),band(X,X+24),band(X-48,X-24),band(X+24,X+48)
     col=None if any(v is None for v in (ca,cb,ca2,cb2)) else max(0,np.linalg.norm(ca-cb)-0.5*(np.linalg.norm(ca-ca2)+np.linalg.norm(cb-cb2)))
     return int(m.sum()),float(e/np.median(inner)),col
-AT=A0.transpose(1,0,2).copy();LT=L0.T.copy()
+AT=A0.transpose(1,0,2).copy();LT=L0.T.copy();GT=G0.T.copy()
 def line(d,c,a,b):
     """d='V'：x=c，y∈[a,b)；d='H'：y=c，x∈[a,b)"""
-    return meas(A0,L0,c,slice(a,b)) if d=='V' else meas(AT,LT,c,slice(a,b))
+    return meas(A0,L0,c,slice(a,b),G0) if d=='V' else meas(AT,LT,c,slice(a,b),GT)
 # 补丁边（会落在中线上，要从对照里剔除）
 pedges=[]
 for p in PATCH:
